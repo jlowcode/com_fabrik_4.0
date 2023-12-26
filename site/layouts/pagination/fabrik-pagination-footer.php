@@ -16,7 +16,7 @@ if ($d->showNav) :
 <div class="list-footer">
 	<div class="limit">
 		<div class="input-prepend input-append">
-			<span class="add-on">
+			<span class="add-on" style="height: 42px;">
 				<label for="<?php echo $d->listName;?>">
 					<small>
 					<?php echo $d->label; ?>
@@ -24,7 +24,7 @@ if ($d->showNav) :
 				</label>
 			</span>
 			<?php echo $d->list; ?>
-			<span class="add-on">
+			<span class="add-on" style="height: 42px;">
 				<small>
 					<?php echo $d->pagesCounter; ?>
 				</small>

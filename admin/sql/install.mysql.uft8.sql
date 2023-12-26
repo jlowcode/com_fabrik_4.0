@@ -11,7 +11,7 @@ CREATE TABLE IF NOT EXISTS `#__fabrik_connections` (
 	`default` INT(1) NOT NULL DEFAULT '0',
 	`params` TEXT NOT NULL,
 	PRIMARY KEY (`id`)
-) DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 CREATE TABLE IF NOT EXISTS `#__fabrik_cron` (
 	`id` INT(6) NOT NULL AUTO_INCREMENT,
@@ -30,7 +30,7 @@ CREATE TABLE IF NOT EXISTS `#__fabrik_cron` (
 	`lastrun` DATETIME NOT NULL,
 	`params` TEXT NOT NULL,
 	PRIMARY KEY (`id`)
-) DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 CREATE TABLE IF NOT EXISTS `#__fabrik_elements` (
 	`id` INT(6) NOT NULL AUTO_INCREMENT,
@@ -51,7 +51,7 @@ CREATE TABLE IF NOT EXISTS `#__fabrik_elements` (
 	`hidden` INT(1) NOT NULL,
 	`eval` INT(1) NOT NULL,
 	`ordering` INT(4) NOT NULL,
-	`show_in_list_summary` INT(1), 
+	`show_in_list_summary` INT(1),
 	`filter_type` VARCHAR (20),
 	`filter_exact_match` INT(1),
 	`published` INT(1) NOT NULL default '0',
@@ -68,7 +68,7 @@ CREATE TABLE IF NOT EXISTS `#__fabrik_elements` (
 	KEY `checked_out_INDEX` (`checked_out`),
 	KEY `group_id_INDEX` (`group_id`),
 	KEY `parent_id_INDEX` (`parent_id`)
-) DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 CREATE TABLE IF NOT EXISTS `#__fabrik_formgroup` (
 	`id` INT(6) NOT NULL AUTO_INCREMENT,
@@ -80,7 +80,7 @@ CREATE TABLE IF NOT EXISTS `#__fabrik_formgroup` (
 	KEY `group_id_INDEX` (`group_id`),
 	KEY `ordering_INDEX` (`ordering`)
 
-) DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 CREATE TABLE IF NOT EXISTS `#__fabrik_forms` (
 	`id` INT(6) NOT NULL AUTO_INCREMENT,
@@ -95,18 +95,18 @@ CREATE TABLE IF NOT EXISTS `#__fabrik_forms` (
 	`modified_by` INT(11) NOT NULL,
 	`checked_out` INT(11) NOT NULL,
 	`checked_out_time` datetime NOT NULL,
-	`publish_up` DATETIME, 
+	`publish_up` DATETIME,
 	`publish_down` DATETIME,
 	`reset_button_label` VARCHAR (100) NOT NULL,
 	`submit_button_label` VARCHAR (100) NOT NULL,
-	`form_template` varchar(255), 
+	`form_template` varchar(255),
 	`view_only_template` varchar(255),
 	`published` INT(1) NOT NULL DEFAULT 0,
 	`private` TINYINT(1) NOT NULL DEFAULT '0',
 	`params` TEXT NOT NULL,
 	PRIMARY KEY (`id`),
 	KEY `published_INDEX` (`published`)
-) DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 CREATE TABLE IF NOT EXISTS `#__fabrik_form_sessions` (
 	`id` INT(6) NOT NULL AUTO_INCREMENT,
@@ -119,7 +119,7 @@ CREATE TABLE IF NOT EXISTS `#__fabrik_form_sessions` (
 	`data` MEDIUMTEXT NOT NULL,
 	`time_date` TIMESTAMP NOT NULL,
 	PRIMARY KEY (`id`)
-) DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 CREATE TABLE IF NOT EXISTS `#__fabrik_groups` (
 	`id` INT(6) NOT NULL AUTO_INCREMENT,
@@ -139,7 +139,7 @@ CREATE TABLE IF NOT EXISTS `#__fabrik_groups` (
 	`params` TEXT NOT NULL,
 	PRIMARY KEY (`id`),
 	KEY `published_INDEX` (`published`)
-) DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 CREATE TABLE IF NOT EXISTS `#__fabrik_joins` (
 	`id` INT(6) NOT NULL AUTO_INCREMENT,
@@ -148,7 +148,7 @@ CREATE TABLE IF NOT EXISTS `#__fabrik_joins` (
 	`join_from_table` VARCHAR(255) NOT NULL,
 	`table_join` VARCHAR(255) NOT NULL,
 	`table_key` VARCHAR(255) NOT NULL,
-	`table_join_key` VARCHAR(255) NOT NULL, 
+	`table_join_key` VARCHAR(255) NOT NULL,
 	`join_type` VARCHAR(255) NOT NULL,
 	`group_id` INT(10) NOT NULL,
 	`params` TEXT NOT NULL,
@@ -157,17 +157,17 @@ CREATE TABLE IF NOT EXISTS `#__fabrik_joins` (
 	KEY `element_id_INDEX` (`element_id`),
 	KEY `group_id_INDEX` (`group_id`),
 	KEY `table_join_INDEX` (`table_join`(10))
-) DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 CREATE TABLE IF NOT EXISTS `#__fabrik_jsactions` (
 	`id` INT(6) NOT NULL AUTO_INCREMENT,
-	`element_id` INT(10) NOT NULL, 
+	`element_id` INT(10) NOT NULL,
 	`action` VARCHAR(255) NOT NULL,
 	`code` TEXT NOT NULL,
 	`params` TEXT NOT NULL,
 	PRIMARY KEY (`id`),
 	KEY `element_id_INDEX` (`element_id`)
-) DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 
 CREATE TABLE IF NOT EXISTS `#__fabrik_lists` (
@@ -179,29 +179,29 @@ CREATE TABLE IF NOT EXISTS `#__fabrik_lists` (
 	`db_primary_key` VARCHAR(255) NOT NULL,
 	`auto_inc` INT(1) NOT NULL,
 	`connection_id` INT(6)  NOT NULL,
-	`created` DATETIME, 
-	`created_by` INT(4) NOT NULL, 
-	`created_by_alias` VARCHAR(255) NOT NULL, 
+	`created` DATETIME,
+	`created_by` INT(4) NOT NULL,
+	`created_by_alias` VARCHAR(255) NOT NULL,
 	`modified` DATETIME,
 	`modified_by` INT(4) NOT NULL,
 	`checked_out` INT(4) NOT NULL,
-	`checked_out_time` DATETIME, 
+	`checked_out_time` DATETIME,
 	`published` INT(1) NOT NULL DEFAULT 0,
-	`publish_up` DATETIME, 
-	`publish_down` DATETIME, 
-	`access` INT(4) NOT NULL, 
+	`publish_up` DATETIME,
+	`publish_down` DATETIME,
+	`access` INT(4) NOT NULL,
 	`hits` INT(4) NOT NULL,
 	`rows_per_page` INT(5) NOT NULL,
 	`template` varchar (255) NOT NULL,
 	`order_by` varchar (255) NOT NULL,
 	`order_dir` varchar(255) NOT NULL default 'ASC',
-	`filter_action` varchar(30) NOT NULL, 
-	`group_by` VARCHAR(255) NOT NULL, 
+	`filter_action` varchar(30) NOT NULL,
+	`group_by` VARCHAR(255) NOT NULL,
 	`private` TINYINT(1) NOT NULL DEFAULT '0',
 	`params` TEXT NOT NULL,
 	PRIMARY KEY (`id`),
 	KEY `form_id_INDEX` (`form_id`)
-) DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 CREATE TABLE IF NOT EXISTS `#__fabrik_log` (
 	`id` INT(10) NOT NULL AUTO_INCREMENT PRIMARY KEY,
@@ -211,7 +211,7 @@ CREATE TABLE IF NOT EXISTS `#__fabrik_log` (
 	`message_source` VARCHAR(255) NOT NULL,
 	`message_type` CHAR(60) NOT NULL,
 	`message` TEXT NOT NULL
-) DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 CREATE TABLE IF NOT EXISTS `#__fabrik_packages` (
 	`id` INT NOT NULL AUTO_INCREMENT,
@@ -228,7 +228,7 @@ CREATE TABLE IF NOT EXISTS `#__fabrik_packages` (
 	`template` VARCHAR(255) NOT NULL,
 	`params` TEXT NOT NULL,
 	PRIMARY KEY (`id`)
-) DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 CREATE TABLE IF NOT EXISTS `#__fabrik_validations` (
 	`id` INT(6) NOT NULL AUTO_INCREMENT,
@@ -237,10 +237,10 @@ CREATE TABLE IF NOT EXISTS `#__fabrik_validations` (
 	 `message` varchar(255) null,
 	`client_side_validation` INT(1) NOT NULL default 0,
 	`checked_out` INT(4) NOT NULL,
-	`checked_out_time` DATETIME, 
+	`checked_out_time` DATETIME,
 	`params` TEXT NOT NULL,
 	PRIMARY KEY (`id`)
-) DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 CREATE TABLE IF NOT EXISTS `#__fabrik_visualizations` (
 	`id` INT(6) NOT NULL AUTO_INCREMENT,
@@ -260,5 +260,36 @@ CREATE TABLE IF NOT EXISTS `#__fabrik_visualizations` (
 	`access` INT(6) NOT NULL,
 	`params` TEXT NOT NULL,
 	PRIMARY KEY (`id`)
-) DEFAULT CHARSET=utf8;
-				
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+CREATE TABLE IF NOT EXISTS `#__fabrik_pkgs` (
+  `id` INT(11) NOT NULL AUTO_INCREMENT,
+  `name` TEXT,
+  `file` TEXT,
+  `record` INT(255) DEFAULT NULL,
+  `date_time` datetime DEFAULT NULL,
+  `users_id` INT(11) DEFAULT NULL,
+  `params` VARCHAR(255) DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+CREATE TABLE IF NOT EXISTS `#__fabrik_harvesting` (
+`id` int(11) NOT NULL AUTO_INCREMENT,
+`repository` text DEFAULT NULL,
+`list` varchar(255) DEFAULT NULL,
+`dowload_file` varchar(255) DEFAULT NULL,
+`extract` varchar(255) DEFAULT NULL,
+`syncronism` tinyint(2) DEFAULT NULL,
+`field1` varchar(255) DEFAULT NULL,
+`field2` varchar(255) DEFAULT NULL,
+`status` tinyint(1) DEFAULT 0,
+`date_creation` datetime DEFAULT NULL,
+`date_execution` datetime DEFAULT NULL,
+`users_id` int(11) DEFAULT NULL,
+`record_last` varchar(255) DEFAULT NULL,
+`map_header` mediumtext DEFAULT NULL,
+`map_metadata` mediumtext DEFAULT NULL,
+`line_num` int(11) DEFAULT 0,
+`page_xml` int(11) DEFAULT 0,
+PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;

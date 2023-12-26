@@ -59,6 +59,36 @@ class FabrikAdminController extends JControllerLegacy
 		$config['dbo'] = $db;
 		$r = parent::createModel($name, $prefix, $config);
 
-		return $r;
-	}
+        return $r;
+    }
+
+    /**
+     * Function that will take exception messages and return them to the client already treated.
+     *
+     * @param $code
+     * @param $message
+     * @return mixed
+     */
+    public static function handlePossibleExceptions($code, $message)
+    {
+        switch ($code) {
+            case 1064:
+                $text = FText::_('COM_FABRIK_EXCEPTION_MESSAGE_1064');
+                break;
+            default:
+                $text = $message;
+                break;
+        }
+
+        return $text;
+    }
+
+    public function removeAccentsSpecialCharacters($str) {
+        $comAcentos = array('à', 'á', 'â', 'ã', 'ä', 'å', 'ç', 'è', 'é', 'ê', 'ë', 'ì', 'í', 'î', 'ï', 'ñ', 'ò', 'ó', 'ô', 'õ', 'ö', 'ù', 'ü', 'ú',
+            'ÿ', 'À', 'Á', 'Â', 'Ã', 'Ä', 'Å', 'Ç', 'È', 'É', 'Ê', 'Ë', 'Ì', 'Í', 'Î', 'Ï', 'Ñ', 'Ò', 'Ó', 'Ô', 'Õ', 'Ö', 'O', 'Ù', 'Ü', 'Ú');
+        $semAcentos = array('a', 'a', 'a', 'a', 'a', 'a', 'c', 'e', 'e', 'e', 'e', 'i', 'i', 'i', 'i', 'n', 'o', 'o', 'o', 'o', 'o', 'u', 'u', 'u',
+            'y', 'A', 'A', 'A', 'A', 'A', 'A', 'C', 'E', 'E', 'E', 'E', 'I', 'I', 'I', 'I', 'N', 'O', 'O', 'O', 'O', 'O', '0', 'U', 'U', 'U');
+
+        return str_replace($comAcentos, $semAcentos, $str);
+    }
 }

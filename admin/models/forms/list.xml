@@ -378,6 +378,7 @@
 				<option value="3">COM_FABRIK_FILTER_UNDER_HEADINGS</option>
 				<option value="4">COM_FABRIK_FILTER_UNDER_HEADINGS_TOGGLE</option>
 				<option value="5">COM_FABRIK_FILTER_POPUP</option>
+				<option value="6">COM_FABRIK_FILTER_LEFT_SIDE</option>
 			</field>
 
 			<field name="advanced-filter"
@@ -814,6 +815,17 @@
 				<option value="1">JYES</option>
 			</field>
 
+			<field name="csv_include_dbjoin_params"
+			       type="radio"
+			       class="btn-group"
+			       default="0"
+			       label="COM_FABRIK_FIELD_CSV_INCLUDE_DBJOIN_PARAMS_LABEL"
+			       description="COM_FABRIK_FIELD_CSV_INCLUDE_DBJOIN_PARAMS_DESC"
+			>
+				<option value="0">JNO</option>
+				<option value="1">JYES</option>
+			</field>
+
 			<field name="csv_include_calculations"
 			       type="radio"
 			       class="btn-group"
@@ -1038,8 +1050,35 @@
 				<option value="0">JNO</option>
 				<option value="1">JYES</option>
 			</field>
+			
+			<field name="thumbnail"
+				label="COM_FABRIK_LABEL_SELECT_THUMBNAIL"
+				description="COM_FABRIK_DESCRIPTION_SELECT_THUMBNAIL"
+				type="Listfields"/>
+			
+			<field name="titulo"
+				description="COM_FABRIK_DESCRIPTION_SELECT_TITLE"
+				label="COM_FABRIK_LABEL_SELECT_TITLE"
+				type="Listfields"/>
+				
+			<field name="layout-tree-parent"
+				label="COM_FABRIK_LAYOUT_TREE_PARENT_TITLE"
+				description="COM_FABRIK_LAYOUT_TREE_PARENT_DESCRIPTION"
+				type="Listfields"/>
+
+			<field name="show-layout-selector"
+				   type="radio"
+				   class="btn-group"
+				   default="0"
+				   label="COM_FABRIK_LABEL_SHOW_SELECT_LAYOUT"
+				   description="COM_FABRIK_DESCRIPTION_SHOW_SELECT_LAYOUT"
+			>
+				<option value="0">JNO</option>
+				<option value="1">JYES</option>
+			</field>
 
 		</fieldset>
+		
 
 		<fieldset name="layout-bootstrap">
 
@@ -1488,6 +1527,15 @@
 				<option value="1">JYES</option>
 			</field>
 
+			<field name="reduce_query"
+			       type="radio"
+			       default="0"
+			       label="COM_FABRIK_LIST_REDUCE_QUERY_LABEL"
+			       description="COM_FABRIK_LIST_REDUCE_QUERY_DESC"
+			       class="btn-group">
+				<option value="0">JNO</option>
+				<option value="1">JYES</option>
+			</field>
 		</fieldset>
 
 		<fieldset name="open_archive_initiative">
