@@ -11,9 +11,12 @@
 // No direct access
 defined('_JEXEC') or die('Restricted access');
 
+use Joomla\CMS\Form\FormHelper;
 use Fabrik\Helpers\Html;
-use Fabrik\Helpers\Text;
+use Joomla\CMS\Language\Text;
 use Fabrik\Helpers\Worker;
+use Joomla\CMS\HTML\HTMLHelper;
+use Joomla\CMS\Form\Field\ListField;
 
 // Required for menus
 //require_once JPATH_SITE . '/components/com_fabrik/helpers/html.php';
@@ -24,7 +27,7 @@ require_once JPATH_ADMINISTRATOR . '/components/com_fabrik/helpers/element.php';
 jimport('joomla.html.html');
 jimport('joomla.form.formfield');
 jimport('joomla.form.helper');
-JFormHelper::loadFieldClass('list');
+FormHelper::loadFieldClass('list');
 
 /**
  * Renders a list of fabrik lists or db tables
@@ -33,7 +36,7 @@ JFormHelper::loadFieldClass('list');
  * @subpackage  Form
  * @since       3.0
  */
-class JFormFieldFabrikTables extends JFormFieldList
+class JFormFieldFabrikTables extends ListField
 {
 	/**
 	 * Element name
@@ -69,13 +72,13 @@ class JFormFieldFabrikTables extends JFormFieldList
 		{
 			// We are not monitoring a connection drop down so load in all tables
 			$query = $db->getQuery(true);
-			$query->select('id AS value, label AS text')->from('#__{package}_lists')->where('published <> -2')->order('label ASC');
+			$query->select('id AS value, label AS text')->from('#__fabrik_lists')->where('published <> -2')->order('label ASC');
 			$db->setQuery($query);
 			$rows = $db->loadObjectList();
 		}
 		else
 		{
-			$rows = array(JHTML::_('select.option', '', Text::_('COM_FABRIK_SELECT_A_CONNECTION_FIRST'), 'value', 'text'));
+			$rows = array(HTMLHelper::_('select.option', '', Text::_('COM_FABRIK_SELECT_A_CONNECTION_FIRST'), 'value', 'text'));
 		}
 
 		return $rows;

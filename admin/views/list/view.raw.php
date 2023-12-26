@@ -11,19 +11,14 @@
 // No direct access
 defined('_JEXEC') or die('Restricted access');
 
+use Joomla\CMS\Language\Text;
+use Joomla\CMS\MVC\View\HtmlView;
+use Joomla\CMS\Factory;
 use Joomla\Utilities\ArrayHelper;
 
 jimport('joomla.application.component.view');
 
-/**
- * View to edit a list.
- *
- * @package     Joomla.Administrator
- * @subpackage  Fabrik
- * @since       1.5
- */
-
-class FabrikAdminViewList extends JViewLegacy
+class FabrikAdminViewList extends HtmlView
 {
 	/**
 	 * Display a json object representing the table data.
@@ -35,15 +30,15 @@ class FabrikAdminViewList extends JViewLegacy
 
 	public function display($tpl = null)
 	{
-		$app = JFactory::getApplication();
+		$app = Factory::getApplication();
 		$input = $app->input;
-		$model = JModelLegacy::getInstance('List', 'FabrikFEModel');
+		$model = Factory::getApplication()->bootComponent('com_fabrik')->getMVCFactory()->createModel('List', 'FabrikFEModel');
 		$model->setId($input->getInt('listid'));
 		$this->setModel($model, true);
 		$item = $model->getTable();
 		$params = $model->getParams();
 		$model->render();
-		$this->emptyDataMessage = FText::_($params->get('empty_data_msg', 'COM_FABRIK_LIST_NO_DATA_MSG'));
+		$this->emptyDataMessage = Text::_($params->get('empty_data_msg', 'COM_FABRIK_LIST_NO_DATA_MSG'));
 		$rowid = $input->getString('rowid', '', 'string');
 		list($this->headings, $groupHeadings, $this->headingClass, $this->cellClass) = $this->get('Headings');
 		$data = $model->getData();
@@ -87,7 +82,7 @@ class FabrikAdminViewList extends JViewLegacy
 		$d = array('id' => $item->id, 'rowid' => $rowid, 'model' => 'list', 'data' => $data,
 				'headings' => $this->headings,
 				'formid' => $model->getTable()->form_id,
-				'lastInsertedRow' => JFactory::getSession()->get('lastInsertedRow', 'test'));
+				'lastInsertedRow' => Factory::getSession()->get('lastInsertedRow', 'test'));
 		$d['nav'] = get_object_vars($nav);
 		$d['htmlnav'] = $params->get('show-table-nav', 1) ? $nav->getListFooter($model->getId(), $this->getTmpl()) : '';
 		$d['calculations'] = $model->getCalculations();
@@ -109,14 +104,14 @@ class FabrikAdminViewList extends JViewLegacy
 
 	private function getTmpl()
 	{
-		$app = JFactory::getApplication();
+		$app = Factory::getApplication();
 		$input = $app->input;
 		$input->set('hidemainmenu', true);
 		$model = $this->getModel();
 		$item = $model->getTable();
 		$params = $model->getParams();
 
-		if ($app->isAdmin())
+		if ($app->isClient('administrator'))
 		{
 			$tmpl = $params->get('admin_template');
 

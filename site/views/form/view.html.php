@@ -11,6 +11,7 @@
 // No direct access
 defined('_JEXEC') or die('Restricted access');
 
+use Joomla\CMS\Router\Route;
 use Joomla\Utilities\ArrayHelper;
 use Fabrik\Helpers\StringHelper;
 
@@ -40,7 +41,7 @@ class FabrikViewForm extends FabrikViewFormBase
 			$this->setCanonicalLink();
 			$this->output();
 
-			if (!$this->app->isAdmin())
+			if (!$this->app->isClient('administrator'))
 			{
 				$this->state  = $this->get('State');
 				$model        = $this->getModel();
@@ -95,7 +96,7 @@ class FabrikViewForm extends FabrikViewFormBase
 	{
 		$url = '';
 
-		if (!$this->app->isAdmin() && !$this->isMambot)
+		if (!$this->app->isClient('administrator') && !$this->isMambot)
 		{
 			/** @var FabrikFEModelForm $model */
 			$model  = $this->getModel();
@@ -104,7 +105,7 @@ class FabrikViewForm extends FabrikViewFormBase
 			$slug   = $model->getListModel()->getSlug(ArrayHelper::toObject($data));
 			$rowId  = $slug === '' ? $model->getRowId() : $slug;
 			$view   = $model->isEditable() ? 'form' : 'details';
-			$url    = JRoute::_('index.php?option=com_' . $this->package . '&view=' . $view . '&formid=' . $formId . '&rowid=' . $rowId);
+			$url    = Route::_('index.php?option=com_' . $this->package . '&view=' . $view . '&formid=' . $formId . '&rowid=' . $rowId);
 		}
 
 		return $url;
@@ -118,7 +119,7 @@ class FabrikViewForm extends FabrikViewFormBase
 	 */
 	public function setCanonicalLink()
 	{
-		if (!$this->app->isAdmin() && !$this->isMambot)
+		if (!$this->app->isClient('administrator') && !$this->isMambot)
 		{
 			$url = $this->getCanonicalLink();
 

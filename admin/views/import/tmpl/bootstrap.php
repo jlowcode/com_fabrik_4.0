@@ -12,11 +12,15 @@
 // No direct access
 defined('_JEXEC') or die('Restricted access');
 
+use Joomla\CMS\Language\Text;
+use Joomla\CMS\Router\Route;
+use Joomla\CMS\Factory;
+use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\Utilities\ArrayHelper;
 
-JHtml::_('behavior.tooltip');
+HTMLHelper::_('bootstrap.tooltip');
 FabrikHelperHTML::formvalidation();
-$app = JFactory::getApplication();
+$app = Factory::getApplication();
 $input = $app->input;
 
 ?>
@@ -39,7 +43,7 @@ window.addEvent('domready', function () {
 });
 
 </script>
-<form enctype="multipart/form-data" action="<?php JRoute::_('index.php?option=com_fabrik'); ?>" method="post" name="adminForm" id="adminForm" class="form-validate">
+<form enctype="multipart/form-data" action="<?php Route::_('index.php?option=com_fabrik'); ?>" method="post" name="adminForm" id="adminForm" class="form-validate">
 
 <div class="fltlft">
 	<?php
@@ -52,7 +56,7 @@ window.addEvent('domready', function () {
 	if (($id !== 0)) :
 		$db = FabrikWorker::getDbo(true);
 		$query = $db->getQuery(true);
-		$query->select('label')->from('#__{package}_lists')->where('id = ' . $id);
+		$query->select('label')->from('#__fabrik_lists')->where('id = ' . $id);
 		$db->setQuery($query);
 		$list = $db->loadResult();
 	endif;
@@ -64,10 +68,10 @@ window.addEvent('domready', function () {
 
 	<?php
 	foreach ($fieldsets as $n => $fieldset) :?>
-	<fieldset class="form-horizontal">
+	<fieldset>
 		<?php
 		if ($n == 0) :
-			echo '<legend>' . FText::_('COM_FABRIK_IMPORT_CSV') . '</legend>';
+			echo '<legend>' . Text::_('COM_FABRIK_IMPORT_CSV') . '</legend>';
 		endif;
 		foreach ($this->form->getFieldset($fieldset) as $this->field) :
 			echo $this->loadTemplate('control_group');
@@ -78,7 +82,7 @@ window.addEvent('domready', function () {
 	<input type="hidden" name="drop_data" value="0" />
 	<input type="hidden" name="overwrite" value="0" />
  	<input type="hidden" name="task" value="" />
-  	<?php echo JHTML::_('form.token');
-	echo JHTML::_('behavior.keepalive'); ?>
+  	<?php echo HTMLHelper::_('form.token');
+	echo HTMLHelper::_('behavior.keepalive'); ?>
 	</div>
 </form>

@@ -11,6 +11,13 @@
 // No direct access
 defined('_JEXEC') or die('Restricted access');
 
+use Joomla\CMS\Language\Text;
+use Joomla\CMS\Version;
+use Joomla\CMS\Form\Form;
+use Joomla\CMS\Form\FormField;
+use Joomla\CMS\Factory;
+use Joomla\CMS\HTML\HTMLHelper;
+
 jimport('joomla.form.formfield');
 
 /**
@@ -21,7 +28,7 @@ jimport('joomla.form.formfield');
  * @since       1.6
  */
 
-class JFormFieldFabrikModalrepeat extends JFormField
+class JFormFieldFabrikModalrepeat extends FormField
 {
 	/**
 	 * The form field type.
@@ -42,13 +49,12 @@ class JFormFieldFabrikModalrepeat extends JFormField
 	protected function getInput()
 	{
 		// Initialize variables.
-		$app = JFactory::getApplication();
-		$document = JFactory::getDocument();
-		JHTML::stylesheet('administrator/components/com_fabrik/views/fabrikadmin.css');
-		$subForm = new JForm($this->name, array('control' => 'jform'));
+		$app = Factory::getApplication();
+		$document = Factory::getDocument();
+		HTMLHelper::stylesheet('administrator/components/com_fabrik/views/fabrikadmin.css');
+		$subForm = new Form($this->name, array('control' => 'jform'));
 		$xml = $this->element->children()->asXML();
 		$subForm->load($xml);
-		$j3 = FabrikWorker::j3();
 		
 		if (!isset($this->form->repeatCounter))
 		{
@@ -58,9 +64,6 @@ class JFormFieldFabrikModalrepeat extends JFormField
 		// Needed for repeating modals in gmaps viz
 		$subForm->repeatCounter = (int) $this->form->repeatCounter;
 
-		/**
-		 * f3 hack
-		 */
 
 		$input = $app->input;
 		$view = $input->get('view', 'list');
@@ -87,7 +90,7 @@ class JFormFieldFabrikModalrepeat extends JFormField
 		}
 		else
 		{
-			$feModel = JModelLegacy::getInstance($view, 'FabrikFEModel');
+			$feModel = Factory::getApplication()->bootComponent('com_fabrik')->getMVCFactory()->createModel($view, 'FabrikFEModel');
 			$feModel->setId($id);
 		}
 
@@ -114,23 +117,20 @@ class JFormFieldFabrikModalrepeat extends JFormField
 
 		$this->value = json_encode($v);
 
-		/*
-		 * end
-		 */
 		$children = $this->element->children();
 
-		// $$$ rob 19/07/2012 not sure y but this fires a strict standard warning deep in JForm, suppress error for now
+		// $$$ rob 19/07/2012 not sure y but this fires a strict standard warning deep in Form, suppress error for now
 		@$subForm->setFields($children);
 
 		$str = array();
-		$version = new JVersion;
-		$j32 = version_compare($version->RELEASE, '3.2') >= 0 ? true : false;
-		$j322 = ($j32 && $version->DEV_LEVEL >=3);
-		$j33 = version_compare($version->RELEASE, '3.3') >= 0 ? true : false;
+		
+		$j32 = true;
+		$j322 = false;
+		$j33 = true;
 
-		$modalId = $j32 || $j33 ? 'attrib-' . $this->id . '_modal' : $this->id . '_modal';
+		$modalId = 'attrib-' . $this->id . '_modal';
 
-		// As JForm will render child fieldsets we have to hide it via CSS
+		// As Form will render child fieldsets we have to hide it via CSS
 		$fieldSetId = str_replace('jform_params_', '', $modalId);
 		$css = 'a[href="#' . $fieldSetId . '"] { display: none!important; }';
 		$document->addStyleDeclaration($css);
@@ -147,21 +147,12 @@ class JFormFieldFabrikModalrepeat extends JFormField
 		{
 			$names[] = (string) $field->element->attributes()->name;
 			$str[] = '<th>' . strip_tags($field->getLabel($field->name));
-			$str[] = '<br /><small style="font-weight:normal">' . FText::_($field->description) . '</small>';
+			$str[] = '<br /><small style="font-weight:normal">' . Text::_($field->description) . '</small>';
 			$str[] = '</th>';
 		}
 
-		if ($j3)
-		{
-			$str[] = '<th><a href="#" class="add btn button btn-success"><i class="icon-plus"></i> </a></th>';
-		}
-		else
-		{
-			$str[] = '<th><a href="#" class="add"><img src="' . $path . '/icon-16-new.png" alt="' . FText::_('ADD') . '" /></a></th>';
-		}
-
+		$str[] = '<th><a href="#" class="add btn btn-sm btn-success"><i class="icon-plus" style="color:white;"></i> </a></th>';
 		$str[] = '</tr></thead>';
-
 		$str[] = '<tbody><tr>';
 
 		foreach ($subForm->getFieldset($attributes->name . '_modal') as $field)
@@ -170,24 +161,15 @@ class JFormFieldFabrikModalrepeat extends JFormField
 		}
 
 		$str[] = '<td>';
-
-		if ($j3)
-		{
-			$str[] = '<div class="btn-group"><a class="add btn button btn-success"><i class="icon-plus"></i> </a>';
-			$str[] = '<a class="remove btn button btn-danger"><i class="icon-minus"></i> </a></div>';
-		}
-		else
-		{
-			$str[] = '<a href="#" class="add"><img src="' . $path . '/icon-16-new.png" alt="' . FText::_('ADD') . '" /></a>';
-			$str[] = '<a href="#" class="remove"><img src="' . $path . '/icon-16-delete.png" alt="' . FText::_('REMOVE') . '" /></a>';
-		}
-
+		$str[] = '<div class="btn-group"><a class="add btn btn-sm btn-success"><i class="icon-plus"></i> </a>';
+		$str[] = '<a class="remove btn btn-sm btn-danger"><i class="icon-minus"></i> </a></div>';
 		$str[] = '</td>';
 		$str[] = '</tr></tbody>';
 		$str[] = '</table>';
 		$str[] = '</div>';
 		$form = implode("\n", $str);
-		static $modalRepeat;
+		
+    static $modalRepeat;
 
 		if (!isset($modalRepeat))
 		{
@@ -207,7 +189,7 @@ class JFormFieldFabrikModalrepeat extends JFormField
 
 			$modalRepeat[$modalId][$this->form->repeatCounter] = true;
 			$opts = new stdClass;
-			$opts->j3 = $j3;
+			$opts->j3 = true;
 			$opts = json_encode($opts);
 			$script = str_replace('-', '', $modalId) . " = new FabrikModalRepeat('$modalId', $names, '$this->id', $opts);";
 			$option = $input->get('option');
@@ -218,57 +200,44 @@ class JFormFieldFabrikModalrepeat extends JFormField
 			}
 			else
 			{
-				if ($j3)
+				$context = strtoupper($option);
+
+				if ($context === 'COM_ADVANCEDMODULES')
 				{
+					$context = 'COM_MODULES';
+				}
 
-					$context = strtoupper($option);
+				$j3pane = $context . '_' . str_replace('jform_params_', '', $modalId) . '_FIELDSET_LABEL';
 
-					if ($context === 'COM_ADVANCEDMODULES')
-					{
-						$context = 'COM_MODULES';
-					}
+				if ($j32)
+				{
+					$j3pane = strtoupper(str_replace('attrib-', '', $j3pane));
+				}
 
-					$j3pane = $context . '_' . str_replace('jform_params_', '', $modalId) . '_FIELDSET_LABEL';
-
-					if ($j32)
-					{
-						$j3pane = strtoupper(str_replace('attrib-', '', $j3pane));
-					}
-
-					if ($j322 || $j33)
-					{
-						$script = "window.addEvent('domready', function() {
-					" . $script . "
-					});";
-					}
-					else
-					{
-						$script = "window.addEvent('domready', function() {
-					var a = jQuery(\"a:contains('$j3pane')\");
-						if (a.length > 0) {
-							a = a[0];
-							var href= a.get('href');
-							jQuery(href)[0].destroy();
-
-							var accord = a.getParent('.accordion-group');
-							if (typeOf(accord) !== 'null') {
-								accord.destroy();
-							} else {
-								a.destroy();
-							}
-							" . $script . "
-						}
-					});";
-					}
+				if ($j322 || $j33)
+				{
+					$script = "window.addEvent('domready', function() {
+				" . $script . "
+				});";
 				}
 				else
 				{
 					$script = "window.addEvent('domready', function() {
-			" . $script . "
-			if (typeOf($('$pane')) !== 'null') {
-			  //$('$pane').getParent().hide();
-			}
-			});";
+				var a = jQuery(\"a:contains('$j3pane')\");
+					if (a.length > 0) {
+						a = a[0];
+						var href= a.get('href');
+						jQuery(href)[0].destroy();
+
+						var accord = a.getParent('.accordion-group');
+						if (typeOf(accord) !== 'null') {
+							accord.destroy();
+						} else {
+							a.destroy();
+						}
+						" . $script . "
+					}
+				});";
 				}
 
 				// Wont work when rendering in admin module page
@@ -284,24 +253,12 @@ class JFormFieldFabrikModalrepeat extends JFormField
 
 		$value = htmlspecialchars($this->value, ENT_COMPAT, 'UTF-8');
 
-		if ($j3)
-		{
-			$icon = $this->element['icon'] ? '<i class="icon-' . $this->element['icon'] . '"></i> ' : '';
-			$icon .= FText::_('JLIB_FORM_BUTTON_SELECT');
-			$str[] = '<button class="btn" id="' . $modalId . '_button" data-modal="' . $modalId . '">' . $icon . '</button>';
-			$str[] = '<input type="hidden" name="' . $this->name . '" id="' . $this->id . '" value="' . $value . '" />';
-		}
-		else
-		{
-			$str[] = '<div class="button2-left">';
-			$str[] = '	<div class="blank">';
-			$str[] = '		<a id="' . $modalId . '_button" data-modal="' . $modalId . '">' . FText::_('JLIB_FORM_BUTTON_SELECT') . '</a>';
-			$str[] = '		<input type="hidden" name="' . $this->name . '" id="' . $this->id . '" value="' . $value . '" />';
-			$str[] = '	</div>';
-			$str[] = '</div>';
-		}
+		$icon = $this->element['icon'] ? '<i class="icon-' . $this->element['icon'] . '"></i> ' : '';
+		$icon .= Text::_('JLIB_FORM_BUTTON_SELECT');
+		$str[] = '<button class="btn btn-outline-secondary" id="' . $modalId . '_button" data-modal="' . $modalId . '">' . $icon . '</button>';
+		$str[] = '<input type="hidden" name="' . $this->name . '" id="' . $this->id . '" value="' . $value . '" />';
 
-		FabrikHelperHTML::framework();
+    	FabrikHelperHTML::framework();
 		FabrikHelperHTML::iniRequireJS();
 
 		return implode("\n", $str);

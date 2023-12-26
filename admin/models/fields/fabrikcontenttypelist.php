@@ -10,12 +10,18 @@
 // No direct access
 defined('_JEXEC') or die('Restricted access');
 
+use Joomla\CMS\Language\Text;
+use Joomla\CMS\Form\FormHelper;
+use Joomla\CMS\Filesystem\Folder;
+use Joomla\CMS\HTML\HTMLHelper;
+use Joomla\CMS\Form\Field\ListField;
+
 require_once JPATH_ADMINISTRATOR . '/components/com_fabrik/helpers/element.php';
 
 jimport('joomla.html.html');
 jimport('joomla.form.formfield');
 jimport('joomla.form.helper');
-JFormHelper::loadFieldClass('list');
+FormHelper::loadFieldClass('list');
 
 /**
  * Renders a list of Fabrik content types
@@ -24,7 +30,7 @@ JFormHelper::loadFieldClass('list');
  * @subpackage  Form
  * @since       1.6
  */
-class JFormFieldFabrikContentTypeList extends JFormFieldList
+class JFormFieldFabrikContentTypeList extends ListField
 {
 	/**
 	 * Element name
@@ -42,7 +48,7 @@ class JFormFieldFabrikContentTypeList extends JFormFieldList
 	protected function getOptions()
 	{
 		$base    = JPATH_COMPONENT_ADMINISTRATOR . '/models/content_types';
-		$files   = JFolder::files($base, '.xml');
+		$files   = Folder::files($base, '.xml');
 		$options = array();
 
 		foreach ($files as $file)
@@ -55,7 +61,7 @@ class JFormFieldFabrikContentTypeList extends JFormFieldList
 
 			if (!is_null($name) && count($name) > 0)
 			{
-				$options[] = JHTML::_('select.option', $file, $name[0]->nodeValue);
+				$options[] = HTMLHelper::_('select.option', $file, $name[0]->nodeValue);
 			}
 		}
 
@@ -71,8 +77,8 @@ class JFormFieldFabrikContentTypeList extends JFormFieldList
 	protected function getInput()
 	{
 		$str = '<div class="row-fluid">
-		<div class="span5">' . parent::getInput() . '<div id="contentTypeListAclUi"></div></div><div class="span7">';
-		$str .= '<legend>' . JText::_('COM_FABRIK_PREVIEW') . ': </legend>';
+		<div class="col-sm-5">' . parent::getInput() . '<div id="contentTypeListAclUi"></div></div><div class="col-sm-7">';
+		$str .= '<legend>' . Text::_('COM_FABRIK_PREVIEW') . ': </legend>';
 		$str .= '<div class="well" id="contentTypeListPreview"></div>';
 
 		$str .= '</div>';

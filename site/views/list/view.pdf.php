@@ -10,6 +10,9 @@
 // No direct access
 defined('_JEXEC') or die('Restricted access');
 
+use Joomla\CMS\Layout\LayoutInterface;
+use Fabrik\Document\PdfDocument;
+
 jimport('joomla.application.component.view');
 require_once COM_FABRIK_FRONTEND . '/views/list/view.base.php';
 
@@ -37,8 +40,8 @@ class FabrikViewList extends FabrikViewListBase
 		{
 			$model = $this->getModel();
 			$params = $model->getParams();
-			$size        = $this->app->input->get('pdf_size', $params->get('pdf_size', 'A4'));
-			$orientation = $this->app->input->get('pdf_orientation', $params->get('pdf_orientation', 'portrait'));
+			$size        = $this->app->getInput()->get('pdf_size', $params->get('pdf_size', 'A4'));
+			$orientation = $this->app->getInput()->get('pdf_orientation', $params->get('pdf_orientation', 'portrait'));
 			$this->doc->setPaper($size, $orientation);
 			$this->nav = '';
 			$this->showPDF = false;
@@ -48,7 +51,7 @@ class FabrikViewList extends FabrikViewListBase
 			$this->showFilters = false;
 			$this->hasButtons = false;
 
-			if ($this->app->input->get('pdf_include_bootstrap', $params->get('pdf_include_bootstrap', '0')) === '1')
+			if ($this->app->getInput()->get('pdf_include_bootstrap', $params->get('pdf_include_bootstrap', '0')) === '1')
 			{
 				FabrikhelperHTML::loadBootstrapCSS(true);
 			}
@@ -85,7 +88,7 @@ class FabrikViewList extends FabrikViewListBase
 		$this->doc->setName($this->doc->getTitle());
 	}
 		/**
-	 * Render the group by heading as a JLayout list.fabrik-group-by-heading
+	 * Render the group by heading as a LayoutInterface list.fabrik-group-by-heading
 
 	 *
 	 * @param   string  $groupedBy  Group by key for $this->grouptemplates

@@ -114,7 +114,7 @@ define(['jquery', 'fab/encoder', 'fab/fabrik', 'lib/debounce/jquery.ba-throttle-
 	        if (this.options.ajaxValidation && this.options.toggleSubmit && this.options.toggleSubmitTip !== '') {
 		        var submit = this._getButton('Submit');
 		        if (typeOf(submit) !== 'null') {
-			        jQuery(submit).wrap('<div data-toggle="tooltip" title="' + Joomla.JText._('COM_FABRIK_MUST_VALIDATE') +
+			        jQuery(submit).wrap('<div data-bs-toggle="tooltip" title="' + Joomla.JText._('COM_FABRIK_MUST_VALIDATE') +
                         '" class="fabrikSubmitWrapper" style="display: inline-block"></div>div>');
 		        }
 	        }
@@ -190,7 +190,8 @@ define(['jquery', 'fab/encoder', 'fab/fabrik', 'lib/debounce/jquery.ba-throttle-
          * Print button action - either open up the print preview window - or print if already opened
          */
         watchPrintButton: function () {
-            this.form.getElements('a[data-fabrik-print]').addEvent('click', function (e) {
+            if (this.form) {
+				this.form.getElements('a[data-fabrik-print]').addEvent('click', function (e) {
                 e.stop();
                 if (this.options.print) {
                     window.print();
@@ -213,13 +214,15 @@ define(['jquery', 'fab/encoder', 'fab/fabrik', 'lib/debounce/jquery.ba-throttle-
                     );
                 }
             }.bind(this));
+			}
         },
 
         /**
          * PDF button action.
          */
         watchPdfButton: function () {
-            this.form.getElements('*[data-role="open-form-pdf"]').addEvent('click', function (e) {
+            if (this.form) {
+			this.form.getElements('*[data-role="open-form-pdf"]').addEvent('click', function (e) {
                 e.stop();
                 // Build URL as we could have changed the rowid via ajax pagination.
                 // @FIXME for SEF
@@ -233,6 +236,7 @@ define(['jquery', 'fab/encoder', 'fab/fabrik', 'lib/debounce/jquery.ba-throttle-
 	                }                }
                 window.location = url;
             }.bind(this));
+			}
         },
 
         /**
@@ -545,12 +549,8 @@ define(['jquery', 'fab/encoder', 'fab/fabrik', 'lib/debounce/jquery.ba-throttle-
             if (!groupId.test(/^group/)) {
                 groupId = 'group' + groupId;
             }
-            if (document.id(groupId).getParent().hasClass('tab-pane')) {
-                var tabid = document.id(groupId).getParent().id;
-                var tab_anchor = this.form.getElement('a[href=#' + tabid + ']');
-                return tab_anchor.getParent();
-            }
-            return false;
+            var tab_button = document.getElementById(groupId+'_tab');
+            return tab_button == null ? false : tab_button;
         },
 
         /**
@@ -893,8 +893,11 @@ define(['jquery', 'fab/encoder', 'fab/fabrik', 'lib/debounce/jquery.ba-throttle-
                 elements.each(function (el) {
                     if (typeOf(el) === 'array') {
                         if (typeOf(document.id(el[1])) === 'null') {
-                            fconsole('Fabrik form::addElements: Cannot add element "' + el[1] +
-                                '" because it does not exist in HTML.');
+                            /* Some elements may not exist if this is a new record, specifically the lockrow element */
+                            if (document.getElements('input[name=rowid]')[0].value != "" && el[0] != 'FbLockrow') {
+                                fconsole('Fabrik form::addElements: Cannot add element "' + el[1] +
+                                    '" because it does not exist in HTML.');
+                            }
                             return;
                         }
                         try {
@@ -1332,7 +1335,7 @@ define(['jquery', 'fab/encoder', 'fab/fabrik', 'lib/debounce/jquery.ba-throttle-
 
             if (!submit && !apply) {
                 // look for a button element set to submit
-                if (this.form.getElement('button[type=submit]'))
+                if (this.form && this.form.getElement('button[type=submit]'))
                 {
                     submit = this.form.getElement('button[type=submit]');
                 }
@@ -1839,7 +1842,8 @@ define(['jquery', 'fab/encoder', 'fab/fabrik', 'lib/debounce/jquery.ba-throttle-
                 }
             }));
 
-            this.form.addEvent('click:relay(.fabrikSubGroup)', function (e, subGroup) {
+            if (this.form) {
+				this.form.addEvent('click:relay(.fabrikSubGroup)', function (e, subGroup) {
                 var r = subGroup.getElement('.fabrikGroupRepeater');
                 if (r) {
                     subGroup.addEvent('mouseenter', function (e) {
@@ -1850,6 +1854,7 @@ define(['jquery', 'fab/encoder', 'fab/fabrik', 'lib/debounce/jquery.ba-throttle-
                     });
                 }
             }.bind(this));
+			}
         },
 
         /**
@@ -2418,7 +2423,7 @@ define(['jquery', 'fab/encoder', 'fab/fabrik', 'lib/debounce/jquery.ba-throttle-
 
                     // Table group
                     var add = group.getElement('.addGroup');
-                    add.inject(sub.getElement('td.fabrikGroupRepeater'));
+                    add.inject(sub.getElement('div.fabrikGroupRepeater'),'top');
                     sub.setStyle('display', '');
                 } else {
                     subgroups[0].getElement('.fabrikNotice').dispose();

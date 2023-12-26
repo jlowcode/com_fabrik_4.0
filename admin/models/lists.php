@@ -12,17 +12,13 @@
 // No direct access
 defined('_JEXEC') or die('Restricted access');
 
+use Joomla\CMS\Table\Table;
+use Joomla\CMS\Component\ComponentHelper;
+use Joomla\CMS\Factory;
 use Joomla\Utilities\ArrayHelper;
 
 require_once 'fabmodellist.php';
 
-/**
- * Fabrik Admin Lists Model
- *
- * @package     Joomla.Administrator
- * @subpackage  Fabrik
- * @since       3.0
- */
 class FabrikAdminModelLists extends FabModelList
 {
 	/**
@@ -37,7 +33,12 @@ class FabrikAdminModelLists extends FabModelList
 	{
 		if (empty($config['filter_fields']))
 		{
-			$config['filter_fields'] = array('l.id', 'label', 'db_table_name', 'published');
+			$config['filter_fields'] = [
+				'id', 'l.id', 
+				'label', 'l.label',
+				'db_table_name', 'l.db_table_name',
+				'published', 'l.published'
+			];
 		}
 
 		parent::__construct($config);
@@ -52,13 +53,15 @@ class FabrikAdminModelLists extends FabModelList
 	 */
 	protected function getListQuery()
 	{
+		$classPath = get_class($this) . '->' . implode('->', class_parents($this));
+		
 		// Initialise variables.
 		$db    = $this->getDbo();
 		$query = $db->getQuery(true);
 
 		// Select the required fields from the table.
 		$query->select($this->getState('list.select', 'l.*'));
-		$query->from('#__{package}_lists AS l');
+		$query->from('#__fabrik_lists AS l');
 
 		// Filter by published state
 		$published = $this->getState('filter.published');
@@ -85,8 +88,8 @@ class FabrikAdminModelLists extends FabModelList
 		}
 
 		// Add the list ordering clause.
-		$orderCol  = $this->state->get('list.ordering');
-		$orderDirn = $this->state->get('list.direction');
+		$orderCol  = $this->state->get('list.ordering', 'l.id');
+		$orderDirn = $this->state->get('list.direction', 'asc');
 
 		if ($orderCol == 'ordering' || $orderCol == 'category_title')
 		{
@@ -136,8 +139,8 @@ class FabrikAdminModelLists extends FabModelList
 		$db    = $this->getDbo();
 		$query = $db->getQuery(true);
 		$query->select('DISTINCT(l.id) AS id, fg.group_id AS group_id');
-		$query->from('#__{package}_lists AS l');
-		$query->join('LEFT', '#__{package}_formgroup AS fg ON l.form_id = fg.form_id');
+		$query->from('#__fabrik_lists AS l');
+		$query->join('LEFT', '#__fabrik_formgroup AS fg ON l.form_id = fg.form_id');
 		$db->setQuery($query);
 		$rows = $db->loadObjectList('id');
 
@@ -151,7 +154,7 @@ class FabrikAdminModelLists extends FabModelList
 	 * @param   string $prefix A prefix for the table class name. Optional.
 	 * @param   array  $config Configuration array for model. Optional.
 	 *
-	 * @return  JTable    A database object
+	 * @return  Table    A database object
 	 *
 	 * @since    1.6
 	 */
@@ -174,10 +177,11 @@ class FabrikAdminModelLists extends FabModelList
 	 *
 	 * @return  void
 	 */
-	protected function populateState($ordering = null, $direction = null)
+//	protected function populateState($ordering = 'l.id', $direction = 'ASC')
+	protected function populateState($ordering = '', $direction = '')
 	{
 		// Initialise variables.
-		$app = JFactory::getApplication('administrator');
+		$app = Factory::getApplication('administrator');
 
 		// Load the filter state.
 		$search = $app->getUserStateFromRequest($this->context . '.filter.search', 'filter_search');
@@ -188,11 +192,11 @@ class FabrikAdminModelLists extends FabModelList
 		$this->setState('filter.published', $published);
 
 		// Load the parameters.
-		$params = JComponentHelper::getParams('com_fabrik');
+		$params = ComponentHelper::getParams('com_fabrik');
 		$this->setState('params', $params);
 
 		// List state information.
-		parent::populateState('label', 'asc');
+		parent::populateState($ordering, $direction);
 	}
 
 	/**
@@ -202,13 +206,13 @@ class FabrikAdminModelLists extends FabModelList
 	 */
 	public function getDbTableNames()
 	{
-		$app   = JFactory::getApplication();
+		$app   = Factory::getApplication();
 		$input = $app->input;
 		$cid   = $input->get('cid', array(), 'array');
 		$cid   = ArrayHelper::toInteger($cid);
 		$db    = FabrikWorker::getDbo(true);
 		$query = $db->getQuery(true);
-		$query->select('db_table_name')->from('#__{package}_lists')->where('id IN(' . implode(',', $cid) . ')');
+		$query->select('db_table_name')->from('#__fabrik_lists')->where('id IN(' . implode(',', $cid) . ')');
 		$db->setQuery($query);
 
 		return $db->loadColumn();

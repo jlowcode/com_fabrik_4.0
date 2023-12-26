@@ -11,6 +11,8 @@
 // No direct access
 defined('_JEXEC') or die('Restricted access');
 
+use Joomla\CMS\Language\Text;
+
 // The number of columns to split the list rows into
 $columns = 3;
 
@@ -29,7 +31,7 @@ endif;
 
 ?>
 <?php if ($this->tablePicker != '') { ?>
-	<div style="text-align:right"><?php echo FText::_('COM_FABRIK_LIST') ?>: <?php echo $this->tablePicker; ?></div>
+	<div style="text-align:right"><?php echo Text::_('COM_FABRIK_LIST') ?>: <?php echo $this->tablePicker; ?></div>
 <?php }
 
 if ($this->params->get('show_page_heading')) :
@@ -58,14 +60,14 @@ if ($this->showFilters) {
 <?php foreach ($this->pluginBeforeList as $c) {
 	echo $c;
 }?>
-<div class="fabrikList" id="list_<?php echo $this->table->renderid;?>" >
+<div class="fabrikList <?php echo $this->list->class;?>" id="list_<?php echo $this->table->renderid;?>" >
 
 	<?php
 	$gCounter = 0;
 	foreach ($this->rows as $groupedBy => $group) :?>
 	<?php
 	if ($this->isGrouped) :
-		$imgProps = array('alt' => FText::_('COM_FABRIK_TOGGLE'), 'data-role' => 'toggle', 'data-expand-icon' => 'fa fa-arrow-down', 'data-collapse-icon' => 'fa fa-arrow-right');
+		$imgProps = array('alt' => Text::_('COM_FABRIK_TOGGLE'), 'data-role' => 'toggle', 'data-expand-icon' => 'fa fa-arrow-down', 'data-collapse-icon' => 'fa fa-arrow-right');
 	?>
 	<div class="fabrik_groupheading">
 		<?php echo $this->layoutGroupHeading($groupedBy, $group); ?>
@@ -83,11 +85,15 @@ if ($this->showFilters) {
 	<?php
 
 	$items = array();
+	
 	foreach ($group as $this->_row) :
-		$items[] = $this->loadTemplate('row');
+		$item = new stdClass;
+		$item->rowdata = $this->loadTemplate('row');
+		$item->spanId = $this->_row->id;
+		$items[] = $item;
 	endforeach;
-	$class = 'fabrik_row well row-striped';
-	echo FabrikHelperHTML::bootstrapGrid($items, $columns, $class, true, $this->_row->id);
+	$class = 'fabrik_row ';
+	echo FabrikHelperHTML::bootstrapGrid($items, $columns, $class, true, '');
 
 	?>
 	</div>

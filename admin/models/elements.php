@@ -12,6 +12,11 @@
 // No direct access
 defined('_JEXEC') or die('Restricted access');
 
+use Joomla\CMS\Language\Text;
+use Joomla\CMS\Table\Table;
+use Joomla\CMS\Component\ComponentHelper;
+use Joomla\CMS\Factory;
+use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\Registry\Registry;
 use Joomla\Utilities\ArrayHelper;
 
@@ -40,8 +45,19 @@ class FabrikAdminModelElements extends FabModelList
 	{
 		if (empty($config['filter_fields']))
 		{
-			$config['filter_fields'] = array('e.id', 'e.name', 'e.label', 'e.show_in_list_summary', 'e.published', 'e.ordering', 'g.label',
-				'e.plugin', 'g.name');
+			$config['filter_fields'] = [
+				'e.id', 
+				'e.name', 
+				'e.label', 
+				'e.show_in_list_summary', 'showinlist',
+				'e.published', 'published',
+				'e.ordering', 
+				'g.label',
+				'e.plugin', 'plugin',
+				'g.name',
+				'form',
+				'group',
+			];
 		}
 
 		parent::__construct($config);
@@ -62,7 +78,7 @@ class FabrikAdminModelElements extends FabModelList
 
 		// Select the required fields from the table.
 		$query->select($this->getState('list.select', 'e.*, e.ordering AS ordering'));
-		$query->from('#__{package}_elements AS e');
+		$query->from('#__fabrik_elements AS e');
 
 		$query->select('(SELECT COUNT(*) FROM #__fabrik_jsactions AS js WHERE js.element_id = e.id) AS numJs');
 
@@ -89,21 +105,21 @@ class FabrikAdminModelElements extends FabModelList
 
 		$group = $this->getState('filter.group');
 
-		if (trim($group) !== '')
+		if (!empty($group) && !empty(trim($group)))
 		{
 			$query->where('g.id = ' . (int) $group);
 		}
 
 		$showInList = $this->getState('filter.showinlist');
 
-		if (trim($showInList) !== '')
+		if (trim($showInList) != '')
 		{
 			$query->where('e.show_in_list_summary = ' . (int) $showInList);
 		}
 
 		$plugin = $this->getState('filter.plugin');
 
-		if (trim($plugin) !== '')
+		if (!empty($plugin) && !empty(trim($plugin)))
 		{
 			$query->where('e.plugin = ' . $db->quote($plugin));
 		}
@@ -123,11 +139,11 @@ class FabrikAdminModelElements extends FabModelList
 		$query->select('e.id');
 
 		$query->join('LEFT', '#__users AS u ON checked_out = u.id');
-		$query->join('LEFT', '#__{package}_groups AS g ON e.group_id = g.id ');
+		$query->join('LEFT', '#__fabrik_groups AS g ON e.group_id = g.id ');
 
 		// Was inner join but if el assigned to group which was not part of a form then the element was not shown in the list
-		$query->join('LEFT', '#__{package}_formgroup AS fg ON fg.group_id = e.group_id');
-		$query->join('LEFT', '#__{package}_lists AS l ON l.form_id = fg.form_id');
+		$query->join('LEFT', '#__fabrik_formgroup AS fg ON fg.group_id = e.group_id');
+		$query->join('LEFT', '#__fabrik_lists AS l ON l.form_id = fg.form_id');
 
 		// Add the list ordering clause.
 		$orderCol  = $this->state->get('list.ordering', 'ordering');
@@ -162,14 +178,14 @@ class FabrikAdminModelElements extends FabModelList
 			IF( ISNULL(jj.table_join), CONCAT(ll.db_table_name, '___', ee.name), CONCAT(jj.table_join, '___', ee.name))
 			)
 			FROM #__fabrik_elements AS ee
-			LEFT JOIN #__{package}_joins AS jj ON jj.group_id = ee.group_id
-			LEFT JOIN #__{package}_formgroup as fg ON fg.group_id = ee.group_id
-			LEFT JOIN #__{package}_lists AS ll ON ll.form_id = fg.form_id
+			LEFT JOIN #__fabrik_joins AS jj ON jj.group_id = ee.group_id
+			LEFT JOIN #__fabrik_formgroup as fg ON fg.group_id = ee.group_id
+			LEFT JOIN #__fabrik_lists AS ll ON ll.form_id = fg.form_id
 			WHERE (jj.list_id != 0 AND jj.element_id = 0)
 			AND ee.id = e.id AND ee.group_id <> 0 AND ee.id IN (" . implode(',', $elementIds) . ") LIMIT 1)  AS full_element_name";
 
 			$query->select('u.name AS editor, ' . $fullname . ', g.name AS group_name, l.db_table_name');
-			$query->select("(SELECT GROUP_CONCAT(ec.id SEPARATOR ',') FROM #__{package}_elements AS ec WHERE ec.parent_id = e.id) AS child_ids");
+			$query->select("(SELECT GROUP_CONCAT(ec.id SEPARATOR ',') FROM #__fabrik_elements AS ec WHERE ec.parent_id = e.id) AS child_ids");
 		}
 
 		//$sql = (string)$query;
@@ -212,15 +228,15 @@ class FabrikAdminModelElements extends FabModelList
 			$viewAccessTitle = FArrayHelper::getValue($viewLevels, $params->get('view_access', 1));
 			$viewAccessTitle = is_object($viewAccessTitle) ? $viewAccessTitle->title : 'n/a';
 
-			$item->tip = FText::_('COM_FABRIK_ACCESS_EDITABLE_ELEMENT') . ': ' . $addAccessTitle
-				. '<br />' . FText::_('COM_FABRIK_ELEMENT_EDIT_ACCESS_LABEL') . ': ' . $editAccessTitle
-				. '<br />' . FText::_('COM_FABRIK_ACCESS_VIEWABLE_ELEMENT') . ': ' . $viewAccessTitle;
+			$item->tip = Text::_('COM_FABRIK_ACCESS_EDITABLE_ELEMENT') . ': ' . $addAccessTitle
+				. '<br />' . Text::_('COM_FABRIK_ELEMENT_EDIT_ACCESS_LABEL') . ': ' . $editAccessTitle
+				. '<br />' . Text::_('COM_FABRIK_ACCESS_VIEWABLE_ELEMENT') . ': ' . $viewAccessTitle;
 
 			$validations = $params->get('validations');
 			$v           = array();
 
 			// $$$ hugh - make sure the element has validations, if not it could return null or 0 length array
-			if (is_object($validations))
+			if (is_object($validations) && property_exists($validations,'plugin'))
 			{
 				for ($i = 0; $i < count($validations->plugin); $i++)
 				{
@@ -231,7 +247,7 @@ class FabrikAdminModelElements extends FabModelList
 					 */
 					if (empty($pname))
 					{
-						$v[] = '&nbsp;&nbsp;<strong>' . FText::_('COM_FABRIK_ELEMENTS_NO_VALIDATION_SELECTED') . '</strong>';
+						$v[] = '&nbsp;&nbsp;<strong>' . Text::_('COM_FABRIK_ELEMENTS_NO_VALIDATION_SELECTED') . '</strong>';
 						continue;
 					}
 
@@ -242,15 +258,15 @@ class FabrikAdminModelElements extends FabModelList
 					 */
 					if (!isset($validations->plugin_published))
 					{
-						$published = FText::_('JPUBLISHED');
+						$published = Text::_('JPUBLISHED');
 					}
 					else
 					{
-						$published = $validations->plugin_published[$i] ? FText::_('JPUBLISHED') : FText::_('JUNPUBLISHED');
+						$published = $validations->plugin_published[$i] ? Text::_('JPUBLISHED') : Text::_('JUNPUBLISHED');
 					}
 
 					$v[] = '&nbsp;&nbsp;<strong>' . $pname . ': <em>' . $published . '</em></strong>'
-						. '<br />&nbsp;&nbsp;&nbsp;&nbsp;' . FText::_('COM_FABRIK_FIELD_ERROR_MSG_LABEL') . ': <em>' . htmlspecialchars(FArrayHelper::getValue($msgs, $i, 'n/a')) . '</em>';
+						. '<br />&nbsp;&nbsp;&nbsp;&nbsp;' . Text::_('COM_FABRIK_FIELD_ERROR_MSG_LABEL') . ': <em>' . htmlspecialchars(FArrayHelper::getValue($msgs, $i, 'n/a')) . '</em>';
 				}
 			}
 
@@ -268,7 +284,7 @@ class FabrikAdminModelElements extends FabModelList
 	 * @param   string $prefix A prefix for the table class name. Optional.
 	 * @param   array  $config Configuration array for model. Optional.
 	 *
-	 * @return  JTable    A database object
+	 * @return  Table    A database object
 	 *
 	 * @since   1.6
 	 */
@@ -293,35 +309,35 @@ class FabrikAdminModelElements extends FabModelList
 	 * @return  null
 	 */
 
-	protected function populateState($ordering = null, $direction = null)
+	protected function populateState($ordering = 'id', $direction = 'asc')
 	{
 		// Initialise variables.
-		$app = JFactory::getApplication('administrator');
+		$app = Factory::getApplication('administrator');
 
 		// Load the parameters.
-		$params = JComponentHelper::getParams('com_fabrik');
+		$params = ComponentHelper::getParams('com_fabrik');
 		$this->setState('params', $params);
 
-		$published = $app->getUserStateFromRequest($this->context . '.filter.published', 'filter_published', '');
+		$published = $this->getUserStateFromRequest($this->context . '.filter.published', 'filter_published', '');
 		$this->setState('filter.published', $published);
 
-		$search = $app->getUserStateFromRequest($this->context . '.filter.search', 'filter_search');
+		$search = $this->getUserStateFromRequest($this->context . '.filter.search', 'filter_search');
 		$this->setState('filter.search', $search);
 
 		// Load the form state
-		$form = $app->getUserStateFromRequest($this->context . '.filter.form', 'filter_form', '');
+		$form = $this->getUserStateFromRequest($this->context . '.filter.form', 'filter_form', '');
 		$this->setState('filter.form', $form);
 
 		// Load the group state
-		$group = $app->getUserStateFromRequest($this->context . '.filter.group', 'filter_group', '');
+		$group = $this->getUserStateFromRequest($this->context . '.filter.group', 'filter_group', '');
 		$this->setState('filter.group', $group);
 
 		// Load the show in list state
-		$showinlist = $app->getUserStateFromRequest($this->context . '.filter.showinlist', 'filter_showinlist', '');
+		$showinlist = $this->getUserStateFromRequest($this->context . '.filter.showinlist', 'filter_showinlist', '');
 		$this->setState('filter.showinlist', $showinlist);
 
 		// Load the plug-in state
-		$plugin = $app->getUserStateFromRequest($this->context . '.filter.plugin', 'filter_plugin', '');
+		$plugin = $this->getUserStateFromRequest($this->context . '.filter.plugin', 'filter_plugin', '');
 		$this->setState('filter.plugin', $plugin);
 
 		// List state information.
@@ -336,7 +352,7 @@ class FabrikAdminModelElements extends FabModelList
 
 	public function getShowInListOptions()
 	{
-		return array(JHtml::_('select.option', 0, FText::_('JNO')), JHtml::_('select.option', 1, FText::_('JYES')));
+		return array(HTMLHelper::_('select.option', 0, Text::_('JNO')), HTMLHelper::_('select.option', 1, Text::_('JYES')));
 	}
 
 	/**
@@ -348,7 +364,7 @@ class FabrikAdminModelElements extends FabModelList
 	public function getPluginOptions()
 	{
 		$db     = FabrikWorker::getDbo(true);
-		$user   = JFactory::getUser();
+		$user   = Factory::getUser();
 		$levels = implode(',', $user->getAuthorisedViewLevels());
 		$query  = $db->getQuery(true);
 		$query->select('element AS value, element AS text')->from('#__extensions')->where('enabled >= 1')->where('type =' . $db->quote('plugin'))
@@ -407,8 +423,8 @@ class FabrikAdminModelElements extends FabModelList
 
 		if (!empty($blocked))
 		{
-			$app = JFactory::getApplication();
-			$app->enqueueMessage(FText::_('COM_FABRIK_CANT_UNPUBLISHED_PK_ELEMENT'), 'warning');
+			$app = Factory::getApplication();
+			$app->enqueueMessage(Text::_('COM_FABRIK_CANT_UNPUBLISHED_PK_ELEMENT'), 'warning');
 		}
 
 		return array_diff($ids, $blocked);

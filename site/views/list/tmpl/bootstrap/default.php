@@ -12,6 +12,8 @@
 // No direct access
 defined('_JEXEC') or die('Restricted access');
 
+use Joomla\CMS\Language\Text;
+
 $pageClass = $this->params->get('pageclass_sfx', '');
 
 if ($pageClass !== '') :
@@ -19,7 +21,7 @@ if ($pageClass !== '') :
 endif;
 
 if ($this->tablePicker != '') : ?>
-	<div style="text-align:right"><?php echo FText::_('COM_FABRIK_LIST') ?>: <?php echo $this->tablePicker; ?></div>
+	<div style="text-align:right"><?php echo Text::_('COM_FABRIK_LIST') ?>: <?php echo $this->tablePicker; ?></div>
 <?php
 endif;
 
@@ -39,15 +41,19 @@ echo $this->table->intro;
 
 ?>
 <form class="fabrikForm form-search" action="<?php echo $this->table->action;?>" method="post" id="<?php echo $this->formid;?>" name="fabrikList">
+<div class="container-fluid text-bg-light">
+	<?php
+	if ($this->hasButtons):
+		echo $this->loadTemplate('buttons');
+	endif;?>
 
-<?php
-if ($this->hasButtons):
-	echo $this->loadTemplate('buttons');
-endif;
-
-if ($this->showFilters && $this->bootShowFilters) :
-	echo $this->layoutFilters();
-endif;
+	<?php
+	if ($this->showFilters && $this->bootShowFilters) :
+		echo $this->layoutFilters();
+	endif;
+	?>
+</div>
+<?php	
 //for some really ODD reason loading the headings template inside the group
 //template causes an error as $this->_path['template'] doesn't contain the correct
 // path to this template - go figure!

@@ -12,7 +12,9 @@
 defined('_JEXEC') or die('Restricted access');
 
 use Fabrik\Helpers\Image;
-use Fabrik\Helpers\Text;
+use Joomla\CMS\Language\Text;
+use Joomla\CMS\HTML\HTMLHelper;
+use Joomla\CMS\Form\Field\ListField;
 
 require_once JPATH_ADMINISTRATOR . '/components/com_fabrik/helpers/element.php';
 
@@ -24,7 +26,7 @@ require_once JPATH_ADMINISTRATOR . '/components/com_fabrik/helpers/element.php';
  * @since       3.0
  */
 
-class JFormFieldImagelibs extends JFormFieldList
+class JFormFieldImagelibs extends ListField
 {
 	/**
 	 * Element name
@@ -45,7 +47,7 @@ class JFormFieldImagelibs extends JFormFieldList
 
 		if (empty($imageLibs))
 		{
-			return JHTML::_('select.option', Text::_('COM_FABRIK_IMAGELIBS_NOT_FOUND'));
+			return HTMLHelper::_('select.option', Text::_('COM_FABRIK_IMAGELIBS_NOT_FOUND'));
 		}
 
 		return $imageLibs;

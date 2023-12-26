@@ -1112,7 +1112,7 @@ define(['jquery', 'fab/fabrik', 'fab/list-toggle', 'fab/list-grouped-toggler', '
                 Object.each(this.options.data, function (group) {
                     for (var i = 0; i < group.length; i++) {
                         var row = group[i];
-                        if (row && row.data.__pk_val === id) {
+                        if (row && row.data.__pk_val == id) {
                             found = row.data;
                         }
                     }
@@ -1267,7 +1267,7 @@ define(['jquery', 'fab/fabrik', 'fab/list-toggle', 'fab/list-grouped-toggler', '
                 if (window.history && window.history.pushState) {
                     history.pushState(data, 'fabrik.list.rows');
                 }
-                if (!(data.id === this.id && data.model === 'list')) {
+                if (!(data.id == this.id && data.model === 'list')) {
                     return;
                 }
 
@@ -1539,7 +1539,7 @@ define(['jquery', 'fab/fabrik', 'fab/list-toggle', 'fab/list-grouped-toggler', '
                     self.doFilter();
                 });
                 if (this.options.ajax_links) {
-                    if (addRecord.size() > 0) {
+                    if (addRecord.length > 0) {
                         addRecord.off();
                         href = addRecord.prop('href');
                         loadMethod = (this.options.links.add === '' ||

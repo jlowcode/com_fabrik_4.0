@@ -18,6 +18,9 @@ require_once 'fabmodeladmin.php';
 require JPATH_COMPONENT_ADMINISTRATOR . '/models/databaseimporter.php';
 require_once JPATH_COMPONENT_ADMINISTRATOR . '/helpers/contenttype.php';
 
+use Joomla\CMS\Form\Form;
+use Joomla\CMS\Factory;
+use Joomla\CMS\Filesystem\Path;
 use Joomla\Utilities\ArrayHelper;
 use \Joomla\Registry\Registry;
 
@@ -103,7 +106,7 @@ class FabrikAdminModelContentTypeImport extends FabModelAdmin
 	public function __construct($config = array())
 	{
 		parent::__construct($config);
-		$listModel = ArrayHelper::getValue($config, 'listModel', JModelLegacy::getInstance('List', 'FabrikAdminModel'));
+		$listModel = ArrayHelper::getValue($config, 'listModel', Factory::getApplication()->bootComponent('com_fabrik')->getMVCFactory()->createModel('List', 'FabrikAdminModel'));
 
 		if (!is_a($listModel, 'FabrikAdminModelList'))
 		{
@@ -120,7 +123,7 @@ class FabrikAdminModelContentTypeImport extends FabModelAdmin
 	 * @param   array $data     Data for the form.
 	 * @param   bool  $loadData True if the form is to load its own data (default case), false if not.
 	 *
-	 * @return  mixed  A JForm object on success, false on failure
+	 * @return  mixed  A Form object on success, false on failure
 	 *
 	 * @since    3.3.5
 	 */
@@ -148,19 +151,21 @@ class FabrikAdminModelContentTypeImport extends FabModelAdmin
 	 */
 	public function loadContentType($name)
 	{
+		// $name = default.xml
 		if ((string) $name === '')
 		{
 			throw new UnexpectedValueException('no content type supplied');
 		}
 
-		$paths = self::addContentTypeIncludePath();
-		$path  = JPath::find($paths, $name);
-
+//H		$paths = self::addContentTypeIncludePath();// useless
+//H		$path  = Path::find($paths, $name);// useless
+		$path  = JPATH_COMPONENT_ADMINISTRATOR . '/models/content_types/' . $name;
+/*H
 		if (!$path)
 		{
 			throw new UnexpectedValueException('Content type not found in paths');
 		}
-
+*/
 		$xml = file_get_contents($path);
 		$this->doc->loadXML($xml);
 
@@ -183,13 +188,13 @@ class FabrikAdminModelContentTypeImport extends FabModelAdmin
 
 		$groupIds   = array();
 		$fields     = array();
-		$xpath      = new DOMXpath($this->doc);
-		$groups     = $xpath->query('/contenttype/group');
+		$xpath      = new DOMXpath($this->doc);// reading admin/models/content_types/default.xml
+		$groups     = $xpath->query('/contenttype/group');//we don't have this folder
 		$i          = 1;
 		$elementMap = array();
 		$w          = new FabrikWorker;
 		$jForm      = $this->app->input->get('jform', array(), 'array');
-
+		$date 		= Factory::getDate();
 		foreach ($groups as $group)
 		{
 			$groupData           = array();
@@ -197,23 +202,24 @@ class FabrikAdminModelContentTypeImport extends FabModelAdmin
 			$groupData           = $w->parseMessageForPlaceHolder($groupData, $jForm);
 			$groupData['params'] = FabrikContentTypHelper::nodeParams($group);
 			$this->mapGroupACL($groupData);
-
 			$isJoin   = ArrayHelper::getValue($groupData, 'is_join', false);
 			$isRepeat = isset($groupData['params']->repeat_group_button) ? $groupData['params']->repeat_group_button : false;
 
-			$groupId                          = $this->listModel->createLinkedGroup($groupData, $isJoin, $isRepeat);
+			$groupId                          = $this->listModel->createLinkedGroup($groupData, $isJoin, $isRepeat);// group_id should be 5 but is empty
 			$this->groupMap[$groupData['id']] = $groupId;
 			$elements                         = $xpath->query('/contenttype/group[' . $i . ']/element');
 
 			foreach ($elements as $element)
 			{
 				$elementData = FabrikContentTypHelper::domNodeAttributesToArray($element);
-
 				if (array_key_exists('id', $elementData))
 				{
 					$oldId = $elementData['id'];
 					unset($elementData['id']);
 				}
+
+				$elementData['created'] = $elementData['modified'] = Factory::getDate()->toSql();
+				$elementData['created-by'] = $elementData['modified_by'] = Factory::getUser()->id;
 
 				$elementData['params']   = json_encode(FabrikContentTypHelper::nodeParams($element));
 				$elementData['group_id'] = $groupId;
@@ -221,7 +227,6 @@ class FabrikAdminModelContentTypeImport extends FabModelAdmin
 				$this->massageElementData($elementData);
 				$name          = (string) $element->getAttribute('name');
 				$fields[$name] = $this->listModel->makeElement($name, $elementData);
-
 				if (!empty($oldId))
 				{
 					$elementMap[$oldId] = $fields[$name]->element->id;
@@ -317,12 +322,10 @@ class FabrikAdminModelContentTypeImport extends FabModelAdmin
 		$return        = true;
 		$formModel     = $this->listModel->getFormModel();
 		$pluginManager = FabrikWorker::getPluginManager();
-
 		foreach ($elementMap as $origId => $newId)
 		{
 			// The XML Dom object describing the element's plugin properties
 			$pluginManifest = $pluginManager->getPluginFromId($newId)->getPluginForm()->getXml();
-
 			// Get all listfield parameters where the value format property is no 'tableelement'
 			$listFields = $pluginManifest->xpath('//field[@type=\'listfields\'][(@valueformat=\'tableelement\') != true()]');
 			$paramNames = array();
@@ -550,6 +553,7 @@ class FabrikAdminModelContentTypeImport extends FabModelAdmin
 	 *
 	 * @return  array  An array of filesystem paths to find Content type XML files.
 	 */
+/*
 	public static function addContentTypeIncludePath($path = null)
 	{
 		// If the internal paths have not been initialised, do so with the base table path.
@@ -557,7 +561,7 @@ class FabrikAdminModelContentTypeImport extends FabModelAdmin
 		{
 			self::$_contentTypeIncludePaths = JPATH_COMPONENT_ADMINISTRATOR . '/models/content_types';
 		}
-
+// do we realy need all this ?
 		// Convert the passed path(s) to add to an array.
 		settype($path, 'array');
 
@@ -577,10 +581,9 @@ class FabrikAdminModelContentTypeImport extends FabModelAdmin
 				}
 			}
 		}
-
 		return self::$_contentTypeIncludePaths;
 	}
-
+*/
 	/**
 	 * Prepare the group and element models for form view preview
 	 *
@@ -599,7 +602,7 @@ class FabrikAdminModelContentTypeImport extends FabModelAdmin
 			$groupData           = array();
 			$groupData           = FabrikContentTypHelper::domNodeAttributesToArray($group, $groupData);
 			$groupData['params'] = FabrikContentTypHelper::nodeParams($group);
-			$groupModel          = JModelLegacy::getInstance('Group', 'FabrikFEModel');
+			$groupModel          = Factory::getApplication()->bootComponent('com_fabrik')->getMVCFactory()->createModel('Group', 'FabrikFEModel');
 			$groupTable          = FabTable::getInstance('Group', 'FabrikTable');
 			$groupTable->bind($groupData);
 			$groupModel->setGroup($groupTable);
@@ -650,12 +653,14 @@ class FabrikAdminModelContentTypeImport extends FabModelAdmin
 	 *
 	 * @return array
 	 */
-	public function import($contentType = null, $dbTableName, $groupData = array())
+	 //Deprecated: Required parameter $dbTableName follows optional parameter $contentType
+	public function import($dbTableName, $contentType = null, $groupData = array())
 	{
 		$input = $this->app->input;
 
 		if (!empty($contentType))
 		{
+
 			$fields = $this->loadContentType($contentType)
 				->createGroupsFromContentType($dbTableName);
 		}
@@ -667,7 +672,6 @@ class FabrikAdminModelContentTypeImport extends FabModelAdmin
 			$primaryKey = array_keys($input->get('key', array(), 'array'));
 			$primaryKey = array_pop($primaryKey);
 			$elements   = array();
-
 			foreach ($fields as $name => $plugin)
 			{
 				$pk         = $name === $primaryKey ? 1 : 0;
@@ -681,8 +685,7 @@ class FabrikAdminModelContentTypeImport extends FabModelAdmin
 			}
 
 			/** @var FabrikAdminModelContentTypeExport $exporter */
-			$exporter = JModelLegacy::getInstance('ContentTypeExport', 'FabrikAdminModel',
-				array('listModel' => $this->listModel));
+			$exporter = Factory::getApplication()->bootComponent('com_fabrik')->getMVCFactory()->createModel('ContentTypeExport', 'FabrikAdminModel',	array('listModel' => $this->listModel));
 			$xml      = $exporter->createXMLFromArray($groupData, $elements);
 			$this->doc->loadXML($xml);
 			$fields = $this->createGroupsFromContentType($dbTableName);

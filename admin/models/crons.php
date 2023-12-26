@@ -12,6 +12,10 @@
 // No direct access
 defined('_JEXEC') or die('Restricted access');
 
+use Joomla\CMS\Table\Table;
+use Joomla\CMS\Component\ComponentHelper;
+use Joomla\CMS\Factory;
+
 require_once 'fabmodellist.php';
 
 /**
@@ -35,7 +39,13 @@ class FabrikAdminModelCrons extends FabModelList
 	{
 		if (empty($config['filter_fields']))
 		{
-			$config['filter_fields'] = array('c.id', 'c.label', 'p.published');
+			$config['filter_fields'] = [
+				'c.id', 'id', 
+				'c.label', 'label', 
+				'c.published', 'published',
+				'c.frequency', 'frequency',
+				'c.lastrun', 'lastrun',
+			];
 		}
 
 		parent::__construct($config);
@@ -54,11 +64,13 @@ class FabrikAdminModelCrons extends FabModelList
 
 		// Select the required fields from the table.
 		$query->select($this->getState('list.select', 'c.*'));
-		$query->from('#__{package}_cron AS c');
+		$query->from('#__fabrik_cron AS c');
 
 		// Join over the users for the checked out user.
 		$query->select('u.name AS editor');
 		$query->join('LEFT', '#__users AS u ON checked_out = u.id');
+
+		// calculate the frequency in seconds
 
 		// Filter by published state
 		$published = $this->getState('filter.published');
@@ -102,7 +114,7 @@ class FabrikAdminModelCrons extends FabModelList
 	 * @param   string $prefix A prefix for the table class name. Optional.
 	 * @param   array  $config Configuration array for model. Optional.
 	 *
-	 * @return  JTable  A database object
+	 * @return  Table  A database object
 	 */
 	public function getTable($type = 'Cron', $prefix = 'FabrikTable', $config = array())
 	{
@@ -124,10 +136,10 @@ class FabrikAdminModelCrons extends FabModelList
 	protected function populateState($ordering = null, $direction = null)
 	{
 		// Initialise variables.
-		$app = JFactory::getApplication('administrator');
+		$app = Factory::getApplication('administrator');
 
 		// Load the parameters.
-		$params = JComponentHelper::getParams('com_fabrik');
+		$params = ComponentHelper::getParams('com_fabrik');
 		$this->setState('params', $params);
 
 		// Load the filter state.

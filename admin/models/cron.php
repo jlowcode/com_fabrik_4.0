@@ -12,7 +12,15 @@
 // No direct access
 defined('_JEXEC') or die('Restricted access');
 
+use Joomla\CMS\Language\Text;
+use Joomla\CMS\Table\Table;
+use Joomla\CMS\Plugin\PluginHelper;
+use Joomla\CMS\Filter\InputFilter;
+use Joomla\CMS\Form\Form;
+use Joomla\CMS\Form\FormRule;
+use Joomla\CMS\Factory;
 use Joomla\Utilities\ArrayHelper;
+use Joomla\CMS\Date\Date;
 
 require_once 'fabmodeladmin.php';
 
@@ -39,7 +47,7 @@ class FabrikAdminModelCron extends FabModelAdmin
 	 * @param   string $prefix A prefix for the table class name. Optional.
 	 * @param   array  $config Configuration array for model. Optional.
 	 *
-	 * @return  JTable  A database object
+	 * @return  Table  A database object
 	 */
 	public function getTable($type = 'Cron', $prefix = 'FabrikTable', $config = array())
 	{
@@ -54,7 +62,7 @@ class FabrikAdminModelCron extends FabModelAdmin
 	 * @param   array $data     Data for the form.
 	 * @param   bool  $loadData True if the form is to load its own data (default case), false if not.
 	 *
-	 * @return  mixed  A JForm object on success, false on failure
+	 * @return  mixed  A Form object on success, false on failure
 	 */
 	public function getForm($data = array(), $loadData = true)
 	{
@@ -104,19 +112,20 @@ class FabrikAdminModelCron extends FabModelAdmin
 			$plugin = $item->plugin;
 		}
 
-		JPluginHelper::importPlugin('fabrik_cron');
+		PluginHelper::importPlugin('fabrik_cron');
 
 		// Trim old f2 cron prefix.
-		$plugin = FabrikString::ltrimiword($plugin, 'cron');
+		//$plugin = FabrikString::ltrimiword($plugin, 'cron');
 
 		if ($plugin == '')
 		{
-			$str = '<div class="alert">' . FText::_('COM_FABRIK_SELECT_A_PLUGIN') . '</div>';
+			$str = '<div class="alert">' . Text::_('COM_FABRIK_SELECT_A_PLUGIN') . '</div>';
 		}
 		else
 		{
 			$plugin = $this->pluginManager->getPlugIn($plugin, 'Cron');
-			$mode   = FabrikWorker::j3() ? 'nav-tabs' : '';
+//			$mode   = FabrikWorker::j3() ? 'nav-tabs' : '';
+			$mode   = 'nav-tabs';
 			$str    = $plugin->onRenderAdminSettings(ArrayHelper::fromObject($item), null, $mode);
 		}
 
@@ -132,18 +141,29 @@ class FabrikAdminModelCron extends FabModelAdmin
 	 */
 	public function save($data)
 	{
+		$date = Factory::getDate();
+		
 		if (FArrayHelper::getValue($data, 'lastrun') == '')
 		{
-			$date            = JFactory::getDate();
 			$data['lastrun'] = $date->toSql();
 		}
 		else
 		{
-			$timeZone = new DateTimeZone($this->config->get('offset'));
-			$data['lastrun']     = JFactory::getDate($data['lastrun'], $timeZone)->toSql(false);
+			$timeZone = new \DateTimeZone($this->config->get('offset'));
+			$data['lastrun']     = Factory::getDate($data['lastrun'], $timeZone)->toSql(false);
 		}
 
-		$data['params'] = json_encode($data['params']);
+		//New record
+		if (empty($data['id']) )
+		{
+			$data['created']	= $date->toSql();
+			$data['created_by']	= $this->user->get('id');
+			$data['created_by_alias'] =  $this->user->get('username');
+
+		}
+		$data['params']		= json_encode($data['params']);
+		$data['modified']	= $date->toSql();
+		$data['modified_by']	= $this->user->get('id');
 
 		return parent::save($data);
 	}
@@ -151,12 +171,12 @@ class FabrikAdminModelCron extends FabModelAdmin
 	/**
 	 * Method to validate the form data.
 	 *
-	 * @param   JForm  $form  The form to validate against.
+	 * @param   Form  $form  The form to validate against.
 	 * @param   array  $data  The data to validate.
 	 * @param   string $group The name of the field group to validate.
 	 *
-	 * @see     JFormRule
-	 * @see     JFilterInput
+	 * @see     FormRule
+	 * @see     InputFilter
 	 *
 	 * @return  mixed  Array of filtered data if valid, false otherwise.
 	 */

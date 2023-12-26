@@ -30,25 +30,38 @@ if ($this->params->get('show-title', 1)) :?>
 endif;
 
 echo $form->intro;
+
 if ($this->isMambot) :
 	echo '<div class="fabrikForm fabrikDetails fabrikIsMambot" id="' . $form->formid . '">';
 else :
 	echo '<div class="fabrikForm fabrikDetails" id="' . $form->formid . '">';
 endif;
+
 echo $this->plugintop;
-echo $this->loadTemplate('buttons');
-echo $this->loadTemplate('relateddata');
+?>
+<div class="row-fluid nav">
+	<div class="<?php echo FabrikHelperHTML::getGridSpan(6); ?> pull-right">
+		<?php
+		echo $this->loadTemplate('buttons');
+		?>
+	</div>
+	<div class="<?php echo FabrikHelperHTML::getGridSpan(6); ?>">
+		<?php
+		echo $this->loadTemplate('relateddata');
+		?>
+	</div>
+</div>
+<?php
+
 foreach ($this->groups as $group) :
 	$this->group = $group;
 	?>
 
-		<div class="<?php echo $group->class; ?>" id="group<?php echo $group->id;?>" style="<?php echo $group->css;?>">
+		<fieldset class="<?php echo $group->class; ?>" id="group<?php echo $group->id;?>" style="<?php echo $group->css;?>">
 
 		<?php
 		if ($group->showLegend) :?>
-			<h3 class="legend">
-				<span><?php echo $group->title;?></span>
-			</h3>
+				<legend class="mt-3 legend"><?php echo $group->title;?></legend>
 		<?php endif;
 
 		if (!empty($group->intro)) : ?>
@@ -69,7 +82,7 @@ foreach ($this->groups as $group) :
 		<?php
 		endif;
 		?>
-	</div>
+	</fieldset>
 <?php
 endforeach;
 

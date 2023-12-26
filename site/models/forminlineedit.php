@@ -11,6 +11,11 @@
 // No direct access
 defined('_JEXEC') or die('Restricted access');
 
+use Joomla\CMS\Language\Text;
+use Joomla\CMS\Layout\LayoutInterface;
+use Joomla\CMS\Session\Session;
+use Joomla\CMS\Factory;
+
 jimport('joomla.application.component.model');
 require_once 'fabrikmodelform.php';
 
@@ -35,9 +40,8 @@ class FabrikFEModelFormInlineEdit extends FabModelForm
 	 */
 	public function render()
 	{
-		$this->formModel = JModelLegacy::getInstance('Form', 'FabrikFEModel');
-		$input = $this->app->input;
-		$j3 = FabrikWorker::j3();
+		$this->formModel = Factory::getApplication()->bootComponent('com_fabrik')->getMVCFactory()->createModel('Form', 'FabrikFEModel');
+		$input = $this->app->getInput();
 
 		// Need to render() with all element ids in case canEditRow plugins etc. use the row data.
 		$elids = $input->get('elementid', array(), 'array');
@@ -52,7 +56,7 @@ class FabrikFEModelFormInlineEdit extends FabModelForm
 		// Main trigger element's id
 		$elementId = $input->getInt('elid');
 
-		$html = $j3 ? $this->inlineEditMarkUp() : $this->inlineEditMarkupJ25();
+		$html = $this->inlineEditMarkUp();
 		echo implode("\n", $html);
 
 		$srcs = array();
@@ -75,7 +79,7 @@ class FabrikFEModelFormInlineEdit extends FabModelForm
 			{
 				$onLoad[] = "o.select();";
 				$onLoad[] = "o.focus();";
-				$onLoad[] = "Fabrik.inlineedit_$elementId.token = '" . JSession::getFormToken() . "';";
+				$onLoad[] = "Fabrik.inlineedit_$elementId.token = '" . Session::getFormToken() . "';";
 			}
 
 			$eCounter++;
@@ -95,11 +99,11 @@ class FabrikFEModelFormInlineEdit extends FabModelForm
 	 */
 	protected function inlineEditMarkUp()
 	{
-		// @TODO JLayout this
-		$input = $this->app->input;
+		// @TODO LayoutInterface this
+		$input = $this->app->getInput();
 		$html = array();
 		$html[] = '<div class="modal">';
-		$html[] = ' <div class="modal-header"><h3>' . FText::_('COM_FABRIK_EDIT') . '</h3></div>';
+		$html[] = ' <div class="modal-header"><h3>' . Text::_('COM_FABRIK_EDIT') . '</h3></div>';
 		$html[] = '<div class="modal-body">';
 		$html[] = '<form>';
 
@@ -109,7 +113,8 @@ class FabrikFEModelFormInlineEdit extends FabModelForm
 			{
 				$html[] = '<div class="control-group fabrikElementContainer ' . $element->id . '">';
 				$html[] = '<label>' . $element->label . '</label>';
-				$html[] = '<div class="fabrikElement">';
+//				$html[] = '<div class="fabrikElement'.$element->bsClass'">';
+				$html[] = '<div class="fabrikElement '.$element->bsClass.'">';
 				$html[] = $element->element;
 				$html[] = '</div>';
 				$html[] = '</div>';
@@ -127,15 +132,15 @@ class FabrikFEModelFormInlineEdit extends FabModelForm
 			if ($input->getBool('inlinecancel') == true)
 			{
 				$html[] = '<a href="#" class="btn inline-cancel">';
-				$html[] = FabrikHelperHTML::image('delete.png', 'list', $thisTmpl, array('alt' => FText::_('COM_FABRIK_CANCEL')));
-				$html[] = '<span>' . FText::_('COM_FABRIK_CANCEL') . '</span></a>';
+				$html[] = FabrikHelperHTML::image('delete.png', 'list', $thisTmpl, array('alt' => Text::_('COM_FABRIK_CANCEL')));
+				$html[] = '<span>' . Text::_('COM_FABRIK_CANCEL') . '</span></a>';
 			}
 
 			if ($input->getBool('inlinesave') == true)
 			{
 				$html[] = '<a href="#" class="btn btn-primary inline-save">';
-				$html[] = FabrikHelperHTML::image('save.png', 'list', $thisTmpl, array('alt' => FText::_('COM_FABRIK_SAVE')));
-				$html[] = '<span>' . FText::_('COM_FABRIK_SAVE') . '</span></a>';
+				$html[] = FabrikHelperHTML::image('save.png', 'list', $thisTmpl, array('alt' => Text::_('COM_FABRIK_SAVE')));
+				$html[] = '<span>' . Text::_('COM_FABRIK_SAVE') . '</span></a>';
 			}
 
 			$html[] = '</div>';
@@ -145,68 +150,6 @@ class FabrikFEModelFormInlineEdit extends FabModelForm
 
 		return $html;
 	}
-
-	/**
-	 * Create markup for old school 2.5 inline editor
-	 *
-	 * @since   3.1b
-	 *
-	 * @return  array
-	 */
-	protected function inlineEditMarkupJ25()
-	{
-		$input = $this->app->input;
-
-		$html = array();
-		$html[] = '<div class="floating-tip-wrapper inlineedit" style="position:absolute">';
-		$html[] = '<div class="floating-tip" >';
-		$html[] = '<ul class="fabrikElementContainer">';
-
-		foreach ($this->groups as $group)
-		{
-			foreach ($group->elements as $element)
-			{
-				$html[] = '<li class="' . $element->id . '">' . $element->label . '</li>';
-				$html[] = '<li class="fabrikElement">';
-				$html[] = $element->element;
-				$html[] = '</li>';
-			}
-		}
-
-		$html[] = '</ul>';
-		$thisTmpl = isset($this->tmpl) ? $this->tmpl : '';
-
-		if ($input->getBool('inlinesave') || $input->getBool('inlinecancel'))
-		{
-			$html[] = '<ul class="">';
-
-			if ($input->getBool('inlinecancel') == true)
-			{
-				$html[] = '<li class="ajax-controls inline-cancel">';
-				$html[] = '<a href="#" class="">';
-				$html[] = FabrikHelperHTML::image('delete.png', 'list', $thisTmpl, array('alt' => FText::_('COM_FABRIK_CANCEL')));
-				$html[] = '<span>' . FText::_('COM_FABRIK_CANCEL') . '</span></a>';
-				$html[] = '</li>';
-			}
-
-			if ($input->getBool('inlinesave') == true)
-			{
-				$html[] = '<li class="ajax-controls inline-save">';
-				$html[] = '<a href="#" class="">';
-				$html[] = FabrikHelperHTML::image('save.png', 'list', $thisTmpl, array('alt' => FText::_('COM_FABRIK_SAVE')));
-				$html[] = '<span>' . FText::_('COM_FABRIK_SAVE') . '</span></a>';
-				$html[] = '</li>';
-			}
-
-			$html[] = '</ul>';
-		}
-
-		$html[] = '</div>';
-		$html[] = '</div>';
-
-		return $html;
-	}
-
 	/**
 	 * Set form model
 	 *
@@ -226,7 +169,7 @@ class FabrikFEModelFormInlineEdit extends FabModelForm
 	 */
 	public function showResults()
 	{
-		$input = $this->app->input;
+		$input = $this->app->getInput();
 		$listModel = $this->formModel->getListModel();
 		$listId = $listModel->getId();
 		$listModel->clearCalculations();

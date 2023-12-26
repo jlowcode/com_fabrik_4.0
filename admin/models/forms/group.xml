@@ -6,7 +6,7 @@
 
 			<field name="id"
 			       type="text"
-			       class="readonly input-mini"
+			       class="readonly col-sm-2"
 			       default="0"
 			       label="COM_FABRIK_ID_LABEL"
 			       description="COM_FABRIK_FIELD_GROUP_ID_DESC"
@@ -35,7 +35,7 @@
 
 			<field name="published"
 			       type="radio"
-			       class="btn-group"
+		       		class="btn btn-group"
 			       default="1"
 			       label="JSTATUS"
 			       description="JFIELD_PUBLISHED_DESC"
@@ -75,6 +75,7 @@
 			       type="radio"
 			       class="btn-group"
 			       default="1"
+				layout="joomla.form.field.radio.switcher"
 			       label="COM_FABRIK_FIELD_IN_LIST_LABEL"
 			       description="COM_FABRIK_FIELD_IN_LIST_DESC"
 			>
@@ -116,6 +117,7 @@
 			       type="grouprepeat"
 			       default="0"
 			       class="radio btn-group"
+				layout="joomla.form.field.radio.switcher"
 			       description="COM_FABRIK_REPEAT_GROUP_BUTTON_DESC"
 			       label="COM_FABRIK_REPEAT_GROUP_BUTTON_LABEL">
 				<option value="0">JNO</option>
@@ -133,14 +135,14 @@
 
 			<field name="repeat_max"
 			       type="text"
-			       class="input-mini"
+			       class="col-sm-2"
 			       size="2"
 			       description="COM_FABRIK_REPEAT_GROUP_MAX_DESC"
 			       label="COM_FABRIK_REPEAT_GROUP_MAX_LABEL"/>
 
 			<field name="repeat_min"
 			       type="text"
-			       class="input-mini"
+			       class="col-sm-2"
 			       label="COM_FABRIK_REPEAT_GROUP_MIN_LABEL"
 			       description="COM_FABRIK_REPEAT_GROUP_MIN_DESC"
 			       size="2"/>
@@ -216,6 +218,7 @@
 
 			<field default="0"
 			       class="radio btn-group"
+				layout="joomla.form.field.radio.switcher"
 			       description="COM_FABRIK_REPEAT_GROUP_COPY_ELEMENT_VALUES_DESC"
 			       label="COM_FABRIK_REPEAT_GROUP_COPY_ELEMENT_VALUES_LABEL"
 			       name="repeat_copy_element_values"
@@ -230,7 +233,7 @@
 
 			<field name="group_columns"
 			       type="text"
-			       class="input-mini"
+			       class="col-sm-2"
 			       default="1"
 			       description="COM_FABRIK_COLUMNS_DESC"
 			       label="COM_FABRIK_COLUMNS_LABEL"
@@ -260,6 +263,7 @@
 
 			<field class="btn-group"
 			       default="0"
+				layout="joomla.form.field.radio.switcher"
 			       description="COM_FABRIK_RANDOMISE_ELEMENTS_DESC"
 			       label="COM_FABRIK_RANDOMISE_ELEMENTS_LABEL"
 			       name="random"
@@ -268,8 +272,7 @@
 				<option value="1">JYES</option>
 			</field>
 			<field name="labels_above"
-			       type="radio"
-			       class="btn-group"
+			       type="list"
 			       default="-1"
 			       label="COM_FABRIK_FIELD_GROUP_LABELS_ABOVE_LABEL"
 			       description="COM_FABRIK_FIELD_GROUP_LABELS_ABOVE_DESC">
@@ -280,8 +283,7 @@
 			</field>
 
 			<field name="labels_above_details"
-			       type="radio"
-			       class="btn-group"
+			       type="list"
 			       default="-1"
 			       label="COM_FABRIK_FIELD_GROUP_LABELS_ABOVE_DETAILS_LABEL"
 			       description="COM_FABRIK_FIELD_GROUP_LABELS_ABOVE_DETAILS_DESC">

@@ -12,11 +12,15 @@
 // No direct access
 defined('_JEXEC') or die('Restricted access');
 
-JHtml::addIncludePath(JPATH_COMPONENT . '/helpers/html');
-JHTML::stylesheet('administrator/components/com_fabrik/views/fabrikadmin.css');
-JHtml::_('behavior.tooltip');
+use Joomla\CMS\Language\Text;
+use Joomla\CMS\Router\Route;
+use Joomla\CMS\HTML\HTMLHelper;
+
+HTMLHelper::addIncludePath(JPATH_COMPONENT . '/helpers/html');
+HTMLHelper::stylesheet('administrator/components/com_fabrik/views/fabrikadmin.css');
+HTMLHelper::_('bootstrap.tooltip');
 FabrikHelperHTML::formvalidation();
-JHtml::_('behavior.keepalive');
+HTMLHelper::_('behavior.keepalive');
 
 ?>
 <script type="text/javascript">
@@ -31,18 +35,18 @@ JHtml::_('behavior.keepalive');
 				window.fireEvent('form.save');
 				Joomla.submitform(task, document.getElementById('adminForm'));
 			} else {
-				window.alert('<?php echo $this->escape(FText::_('JGLOBAL_VALIDATION_FORM_FAILED'));?>');
+				window.alert('<?php echo $this->escape(Text::_('JGLOBAL_VALIDATION_FORM_FAILED'));?>');
 			}
 		});
 	}
 </script>
-<form action="<?php JRoute::_('index.php?option=com_fabrik'); ?>" method="post" name="adminForm" id="adminForm" class="form-validate">
+<form action="<?php Route::_('index.php?option=com_fabrik'); ?>" method="post" name="adminForm" id="adminForm" class="form-validate">
 
-	<div class="row-fluid">
-		<div class="span6">
-			<fieldset class="form-horizontal">
+	<div class="row">
+		<div class="col-sm-6">
+			<fieldset>
 		    	<legend>
-		    		<?php echo FText::_('COM_FABRIK_DETAILS');?>
+		    		<?php echo Text::_('COM_FABRIK_DETAILS');?>
 		    	</legend>
 				<?php
 				foreach ($this->form->getFieldset('details') as $key => $this->field) :
@@ -66,11 +70,11 @@ JHtml::_('behavior.keepalive');
 
 		</div>
 
-		<div class="span6">
+		<div class="col-sm-6">
 
-			<fieldset class="form-horizontal">
+			<fieldset>
 		    	<legend>
-		    		<?php echo FText::_('COM_FABRIK_RUN');?>
+		    		<?php echo Text::_('COM_FABRIK_RUN');?>
 		    	</legend>
 				<?php foreach ($this->form->getFieldset('run') as $this->field) :
 					echo $this->loadTemplate('control_group');
@@ -78,9 +82,9 @@ JHtml::_('behavior.keepalive');
 				?>
 			</fieldset>
 
-			<fieldset class="form-horizontal">
+			<fieldset>
 		    	<legend>
-		    		<?php echo FText::_('COM_FABRIK_LOG');?>
+		    		<?php echo Text::_('COM_FABRIK_LOG');?>
 		    	</legend>
 				<?php foreach ($this->form->getFieldset('log') as $this->field) :
 					echo $this->loadTemplate('control_group');
@@ -89,9 +93,9 @@ JHtml::_('behavior.keepalive');
 			</fieldset>
 		</div>
 	</div>
-	<div class="row-fluid">
-		<div class="span12">
-			<fieldset class="form-horizontal">
+	<div class="row">
+		<div class="col-sm-12">
+			<fieldset>
 				<div id="plugin-container">
 					<?php echo $this->pluginFields;?>
 				</div>
@@ -99,5 +103,5 @@ JHtml::_('behavior.keepalive');
 		</div>
 	</div>
 	<input type="hidden" name="task" value="" />
-	<?php echo JHtml::_('form.token'); ?>
+	<?php echo HTMLHelper::_('form.token'); ?>
 </form>

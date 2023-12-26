@@ -271,7 +271,7 @@ define(['jquery', 'fab/fabrik', 'jQueryUI', 'fab/utils'], function (jQuery, Fabr
             /* Use form title if modal handlelabel is blank
             * $$$ Rob - this is not going to work with UIKit for example - try not to rely on the DOM classes/markup
             * for this type of thing - assign data-foo attributes to the layouts instead */
-            if (jQuery('div.modal-header .handlelabel').text().length === 0) {
+            if (jQuery('div.modal-header .handlelabel').text().length === 0 && jQuery('div.itemContentPadder form').context !== undefined) {
                 if (jQuery('div.itemContentPadder form').context.title.length) {
                     jQuery('div.modal-header .handlelabel').text(jQuery('div.itemContentPadder form').context.title);
                 }
@@ -439,14 +439,14 @@ define(['jquery', 'fab/fabrik', 'jQueryUI', 'fab/utils'], function (jQuery, Fabr
                         'url'   : this.options.contentURL,
                         'data'  : jQuery.extend(this.options.data, {'fabrik_window_id': this.options.id}),
                         'method': 'post',
-                    }).success(function (r) {
+                    'success': function (r) {
                         Fabrik.loader.stop(self.contentEl);
                         self.contentEl.append(r);
                         self.watchTabs();
                         self.center();
                         self.onContentLoaded.apply(self);
                         Joomla.loadOptions();
-                    });
+                    }});
                     break;
                 // Deprecated - causes all sorts of issues with window resizing.
                 case 'iframe':

@@ -10,20 +10,20 @@
 
 header('Content-type: text/css');
 $c = $_REQUEST['c'];
-$buttonCount = (int) $_REQUEST['buttoncount'];
-$buttonTotal = $buttonCount === 0 ? '100%' : 30 * $buttonCount ."px";
+//buttonCount = (int) $_REQUEST['buttoncount'];
+//$buttonTotal = $buttonCount === 0 ? '100%' : 30 * $buttonCount ."px";
 echo "
+.fabrikButtonsContainer li.dropdown-item {border-bottom:1px solid grey;padding: 0.5rem 1rem;}
+.fabrikButtonsContainer li.dropdown-item a {text-decoration:none;}
+
+.fabrikButtonsContainer .hasFilters, .fabrikFilterContainer .hasFilters {color:red;}
 
 .fabrikDataContainer {
 	clear:both;
-	/*
-		dont use this as it stops dropdowns from showing correctly
-		overflow: auto;*/
-}
-
-.fabrikDataContainer .pagination a{
-	float: left;
-}
+	max-width:100%;}
+	
+.fabrikDataContainer .table thead th {
+white-space: initial;}
 
 ul.fabrikRepeatData {
 	list-style: none;
@@ -57,6 +57,7 @@ list-style: none;
 
 .fabrikDateListFilterRange {
 	text-align: left;
-	display: inline-block;
 }
+/* added for J!4 */
+.btn-group {margin:0}
 ";?>

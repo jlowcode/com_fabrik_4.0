@@ -48,7 +48,7 @@ var ListFieldsElement = new Class({
 
 			opts.each(function (opt) {
 				var o = {'value': opt.value};
-				if (opt.value === this.options.value) {
+				if (opt.value == this.options.value) {
 					o.selected = 'selected';
 				}
 				Array.each(els, function (el) {
@@ -193,7 +193,7 @@ var ListFieldsElement = new Class({
 					});
 				}.bind(this));
 				if (document.id(this.el.id + '_loader')) {
-					document.id(this.el.id + '_loader').hide();
+					document.id(this.el.id + '_loader').hide(true);
 				}
 			}.bind(this)
 		});

@@ -12,6 +12,10 @@
 // No direct access
 defined('_JEXEC') or die('Restricted access');
 
+use Joomla\CMS\Table\Table;
+use Joomla\CMS\Component\ComponentHelper;
+use Joomla\CMS\Factory;
+
 require_once 'fabmodellist.php';
 
 /**
@@ -35,7 +39,13 @@ class FabrikAdminModelGroups extends FabModelList
 	{
 		if (empty($config['filter_fields']))
 		{
-			$config['filter_fields'] = array('g.id', 'g.name', 'g.label', 'f.label', 'g.published');
+			$config['filter_fields'] = [
+				'id', 'g.id', 
+				'name', 'g.name', 
+				'label', 'g.label', 
+				'form', 'f.label', 
+				'published', 'g.published'
+			];
 		}
 
 		parent::__construct($config);
@@ -54,16 +64,16 @@ class FabrikAdminModelGroups extends FabModelList
 
 		// Select the required fields from the table.
 		$query->select($this->getState('list.select', 'g.*'));
-		$query->from('#__{package}_groups AS g');
+		$query->from('#__fabrik_groups AS g');
 
 		// Join over the users for the checked out user.
 		$query->select('u.name AS editor, fg.form_id AS form_id, f.label AS flabel');
 		$query->join('LEFT', '#__users AS u ON checked_out = u.id');
-		$query->join('LEFT', '#__{package}_formgroup AS fg ON g.id = fg.group_id');
-		$query->join('LEFT', '#__{package}_forms AS f ON fg.form_id = f.id');
+		$query->join('LEFT', '#__fabrik_formgroup AS fg ON g.id = fg.group_id');
+		$query->join('LEFT', '#__fabrik_forms AS f ON fg.form_id = f.id');
 
 		// Add the list ordering clause.
-		$orderCol  = $this->state->get('list.ordering');
+		$orderCol  = $this->state->get('list.ordering','g.name');
 		$orderDirn = $this->state->get('list.direction');
 
 		if ($orderCol == 'ordering' || $orderCol == 'category_title')
@@ -124,6 +134,12 @@ class FabrikAdminModelGroups extends FabModelList
 			$query->where('(g.published IN (0, 1))');
 		}
 
+		// filter by form
+		$form = $this->getState('filter.form');
+		if (is_numeric($form)) {
+			$query->where('f.id = ' . (int) $form);
+		}
+
 		// Filter by search in title
 		$search = $this->getState('filter.search');
 
@@ -140,7 +156,7 @@ class FabrikAdminModelGroups extends FabModelList
 		$query = $db->getQuery(true);
 
 		$query->select('COUNT(id) AS count, group_id');
-		$query->from('#__{package}_elements');
+		$query->from('#__fabrik_elements');
 		$query->group('group_id');
 
 		$db->setQuery($query);
@@ -162,7 +178,7 @@ class FabrikAdminModelGroups extends FabModelList
 	 * @param   string $prefix A prefix for the table class name. Optional.
 	 * @param   array  $config Configuration array for model. Optional.
 	 *
-	 * @return  JTable    A database object
+	 * @return  Table    A database object
 	 */
 	public function getTable($type = 'Group', $prefix = 'FabrikTable', $config = array())
 	{
@@ -183,23 +199,23 @@ class FabrikAdminModelGroups extends FabModelList
 	protected function populateState($ordering = null, $direction = null)
 	{
 		// Initialise variables.
-		$app = JFactory::getApplication('administrator');
+		$app = Factory::getApplication('administrator');
 
 		// Load the parameters.
-		$params = JComponentHelper::getParams('com_fabrik');
+		$params = ComponentHelper::getParams('com_fabrik');
 		$this->setState('params', $params);
 
-		$published = $app->getUserStateFromRequest($this->context . '.filter.published', 'filter_published', '');
+		$published = $this->getUserStateFromRequest($this->context . '.filter.published', 'filter_published', '');
 		$this->setState('filter.published', $published);
 
-		$search = $app->getUserStateFromRequest($this->context . '.filter.search', 'filter_search');
+		$search = $this->getUserStateFromRequest($this->context . '.filter.search', 'filter_search');
 		$this->setState('filter.search', $search);
 
 		// Load the form state
-		$package = $app->getUserStateFromRequest($this->context . '.filter.form', 'filter_form', '');
-		$this->setState('filter.form', $package);
+		$form = $this->getUserStateFromRequest($this->context . '.filter.form', 'filter_form', '');
+		$this->setState('filter.form', $form);
 
 		// List state information.
-		parent::populateState('name', 'asc');
+		parent::populateState($ordering, $direction);
 	}
 }

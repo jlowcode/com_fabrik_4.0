@@ -11,6 +11,11 @@
 // No direct access
 defined('_JEXEC') or die('Restricted access');
 
+use Joomla\CMS\Language\Text;
+use Joomla\CMS\Layout\LayoutInterface;
+use Joomla\CMS\Filesystem\File;
+use Joomla\String\StringHelper;
+
 jimport('joomla.application.component.model');
 
 use Fabrik\Helpers\LayoutFile;
@@ -99,9 +104,9 @@ class PlgFabrik_List extends FabrikPlugin
 	 */
 	protected function buttonLabel()
 	{
-		$s = JString::strtoupper($this->buttonPrefix);
+		$s = StringHelper::strtoupper($this->buttonPrefix);
 
-		return FText::_('PLG_LIST_' . $s . '_' . $s);
+		return Text::_('PLG_LIST_' . $s . '_' . $s);
 	}
 
 	/**
@@ -132,7 +137,8 @@ class PlgFabrik_List extends FabrikPlugin
 		if ($this->canUse())
 		{
 			$p  = $this->onGetFilterKey_result();
-			$j3 = FabrikWorker::j3();
+//			$j3 = FabrikWorker::j3();
+//			$j3 = true;
 			FabrikHelperHTML::addPath('plugins/fabrik_list/' . $p . '/images/', 'image', 'list');
 			$name = $this->_getButtonName();
 			$label = $this->buttonLabel();
@@ -152,7 +158,8 @@ class PlgFabrik_List extends FabrikPlugin
 			$img = FabrikHelperHTML::image($imageName, 'list', $tmpl, $properties, false, $opts);
 			$text = $this->buttonAction == 'dropdown' ? $label : '<span class="hidden">' . $label . '</span>';
 
-			if ($j3 && $this->buttonAction != 'dropdown')
+//			if ($j3 && $this->buttonAction != 'dropdown')
+			if ($this->buttonAction != 'dropdown')
 			{
 				$layout = FabrikHelperHTML::getLayout('fabrik-button');
 				$layoutData = (object) array(
@@ -213,7 +220,7 @@ class PlgFabrik_List extends FabrikPlugin
 	 */
 	public function onLoadJavascriptInstance($args)
 	{
-		JText::script('COM_FABRIK_PLEASE_SELECT_A_ROW');
+		Text::script('COM_FABRIK_PLEASE_SELECT_A_ROW');
 
 		return true;
 	}
@@ -279,7 +286,7 @@ class PlgFabrik_List extends FabrikPlugin
 			return false;
 		}
 
-		$input             = $this->app->input;
+		$input             = $this->app->getInput();
 		$postedRenderOrder = $input->getInt('fabrik_listplugin_renderOrder', -1);
 
 		return $input->get('fabrik_listplugin_name') == $this->buttonPrefix && $this->renderOrder == $postedRenderOrder;
@@ -294,7 +301,7 @@ class PlgFabrik_List extends FabrikPlugin
 	 */
 	public function onGetFilterKey()
 	{
-		$this->filterKey = JString::strtolower(str_ireplace('PlgFabrik_List', '', get_class($this)));
+		$this->filterKey = StringHelper::strtolower(str_ireplace('PlgFabrik_List', '', get_class($this)));
 
 		return $this->filterKey;
 	}
@@ -373,7 +380,7 @@ class PlgFabrik_List extends FabrikPlugin
 		$ext = FabrikHelperHTML::isDebug() ? '.js' : '-min.js';
 		$file = 'plugins/fabrik_list/' . $p . '/' . $p . $ext;
 
-		if (JFile::exists(JPATH_SITE . '/' . $file))
+		if (File::exists(JPATH_SITE . '/' . $file))
 		{
 			return array('FbList' . ucfirst(($p)) => $file);
 		}
@@ -445,7 +452,7 @@ class PlgFabrik_List extends FabrikPlugin
 	}
 
 	/**
-	 * Get the element's JLayout file
+	 * Get the element's LayoutInterface file
 	 * Its actually an instance of LayoutFile which inverses the ordering added include paths.
 	 * In LayoutFile the addedPath takes precedence over the default paths, which makes more sense!
 	 *
@@ -456,7 +463,7 @@ class PlgFabrik_List extends FabrikPlugin
 	public function getLayout($type)
 	{
 		$name     = get_class($this);
-		$name     = strtolower(JString::str_ireplace('PlgFabrik_List', '', $name));
+		$name     = strtolower(StringHelper::str_ireplace('PlgFabrik_List', '', $name));
 		$basePath = COM_FABRIK_BASE . '/plugins/fabrik_list/' . $name . '/layouts';
 		$layout   = new LayoutFile('fabrik-list-' . $name . '-' . $type, $basePath, array('debug' => false, 'component' => 'com_fabrik', 'client' => 'site'));
 		$layout->addIncludePaths(JPATH_THEMES . '/' . $this->app->getTemplate() . '/html/layouts');

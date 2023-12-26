@@ -11,12 +11,14 @@
 // No direct access
 defined('_JEXEC') or die('Restricted access');
 
+use Joomla\CMS\Factory;
+use Joomla\CMS\Language\Text;
+use Joomla\CMS\HTML\HTMLHelper;
+use Joomla\CMS\Form\Field\ListField;
+
 require_once JPATH_ADMINISTRATOR . '/components/com_fabrik/helpers/element.php';
 
-jimport('joomla.html.html');
-jimport('joomla.form.formfield');
-jimport('joomla.form.helper');
-JFormHelper::loadFieldClass('list');
+//JFormHelper::loadFieldClass('list');
 
 /**
  * Renders a repeating drop down list of forms
@@ -26,7 +28,7 @@ JFormHelper::loadFieldClass('list');
  * @since       1.6
  */
 
-class JFormFieldFormList extends JFormFieldList
+class JFormFieldFormList extends ListField
 {
 	/**
 	 * Element name
@@ -44,7 +46,12 @@ class JFormFieldFormList extends JFormFieldList
 
 	protected function getOptions()
 	{
-		$app = JFactory::getApplication();
+		$app = Factory::getApplication();
+		if ($app->input->get('option') != 'com_fabrik') {
+			/* Load the fabrik language */
+			$lang = Factory::getLanguage();
+			$lang->load('com_fabrik', JPATH_SITE . '/components/com_fabrik');
+		}
 
 		if ($this->element['package'])
 		{
@@ -54,7 +61,7 @@ class JFormFieldFormList extends JFormFieldList
 		$db = FabrikWorker::getDbo(true);
 		$query = $db->getQuery(true);
 		$query->select('id AS value, label AS ' . $db->quote('text') . ', published');
-		$query->from('#__{package}_forms');
+		$query->from('#__fabrik_forms');
 
 		if (!$this->element['showtrashed'])
 		{
@@ -65,25 +72,29 @@ class JFormFieldFormList extends JFormFieldList
 		$db->setQuery($query);
 		$rows = $db->loadObjectList();
 
-		foreach ($rows as &$row)
+		if (!empty($this->element) && !empty($this->element->option)) {
+			$option = $this->element->option;
+			if (is_array($option)) array_shift($option);
+			$options[] = HTMLHelper::_('select.option', '', Text::_($option));
+		} else {
+			$options[] = HTMLHelper::_('select.option', '', Text::_("COM_FABRIK_PLEASE_SELECT"));
+		}
+		
+		foreach ($rows as $row)
 		{
 			switch ($row->published)
 			{
 				case '0':
-					$row->text .= ' [' . FText::_('JUNPUBLISHED') . ']';
+					$row->text .= ' [' . Text::_('JUNPUBLISHED') . ']';
 					break;
 				case '-2':
-					$row->text .= ' [' . FText::_('JTRASHED') . ']';
+					$row->text .= ' [' . Text::_('JTRASHED') . ']';
 					break;
 			}
+			$options[] = HTMLHelper::_('select.option', $row->value, $row->text);
 		}
 
-		$o = new stdClass;
-		$o->value = '';
-		$o->text = '';
-		array_unshift($rows, $o);
-
-		return $rows;
+		return $options;
 	}
 
 	/**
@@ -94,15 +105,15 @@ class JFormFieldFormList extends JFormFieldList
 
 	protected function getInput()
 	{
-		$app = JFactory::getApplication();
+		$app = Factory::getApplication();
 		$input = $app->input;
 		$option = $input->get('option');
 
-		if (!in_array($option, array('com_modules', 'com_menus', 'com_advancedmodules')))
+		if (!in_array($option, array('com_modules', 'com_menus', 'com_advancedmodules')) && empty($this->value))
 		{
 			$db = FabrikWorker::getDbo(true);
 			$query = $db->getQuery(true);
-			$query->select('form_id')->from('#__{package}_formgroup')->where('group_id = ' . (int) $this->form->getValue('id'));
+			$query->select('form_id')->from('#__fabrik_formgroup')->where('group_id = ' . (int) $this->form->getValue('id'));
 			$db->setQuery($query);
 			$this->value = $db->loadResult();
 			$this->form->setValue('form', null, $this->value);
@@ -126,7 +137,9 @@ class JFormFieldFormList extends JFormFieldList
 			}
 		}
 
+//		return '<input type="hidden" value="' . $this->value . '" name="' . $this->name . '" />' . '<input type="text" value="' . $v
+//		. '" name="form_justalabel" class="readonly" readonly="true" />';
 		return '<input type="hidden" value="' . $this->value . '" name="' . $this->name . '" />' . '<input type="text" value="' . $v
-		. '" name="form_justalabel" class="readonly" readonly="true" />';
+		. '" name="form_justalabel" class="form-control" readonly />';
 	}
 }

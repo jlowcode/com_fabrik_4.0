@@ -11,6 +11,9 @@
 // No direct access
 defined('_JEXEC') or die('Restricted access');
 
+use Joomla\CMS\Language\Text;
+use Joomla\CMS\Factory;
+
 jimport('joomla.application.component.view');
 
 /**
@@ -31,8 +34,8 @@ class FabrikViewCsv extends FabrikView
 	 */
 	public function display($tpl = null)
 	{
-		$this->listid = $this->app->input->get('listid', 0);
-		$listModel    = JModelLegacy::getInstance('List', 'FabrikFEModel');
+		$this->listid = $this->app->getInput()->get('listid', 0);
+		$listModel    = Factory::getApplication()->bootComponent('com_fabrik')->getMVCFactory()->createModel('List', 'FabrikFEModel');
 		$listModel->setId($this->listid);
 		$this->setModel($listModel, true);
 		$this->table = $listModel->getTable();
@@ -80,7 +83,7 @@ class FabrikViewCsv extends FabrikView
 		$listId         = $model->getId();
 		$script         = array();
 		$opts           = new stdClass;
-		$opts->admin    = $this->app->isAdmin();
+		$opts->admin    = $this->app->isClient('administrator');
 		$opts->form     = 'listform_' . $listId;
 		$opts->headings = $model->jsonHeadings();
 		list($this->headings, $groupHeadings, $this->headingClass, $this->cellClass) = $model->getHeadings();
@@ -107,24 +110,24 @@ class FabrikViewCsv extends FabrikView
 
 		// $$$rob if you are loading a table in a window from a form db join select record option
 		// then we want to know the id of the window so we can set its showSpinner() method
-		$opts->winid = $this->app->input->get('winid', '');
+		$opts->winid = $this->app->getInput()->get('winid', '');
 		$opts        = json_encode($opts);
 
-		JText::script('COM_FABRIK_CSV_COMPLETE');
-		JText::script('COM_FABRIK_CSV_DOWNLOAD_HERE');
-		JText::script('COM_FABRIK_CONFIRM_DELETE');
-		JText::script('COM_FABRIK_CSV_DOWNLOADING');
-		JText::script('COM_FABRIK_FILE_TYPE');
-		JText::script('COM_FABRIK_INCLUDE_FILTERS');
-		JText::script('COM_FABRIK_INCLUDE_RAW_DATA');
-		JText::script('COM_FABRIK_INCLUDE_DATA');
-		JText::script('COM_FABRIK_INCLUDE_CALCULATIONS');
-		JText::script('COM_FABRIK_EXPORT');
-		JText::script('COM_FABRIK_LOADING');
-		JText::script('COM_FABRIK_RECORDS');
-		JText::script('JNO');
-		JText::script('JYES');
-		JText::script('COM_FABRIK_SAVING_TO');
+		Text::script('COM_FABRIK_CSV_COMPLETE');
+		Text::script('COM_FABRIK_CSV_DOWNLOAD_HERE');
+		Text::script('COM_FABRIK_CONFIRM_DELETE');
+		Text::script('COM_FABRIK_CSV_DOWNLOADING');
+		Text::script('COM_FABRIK_FILE_TYPE');
+		Text::script('COM_FABRIK_INCLUDE_FILTERS');
+		Text::script('COM_FABRIK_INCLUDE_RAW_DATA');
+		Text::script('COM_FABRIK_INCLUDE_DATA');
+		Text::script('COM_FABRIK_INCLUDE_CALCULATIONS');
+		Text::script('COM_FABRIK_EXPORT');
+		Text::script('COM_FABRIK_LOADING');
+		Text::script('COM_FABRIK_RECORDS');
+		Text::script('JNO');
+		Text::script('JYES');
+		Text::script('COM_FABRIK_SAVING_TO');
 
 		$srcs   = FabrikHelperHTML::framework();
 		$srcs['ListPlugin'] = 'media/com_fabrik/js/list-plugin.js';

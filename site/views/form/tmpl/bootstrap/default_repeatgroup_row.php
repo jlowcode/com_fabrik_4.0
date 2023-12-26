@@ -18,9 +18,10 @@ $group = $this->group;
 <?php
 if ($group->canOrder) :
 ?>
-    <td><?php echo FabrikHelperHTML::icon('icon-bars'); ?></td>
+    <td><?php echo FabrikHelperHTML::icon('icon-menu-2'); ?></td>
 <?php
 endif;
+
 foreach ($this->elements as $element) :
 	$style = $element->hidden ? 'style="display:none"' : '';
 	?>
@@ -32,7 +33,7 @@ foreach ($this->elements as $element) :
 	<?php
 	endif;
 	echo $element->errorTag; ?>
-	<div class="fabrikElement">
+	<div class="fabrikElement <?php echo $element->bsClass;?>">
 		<?php echo $element->element; ?>
 	</div>
 
@@ -50,7 +51,7 @@ foreach ($this->elements as $element) :
 	endforeach;
  	if ($group->editable) : ?>
 		<td class="fabrikGroupRepeater">
-			<div class="pull-right">
+			<div class="fabrikGroupRepeater float-end btn-group-sm">
 			<?php
 			if ($group->canAddRepeat) :
 				echo $this->addRepeatGroupButtonRow;

@@ -11,6 +11,9 @@
 // No direct access
 defined('_JEXEC') or die('Restricted access');
 
+use Joomla\CMS\Layout\LayoutInterface;
+use Joomla\CMS\Object\CMSObject;
+
 require_once JPATH_SITE . '/components/com_fabrik/views/list/view.base.php';
 
 /**
@@ -48,9 +51,9 @@ class FabrikViewList extends FabrikViewListBase
 			$model = $this->getModel();
 			$this->tabs = $model->loadTabs();
 
-			if (!$this->app->isAdmin() && isset($this->params))
+			if (!$this->app->isClient('administrator') && isset($this->params))
 			{
-				/** @var JObject $state */
+				/** @var CMSObject $state */
 				$state = $model->getState();
 				$stateParams = $state->get('params');
 
@@ -75,7 +78,7 @@ class FabrikViewList extends FabrikViewListBase
 	}
 
 	/**
-	 * Render the group by heading as a JLayout list.fabrik-group-by-heading
+	 * Render the group by heading as a LayoutInterface list.fabrik-group-by-heading
 	 *
 	 * @param   string  $groupedBy  Group by key for $this->grouptemplates
 	 * @param   array   $group      Group data

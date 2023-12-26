@@ -6,8 +6,8 @@
         </message>
     </layout>
 
-    <fields name="request">
-        <fieldset name="request" addfieldpath="/administrator/components/com_fabrik/models/fields">
+	<fields name="request">
+		<fieldset addfieldpath="/administrator/components/com_fabrik/models/fields" name="request">
 
             <field name="listid"
                    type="fabriktables"
@@ -16,16 +16,13 @@
             />
 
         </fieldset>
-    </fields>
-
-    <fields addfieldpath="/administrator/components/com_fabrik/models/fields" name="params">
-        <fieldset name="params"
-                  label="COM_FABRIK_MENU_LIST_OPTIONS"
-        >
+	</fields>
+	<fields addfieldpath="/administrator/components/com_fabrik/models/fields" name="params">
+        <fieldset name="params" label="COM_FABRIK_MENU_LIST_OPTIONS">
 
             <field name="addurl"
                    type="text"
-                   class="input-xlarge"
+                   class="col-sm-10"
                    size="50"
                    label="COM_FABRIK_FIELD_ADD_URL_LABEL"
                    description="COM_FABRIK_FIELD_ADD_URL_DESC"
@@ -35,7 +32,8 @@
                    type="radio"
                    class="btn-group"
                    default="1"
-                   label="COM_FABRIK_SHOW_TITLE_LABEL"
+ 				layout="joomla.form.field.radio.switcher"
+                  label="COM_FABRIK_SHOW_TITLE_LABEL"
                    description="COM_FABRIK_SHOW_TITLE_DESC"
             >
                 <option value="0">JNO</option>
@@ -46,7 +44,8 @@
                    type="radio"
                    class="btn-group"
                    default="0"
-                   label="COM_FABRIK_MENU_LIST_RELOAD_CALCS_LABEL"
+ 				layout="joomla.form.field.radio.switcher"
+                  label="COM_FABRIK_MENU_LIST_RELOAD_CALCS_LABEL"
                    description="COM_FABRIK_MENU_LIST_RELOAD_CALCS_DESC"
             >
                 <option value="0">JNO</option>
@@ -71,6 +70,7 @@
                    type="radio"
                    class="btn-group"
                    default="0"
+				layout="joomla.form.field.radio.switcher"
                    description="COM_FABRIK_FIELD_RESET_FILTERS_DESC"
                    label="COM_FABRIK_FIELD_RESET_FILTERS_LABEL"
             >
@@ -87,9 +87,9 @@
                     <fieldset modal="true" name="list_elements_modal" repeat="true">
                         <field name="show_in_list"
                                type="listfields"
-                               size="30"
                                multiple="true"
                                label="COM_FABRIK_LIST_ELEMENTS_HEADING"
+                               size="-9999"
                         />
                     </fieldset>
                 </fields>
@@ -109,6 +109,7 @@
                                type="list"
                                default="OR"
                                label=""
+                               size="-9999"
                         >
                             <option value="AND">AND</option>
                             <option value="OR">OR</option>
@@ -119,11 +120,13 @@
                                raw="true"
                                valueformat="tableelement"
                                label="COM_FABRIK_LIST_ELEMENTS_HEADING"
+                               size="-9999"
                         />
 
                         <field name="filter-conditions"
                                type="list"
                                label="COM_FABRIK_LIST_CONDITION_LABEL"
+                               size="-9999"
                         >
                             <option value="equals">EQUALS</option>
                             <option value="notequals">NOT EQUAL TO</option>
@@ -158,6 +161,7 @@
 
                         <field name="filter-eval"
                                type="list"
+                               size="-9999"
                                label="COM_FABRIK_TYPE"
                         >
                             <option value="0">COM_FABRIK_TEXT</option>
@@ -169,6 +173,7 @@
                         <field name="filter-access"
                                type="accesslevel"
                                label="COM_FABRIK_LIST_FILTER_ACCESS_HEADING"
+                               size="-9999"
                         />
 
                     </fieldset>
@@ -178,7 +183,7 @@
             <field name="rows_per_page"
                    type="text"
                    default="10"
-                   class="input-mini"
+                   class="col-sm-2"
                    size="5"
                    label="COM_FABRIK_FIELD_ROWS_PER_PAGE_LABEL"
                    description="COM_FABRIK_FIELD_ROWS_PER_PAGE_DESC"
@@ -187,7 +192,7 @@
             <field name="popup_width"
                    type="text"
                    default="340"
-                   class="input-mini"
+                   class="col-sm-2"
                    size="5"
                    label="COM_FABRIK_MENU_CSV_POPUP_WIDTH_LABEL"
                    description="COM_FABRIK_MENU_CSV_POPUP_WIDTH_DESC"
@@ -196,7 +201,7 @@
             <field name="popup_opts_width"
                    type="text"
                    default="200"
-                   class="input-mini"
+                   class="col-sm-2"
                    size="5"
                    label="COM_FABRIK_MENU_CSV_POPUP_OPTS_WIDTH_LABEL"
                    description="COM_FABRIK_MENU_CSV_POPUP_OPTS_WIDTH_DESC"
@@ -204,7 +209,7 @@
 
             <field name="csv_import_extensions"
                    type="text"
-                   class="input-medium"
+                   class="col-sm-6"
                    size="20"
                    default="txt,csv,tsv"
                    label="COM_FABRIK_FIELD_CSV_IMPORT_EXTENSIONS_LABEL"
@@ -215,6 +220,7 @@
                    type="radio"
                    class="btn-group"
                    default="0"
+				layout="joomla.form.field.radio.switcher"
                    description="COM_FABRIK_FIELD_CSV_IMPORT_SIL_ONLY_DESC"
                    label="COM_FABRIK_FIELD_CSV_IMPORT_SIL_ONLY_LABEL"
             >
@@ -226,7 +232,8 @@
                    type="radio"
                    class="btn-group"
                    default="0"
-                   description="COM_FABRIK_FIELD_CSV_IMPORT_DROPDATA_DESC"
+ 				layout="joomla.form.field.radio.switcher"
+                  description="COM_FABRIK_FIELD_CSV_IMPORT_DROPDATA_DESC"
                    label="COM_FABRIK_FIELD_CSV_IMPORT_DROPDATA_LABEL"
             >
                 <option value="0">JNO</option>
@@ -238,7 +245,8 @@
                    type="radio"
                    class="btn-group"
                    default="0"
-                   description="COM_FABRIK_FIELD_CSV_IMPORT_OVERWRITE_DESC"
+ 				layout="joomla.form.field.radio.switcher"
+                  description="COM_FABRIK_FIELD_CSV_IMPORT_OVERWRITE_DESC"
                    label="COM_FABRIK_FIELD_CSV_IMPORT_OVERWRITE_LABEL"
             >
                 <option value="0">JNO</option>
@@ -247,7 +255,7 @@
 
             <field name="list_extra_query_string"
                    type="text"
-                   class="input-xlarge"
+                   class="col-sm-10"
                    size="40"
                    label="COM_FABRIK_FIELD_EXTRA_QUERY_STRING_LABEL"
                    description="COM_FABRIK_FIELD_EXTRA_QUERY_STRING_DESC"

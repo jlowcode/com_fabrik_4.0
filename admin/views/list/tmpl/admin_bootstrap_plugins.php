@@ -12,14 +12,15 @@
 // No direct access
 defined('_JEXEC') or die('Restricted access');
 
+use Joomla\CMS\Language\Text;
+
 ?>
 <div class="tab-pane" id="tabplugins">
-	<fieldset><legend>
-    		<?php echo FText::_('COM_FABRIK_PLUGINS'); ?>
-    	</legend>
-    <div id="plugins"></div>
+<legend><?php echo Text::_('COM_FABRIK_PLUGINS'); ?></legend>
+	<fieldset>
+   <div id="plugins" style="margin-bottom:20px;"></div>
 	<a href="#" id="addPlugin" class="btn">
-		<i class="icon-plus"></i> <?php echo FText::_('COM_FABRIK_ADD'); ?>
+		<i class="icon-plus"></i> <?php echo Text::_('COM_FABRIK_ADD'); ?>
 	</a>
 	</fieldset>
 </div>

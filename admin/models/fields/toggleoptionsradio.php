@@ -11,12 +11,15 @@
 // No direct access
 defined('_JEXEC') or die('Restricted access');
 
+use Joomla\CMS\Form\FormHelper;
+use Joomla\CMS\Form\Field\RadioField;
+
 require_once JPATH_ADMINISTRATOR . '/components/com_fabrik/helpers/element.php';
 
 jimport('joomla.html.html');
 jimport('joomla.form.formfield');
 jimport('joomla.form.helper');
-JFormHelper::loadFieldClass('radio');
+FormHelper::loadFieldClass('radio');
 
 /**
  * Renders a radio list which will toggle visibility of a specified group
@@ -25,7 +28,7 @@ JFormHelper::loadFieldClass('radio');
  * @subpackage  Form
  * @since       1.6
  */
-class JFormFieldToggleoptionsradio extends JFormFieldRadio
+class JFormFieldToggleoptionsradio extends RadioField
 {
 	/**
 	 * Element name

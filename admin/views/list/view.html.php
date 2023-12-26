@@ -11,6 +11,14 @@
 // No direct access
 defined('_JEXEC') or die('Restricted access');
 
+use Joomla\CMS\Toolbar\ToolbarHelper;
+use Joomla\CMS\Language\Text;
+use Joomla\CMS\MVC\View\HtmlView;
+use Joomla\CMS\Table\Table;
+use Joomla\CMS\Form\Form;
+use Joomla\CMS\Factory;
+use Joomla\CMS\HTML\HTMLHelper;
+
 jimport('joomla.application.component.view');
 
 /**
@@ -20,19 +28,19 @@ jimport('joomla.application.component.view');
  * @subpackage  Fabrik
  * @since       1.5
  */
-class FabrikAdminViewList extends JViewLegacy
+class FabrikAdminViewList extends HtmlView
 {
 	/**
 	 * List form
 	 *
-	 * @var JForm
+	 * @var Form
 	 */
 	protected $form;
 
 	/**
 	 * List item
 	 *
-	 * @var JTable
+	 * @var Table
 	 */
 	protected $item;
 
@@ -71,8 +79,8 @@ class FabrikAdminViewList extends JViewLegacy
 
 		if ($this->item->id == 0)
 		{
-			$this->order_by = array(FText::_('COM_FABRIK_AVAILABLE_AFTER_SAVE'));
-			$this->group_by = FText::_('COM_FABRIK_AVAILABLE_AFTER_SAVE');
+			$this->order_by = array(Text::_('COM_FABRIK_AVAILABLE_AFTER_SAVE'));
+			$this->group_by = Text::_('COM_FABRIK_AVAILABLE_AFTER_SAVE');
 		}
 		else
 		{
@@ -82,29 +90,32 @@ class FabrikAdminViewList extends JViewLegacy
 
 			foreach ($orderBys as $orderBy)
 			{
-				$this->order_by[] = $formModel->getElementList('order_by[]', $orderBy, true, false, false, 'id');
+//				$this->order_by[] = $formModel->getElementList('order_by[]', $orderBy, true, false, false, 'id');
+				$this->order_by[] = $formModel->getElementList('order_by[]', $orderBy, true, false, false, 'id', 'class="form-select" ');
 			}
 
 			if (empty($this->order_by))
 			{
-				$this->order_by[] = $formModel->getElementList('order_by[]', '', true, false, false, 'id');
+//				$this->order_by[] = $formModel->getElementList('order_by[]', '', true, false, false, 'id');
+				$this->order_by[] = $formModel->getElementList('order_by[]', '', true, false, false, 'id', 'class="form-select" ');
 			}
 
-			$orderDir[] = JHTML::_('select.option', 'ASC', FText::_('COM_FABRIK_ASCENDING'));
-			$orderDir[] = JHTML::_('select.option', 'DESC', FText::_('COM_FABRIK_DESCENDING'));
+			$orderDir[] = HTMLHelper::_('select.option', 'ASC', Text::_('COM_FABRIK_ASCENDING'));
+			$orderDir[] = HTMLHelper::_('select.option', 'DESC', Text::_('COM_FABRIK_DESCENDING'));
 
 			$orderdirs       = FabrikWorker::JSONtoData($this->item->order_dir, true);
 			$this->order_dir = array();
-			$attribs         = 'class="inputbox" size="1" ';
+//			$attribs         = 'class="inputbox" size="1" ';
+			$attribs         = 'class="form-select" ';
 
 			foreach ($orderdirs as $orderdir)
 			{
-				$this->order_dir[] = JHTML::_('select.genericlist', $orderDir, 'order_dir[]', $attribs, 'value', 'text', $orderdir);
+				$this->order_dir[] = HTMLHelper::_('select.genericlist', $orderDir, 'order_dir[]', $attribs, 'value', 'text', $orderdir);
 			}
 
 			if (empty($this->order_dir))
 			{
-				$this->order_dir[] = JHTML::_('select.genericlist', $orderDir, 'order_dir[]', $attribs, 'value', 'text', '');
+				$this->order_dir[] = HTMLHelper::_('select.genericlist', $orderDir, 'order_dir[]', $attribs, 'value', 'text', '');
 			}
 
 			$this->group_by = $formModel->getElementList('group_by', $this->item->group_by, true, false, false);
@@ -128,6 +139,31 @@ class FabrikAdminViewList extends JViewLegacy
 		FabrikHelperHTML::iniRequireJS($shim);
 		FabrikHelperHTML::script($srcs, $this->js);
 		parent::display($tpl);
+
+		/* The following is a hack to fix an issue with the list and group admin forms losing
+		 * the sidebar menu item above the one the user clicks on before fabrik is fully loaded. 
+		 * This hack forces it to redisplay 
+		*/
+		Factory::getDocument()->addScriptDeclaration('
+			function onReady() {
+			    var details = document.getElementById("btn-details");
+			    if (typeof Fabrik !== "undefined" && details !== null) {
+			    	var buttons = ["btn-details", "btn-data", "btn-publishing", "btn-access", "btn-plugins"];
+			    	for (var idx = 0; idx < buttons.length; idx++) {
+			    		button = document.getElementById(buttons[idx]);
+			    		if (button.style.display == "none") button.style.display = "block";
+			    	}
+			    } else {
+			    	setTimeout(onReady, 100);
+			    }
+			}
+
+			if (document.readyState !== "loading") {
+			    onReady();
+			} else {
+				document.addEventListener("DOMContentLoaded", onReady());
+			}'
+		);
 	}
 
 	/**
@@ -156,7 +192,7 @@ class FabrikAdminViewList extends JViewLegacy
 	 */
 	public function confirmCopy($tpl = null)
 	{
-		$app   = JFactory::getApplication();
+		$app   = Factory::getApplication();
 		$input = $app->input;
 		$cid   = $input->get('cid', array(0), 'array');
 		$lists = array();
@@ -204,7 +240,7 @@ class FabrikAdminViewList extends JViewLegacy
 	{
 		$model      = $this->getModel();
 		$this->form = $model->getContentTypeForm();
-		$input      = JFactory::getApplication()->input;
+		$input      = Factory::getApplication()->input;
 		$this->data = $input->post->get('jform', array(), 'array');
 		$this->addSelectSaveToolBar();
 		FabrikHelperHTML::framework();
@@ -222,18 +258,18 @@ class FabrikAdminViewList extends JViewLegacy
 	 */
 	protected function addSelectSaveToolBar()
 	{
-		$app         = JFactory::getApplication();
+		$app         = Factory::getApplication();
 		$this->state = $this->get('State');
 		$input       = $app->input;
 		$input->set('hidemainmenu', true);
 		$canDo = FabrikAdminHelper::getActions($this->state->get('filter.category_id'));
-		JToolBarHelper::title(FText::_('COM_FABRIK_MANAGER_SELECT_CONTENT_TYPE'), 'puzzle');
+		ToolBarHelper::title(Text::_('COM_FABRIK_MANAGER_SELECT_CONTENT_TYPE'), 'puzzle');
 
 		// For new records, check the create permission.
 		if ($canDo->get('core.create'))
 		{
-			JToolBarHelper::apply('list.doSave', 'JTOOLBAR_SAVE');
-			JToolBarHelper::cancel('list.cancel', 'JTOOLBAR_CANCEL');
+			ToolBarHelper::apply('list.doSave', 'JTOOLBAR_SAVE');
+			ToolBarHelper::cancel('list.cancel', 'JTOOLBAR_CANCEL');
 		}
 	}
 
@@ -244,28 +280,28 @@ class FabrikAdminViewList extends JViewLegacy
 	 */
 	protected function addToolbar()
 	{
-		$app   = JFactory::getApplication();
+		$app   = Factory::getApplication();
 		$input = $app->input;
 		$input->set('hidemainmenu', true);
-		$user       = JFactory::getUser();
+		$user       = Factory::getUser();
 		$userId     = $user->get('id');
 		$isNew      = ($this->item->id == 0);
 		$checkedOut = !($this->item->checked_out == 0 || $this->item->checked_out == $user->get('id'));
 		$canDo      = FabrikAdminHelper::getActions($this->state->get('filter.category_id'));
-		$title      = $isNew ? FText::_('COM_FABRIK_MANAGER_LIST_NEW') : FText::_('COM_FABRIK_MANAGER_LIST_EDIT') . ' "' . $this->item->label . '"';
-		JToolBarHelper::title($title, 'list');
+		$title      = $isNew ? Text::_('COM_FABRIK_MANAGER_LIST_NEW') : Text::_('COM_FABRIK_MANAGER_LIST_EDIT') . ' "' . $this->item->label . '"';
+		ToolBarHelper::title($title, 'list');
 
 		if ($isNew)
 		{
 			// For new records, check the create permission.
 			if ($canDo->get('core.create'))
 			{
-				JToolBarHelper::apply('list.apply', 'JTOOLBAR_APPLY');
-				JToolBarHelper::save('list.save', 'JTOOLBAR_SAVE');
-				JToolBarHelper::addNew('list.save2new', 'JTOOLBAR_SAVE_AND_NEW');
+				ToolBarHelper::apply('list.apply', 'JTOOLBAR_APPLY');
+				ToolBarHelper::save('list.save', 'JTOOLBAR_SAVE');
+				ToolBarHelper::addNew('list.save2new', 'JTOOLBAR_SAVE_AND_NEW');
 			}
 
-			JToolBarHelper::cancel('list.cancel', 'JTOOLBAR_CANCEL');
+			ToolBarHelper::cancel('list.cancel', 'JTOOLBAR_CANCEL');
 		}
 		else
 		{
@@ -275,27 +311,27 @@ class FabrikAdminViewList extends JViewLegacy
 				// Since it's an existing record, check the edit permission, or fall back to edit own if the owner.
 				if ($canDo->get('core.edit') || ($canDo->get('core.edit.own') && $this->item->created_by == $userId))
 				{
-					JToolBarHelper::apply('list.apply', 'JTOOLBAR_APPLY');
-					JToolBarHelper::save('list.save', 'JTOOLBAR_SAVE');
+					ToolBarHelper::apply('list.apply', 'JTOOLBAR_APPLY');
+					ToolBarHelper::save('list.save', 'JTOOLBAR_SAVE');
 
 					// We can save this record, but check the create permission to see if we can return to make a new one.
 					if ($canDo->get('core.create'))
 					{
-						JToolBarHelper::addNew('list.save2new', 'JTOOLBAR_SAVE_AND_NEW');
+						ToolBarHelper::addNew('list.save2new', 'JTOOLBAR_SAVE_AND_NEW');
 					}
 				}
 			}
 			// If checked out, we can still save
 			if ($canDo->get('core.create'))
 			{
-				JToolBarHelper::custom('list.save2copy', 'save-copy.png', 'save-copy_f2.png', 'JTOOLBAR_SAVE_AS_COPY', false);
+				ToolBarHelper::custom('list.save2copy', 'save-copy.png', 'save-copy_f2.png', 'JTOOLBAR_SAVE_AS_COPY', false);
 			}
 
-			JToolBarHelper::cancel('list.cancel', 'JTOOLBAR_CLOSE');
+			ToolBarHelper::cancel('list.cancel', 'JTOOLBAR_CLOSE');
 		}
 
-		JToolBarHelper::divider();
-		JToolBarHelper::help('JHELP_COMPONENTS_FABRIK_LISTS_EDIT', false, FText::_('JHELP_COMPONENTS_FABRIK_LISTS_EDIT'));
+		ToolBarHelper::divider();
+		ToolBarHelper::help('JHELP_COMPONENTS_FABRIK_LISTS_EDIT', false, Text::_('JHELP_COMPONENTS_FABRIK_LISTS_EDIT'));
 	}
 
 	/**
@@ -305,13 +341,13 @@ class FabrikAdminViewList extends JViewLegacy
 	 */
 	protected function addLinkedElementsToolbar()
 	{
-		$app   = JFactory::getApplication();
+		$app   = Factory::getApplication();
 		$input = $app->input;
 		$input->set('hidemainmenu', true);
-		JToolBarHelper::title(FText::_('COM_FABRIK_MANAGER_LIST_LINKED_ELEMENTS'), 'list');
-		JToolBarHelper::cancel('list.cancel', 'JTOOLBAR_CLOSE');
-		JToolBarHelper::divider();
-		JToolBarHelper::help('JHELP_COMPONENTS_FABRIK_LISTS_EDIT');
+		ToolBarHelper::title(Text::_('COM_FABRIK_MANAGER_LIST_LINKED_ELEMENTS'), 'list');
+		ToolBarHelper::cancel('list.cancel', 'JTOOLBAR_CLOSE');
+		ToolBarHelper::divider();
+		ToolBarHelper::help('JHELP_COMPONENTS_FABRIK_LISTS_EDIT');
 	}
 
 	/**
@@ -321,13 +357,13 @@ class FabrikAdminViewList extends JViewLegacy
 	 */
 	protected function addConfirmCopyToolbar()
 	{
-		$app   = JFactory::getApplication();
+		$app   = Factory::getApplication();
 		$input = $app->input;
 		$input->set('hidemainmenu', true);
-		JToolBarHelper::title(FText::_('COM_FABRIK_MANAGER_LIST_COPY'), 'list');
-		JToolBarHelper::cancel('list.cancel', 'JTOOLBAR_CLOSE');
-		JToolBarHelper::save('list.doCopy', 'JTOOLBAR_SAVE');
-		JToolBarHelper::divider();
-		JToolBarHelper::help('JHELP_COMPONENTS_FABRIK_LISTS_EDIT');
+		ToolBarHelper::title(Text::_('COM_FABRIK_MANAGER_LIST_COPY'), 'list');
+		ToolBarHelper::cancel('list.cancel', 'JTOOLBAR_CLOSE');
+		ToolBarHelper::save('list.doCopy', 'JTOOLBAR_SAVE');
+		ToolBarHelper::divider();
+		ToolBarHelper::help('JHELP_COMPONENTS_FABRIK_LISTS_EDIT');
 	}
 }

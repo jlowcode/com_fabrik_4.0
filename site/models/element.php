@@ -4,16 +4,35 @@
  *
  * @package     Joomla
  * @subpackage  Fabrik
- * @copyright   Copyright (C) 2005-2020  Media A-Team, Inc. - All rights reserved.
+ * @copyright   Copyright (C) 2005-2023  Media A-Team, Inc. - All rights reserved.
  * @license     GNU/GPL http://www.gnu.org/copyleft/gpl.html
  */
 
 // No direct access
 defined('_JEXEC') or die('Restricted access');
 
+use Joomla\CMS\Application\ApplicationHelper;
+use Joomla\CMS\Table\Table;
+use Joomla\CMS\Language\Text;
+use Joomla\CMS\Component\ComponentHelper;
+use Joomla\CMS\Layout\FileLayout;
+use Joomla\CMS\Layout\LayoutInterface;
+use Joomla\CMS\Plugin\PluginHelper;
+use Joomla\CMS\Filter\InputFilter;
+use Joomla\CMS\Profiler\Profiler;
+use Joomla\CMS\Session\Session;
+use Joomla\CMS\Form\FormHelper;
+use Joomla\CMS\Factory;
+use Joomla\CMS\Object\CMSObject;
+use Joomla\CMS\Filesystem\File;
+use Joomla\CMS\Filesystem\Folder;
 use Fabrik\Helpers\LayoutFile;
 use Joomla\Registry\Registry;
 use Joomla\Utilities\ArrayHelper;
+use Joomla\String\StringHelper;
+use Joomla\CMS\Date\Date;
+use Joomla\CMS\HTML\HTMLHelper;
+use Fabrik\Helpers\Php;
 
 jimport('joomla.application.component.model');
 jimport('joomla.filesystem.file');
@@ -123,7 +142,7 @@ class PlgFabrik_Element extends FabrikPlugin
 	 *
 	 * @var bool
 	 */
-	protected $hasLabel = true;
+	private $hasLabel = true;
 
 	/**
 	 * Does the element contain sub elements e.g checkboxes radiobuttons
@@ -303,7 +322,7 @@ class PlgFabrik_Element extends FabrikPlugin
 	public function __construct(&$subject, $config = array())
 	{
 		parent::__construct($subject, $config);
-		$this->validator = JModelLegacy::getInstance('ElementValidator', 'FabrikFEModel');
+		$this->validator = Factory::getApplication()->bootComponent('com_fabrik')->getMVCFactory()->createModel('ElementValidator', 'FabrikFEModel');
 		$this->validator->setElementModel($this);
 		$this->access = new stdClass;
 	}
@@ -366,7 +385,7 @@ class PlgFabrik_Element extends FabrikPlugin
 	{
 		if (!$this->element || $force)
 		{
-			JTable::addIncludePath(JPATH_ADMINISTRATOR . '/components/com_fabrik/tables');
+			Table::addIncludePath(JPATH_ADMINISTRATOR . '/components/com_fabrik/tables');
 			$row = FabTable::getInstance('Element', 'FabrikTable');
 			$row->load($this->id);
 			$this->element = $row;
@@ -421,7 +440,7 @@ class PlgFabrik_Element extends FabrikPlugin
 	{
 		if (!$this->element)
 		{
-			JTable::addIncludePath(JPATH_ADMINISTRATOR . '/components/com_fabrik/tables');
+			Table::addIncludePath(JPATH_ADMINISTRATOR . '/components/com_fabrik/tables');
 			$this->element = FabTable::getInstance('Element', 'FabrikTable');
 		}
 
@@ -485,7 +504,7 @@ class PlgFabrik_Element extends FabrikPlugin
 
 		if (is_null($this->group) || $this->group->getId() != $groupId)
 		{
-			$model = JModelLegacy::getInstance('Group', 'FabrikFEModel');
+			$model = Factory::getApplication()->bootComponent('com_fabrik')->getMVCFactory()->createModel('Group', 'FabrikFEModel');
 			$model->setId($groupId);
 			$model->getGroup();
 			$this->group = $model;
@@ -543,7 +562,7 @@ class PlgFabrik_Element extends FabrikPlugin
 		{
 			$listModel  = $this->getListModel();
 			$table      = $listModel->getTable();
-			$this->form = JModelLegacy::getInstance('form', 'FabrikFEModel');
+			$this->form = Factory::getApplication()->bootComponent('com_fabrik')->getMVCFactory()->createModel('Form', 'FabrikFEModel');
 			$this->form->setId($table->form_id);
 			$this->form->getForm();
 		}
@@ -1202,13 +1221,13 @@ class PlgFabrik_Element extends FabrikPlugin
 	}
 
 	/**
-	 * Get validation error - run through JText
+	 * Get validation error - run through Text
 	 *
 	 * @return  string
 	 */
 	public function getValidationErr()
 	{
-		return FText::_($this->validationError);
+		return Text::_($this->validationError);
 	}
 
 	/**
@@ -1400,9 +1419,8 @@ class PlgFabrik_Element extends FabrikPlugin
 				else
 				{
 					FabrikHelperHTML::debug($default, 'element eval default:' . $element->label);
-					$default = stripslashes($default);
 					FabrikWorker::clearEval();
-					$default = @eval($default);
+					$default = Php::Eval(['code' => $default, 'vars'=>['data'=>$data]]);
 					FabrikWorker::logEval($default, 'Caught exception on eval of ' . $element->name . ': %s');
 
 					// Test this does stop error
@@ -1414,14 +1432,14 @@ class PlgFabrik_Element extends FabrikPlugin
 			{
 				foreach ($default as &$d)
 				{
-					$d = FText::_($d);
+					$d = Text::_($d);
 				}
 
 				$this->default = $default;
 			}
 			else
 			{
-				$this->default = FText::_($default);
+				$this->default = Text::_($default);
 			}
 		}
 
@@ -1474,7 +1492,7 @@ class PlgFabrik_Element extends FabrikPlugin
 
 		// $$$rob even though $post is passed by reference - by adding in the value
 		// we aren't actually modifying the $_POST var that post was created from
-		$this->app->input->set($key, $data);
+		$this->app->getInput()->set($key, $data);
 	}
 
 	/**
@@ -1507,7 +1525,7 @@ class PlgFabrik_Element extends FabrikPlugin
 	protected function getDefaultOnACL($data, $opts)
 	{
 		// Rob - 31/10/2012 - if readonly and editing an existing record we don't want to show the default label
-		if (!$this->isEditable() && FArrayHelper::getValue($data, 'rowid') != 0)
+		if (!$this->isEditable() && (int)FArrayHelper::getValue($data, 'rowid') != 0)
 		{
 			$opts['use_default'] = false;
 		}
@@ -1548,7 +1566,7 @@ class PlgFabrik_Element extends FabrikPlugin
 	 */
 	public function getValue($data, $repeatCounter = 0, $opts = array())
 	{
-		$input = $this->app->input;
+		$input = $this->app->getInput();
 
 		if (!isset($this->defaults))
 		{
@@ -1573,7 +1591,13 @@ class PlgFabrik_Element extends FabrikPlugin
 			 * isn't a new form.  Probaby needs to be a global option, although not entirely sure what
 			 * we would set it to ...
 			 */
-			$values = FArrayHelper::getValue($data, $name, $default);
+			 //Fix: don't apply the default if a rowid is set and >=1 (= existing record)
+			 if (array_key_exists('rowid',$data) && !empty($data['rowid'])) {
+				 $values = FArrayHelper::getValue($data, $name);
+			 }
+			 else {
+				 $values = FArrayHelper::getValue($data, $name, $default);
+			 }
 
 			// Querystring override (seems on http://fabrikar.com/subscribe/form/22 querystring var was not being set into $data)
 			if (FArrayHelper::getValue($opts, 'use_querystring', false))
@@ -1692,7 +1716,7 @@ class PlgFabrik_Element extends FabrikPlugin
 		$element = $this->getElement();
 		$label   = $params->get('alt_list_heading') == '' ? $element->label : $params->get('alt_list_heading');
 
-		return FText::_($label);
+		return Text::_($label);
 	}
 
 	/**
@@ -1714,23 +1738,25 @@ class PlgFabrik_Element extends FabrikPlugin
 		$displayData->canView    = $this->canView();
 		$displayData->id         = $this->getHTMLId($repeatCounter);
 		$displayData->canUse     = $this->canUse();
-		$displayData->j3         = FabrikWorker::j3();
+//		$displayData->j3         = FabrikWorker::j3();
+		$displayData->j3         = true;
 		$displayData->hidden     = $this->isHidden();
-		$displayData->label      = FText::_($element->label);
+		$displayData->label      = Text::_($element->label);
 		$displayData->altLabel   = $this->getListHeading();
-		$displayData->hasLabel   = $this->get('hasLabel');
-		$displayData->view       = $this->app->input->get('view', 'form');
+		$displayData->hasLabel   = $this->hasLabel;
+		$displayData->view       = $this->app->getInput()->get('view', 'form');
 		$displayData->tip        = $this->tipHtml($model->data);
 		$displayData->tipText    = $this->tipTextAndValidations('form', $model->data);
 		$displayData->rollOver   = $this->isTipped('form', $model->data);
 		$displayData->isEditable = $this->isEditable();
 		$displayData->tipOpts    = $this->tipOpts();
+		$displayData->labelPosition =  $this->group->labelPosition();
 
-		$labelClass = '';
+		$labelClass = 'form-label';
 
 		if ($displayData->canView || $displayData->canUse)
 		{
-			$labelClass = 'fabrikLabel control-label';
+			$labelClass .= ' fabrikLabel ';
 
 			if (empty($displayData->label))
 			{
@@ -1746,7 +1772,8 @@ class PlgFabrik_Element extends FabrikPlugin
 			{
 				if ($displayData->tip !== '')
 				{
-					$labelClass .= ' fabrikTip';
+					//trob: this triggers FabrikJS, use layout components\com_fabrik\layouts\element\fabrik-element-label.php
+					//$labelClass .= ' fabrikTip';
 				}
 			}
 		}
@@ -1895,7 +1922,7 @@ class PlgFabrik_Element extends FabrikPlugin
 		{
 			if ($this->validator->hasValidations())
 			{
-				$opts->heading = FText::_('COM_FABRIK_VALIDATION');
+				$opts->heading = Text::_('COM_FABRIK_VALIDATION');
 			}
 		}
 
@@ -1979,20 +2006,12 @@ class PlgFabrik_Element extends FabrikPlugin
 
 		if ($params->get('tipseval'))
 		{
-			if (FabrikHelperHTML::isDebug())
-			{
-				$res = eval($tip);
-			}
-			else
-			{
-				$res = @eval($tip);
-			}
-
+			$res = Php::Eval(['code' => $tip, 'vars' => ['data'=>$data]]);
 			FabrikWorker::logEval($res, 'Caught exception (%s) on eval of ' . $this->getElement()->name . ' tip: ' . $tip);
 			$tip = $res;
 		}
 
-		$tip = FText::_($tip);
+		$tip = Text::_($tip);
 
 		return $tip;
 	}
@@ -2145,7 +2164,7 @@ class PlgFabrik_Element extends FabrikPlugin
 			$rule->name = $name;
 		}
 
-		$groupModel = JModelLegacy::getInstance('Group', 'FabrikFEModel');
+		$groupModel = Factory::getApplication()->bootComponent('com_fabrik')->getMVCFactory()->createModel('Group', 'FabrikFEModel');
 		$groupModel->setId($groupId);
 		$groupListModel = $groupModel->getListModel();
 
@@ -2154,21 +2173,21 @@ class PlgFabrik_Element extends FabrikPlugin
 		{
 			if ($groupListModel->fieldExists($rule->name, array(), $groupModel))
 			{
-				$this->app->enqueueMessage(FText::_('COM_FABRIK_ELEMENT_NAME_IN_USE'), 'error');
+				$this->app->enqueueMessage(Text::_('COM_FABRIK_ELEMENT_NAME_IN_USE'), 'error');
 
 				return false;
 			}
 		}
 
 		$date = $this->date;
-		$tz   = new DateTimeZone($this->app->get('offset'));
+		$tz   = new \DateTimeZone($this->app->get('offset'));
 		$date->setTimezone($tz);
 		$rule->created         = $date->toSql();
 		$params                = $rule->params == '' ? new stdClass : json_decode($rule->params);
 		$params->parent_linked = 1;
 		$rule->params          = json_encode($params);
 		$rule->parent_id       = $id;
-		$config                = JComponentHelper::getParams('com_fabrik');
+		$config                = ComponentHelper::getParams('com_fabrik');
 
 		if ($config->get('unpublish_clones', false))
 		{
@@ -2194,7 +2213,7 @@ class PlgFabrik_Element extends FabrikPlugin
 		// Copy js events
 		$db    = FabrikWorker::getDbo(true);
 		$query = $db->getQuery(true);
-		$query->select('id')->from('#__{package}_jsactions')->where('element_id = ' . (int) $id);
+		$query->select('id')->from('#__fabrik_jsactions')->where('element_id = ' . (int) $id);
 		$db->setQuery($query);
 		$actions = $db->loadColumn();
 
@@ -2277,11 +2296,11 @@ class PlgFabrik_Element extends FabrikPlugin
 		$element->className      = 'fb_el_' . $element->id;
 		//$element->containerClass = $this->containerClass($element);
 		$element->element        = $this->preRenderElement($model->data, $c);
+		$element->bsClass        = $this->getBsClass();
 
 		// Ensure that view data property contains the same html as the group's element
-
 		$model->tmplData[$elHTMLName] = $element->element;
-		$element->label_raw           = FText::_($this->getRawLabel());
+		$element->label_raw           = Text::_($this->getRawLabel());
 
 		// GetLabel needs to know if the element is editable
 		if ($elementTable->name != $this->_foreignKey)
@@ -2562,7 +2581,7 @@ class PlgFabrik_Element extends FabrikPlugin
 			if (strstr($customLink, '{slug}') && array_key_exists('slug', $data))
 			{
 				$slug       = str_replace(':', '-', $data['slug']);
-				$slug       = JApplicationHelper::stringURLSafe($slug);
+				$slug       = ApplicationHelper::stringURLSafe($slug);
 				$customLink = str_replace('{slug}', $slug, $customLink);
 			}
 
@@ -2674,7 +2693,7 @@ class PlgFabrik_Element extends FabrikPlugin
 	/**
 	 * Helper method to build an input field
 	 *
-	 * @deprecated use JLayouts instead
+	 * @deprecated use LayoutInterfaces instead
 	 *
 	 * @param   string $node     Input type default 'input'
 	 * @param   array  $bits     Input property => value
@@ -2763,37 +2782,6 @@ class PlgFabrik_Element extends FabrikPlugin
 		}
 
 		$class          = array();
-		$bootstrapClass = $params->get('bootstrap_class', '');
-
-		if ($bootstrapClass !== '')
-		{
-			$class[] = $bootstrapClass;
-
-			// Fall back for old 2.5 sites
-			switch ($bootstrapClass)
-			{
-				case 'input-mini':
-					$size = 3;
-					break;
-				case 'input-small':
-					$size = 6;
-					break;
-				case 'input-medium':
-					$size = 10;
-					break;
-				default:
-				case 'input-large':
-					$size = 20;
-					break;
-				case 'input-xlarge':
-					$size = 35;
-					break;
-				case 'input-block-level':
-				case 'input-xxlarge':
-					$size = 60;
-					break;
-			}
-		}
 
 		// Bootstrap 3
 		$class[] = 'form-control';
@@ -2824,7 +2812,7 @@ class PlgFabrik_Element extends FabrikPlugin
 
 		if ($params->get('placeholder', '') !== '')
 		{
-			$bits['placeholder'] = FText::_($params->get('placeholder'));
+			$bits['placeholder'] = Text::_($params->get('placeholder'));
 		}
 
 		if ($params->get('autocomplete', 1) == 0)
@@ -2999,7 +2987,7 @@ class PlgFabrik_Element extends FabrikPlugin
 		if (!isset($this->jsActions))
 		{
 			$query = $this->_db->getQuery();
-			$query->select('*')->from('#__{package}_jsactions')->where('element_id = ' . (int) $this->id);
+			$query->select('*')->from('#__fabrik_jsactions')->where('element_id = ' . (int) $this->id);
 			$this->_db->setQuery($query);
 			$this->jsActions = $this->_db->loadObjectList();
 		}
@@ -3072,7 +3060,7 @@ class PlgFabrik_Element extends FabrikPlugin
 						$jsStr .= $jsControllerKey . ".addElementFX('$triggerid', '$jsAct->js_e_event');\n";
 						self::$fxAdded[$key] = true;
 
-						$f                 = JFilterInput::getInstance();
+						$f                 = InputFilter::getInstance();
 						$post              = $f->clean($_POST, 'array');
 						$jsAct->js_e_value = $w->parseMessageForPlaceHolder(htmlspecialchars_decode($jsAct->js_e_value), $post);
 
@@ -3164,7 +3152,7 @@ class PlgFabrik_Element extends FabrikPlugin
 	 */
 	protected function getDefaultFilterVal($normal = true, $counter = 0)
 	{
-		$input = $this->app->input;
+		$input = $this->app->getInput();
 
 		// Used for update col list plugin - we don't want a default value filled
 		if ($input->get('fabrikIngoreDefaultFilterVal', false))
@@ -3179,7 +3167,7 @@ class PlgFabrik_Element extends FabrikPlugin
 		//$elName = $this->getFilterFullName();
 		$elName = $this->getFullName(true, false);
 		$elid   = $this->getElement()->id;
-		$f      = JFilterInput::getInstance();
+		$f      = InputFilter::getInstance();
 		$data   = $f->clean($_REQUEST, 'array');
 
 		// See if the data is in the request array - can use tablename___elementname=filterval in query string
@@ -3366,7 +3354,7 @@ class PlgFabrik_Element extends FabrikPlugin
 
 			if (!in_array($element->filter_type, array('checkbox', 'multiselect')))
 			{
-				array_unshift($rows, JHTML::_('select.option', '', $this->filterSelectLabel()));
+				array_unshift($rows, HTMLHelper::_('select.option', '', $this->filterSelectLabel()));
 			}
 
 			$this->getFilterDisplayValues($default, $rows);
@@ -3374,7 +3362,7 @@ class PlgFabrik_Element extends FabrikPlugin
 			foreach ($rows as &$r)
 			{
 				// translate
-				$r->text = FText::_($r->text);
+				$r->text = Text::_($r->text);
 
 				// decode first, to decode all hex entities (like &#39;)
 				$r->text = html_entity_decode($r->text, ENT_QUOTES | ENT_XML1, 'UTF-8');
@@ -3468,7 +3456,7 @@ class PlgFabrik_Element extends FabrikPlugin
 		$v    = $element->filter_type === 'multiselect' ? $v . '[]' : $v;
 		$data = 'data-filter-name="' . $this->getFullName(true, false) . '"';
 
-		return JHTML::_('select.genericlist', $rows, $v, 'class="' . $class . '" ' . $size . ' ' . $data, 'value', 'text', $default, $id);
+		return HTMLHelper::_('select.genericlist', $rows, $v, 'class="form-select-sm ' . $class . '" ' . $size . ' ' . $data, 'value', 'text', $default, $id);
 	}
 
 	/**
@@ -3505,8 +3493,8 @@ class PlgFabrik_Element extends FabrikPlugin
 	protected function filterClass()
 	{
 		$params         = $this->getParams();
-		$classes        = array('inputbox fabrik_filter');
-		$bootstrapClass = $params->get('filter_class', 'input-small');
+		$classes        = array('fabrik_filter');
+		$bootstrapClass = trim($this->getBsClass($params->get('filter_class', 'col-sm-4')));
 		$classes[]      = $bootstrapClass;
 		$classes[]      = $params->get('filter_responsive_class', '');
 
@@ -3522,7 +3510,7 @@ class PlgFabrik_Element extends FabrikPlugin
 	 *
 	 * @since 3.0.7
 	 *
-	 * @return  string  Checkbox filter JLayout HTML
+	 * @return  string  Checkbox filter LayoutInterface HTML
 	 */
 	protected function checkboxFilter($rows, $default, $v)
 	{
@@ -3550,7 +3538,7 @@ class PlgFabrik_Element extends FabrikPlugin
 		if ($res === '')
 		{
 			//$basePath = COM_FABRIK_FRONTEND . '/layouts/';
-			//$layout   = new JLayoutFile('list.filter.fabrik-filter-checkbox', $basePath, array('debug' => false, 'component' => 'com_fabrik', 'client' => 'site'));
+			//$layout   = new FileLayout('list.filter.fabrik-filter-checkbox', $basePath, array('debug' => false, 'component' => 'com_fabrik', 'client' => 'site'));
 			//$layout = $this->getLayout('list.filter.fabrik-filter-checkbox');
 			$layout = $this->getListModel()->getLayout('list.filter.fabrik-filter-checkbox');
 			$res      = $layout->render($displayData);
@@ -3590,11 +3578,11 @@ class PlgFabrik_Element extends FabrikPlugin
 
 		if ($type === 'list')
 		{
-			$return[] = '<span class="fabrikFilterRangeLabel">' . FText::_('COM_FABRIK_BETWEEN') . '</span>';
-			$return[] = JHTML::_('select.genericlist', $rows, $v . '[0]', $attributes, 'value', 'text', $def0, $element->name . '_filter_range_0');
+			$return[] = '<span class="fabrikFilterRangeLabel">' . Text::_('COM_FABRIK_BETWEEN') . '</span>';
+			$return[] = HTMLHelper::_('select.genericlist', $rows, $v . '[0]', $attributes, 'value', 'text', $def0, $element->name . '_filter_range_0');
 			$return[] = '<br />';
-			$return[] = '<span class="fabrikFilterRangeLabel">' . FText::_('COM_FABRIK_AND') . '</span>';
-			$return[] = JHTML::_('select.genericlist', $rows, $v . '[1]', $attributes, 'value', 'text', $def1, $element->name . '_filter_range_1');
+			$return[] = '<span class="fabrikFilterRangeLabel">' . Text::_('COM_FABRIK_AND') . '</span>';
+			$return[] = HTMLHelper::_('select.genericlist', $rows, $v . '[1]', $attributes, 'value', 'text', $def1, $element->name . '_filter_range_1');
 		}
 		else
 		{
@@ -3647,7 +3635,7 @@ class PlgFabrik_Element extends FabrikPlugin
 	 *
 	 * @return  array  HTML bits
 	 */
-	protected function autoCompleteFilter($default, $v, $labelValue = null, $normal = true, $container)
+	protected function autoCompleteFilter($default, $v, $labelValue = null, $normal = true, $container = null)
 	{
 		if (is_null($labelValue))
 		{
@@ -3704,7 +3692,7 @@ class PlgFabrik_Element extends FabrikPlugin
 	{
 		$params = $this->getParams();
 
-		return $params->get('filter_required') == 1 ? FText::_('COM_FABRIK_PLEASE_SELECT') : FText::_('COM_FABRIK_FILTER_PLEASE_SELECT');
+		return $params->get('filter_required') == 1 ? Text::_('COM_FABRIK_PLEASE_SELECT') : Text::_('COM_FABRIK_FILTER_PLEASE_SELECT');
 	}
 
 	/**
@@ -3726,7 +3714,7 @@ class PlgFabrik_Element extends FabrikPlugin
 				[value] => ["1"]
 		)
 		and converts them into
-		[0] => JObject Object
+		[0] => CMSObject Object
 		(
 				[_errors:protected] => Array
 				(
@@ -3762,7 +3750,7 @@ class PlgFabrik_Element extends FabrikPlugin
 						if (!in_array($vals2[$jj], $allValues))
 						{
 							$allValues[] = $vals2[$jj];
-							$rows[]      = JHTML::_('select.option', $vals2[$jj], $txt2[$jj]);
+							$rows[]      = HTMLHelper::_('select.option', $vals2[$jj], $txt2[$jj]);
 						}
 					}
 				}
@@ -3843,7 +3831,7 @@ class PlgFabrik_Element extends FabrikPlugin
 			 **/
 			if (!is_array($phpOpts) || !$phpOpts[0] || !is_object($phpOpts[0]) || !isset($phpOpts[0]->value) || !isset($phpOpts[0]->text))
 			{
-				FabrikWorker::logError(sprintf(FText::_('COM_FABRIK_ELEMENT_SUBOPTION_ERROR'), $this->element->name, var_export($phpOpts, true)), 'error');
+				FabrikWorker::logError(sprintf(Text::_('COM_FABRIK_ELEMENT_SUBOPTION_ERROR'), $this->element->name, var_export($phpOpts, true)), 'error');
 
 				return array();
 			}
@@ -3874,7 +3862,7 @@ class PlgFabrik_Element extends FabrikPlugin
 
 		if (!$phpOpts)
 		{
-			// cache, as running FText::() can eat up time with lots of options
+			// cache, as running Text::() can eat up time with lots of options
 			if (!isset($this->subOptionLabels))
 			{
 				$params = $this->getParams();
@@ -3883,7 +3871,7 @@ class PlgFabrik_Element extends FabrikPlugin
 
 				foreach ($opts as &$opt)
 				{
-					$opt = FText::_($opt);
+					$opt = Text::_($opt);
 				}
 
 				$this->subOptionLabels = $opts;
@@ -3894,7 +3882,7 @@ class PlgFabrik_Element extends FabrikPlugin
 		else
 		{
 			/**
-			 * Paul - According to tooltip, $phpOpts should be of form "array(JHTML::_('select.option', '1', 'one'))"
+			 * Paul - According to tooltip, $phpOpts should be of form "array(HTMLHelper::_('select.option', '1', 'one'))"
 			 * This is an array of objects with properties text and value.
 			 * If user has mis-specified this we should tell them.
 			 *
@@ -3902,7 +3890,7 @@ class PlgFabrik_Element extends FabrikPlugin
 			 **/
 			if (!is_array($phpOpts) || !$phpOpts[0] || !is_object($phpOpts[0]) || !isset($phpOpts[0]->value) || !isset($phpOpts[0]->text))
 			{
-				FabrikWorker::logError(sprintf(FText::_('COM_FABRIK_ELEMENT_SUBOPTION_ERROR'), $this->element->name, var_export($phpOpts, true)), 'error');
+				FabrikWorker::logError(sprintf(Text::_('COM_FABRIK_ELEMENT_SUBOPTION_ERROR'), $this->element->name, var_export($phpOpts, true)), 'error');
 
 				return array();
 			}
@@ -3917,7 +3905,7 @@ class PlgFabrik_Element extends FabrikPlugin
 
 		foreach ($opts as &$opt)
 		{
-			$opt = FText::_($opt);
+			$opt = Text::_($opt);
 		}
 
 		return $opts;
@@ -3953,7 +3941,7 @@ class PlgFabrik_Element extends FabrikPlugin
 	 *
 	 * @since  3.0.7
 	 *
-	 * @return mixed  false if no, otherwise needs to return array of JHTML::options
+	 * @return mixed  false if no, otherwise needs to return array of HTMLHelperoptions
 	 */
 	protected function getPhpOptions($data = array())
 	{
@@ -3973,18 +3961,8 @@ class PlgFabrik_Element extends FabrikPlugin
 				return $this->phpOptions[$key];
 			}
 
-			/* Clear any current errors, if anything happened before it will get picked up by the loEval and likely has nothing to do with the eval */
-			error_clear_last();
-			
-			if (FabrikHelperHTML::isDebug())
-			{
-				$res = eval($pop);
-			}
-			else
-			{
-				$res = @eval($pop);
-			}
-
+			FabrikWorker::clearEval();
+			$res = Php::Eval(['code' => $pop, 'vars' => ["data" => $data]]);
 			FabrikWorker::logEval($res, 'Eval exception : ' . $this->element->name . '::getPhpOptions() : ' . $pop . ' : %s');
 
 			$this->phpOptions[$key] = $res;
@@ -4026,7 +4004,7 @@ class PlgFabrik_Element extends FabrikPlugin
 	 */
 	protected function getFilterBuildMethod()
 	{
-		$usersConfig = JComponentHelper::getParams('com_fabrik');
+		$usersConfig = ComponentHelper::getParams('com_fabrik');
 		$params      = $this->getParams();
 		$filterBuild = $params->get('filter_build_method', 0);
 
@@ -4093,7 +4071,7 @@ class PlgFabrik_Element extends FabrikPlugin
 	protected function filterValueList_Exact($normal, $tableName = '', $label = '', $id = '', $incJoin = true)
 	{
 		$listModel = $this->getListModel();
-		$fbConfig  = JComponentHelper::getParams('com_fabrik');
+		$fbConfig  = ComponentHelper::getParams('com_fabrik');
 		$fabrikDb  = $listModel->getDb();
 		$table     = $listModel->getTable();
 		$element   = $this->getElement();
@@ -4190,13 +4168,13 @@ class PlgFabrik_Element extends FabrikPlugin
 		// Apply element where/order by statements to the filter (e.g. dbjoins 'Joins where and/or order by statement')
 		$elementWhere = $this->buildQueryWhere(array(), true, null, array('mode' => 'filter'));
 
-		if (JString::stristr($sql, 'WHERE ') && JString::stristr($elementWhere, 'WHERE '))
+		if (StringHelper::stristr($sql, 'WHERE ') && StringHelper::stristr($elementWhere??'', 'WHERE '))
 		{
 			// $$$ hugh - only replace the WHERE with AND if it's the first word, so we don't munge sub-queries
-			// $elementWhere = JString::str_ireplace('WHERE ', 'AND ', $elementWhere);
+			// $elementWhere = StringHelper::str_ireplace('WHERE ', 'AND ', $elementWhere);
 			$elementWhere = preg_replace("#^(\s*)(WHERE)(.*)#i", "$1AND$3", $elementWhere);
 		}
-		else if (JString::stristr($sql, 'WHERE ') && !empty($elementWhere) && !JString::stristr($elementWhere, 'WHERE '))
+		else if (StringHelper::stristr($sql, 'WHERE ') && !empty($elementWhere) && !StringHelper::stristr($elementWhere, 'WHERE '))
 		{
 			// if we have a WHERE in the main query, and the element clause isn't empty but doesn't start with WHERE ...
 			$elementWhere = 'AND ' . $elementWhere;
@@ -4239,7 +4217,7 @@ class PlgFabrik_Element extends FabrikPlugin
 				$return[] = $this->getROElement($d);
 			}
 
-			return FText::_('COM_FABRIK_BETWEEN') . '<br />' . implode('<br />' . FText::_('COM_FABRIK_AND') . "<br />", $return);
+			return Text::_('COM_FABRIK_BETWEEN') . '<br />' . implode('<br />' . Text::_('COM_FABRIK_AND') . "<br />", $return);
 		}
 
 		return $this->getROElement($data);
@@ -4285,7 +4263,7 @@ class PlgFabrik_Element extends FabrikPlugin
 
 		for ($i = 0; $i < count($values); $i++)
 		{
-			$return[] = JHTML::_('select.option', $values[$i], $labels[$i]);
+			$return[] = HTMLHelper::_('select.option', $values[$i], $labels[$i]);
 		}
 
 		return $return;
@@ -4401,7 +4379,7 @@ class PlgFabrik_Element extends FabrikPlugin
 		$element  = $this->getElement();
 		$type     = $element->filter_type;
 		$name     = $this->getFullName(true, false);
-		$qsFilter = $this->app->input->get($name, array(), 'array');
+		$qsFilter = $this->app->getInput()->get($name, array(), 'array');
 		$qsValues = FArrayHelper::getValue($qsFilter, 'value', array());
 
 		if (is_array($qsValues) && count($qsValues) > 1)
@@ -4547,7 +4525,7 @@ class PlgFabrik_Element extends FabrikPlugin
 	 */
 	public function getFilterValue($value, $condition, $eval)
 	{
-		$condition = JString::strtolower($condition);
+		$condition = StringHelper::strtolower($condition);
 		$this->escapeQueryValue($condition, $value);
 		$db = FabrikWorker::getDbo();
 
@@ -4663,8 +4641,8 @@ class PlgFabrik_Element extends FabrikPlugin
 			if ($eval == FABRIKFILTER_NOQUOTES)
 			{
 				// $$$ hugh - darn, this is stripping the ' of the end of things like "select & from foo where bar = '123'"
-				$value = JString::ltrim($value, "'");
-				$value = JString::rtrim($value, "'");
+				$value = StringHelper::ltrim($value, "'");
+				$value = StringHelper::rtrim($value, "'");
 			}
 
 			if ($condition == '=' && $value == "'_null_'")
@@ -4791,7 +4769,7 @@ class PlgFabrik_Element extends FabrikPlugin
 	{
 		$fieldDesc = $this->getFieldDescription();
 
-		if (JString::stristr($fieldDesc, 'INT') || $this->getElement()->filter_exact_match == 1)
+		if (StringHelper::stristr($fieldDesc, 'INT') || $this->getElement()->filter_exact_match == 1)
 		{
 			return '=';
 		}
@@ -4848,7 +4826,7 @@ class PlgFabrik_Element extends FabrikPlugin
 		$db    = FabrikWorker::getDbo(true);
 		$query = $db->getQuery(true);
 		$id    = (int) $this->getElement()->id;
-		$query->delete()->from('#__{package}_jsactions')->where('element_id =' . $id);
+		$query->delete()->from('#__fabrik_jsactions')->where('element_id =' . $id);
 		$db->setQuery($query);
 
 		try
@@ -5144,7 +5122,7 @@ class PlgFabrik_Element extends FabrikPlugin
 	protected function calcGroupBys($splitParam, $listModel)
 	{
 		$pluginManager  = FabrikWorker::getPluginManager();
-		$requestGroupBy = $this->app->input->get('group_by', '');
+		$requestGroupBy = $this->app->getInput()->get('group_by', '');
 		$groupByLabels  = array();
 
 		if ($requestGroupBy == '0')
@@ -5251,7 +5229,7 @@ class PlgFabrik_Element extends FabrikPlugin
 		$splitSum = $params->get('sum_split', '');
 		list($groupBys, $groupByLabels) = $this->calcGroupBys('sum_split', $listModel);
 		$split     = empty($groupBys) ? false : true;
-		$calcLabel = $params->get('sum_label', FText::_('COM_FABRIK_SUM'));
+		$calcLabel = $params->get('sum_label', Text::_('COM_FABRIK_SUM'));
 
 		if ($split)
 		{
@@ -5271,7 +5249,7 @@ class PlgFabrik_Element extends FabrikPlugin
 
 			$uberObject          = new stdClass;
 			$uberObject->value   = $uberTotal;
-			$uberObject->label   = FText::_('COM_FABRIK_TOTAL');
+			$uberObject->label   = Text::_('COM_FABRIK_TOTAL');
 			$uberObject->class   = 'splittotal';
 			$uberObject->special = true;
 			$results2[]          = $uberObject;
@@ -5306,7 +5284,7 @@ class PlgFabrik_Element extends FabrikPlugin
 		$params    = $this->getParams();
 		$splitAvg  = $params->get('avg_split', '');
 		$item      = $listModel->getTable();
-		$calcLabel = $params->get('avg_label', FText::_('COM_FABRIK_AVERAGE'));
+		$calcLabel = $params->get('avg_label', Text::_('COM_FABRIK_AVERAGE'));
 		list($groupBys, $groupByLabels) = $this->calcGroupBys('avg_split', $listModel);
 
 		$split = empty($groupBys) ? false : true;
@@ -5329,7 +5307,7 @@ class PlgFabrik_Element extends FabrikPlugin
 
 			$uberObject          = new stdClass;
 			$uberObject->value   = $uberTotal / count($results2);
-			$uberObject->label   = FText::_('COM_FABRIK_AVERAGE');
+			$uberObject->label   = Text::_('COM_FABRIK_AVERAGE');
 			$uberObject->special = true;
 			$uberObject->class   = 'splittotal';
 			$results2[]          = $uberObject;
@@ -5386,7 +5364,7 @@ class PlgFabrik_Element extends FabrikPlugin
 		$split     = empty($groupBys) ? false : true;
 		$format    = $this->getFormatString();
 		$res       = '';
-		$calcLabel = $params->get('median_label', FText::_('COM_FABRIK_MEDIAN'));
+		$calcLabel = $params->get('median_label', Text::_('COM_FABRIK_MEDIAN'));
 		$results   = array();
 
 		if ($split)
@@ -5440,7 +5418,7 @@ class PlgFabrik_Element extends FabrikPlugin
 		$item       = $listModel->getTable();
 		$element    = $this->getElement();
 		$params     = $this->getParams();
-		$calcLabel  = $params->get('count_label', FText::_('COM_FABRIK_COUNT'));
+		$calcLabel  = $params->get('count_label', Text::_('COM_FABRIK_COUNT'));
 		$splitCount = $params->get('count_split', '');
 
 		list($groupBys, $groupByLabels) = $this->calcGroupBys('count_split', $listModel);
@@ -5473,11 +5451,11 @@ class PlgFabrik_Element extends FabrikPlugin
 
 			$uberObject                            = new stdClass;
 			$uberObject->value                     = count($results2) == 0 ? 0 : $uberTotal;
-			$uberObject->label                     = FText::_('COM_FABRIK_TOTAL');
+			$uberObject->label                     = Text::_('COM_FABRIK_TOTAL');
 			$uberObject->class                     = 'splittotal';
 			$uberObject->special                   = true;
 			$results                               = $this->formatCalcSplitLabels($results2, $plugin, 'count');
-			$results[FText::_('COM_FABRIK_TOTAL')] = $uberObject;
+			$results[Text::_('COM_FABRIK_TOTAL')] = $uberObject;
 		}
 		else
 		{
@@ -5508,7 +5486,7 @@ class PlgFabrik_Element extends FabrikPlugin
 		$item        = $listModel->getTable();
 		$splitCustom = $params->get('custom_calc_split', '');
 		$split       = $splitCustom == '' ? false : true;
-		$calcLabel   = $params->get('custom_calc_label', FText::_('COM_FABRIK_CUSTOM'));
+		$calcLabel   = $params->get('custom_calc_label', Text::_('COM_FABRIK_CUSTOM'));
 
 		if ($split)
 		{
@@ -5655,7 +5633,7 @@ class PlgFabrik_Element extends FabrikPlugin
 					if (!empty($custom_calc_php))
 					{
 						FabrikWorker::clearEval();
-						$o->value = @eval((string) stripslashes($custom_calc_php));
+						$o->value = Php::Eval(['code' => $custom_calc_php]);
 						FabrikWorker::logEval($custom_calc_php, 'Caught exception on eval of ' . $name . ': %s');
 					}
 					else
@@ -5931,7 +5909,7 @@ class PlgFabrik_Element extends FabrikPlugin
 		$p   = $this->getElement()->plugin;
 		$src = 'plugins/fabrik_element/' . $p . '/list-' . $p . '.js';
 
-		if (JFile::exists(JPATH_SITE . '/' . $src))
+		if (File::exists(JPATH_SITE . '/' . $src))
 		{
 			$className = 'Fb' . ucfirst($p) .'List';
 			$srcs[$className] = $src;
@@ -5941,7 +5919,7 @@ class PlgFabrik_Element extends FabrikPlugin
 	/**
 	 * Can be overwritten in plugin classes
 	 * e.g. if changing from db join to field we need to remove the join
-	 * entry from the #__{package}_joins table
+	 * entry from the #__fabrik_joins table
 	 *
 	 * @param   object &$row that is going to be updated
 	 *
@@ -5949,7 +5927,8 @@ class PlgFabrik_Element extends FabrikPlugin
 	 */
 	public function beforeSave(&$row)
 	{
-		$safeHtmlFilter = JFilterInput::getInstance(null, null, 1, 1);
+//		$safeHtmlFilter = InputFilter::getInstance(null, null, 1, 1);
+		$safeHtmlFilter = InputFilter::getInstance(array(), array(), 1, 1);
 		$post           = $safeHtmlFilter->clean($_POST, 'array');
 		$post           = $post['jform'];
 		$dbjoinEl       = (is_subclass_of($this, 'PlgFabrik_ElementDatabasejoin') || get_class($this) == 'PlgFabrik_ElementDatabasejoin');
@@ -5981,12 +5960,12 @@ class PlgFabrik_Element extends FabrikPlugin
 
 		$db    = FabrikWorker::getDbo(true);
 		$query = $db->getQuery(true);
-		$query->delete('#__{package}_joins')->where('element_id = ' . $id);
+		$query->delete('#__fabrik_joins')->where('element_id = ' . $id);
 		$db->setQuery($query);
 		$db->execute();
 
 		$query->clear();
-		$query->select('j.id AS jid')->from('#__{package}_elements AS e')->join('INNER', ' #__{package}_joins AS j ON j.element_id = e.id')
+		$query->select('j.id AS jid')->from('#__fabrik_elements AS e')->join('INNER', ' #__fabrik_joins AS j ON j.element_id = e.id')
 			->where('e.parent_id = ' . $id);
 		$db->setQuery($query);
 		$join_ids = $db->loadColumn();
@@ -5994,7 +5973,7 @@ class PlgFabrik_Element extends FabrikPlugin
 		if (!empty($join_ids))
 		{
 			$query->clear();
-			$query->delete('#__{package}_joins')->where('id IN (' . implode(',', $join_ids) . ')');
+			$query->delete('#__fabrik_joins')->where('id IN (' . implode(',', $join_ids) . ')');
 			$db->setQuery($query);
 			$db->execute();
 		}
@@ -6092,8 +6071,8 @@ class PlgFabrik_Element extends FabrikPlugin
 	public function ajax_loadTableFields()
 	{
 		$db             = FabrikWorker::getDbo();
-		$listModel      = JModelLegacy::getInstance('List', 'FabrikFEModel');
-		$input          = $this->app->input;
+		$listModel      = Factory::getApplication()->bootComponent('com_fabrik')->getMVCFactory()->createModel('List', 'FabrikFEModel');
+		$input          = $this->app->getInput();
 		$this->_cnnId   = $input->getInt('cid', 0);
 		$tbl            = $db->qn($input->get('table'));
 		$fieldDropDown  = $listModel->getFieldsDropDown($this->_cnnId, $tbl, '-', false, 'params[join_val_column]');
@@ -6125,7 +6104,7 @@ class PlgFabrik_Element extends FabrikPlugin
 	public function getFieldDescription()
 	{
 		$element = $this->getPluginName();
-		$plugin  = JPluginHelper::getPlugin('fabrik_element', $element);
+		$plugin  = PluginHelper::getPlugin('fabrik_element', $element);
 		$fParams = new Registry($plugin->params);
 		$p       = $this->getParams();
 
@@ -6239,7 +6218,7 @@ class PlgFabrik_Element extends FabrikPlugin
 	 */
 	public function renderListData($data, stdClass &$thisRow, $opts = array())
 	{
-        $profiler = JProfiler::getInstance('Application');
+        $profiler = Profiler::getInstance('Application');
         JDEBUG ? $profiler->mark("renderListData: parent: start: {$this->element->name}") : null;
 
         $params    = $this->getParams();
@@ -6299,7 +6278,7 @@ class PlgFabrik_Element extends FabrikPlugin
 	 */
 	protected function renderListDataFinal($data, $opts)
 	{
-        $profiler = JProfiler::getInstance('Application');
+        $profiler = Profiler::getInstance('Application');
         JDEBUG ? $profiler->mark("renderListDataFinal: parent: start: {$this->element->name}") : null;
 
         if (is_array($data))
@@ -6350,7 +6329,7 @@ class PlgFabrik_Element extends FabrikPlugin
 		if ($res === '')
 		{
 			$basePath = COM_FABRIK_FRONTEND . '/layouts/';
-			$layout   = new JLayoutFile('fabrik-element-list', $basePath, array('debug' => false, 'component' => 'com_fabrik', 'client' => 'site'));
+			$layout   = new FileLayout('fabrik-element-list', $basePath, array('debug' => false, 'component' => 'com_fabrik', 'client' => 'site'));
 			$res      = $layout->render($displayData);
 		}
 
@@ -6419,10 +6398,10 @@ class PlgFabrik_Element extends FabrikPlugin
 		}
 
 		$basePath                        = COM_FABRIK_BASE . '/components/com_fabrik/layouts/element';
-		$layout                          = new JLayoutFile('fabrik-element-addoptions', $basePath, array('debug' => false, 'component' => 'com_fabrik', 'client' => 'site'));
+		$layout                          = new FileLayout('fabrik-element-addoptions', $basePath, array('debug' => false, 'component' => 'com_fabrik', 'client' => 'site'));
 		$displayData                     = new stdClass;
 		$displayData->id                 = $this->getHTMLId($repeatCounter);
-		$displayData->add_image          = FabrikHelperHTML::image('plus', 'form', @$this->tmpl, array('alt' => FText::_('COM_FABRIK_ADD')));
+		$displayData->add_image          = FabrikHelperHTML::image('plus', 'form', @$this->tmpl, array('alt' => Text::_('COM_FABRIK_ADD')));
 		$displayData->allowadd_onlylabel = $params->get('allowadd-onlylabel');
 		$displayData->savenewadditions   = $params->get('savenewadditions');
 		$displayData->onlylabel          = $onlylabel;
@@ -6519,7 +6498,7 @@ class PlgFabrik_Element extends FabrikPlugin
 		}
 
 		$query           = $db->getQuery(true);
-		$query->update('#__{package}_elements')->set('params = ' . $db->q($element->params))->where('id = ' . (int) $element->id);
+		$query->update('#__fabrik_elements')->set('params = ' . $db->q($element->params))->where('id = ' . (int) $element->id);
 		$db->setQuery($query);
 		$res = $db->execute();
 
@@ -6691,9 +6670,9 @@ class PlgFabrik_Element extends FabrikPlugin
 	 */
 	public function onAjax_getFolders()
 	{
-		$input   = $this->app->input;
+		$input   = $this->app->getInput();
 		$rDir    = $input->getString('dir');
-		$folders = JFolder::folders($rDir);
+		$folders = Folder::folders($rDir);
 
 		if ($folders === false)
 		{
@@ -6866,23 +6845,23 @@ class PlgFabrik_Element extends FabrikPlugin
 	public function onAutocomplete_options()
 	{
 		// Needed for ajax update (since we are calling this method via dispatcher element is not set)
-		$input = $this->app->input;
+		$input = $this->app->getInput();
 		$o         = new stdClass;
 		$formModel = $this->getFormModel();
 		$this->setId($input->getInt('element_id'));
 		$this->loadMeForAjax();
 
 		// Check for request forgeries
-		if ($formModel->spoofCheck() && !JSession::checkToken('request'))
+		if ($formModel->spoofCheck() && !Session::checkToken('request'))
 		{
-			$o->error = FText::_('JERROR_ALERTNOAUTHOR');
+			$o->error = Text::_('JERROR_ALERTNOAUTHOR');
 			echo json_encode($o);
 
 			return;
 		}
 
 		if (!$this->canUse()) {
-			$o->error = FText::_('JERROR_ALERTNOAUTHOR');
+			$o->error = Text::_('JERROR_ALERTNOAUTHOR');
 			echo json_encode($o);
 
 			return;
@@ -6897,7 +6876,7 @@ class PlgFabrik_Element extends FabrikPlugin
 		}
 		else
 		{
-			echo $cache->call(array(get_class($this), 'cacheAutoCompleteOptions'), $this, $search);
+			echo $cache->get(array(get_class($this), 'cacheAutoCompleteOptions'), [$this, $search]);
 		}
 	}
 
@@ -7003,7 +6982,7 @@ class PlgFabrik_Element extends FabrikPlugin
 
 				if ($where != '')
 				{
-					$where = JString::substr($where, 5, JString::strlen($where) - 5);
+					$where = StringHelper::substr($where, 5, StringHelper::strlen($where) - 5);
 
 					if (!in_array($where, $whereArray))
 					{
@@ -7082,7 +7061,7 @@ class PlgFabrik_Element extends FabrikPlugin
 	{
 		$params = $this->getParams();
 
-		if (!$params->get('field_use_number_format', false))
+		if (!$params->get('field_use_number_format', false) || empty($data))
 		{
 			return $data;
 		}
@@ -7115,7 +7094,7 @@ class PlgFabrik_Element extends FabrikPlugin
 	{
 		$params = $this->getParams();
 
-		if (!$params->get('field_use_number_format', false))
+		if (!$params->get('field_use_number_format', false) || is_null($val))
 		{
 			return $val;
 		}
@@ -7167,7 +7146,7 @@ class PlgFabrik_Element extends FabrikPlugin
 
 		$db    = FabrikWorker::getDbo(true);
 		$query = $db->getQuery(true);
-		$query->select('id')->from('#__{package}_elements')->where('parent_id = ' . (int) $id);
+		$query->select('id')->from('#__fabrik_elements')->where('parent_id = ' . (int) $id);
 		$db->setQuery($query);
 		$kids     = $db->loadObjectList();
 		$all_kids = array();
@@ -7266,7 +7245,7 @@ class PlgFabrik_Element extends FabrikPlugin
 	{
 		if (is_null($this->joinModel))
 		{
-			$this->joinModel = JModelLegacy::getInstance('Join', 'FabrikFEModel');
+			$this->joinModel = Factory::getApplication()->bootComponent('com_fabrik')->getMVCFactory()->createModel('Join', 'FabrikFEModel');
 
 			// $$$ rob ensure we load the join by asking for the parents id, but then ensure we set the element id back to this elements id
 			$this->joinModel->getJoinFromKey('element_id', $this->getParent()->id);
@@ -7293,14 +7272,14 @@ class PlgFabrik_Element extends FabrikPlugin
 		$query = $db->getQuery(true);
 
 		// Update linked lists id.
-		$query->update('#__{package}_joins')->set('table_key = ' . $db->q($newName))
+		$query->update('#__fabrik_joins')->set('table_key = ' . $db->q($newName))
 			->where('join_from_table = ' . $db->q($item->db_table_name))->where('table_key = ' . $db->q($oldName));
 		$db->setQuery($query);
 		$db->execute();
 
 		// Update join pk parameter
 		$query->clear();
-		$query->select('id')->from('#__{package}_joins')->where('table_join = ' . $db->q($item->db_table_name));
+		$query->select('id')->from('#__fabrik_joins')->where('table_join = ' . $db->q($item->db_table_name));
 		$db->setQuery($query);
 		$ids    = $db->loadColumn();
 		$testPk = $db->qn($item->db_table_name . '.' . $oldName);
@@ -7453,12 +7432,12 @@ class PlgFabrik_Element extends FabrikPlugin
 	 */
 	protected function loadMeForAjax()
 	{
-		$input      = $this->app->input;
-		$this->form = JModelLegacy::getInstance('form', 'FabrikFEModel');
+		$input      = $this->app->getInput();
+		$this->form = Factory::getApplication()->bootComponent('com_fabrik')->getMVCFactory()->createModel('Form', 'FabrikFEModel');
 		$formId     = $input->getInt('formid');
 		$this->form->setId($formId);
 		$this->setId($input->getInt('element_id'));
-		$this->list = JModelLegacy::getInstance('list', 'FabrikFEModel');
+		$this->list = Factory::getApplication()->bootComponent('com_fabrik')->getMVCFactory()->createModel('List', 'FabrikFEModel');
 		$this->list->loadFromFormId($formId);
 		$table          = $this->list->getTable(true);
 		$table->form_id = $formId;
@@ -7761,7 +7740,7 @@ class PlgFabrik_Element extends FabrikPlugin
 
 		// I set this to raw for cdd.
 		$name       = $this->getFullName(true, false);
-		$ajaxSubmit = $this->app->input->get('fabrik_ajax');
+		$ajaxSubmit = $this->app->getInput()->get('fabrik_ajax');
 		$rawName    = $name . '_raw';
 		$shortName  = $this->getElement()->name;
 
@@ -8037,7 +8016,7 @@ class PlgFabrik_Element extends FabrikPlugin
 	 */
 	public function getAdvancedSelectClass()
 	{
-		$fbConfig       = JComponentHelper::getParams('com_fabrik');
+		$fbConfig       = ComponentHelper::getParams('com_fabrik');
 		$params         = $this->getParams();
 		$advancedClass  = '';
 		$globalAdvanced = (int) $fbConfig->get('advanced_behavior', '0');
@@ -8051,7 +8030,7 @@ class PlgFabrik_Element extends FabrikPlugin
 	}
 
 	/**
-	 * Get the element's JLayout file
+	 * Get the element's LayoutInterface file
 	 * Its actually an instance of LayoutFile which inverses the ordering added include paths.
 	 * In LayoutFile the addedPath takes precedence over the default paths, which makes more sense!
 	 *
@@ -8087,7 +8066,7 @@ class PlgFabrik_Element extends FabrikPlugin
 	}
 
 	/**
-	 * Get the JLayout base path for the plugin's layout files.
+	 * Get the LayoutInterface base path for the plugin's layout files.
 	 *
 	 * @return string
 	 */
@@ -8112,7 +8091,7 @@ class PlgFabrik_Element extends FabrikPlugin
 			$name = array_pop($name);
 		}
 
-		return strtolower(JString::str_ireplace('PlgFabrik_Element', '', $name));
+		return strtolower(StringHelper::str_ireplace('PlgFabrik_Element', '', $name));
 	}
 
 	/**
@@ -8130,10 +8109,10 @@ class PlgFabrik_Element extends FabrikPlugin
 	{
 		if (!is_null($path))
 		{
-			JFormHelper::addRulePath($path);
+			FormHelper::addRulePath($path);
 		}
 
-		$rule = JFormHelper::loadRuleType($type, true);
+		$rule = FormHelper::loadRuleType($type, true);
 		$xml  = new SimpleXMLElement('<xml></xml>');
 		$this->lang->load('com_users');
 
@@ -8189,7 +8168,7 @@ class PlgFabrik_Element extends FabrikPlugin
 	 */
 	public function isPublished()
 	{
-		return $this->getElement()->published === '1';
+		return $this->getElement()->published === 1;
 	}
 
 	/**
@@ -8197,7 +8176,7 @@ class PlgFabrik_Element extends FabrikPlugin
 	 *
 	 * @return void
 	 */
-	public function jsJLayouts()
+	public function jsJLayout()
 	{
 	}
 
@@ -8300,5 +8279,36 @@ class PlgFabrik_Element extends FabrikPlugin
 				}
 			}
 		}
+	}
+
+	/* Convert the older BS2 & BS3 column classes to BS5
+	 *
+	 * @param   string $oldClass class to convert
+	 *
+	 * @return   string BS5 class
+	*/
+	protected function getBsClass($oldClass='') {
+		$classList = [
+			'input-mini' 	=> 'col-sm-2',
+			'input-small' 	=> 'col-sm-4',
+			'input-medium' 	=> 'col-sm-6',
+			'input-large' 	=> 'col-sm-8',
+			'input-xlarge' 	=> 'col-sm-10',
+			'input-xxlarge' => 'col-sm-12',
+			'input-block-level' => 'col-sm-12',
+		];
+
+		// Some plugins have no format setting, but they should. If not then we use col-sm-10, 2 grids are used for the label
+		$bsClass = $oldClass == '' ? $this->getParams()->get('bootstrap_class', 'col-sm-10') : $oldClass;
+
+		// check for old col-sm and span classes
+		$bsClass = str_replace(['col-md-', 'span'], 'col-sm-', $bsClass);
+
+		if (array_key_exists($bsClass, $classList)) {
+			$bsClass = $classList[$bsClass];
+		}
+		if (strlen($bsClass) > 0) $bsClass = ' '.$bsClass;
+
+		return $bsClass;
 	}
 }

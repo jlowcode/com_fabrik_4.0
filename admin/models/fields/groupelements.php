@@ -11,7 +11,13 @@
 // No direct access
 defined('_JEXEC') or die('Restricted access');
 
-JFormHelper::loadFieldClass('groupedlist');
+use Joomla\CMS\Language\Text;
+use Joomla\CMS\Form\FormHelper;
+use Joomla\CMS\Factory;
+use Joomla\CMS\HTML\HTMLHelper;
+use Joomla\CMS\Form\Field\GroupedlistField;
+
+FormHelper::loadFieldClass('groupedlist');
 
 /**
  * Renders a list of fabrik lists or db tables
@@ -20,7 +26,7 @@ JFormHelper::loadFieldClass('groupedlist');
  * @subpackage  Form
  * @since       3.1
  */
-class JFormFieldGroupElements extends JFormFieldGroupedList
+class JFormFieldGroupElements extends GroupedlistField
 {
 	/**
 	 * The form field type.
@@ -37,23 +43,23 @@ class JFormFieldGroupElements extends JFormFieldGroupedList
 	 */
 	protected function getGroups()
 	{
-		$app = JFactory::getApplication();
+		$app = Factory::getApplication();
 		$input = $app->input;
 		$db = FabrikWorker::getDbo(true);
 
 		$query = $db->getQuery(true);
 		$query->select('form_id')
-		->from($db->quoteName('#__{package}_formgroup') . ' AS fg')
-		->join('LEFT', '#__{package}_elements AS e ON e.group_id = fg.group_id')
+		->from($db->quoteName('#__fabrik_formgroup') . ' AS fg')
+		->join('LEFT', '#__fabrik_elements AS e ON e.group_id = fg.group_id')
 		->where('e.id = ' . $input->getInt('elementid'));
 		$db->setQuery($query);
 		$formId = $db->loadResult();
-		$formModel = JModelLegacy::getInstance('Form', 'FabrikFEModel');
+		$formModel = Factory::getApplication()->bootComponent('com_fabrik')->getMVCFactory()->createModel('Form', 'FabrikFEModel');
 		$formModel->setId($formId);
 
 		$rows = array();
-		$rows[FText::_('COM_FABRIK_GROUPS')] = array();
-		$rows[FText::_('COM_FABRIK_ELEMENTS')] = array();
+		$rows[Text::_('COM_FABRIK_GROUPS')] = array();
+		$rows[Text::_('COM_FABRIK_ELEMENTS')] = array();
 
 		// Get available element types
 		$groups = $formModel->getGroupsHiarachy();
@@ -63,19 +69,19 @@ class JFormFieldGroupElements extends JFormFieldGroupedList
 			$group = $groupModel->getGroup();
 			$label = $group->name;
 			$value = 'fabrik_trigger_group_group' . $group->id;
-			$rows[FText::_('COM_FABRIK_GROUPS')][] = JHTML::_('select.option', $value, $label);
+			$rows[Text::_('COM_FABRIK_GROUPS')][] = HTMLHelper::_('select.option', $value, $label);
 			$elementModels = $groupModel->getMyElements();
 
 			foreach ($elementModels as $elementModel)
 			{
 				$label = $elementModel->getFullName(false, false);
 				$value = 'fabrik_trigger_element_' . $elementModel->getFullName(true, false);
-				$rows[FText::_('COM_FABRIK_ELEMENTS')][] = JHTML::_('select.option', $value, $label);
+				$rows[Text::_('COM_FABRIK_ELEMENTS')][] = HTMLHelper::_('select.option', $value, $label);
 			}
 		}
 
 		reset($rows);
-		asort($rows[FText::_('COM_FABRIK_ELEMENTS')]);
+		asort($rows[Text::_('COM_FABRIK_ELEMENTS')]);
 
 		return $rows;
 	}

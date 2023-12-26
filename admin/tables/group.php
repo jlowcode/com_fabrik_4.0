@@ -11,6 +11,9 @@
 // No direct access
 defined('_JEXEC') or die('Restricted access');
 
+use Joomla\CMS\Language\Text;
+use Joomla\CMS\Table\Table;
+
 require_once JPATH_ADMINISTRATOR . '/components/com_fabrik/tables/fabtable.php';
 
 /**
@@ -46,7 +49,7 @@ class FabrikTableGroup extends FabTable
 	 */
 	public function __construct(&$db)
 	{
-		parent::__construct('#__{package}_groups', 'id', $db);
+		parent::__construct('#__fabrik_groups', 'id', $db);
 	}
 
 	/**
@@ -58,7 +61,7 @@ class FabrikTableGroup extends FabTable
 	{
 		if (trim($this->name) == '')
 		{
-			$this->_error = FText::_("YOUR GROUP MUST CONTAIN A NAME");
+			$this->_error = Text::_("YOUR GROUP MUST CONTAIN A NAME");
 
 			return false;
 		}
@@ -68,7 +71,7 @@ class FabrikTableGroup extends FabTable
 
 	/**
 	 * Method to load a row from the database by primary key and bind the fields
-	 * to the JTable instance properties.
+	 * to the Table instance properties.
 	 *
 	 * @param   mixed    $keys   An optional primary key value to load the row by, or an array of fields to match.  If not
 	 * set the instance property value is used.
@@ -105,12 +108,12 @@ class FabrikTableGroup extends FabTable
 
 		$db = $this->getDBO();
 		$query = $db->getQuery(true);
-		$query->select('#__{package}_groups.*, #__{package}_joins.id AS join_id')->from($this->_tbl)
-			->join('LEFT', '#__{package}_joins ON #__{package}_groups.id = #__{package}_joins.group_id');
+		$query->select('#__fabrik_groups.*, #__fabrik_joins.id AS join_id')->from($this->_tbl)
+			->join('LEFT', '#__fabrik_joins ON #__fabrik_groups.id = #__fabrik_joins.group_id');
 
 		foreach ($keys as $field => $value)
 		{
-			$query->where($db->qn('#__{package}_groups') . '.' . $db->qn($field) . ' = ' . $db->q($value));
+			$query->where($db->qn('#__fabrik_groups') . '.' . $db->qn($field) . ' = ' . $db->q($value));
 		}
 
 		$query->where(" (( element_id = 0 OR is_join = 0) OR element_id IS NULL)");
@@ -128,20 +131,25 @@ class FabrikTableGroup extends FabTable
 	}
 
 	/**
-	 * Method to store a row in the database from the JTable instance properties.
+	 * Method to store a row in the database from the Table instance properties.
 	 * If a primary key value is set the row with that primary key value will be
 	 * updated with the instance property values.  If no primary key value is set
 	 * a new row will be inserted into the database with the properties from the
-	 * JTable instance.
+	 * Table instance.
 	 *
 	 * @param   boolean  $updateNulls  True to update fields even if they are null.
 	 *
 	 * @return  boolean  True on success.
 	 */
-	public function store($updateNulls = false)
+	public function store($updateNulls = true)
 	{
 		unset($this->join_id);
 
-		return parent::store($updateNulls);
+		//return parent::store($updateNulls);
+		if (!parent::store($updateNulls)) 
+		{
+			throw new RuntimeException('Fabrik error storing group data: ' . $this->getError());
+		}
+		return true;
 	}
 }

@@ -11,10 +11,16 @@
 // No direct access
 defined('_JEXEC') or die('Restricted access');
 
+use Joomla\CMS\Language\Text;
+use Joomla\CMS\Form\FormHelper;
+use Joomla\CMS\HTML\HTMLHelper;
+use Joomla\CMS\Filesystem\Folder;
+use Joomla\CMS\Form\Field\ListField;
+
 jimport('joomla.html.html');
 jimport('joomla.form.formfield');
 jimport('joomla.form.helper');
-JFormHelper::loadFieldClass('list');
+FormHelper::loadFieldClass('list');
 require_once JPATH_ADMINISTRATOR . '/components/com_fabrik/helpers/element.php';
 
 /**
@@ -25,7 +31,7 @@ require_once JPATH_ADMINISTRATOR . '/components/com_fabrik/helpers/element.php';
  * @since       1.6
  */
 
-class JFormFieldRecursivefolderlist extends JFormFieldList
+class JFormFieldRecursivefolderlist extends ListField
 {
 	/**
 	 * Element name
@@ -63,16 +69,16 @@ class JFormFieldRecursivefolderlist extends JFormFieldList
 		// Prepend some default options based on field attributes.
 		if (!$hideNone)
 		{
-			$options[] = JHtml::_('select.option', '-1', JText::alt('JOPTION_DO_NOT_USE', preg_replace('/[^a-zA-Z0-9_\-]/', '_', $this->fieldname)));
+			$options[] = HTMLHelper::_('select.option', '-1', Text::alt('JOPTION_DO_NOT_USE', preg_replace('/[^a-zA-Z0-9_\-]/', '_', $this->fieldname)));
 		}
 
 		if (!$hideDefault)
 		{
-			$options[] = JHtml::_('select.option', '', JText::alt('JOPTION_USE_DEFAULT', preg_replace('/[^a-zA-Z0-9_\-]/', '_', $this->fieldname)));
+			$options[] = HTMLHelper::_('select.option', '', Text::alt('JOPTION_USE_DEFAULT', preg_replace('/[^a-zA-Z0-9_\-]/', '_', $this->fieldname)));
 		}
 
 		// Get a list of folders in the search path with the given filter.
-		$folders = JFolder::folders($path, $filter, true);
+		$folders = Folder::folders($path, $filter, true);
 
 		// Build the options list from the list of folders.
 		if (is_array($folders))
@@ -88,7 +94,7 @@ class JFormFieldRecursivefolderlist extends JFormFieldList
 					}
 				}
 
-				$options[] = JHtml::_('select.option', $folder, $folder);
+				$options[] = HTMLHelper::_('select.option', $folder, $folder);
 			}
 		}
 

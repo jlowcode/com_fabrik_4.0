@@ -11,6 +11,7 @@
 // No direct access
 defined('_JEXEC') or die('Restricted access');
 
+use Joomla\CMS\Table\Table;
 use \Joomla\Registry\Registry;
 
 jimport('joomla.application.component.model');
@@ -119,9 +120,9 @@ class FabrikFEModelJoin extends FabModel
 	}
 
 	/**
-	 * When loading the join JTable ensure its params are set to be a JRegistry item
+	 * When loading the join Table ensure its params are set to be a Registry item
 	 *
-	 * @param   JTable  &$join  Join table
+	 * @param   Table  &$join  Join table
 	 *
 	 * @return  void
 	 */
@@ -177,8 +178,11 @@ class FabrikFEModelJoin extends FabModel
 	public function getForeignID($glue = '___')
 	{
 		$join = $this->getJoin();
-		$pk = str_replace('`', '', $join->params->get('pk'));
-		$pk = str_replace('.', $glue, $pk);
+		$pk = $join->params->get('pk');
+		if (!empty($pk)) {
+			$pk = str_replace('`', '', $pk);
+			$pk = str_replace('.', $glue, $pk);
+		}
 
 		return $pk;
 	}
@@ -251,17 +255,17 @@ class FabrikFEModelJoin extends FabModel
 	{
 		$db = FabrikWorker::getDbo(true);
 		$query = $db->getQuery(true);
-		$query->delete(' #__{package}_elements')->where('group_id = ' . (int) $groupId);
+		$query->delete(' #__fabrik_elements')->where('group_id = ' . (int) $groupId);
 		$db->setQuery($query);
 		$db->execute();
 		$query->clear();
-		$query->delete(' #__{package}_groups')->where('id = ' . (int) $groupId);
+		$query->delete(' #__fabrik_groups')->where('id = ' . (int) $groupId);
 		$db->setQuery($query);
 		$db->execute();
 
 		// Delete all form group records
 		$query->clear();
-		$query->delete(' #__{package}_formgroup')->where('group_id = ' . (int) $groupId);
+		$query->delete(' #__fabrik_formgroup')->where('group_id = ' . (int) $groupId);
 		$db->setQuery($query);
 		$db->execute();
 		$this->getJoin()->delete();

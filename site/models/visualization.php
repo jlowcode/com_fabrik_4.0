@@ -11,6 +11,12 @@
 // No direct access
 defined('_JEXEC') or die('Restricted access');
 
+use Joomla\CMS\Language\Text;
+use Joomla\CMS\MVC\Model\BaseDatabaseModel;
+use Joomla\CMS\Router\Route;
+use Joomla\CMS\Session\Session;
+use Joomla\CMS\Filesystem\File;
+use Joomla\String\StringHelper;
 use Joomla\Registry\Registry;
 use Joomla\Utilities\ArrayHelper;
 
@@ -29,6 +35,7 @@ class FabrikFEModelVisualization extends FabModel
 	protected $pluginParams = null;
 
 	protected $row = null;
+	protected $_row = null;
 
 	/** @var object params*/
 	protected $params = null;
@@ -89,7 +96,7 @@ class FabrikFEModelVisualization extends FabModel
 	 */
 	public function showFilters()
 	{
-		$input = $this->app->input;
+		$input = $this->app->getInput();
 		$params = $this->getParams();
 
 		return (int) $input->get('showfilters', $params->get('show_filters')) === 1 ? true : false;
@@ -166,7 +173,7 @@ class FabrikFEModelVisualization extends FabModel
             {
                 if (!array_key_exists($id, $this->tables))
                 {
-                    $listModel = JModelLegacy::getInstance('List', 'FabrikFEModel');
+                    $listModel = BaseDatabaseModel::getInstance('List', 'FabrikFEModel');
                     $listModel->setId($id);
                     $listModel->getTable();
                     $this->tables[$id . '-' . $c] = $listModel;
@@ -213,7 +220,7 @@ class FabrikFEModelVisualization extends FabModel
 	public function getFilters()
 	{
 		$params = $this->getParams();
-		$name = JString::strtolower(str_replace('fabrikModel', '', get_class($this)));
+		$name = StringHelper::strtolower(str_replace('fabrikModel', '', get_class($this)));
 		$filters = array();
 		$showFilters = $params->get($name . '_show_filters', array());
 		$listModels = $this->getlistModels();
@@ -298,16 +305,16 @@ class FabrikFEModelVisualization extends FabModel
 				$table = $listModel->getTable();
 				$url = COM_FABRIK_LIVESITE . 'index.php?option=com_' . $this->package .
 					'&amp;format=partial&amp;view=list&amp;layout=_advancedsearch&amp;tmpl=component&amp;listid='
-					. $table->id . '&amp;nextview=' . $this->app->input->get('view', 'list')
+					. $table->id . '&amp;nextview=' . $this->app->getInput()->get('view', 'list')
 					. '&scope&amp;=' . $this->app->scope;
 
-				$url .= '&amp;tkn=' . JSession::getFormToken();
+				$url .= '&amp;tkn=' . Session::getFormToken();
 				$links[$table->label] = $url;
 			}
 		}
 
-		$title = '<span>' . FText::_('COM_FABRIK_ADVANCED_SEARCH') . '</span>';
-		$opts = array('alt' => FText::_('COM_FABRIK_ADVANCED_SEARCH'), 'class' => 'fabrikTip', 'opts' => '{"notice":true}', 'title' => $title);
+		$title = '<span>' . Text::_('COM_FABRIK_ADVANCED_SEARCH') . '</span>';
+		$opts = array('alt' => Text::_('COM_FABRIK_ADVANCED_SEARCH'), 'class' => 'fabrikTip', 'opts' => '{"notice":true}', 'title' => $title);
 		$img = FabrikHelperHTML::image('find', 'list', '', $opts);
 
 		if (count($links) === 1)
@@ -338,7 +345,7 @@ class FabrikFEModelVisualization extends FabModel
 	 */
 	public function getRenderContext()
 	{
-		$input = $this->app->input;
+		$input = $this->app->getInput();
 		$id = $this->getId();
 
 		// Calendar in content plugin - choose event form needs to know its from a content plugin.
@@ -370,7 +377,7 @@ class FabrikFEModelVisualization extends FabModel
 			return $this->getFilterFormURL;
 		}
 
-		$input = $this->app->input;
+		$input = $this->app->getInput();
 		$option = $input->get('option');
 
 		// Get the router
@@ -402,7 +409,7 @@ class FabrikFEModelVisualization extends FabModel
 		// Limitstart gets added in the pagination model
 		$action = preg_replace("/limitstart" . $this->getState('id') . "}=(.*)?(&|)/", '', $action);
 		$action = FabrikString::rtrimword($action, "&");
-		$this->getFilterFormURL = JRoute::_($action);
+		$this->getFilterFormURL = Route::_($action);
 
 		return $this->getFilterFormURL;
 	}
@@ -597,7 +604,7 @@ class FabrikFEModelVisualization extends FabModel
 		if (is_null($this->params))
 		{
 			$v = $this->getVisualization();
-			$input = $this->app->input;
+			$input = $this->app->getInput();
 			$this->params = new Registry($v->params);
 			$this->params->set('show-title', $input->getInt('show-title', $this->params->get('show-title', 1)));
 		}
@@ -650,7 +657,7 @@ class FabrikFEModelVisualization extends FabModel
 
 		foreach ($views as $view)
 		{
-			if (JFile::exists(COM_FABRIK_FRONTEND . '/js/' . $view . '_' . $this->getId() . '.js'))
+			if (File::exists(COM_FABRIK_FRONTEND . '/js/' . $view . '_' . $this->getId() . '.js'))
 			{
 				$scripts[$scriptsKey] = 'components/com_fabrik/js/' . $view . '_' . $this->getId() . '.js';
 			}

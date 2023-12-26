@@ -12,6 +12,15 @@
 // No direct access
 defined('_JEXEC') or die('Restricted access');
 
+use Joomla\CMS\Language\Text;
+use Joomla\CMS\Access\Access;
+use Joomla\CMS\Component\ComponentHelper;
+use Joomla\CMS\Version;
+use Joomla\CMS\Filter\InputFilter;
+use Joomla\CMS\Factory;
+use Joomla\CMS\Object\CMSObject;
+use Joomla\String\StringHelper;
+
 /**
  * Fabrik Component Helper
  *
@@ -32,23 +41,23 @@ class FabrikAdminHelper
 
 	public static function prepareSaveDate($strdate)
 	{
-		$config = JFactory::getConfig();
+		$config = Factory::getApplication()->getConfig();
 		$tzoffset = $config->get('offset');
 		$db = FabrikWorker::getDbo(true);
 
 		// Handle never unpublish date
-		if (trim($strdate) == FText::_('Never') || trim($strdate) == '' || trim($strdate) == $db->getNullDate())
+		if (trim($strdate) == Text::_('Never') || trim($strdate) == '' || trim($strdate) == $db->getNullDate())
 		{
 			$strdate = $db->getNullDate();
 		}
 		else
 		{
-			if (JString::strlen(trim($strdate)) <= 10)
+			if (StringHelper::strlen(trim($strdate)) <= 10)
 			{
 				$strdate .= ' 00:00:00';
 			}
 
-			$date = JFactory::getDate($strdate, $tzoffset);
+			$date = Factory::getDate($strdate, $tzoffset);
 			$strdate = $date->toSql();
 		}
 
@@ -62,13 +71,13 @@ class FabrikAdminHelper
 	 *
 	 * @since	1.6
 	 *
-	 * @return	JObject
+	 * @return	CMSObject
 	 */
 
 	public static function getActions($categoryId = 0)
 	{
-		$user = JFactory::getUser();
-		$result = new JObject;
+		$user = Factory::getUser();
+		$result = new CMSObject;
 
 		if (empty($categoryId))
 		{
@@ -101,31 +110,34 @@ class FabrikAdminHelper
 
 	public static function addSubmenu($vName)
 	{
+/*
 		$vizUrl = 'index.php?option=com_fabrik&view=visualizations';
 
-		if (FabrikWorker::j3())
-		{
-			JHtmlSidebar::addEntry(FText::_('COM_FABRIK_SUBMENU_HOME'), 'index.php?option=com_fabrik', $vName == 'home');
-			JHtmlSidebar::addEntry(FText::_('COM_FABRIK_SUBMENU_LISTS'), 'index.php?option=com_fabrik&view=lists', $vName == 'lists');
-			JHtmlSidebar::addEntry(FText::_('COM_FABRIK_SUBMENU_FORMS'), 'index.php?option=com_fabrik&view=forms', $vName == 'forms');
-			JHtmlSidebar::addEntry(FText::_('COM_FABRIK_SUBMENU_GROUPS'), 'index.php?option=com_fabrik&view=groups', $vName == 'groups');
-			JHtmlSidebar::addEntry(FText::_('COM_FABRIK_SUBMENU_ELEMENTS'), 'index.php?option=com_fabrik&view=elements', $vName == 'elements');
-			JHtmlSidebar::addEntry(FText::_('COM_FABRIK_SUBMENU_VISUALIZATIONS'), $vizUrl, $vName == 'visualizations');
-			JHtmlSidebar::addEntry(FText::_('COM_FABRIK_SUBMENU_PACKAGES'), 'index.php?option=com_fabrik&view=packages', $vName == 'packages');
-			JHtmlSidebar::addEntry(FText::_('COM_FABRIK_SUBMENU_CONNECTIONS'), 'index.php?option=com_fabrik&view=connections', $vName == 'connections');
-			JHtmlSidebar::addEntry(FText::_('COM_FABRIK_SUBMENU_CRONS'), 'index.php?option=com_fabrik&view=crons', $vName == 'crons');
+//		if (FabrikWorker::j3())
+//		{
+			JHtmlSidebar::addEntry(Text::_('COM_FABRIK_SUBMENU_HOME'), 'index.php?option=com_fabrik', $vName == 'home');
+			JHtmlSidebar::addEntry(Text::_('COM_FABRIK_SUBMENU_LISTS'), 'index.php?option=com_fabrik&view=lists', $vName == 'lists');
+			JHtmlSidebar::addEntry(Text::_('COM_FABRIK_SUBMENU_FORMS'), 'index.php?option=com_fabrik&view=forms', $vName == 'forms');
+			JHtmlSidebar::addEntry(Text::_('COM_FABRIK_SUBMENU_GROUPS'), 'index.php?option=com_fabrik&view=groups', $vName == 'groups');
+			JHtmlSidebar::addEntry(Text::_('COM_FABRIK_SUBMENU_ELEMENTS'), 'index.php?option=com_fabrik&view=elements', $vName == 'elements');
+			JHtmlSidebar::addEntry(Text::_('COM_FABRIK_SUBMENU_VISUALIZATIONS'), $vizUrl, $vName == 'visualizations');
+//			JHtmlSidebar::addEntry(Text::_('COM_FABRIK_SUBMENU_PACKAGES'), 'index.php?option=com_fabrik&view=packages', $vName == 'packages');
+			JHtmlSidebar::addEntry(Text::_('COM_FABRIK_SUBMENU_CONNECTIONS'), 'index.php?option=com_fabrik&view=connections', $vName == 'connections');
+			JHtmlSidebar::addEntry(Text::_('COM_FABRIK_SUBMENU_CRONS'), 'index.php?option=com_fabrik&view=crons', $vName == 'crons');
+/*
 		}
 		else
 		{
-			JSubMenuHelper::addEntry(FText::_('COM_FABRIK_SUBMENU_LISTS'), 'index.php?option=com_fabrik&view=lists', $vName == 'lists');
-			JSubMenuHelper::addEntry(FText::_('COM_FABRIK_SUBMENU_FORMS'), 'index.php?option=com_fabrik&view=forms', $vName == 'forms');
-			JSubMenuHelper::addEntry(FText::_('COM_FABRIK_SUBMENU_GROUPS'), 'index.php?option=com_fabrik&view=groups', $vName == 'groups');
-			JSubMenuHelper::addEntry(FText::_('COM_FABRIK_SUBMENU_ELEMENTS'), 'index.php?option=com_fabrik&view=elements', $vName == 'elements');
-			JSubMenuHelper::addEntry(FText::_('COM_FABRIK_SUBMENU_VISUALIZATIONS'), $vizUrl, $vName == 'visualizations');
-			JSubMenuHelper::addEntry(FText::_('COM_FABRIK_SUBMENU_PACKAGES'), 'index.php?option=com_fabrik&view=packages', $vName == 'packages');
-			JSubMenuHelper::addEntry(FText::_('COM_FABRIK_SUBMENU_CONNECTIONS'), 'index.php?option=com_fabrik&view=connections', $vName == 'connections');
-			JSubMenuHelper::addEntry(FText::_('COM_FABRIK_SUBMENU_CRONS'), 'index.php?option=com_fabrik&view=crons', $vName == 'crons');
+			JSubMenuHelper::addEntry(Text::_('COM_FABRIK_SUBMENU_LISTS'), 'index.php?option=com_fabrik&view=lists', $vName == 'lists');
+			JSubMenuHelper::addEntry(Text::_('COM_FABRIK_SUBMENU_FORMS'), 'index.php?option=com_fabrik&view=forms', $vName == 'forms');
+			JSubMenuHelper::addEntry(Text::_('COM_FABRIK_SUBMENU_GROUPS'), 'index.php?option=com_fabrik&view=groups', $vName == 'groups');
+			JSubMenuHelper::addEntry(Text::_('COM_FABRIK_SUBMENU_ELEMENTS'), 'index.php?option=com_fabrik&view=elements', $vName == 'elements');
+			JSubMenuHelper::addEntry(Text::_('COM_FABRIK_SUBMENU_VISUALIZATIONS'), $vizUrl, $vName == 'visualizations');
+			JSubMenuHelper::addEntry(Text::_('COM_FABRIK_SUBMENU_PACKAGES'), 'index.php?option=com_fabrik&view=packages', $vName == 'packages');
+			JSubMenuHelper::addEntry(Text::_('COM_FABRIK_SUBMENU_CONNECTIONS'), 'index.php?option=com_fabrik&view=connections', $vName == 'connections');
+			JSubMenuHelper::addEntry(Text::_('COM_FABRIK_SUBMENU_CRONS'), 'index.php?option=com_fabrik&view=crons', $vName == 'crons');
 		}
+*/
 	}
 
 	/**
@@ -140,9 +152,9 @@ class FabrikAdminHelper
 	{
 		// Filter settings
 		jimport('joomla.application.component.helper');
-		$config = JComponentHelper::getParams('com_config');
-		$user = JFactory::getUser();
-		$userGroups = JAccess::getGroupsByUser($user->get('id'));
+		$config = ComponentHelper::getParams('com_config');
+		$user = Factory::getUser();
+		$userGroups = Access::getGroupsByUser($user->get('id'));
 
 		$filters = $config->get('filters');
 
@@ -169,7 +181,7 @@ class FabrikAdminHelper
 
 			// Each group the user is in could have different filtering properties.
 			$filterData = $filters->$groupId;
-			$filterType = JString::strtoupper($filterData->filter_type);
+			$filterType = StringHelper::strtoupper($filterData->filter_type);
 
 			if ($filterType == 'NH')
 			{
@@ -246,17 +258,17 @@ class FabrikAdminHelper
 				// Remove the white-listed attributes from the black-list.
 				$tags = array_diff($blackListTags, $whiteListTags);
 				$attrs = array_diff($blackListAttributes, $whiteListAttributes);
-				$filter = JFilterInput::getInstance($tags, $attrs, 1, 1);
+				$filter = InputFilter::getInstance($tags, $attrs, 1, 1);
 			}
 			// White lists take third precedence.
 			elseif ($whiteList)
 			{
-				$filter = JFilterInput::getInstance($whiteListTags, $whiteListAttributes, 0, 0, 0);
+				$filter = InputFilter::getInstance($whiteListTags, $whiteListAttributes, 0, 0, 0);
 			}
 			// No HTML takes last place.
 			else
 			{
-				$filter = JFilterInput::getInstance();
+				$filter = InputFilter::getInstance();
 			}
 
 			$text = $filter->clean($text, 'html');
@@ -276,13 +288,8 @@ class FabrikAdminHelper
 
 	public static function setViewLayout(&$view)
 	{
-		$v = new JVersion;
-
-		if ($v->RELEASE > 2.5)
-		{
 			// If rendering a list inside a form and viewing in admin - there were layout name conflicts (so renamed bootstrap to admin_bootstrap)
 			$layout = $view->getName() === 'list' ? 'admin_bootstrap' : 'bootstrap';
 			$view->setLayout($layout);
-		}
 	}
 }

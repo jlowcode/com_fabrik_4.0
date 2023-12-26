@@ -33,7 +33,7 @@ class FabrikViewList extends FabrikViewListBase
 	 */
 	public function display($tpl = null)
 	{
-		$input = $this->app->input;
+		$input = $this->app->getInput();
 
 		/** @var FabrikFEModelList $model */
 		$model = $this->getModel();
@@ -151,12 +151,12 @@ class FabrikViewList extends FabrikViewListBase
 	 */
 	private function getTmpl()
 	{
-		$input = $this->app->input;
+		$input = $this->app->getInput();
 		$model = $this->getModel();
 		$table = $model->getTable();
 		$params = $model->getParams();
 
-		if ($this->app->isAdmin())
+		if ($this->app->isClient('administrator'))
 		{
 			$tmpl = $params->get('admin_template');
 

@@ -12,8 +12,12 @@
 // No direct access
 defined('_JEXEC') or die('Restricted access');
 
-jimport('joomla.form.formfield');
-JFormHelper::loadFieldClass('textarea');
+use Joomla\CMS\Editor\Editor;
+use Joomla\CMS\Version;
+use Joomla\CMS\Form\FormHelper;
+use Joomla\CMS\Form\Field\TextareaField;
+
+FormHelper::loadFieldClass('textarea');
 
 /**
  * Form Field class for the Joomla Platform.
@@ -21,10 +25,10 @@ JFormHelper::loadFieldClass('textarea');
  *
  * @package     Joomla.Libraries
  * @subpackage  Form
- * @see         JEditor
+ * @see         Editor
  * @since       1.6
  */
-class JFormFieldFabrikeditor extends JFormFieldTextArea
+class JFormFieldFabrikeditor extends TextareaField
 {
 	/**
 	 * The form field type.
@@ -75,13 +79,6 @@ class JFormFieldFabrikeditor extends JFormFieldTextArea
 		$editor = '<textarea name="' . $this->name . '" id="' . $this->id . '"'
 			. $columns . $rows . $class . $disabled . $onChange . $required . '>'
 			. $this->value . '</textarea>';
-
-		$version = new JVersion;
-
-		if ($version->RELEASE == 2.5)
-		{
-			return $editor;
-		}
 
 		FabrikHelperHTML::framework();
 		FabrikHelperHTML::iniRequireJS();

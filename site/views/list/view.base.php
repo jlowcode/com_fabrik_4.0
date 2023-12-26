@@ -11,7 +11,13 @@
 // No direct access
 defined('_JEXEC') or die('Restricted access');
 
+use Joomla\CMS\Language\Text;
+use Joomla\CMS\Component\ComponentHelper;
+use Joomla\CMS\Router\Route;
+use Joomla\CMS\Profiler\Profiler;
+use Joomla\CMS\Filesystem\File;
 use Joomla\Registry\Registry;
+use Joomla\CMS\HTML\HTMLHelper;
 
 jimport('joomla.application.component.view');
 
@@ -58,7 +64,7 @@ class FabrikViewListBase extends FabrikView
 		}
 
 		$exportUrl .= '&format=csv';
-		$csvOpts->exportLink   = JRoute::_($exportUrl, false);
+		$csvOpts->exportLink   = Route::_($exportUrl, false);
 
 		$w->replaceRequest($csvOpts->custom_qs);
 		$csvOpts->incfilters   = (int) $params->get('incfilters');
@@ -81,7 +87,7 @@ class FabrikViewListBase extends FabrikView
 			$layoutData          = (object) array(
 				'name' => 'submit',
 				'class' => 'exportCSVButton btn-primary',
-				'label' => JText::_('COM_FABRIK_EXPORT')
+				'label' => Text::_('COM_FABRIK_EXPORT')
 			);
 
 			$modalOpts['footer'] = $layout->render($layoutData);
@@ -99,7 +105,7 @@ class FabrikViewListBase extends FabrikView
 	 */
 	protected function getManagementJS($data = array())
 	{
-		$input  = $this->app->input;
+		$input  = $this->app->getInput();
 		$itemId = FabrikWorker::itemId();
 
 		/** @var FabrikFEModelList $model */
@@ -123,7 +129,7 @@ class FabrikViewListBase extends FabrikView
 			$modalOpts = array(
 				'content' => '',
 				'id' => 'ajax_links',
-				'title' => JText::_($modalTitle),
+				'title' => Text::_($modalTitle),
 				'modal' => false,
 				'expandable' => true
 			);
@@ -137,7 +143,7 @@ class FabrikViewListBase extends FabrikView
 			$modalOpts = array(
 				'content' => '',
 				'id' => 'advanced-filter',
-				'title' => JText::_('COM_FABRIK_FIELD_ADVANCED_SEARCH_LABEL'),
+				'title' => Text::_('COM_FABRIK_FIELD_ADVANCED_SEARCH_LABEL'),
 				'modal' => false,
 				'expandable' => true
 			);
@@ -190,7 +196,7 @@ class FabrikViewListBase extends FabrikView
 		// Check for a custom js file and include it if it exists
 		$aJsPath = JPATH_SITE . '/components/com_fabrik/views/list/tmpl/' . $tmpl . '/javascript.js';
 
-		if (JFile::exists($aJsPath))
+		if (File::exists($aJsPath))
 		{
 			$src['CustomJs'] = 'components/com_fabrik/views/list/tmpl/' . $tmpl . '/javascript.js';
 		}
@@ -203,7 +209,7 @@ class FabrikViewListBase extends FabrikView
 		$this->_row       = new stdClass;
 		$script           = array();
 		$params           = $model->getParams();
-		$opts->admin      = $this->app->isAdmin();
+		$opts->admin      = $this->app->isClient('administrator');
 		$opts->ajax       = $ajax;
 		$opts->ajax_links = $ajaxLinks;
 
@@ -228,10 +234,11 @@ class FabrikViewListBase extends FabrikView
 		$opts->formid         = $model->getFormModel()->getId();
 		$opts->canEdit        = $model->canEdit() ? '1' : '0';
 		$opts->canView        = $model->canView() ? '1' : '0';
-		$opts->page           = JRoute::_('index.php');
+		$opts->page           = Route::_('index.php');
 		$opts->isGrouped      = $this->isGrouped;
 		$opts->toggleCols     = $toggleCols;
-		$opts->j3             = FabrikWorker::j3();
+//		$opts->j3             = FabrikWorker::j3();
+		$opts->j3             = true;
 		$opts->singleOrdering = (bool) $model->singleOrdering();
 
 		// Reset data back to original settings
@@ -289,7 +296,8 @@ class FabrikViewListBase extends FabrikView
 		$opts->groupByOpts->isGrouped      = (bool) $this->isGrouped;
 		$opts->groupByOpts->collapseOthers = (bool) $params->get('group_by_collapse_others', false);
 		$opts->groupByOpts->startCollapsed = (bool) $input->get('start_collapsed', $params->get('group_by_start_collapsed', false));
-		$opts->groupByOpts->bootstrap      = FabrikWorker::j3();
+//		$opts->groupByOpts->bootstrap      = FabrikWorker::j3();
+		$opts->groupByOpts->bootstrap      = true;
 
 		// If table data starts as empty then we need the html from the row
 		// template otherwise we can't add a row to the table
@@ -299,7 +307,7 @@ class FabrikViewListBase extends FabrikView
 		$this->_row->class = 'fabrik_row';
 
 		// nasty hack for div templates
-		if (JFile::exists(JPATH_ROOT . '/components/com_fabrik/views/list/tmpl/' . $tmpl . '/default_empty_row.php'))
+		if (File::exists(JPATH_ROOT . '/components/com_fabrik/views/list/tmpl/' . $tmpl . '/default_empty_row.php'))
 		{
 			echo $this->loadTemplate('empty_row');
 		}
@@ -350,41 +358,41 @@ class FabrikViewListBase extends FabrikView
 
 	private function jsText()
 	{
-		JText::script('COM_FABRIK_PREV');
-		JText::script('COM_FABRIK_SELECT_ROWS_FOR_DELETION');
-		JText::script('JYES');
-		JText::script('JNO');
-		JText::script('COM_FABRIK_SELECT_COLUMNS_TO_EXPORT');
-		JText::script('COM_FABRIK_INCLUDE_FILTERS');
-		JText::script('COM_FABRIK_INCLUDE_DATA');
-		JText::script('COM_FABRIK_INCLUDE_RAW_DATA');
-		JText::script('COM_FABRIK_INCLUDE_CALCULATIONS');
-		JText::script('COM_FABRIK_EXPORT');
-		JText::script('COM_FABRIK_START');
-		JText::script('COM_FABRIK_NEXT');
-		JText::script('COM_FABRIK_END');
-		JText::script('COM_FABRIK_PAGE');
-		JText::script('COM_FABRIK_OF');
-		JText::script('COM_FABRIK_LOADING');
-		JText::script('COM_FABRIK_RECORDS');
-		JText::script('COM_FABRIK_SAVING_TO');
-		JText::script('COM_FABRIK_CONFIRM_DROP');
-		JText::script('COM_FABRIK_CONFIRM_DELETE_1');
-		JText::script('COM_FABRIK_NO_RECORDS');
-		JText::script('COM_FABRIK_CSV_COMPLETE');
-		JText::script('COM_FABRIK_CSV_DOWNLOAD_HERE');
-		JText::script('COM_FABRIK_CONFIRM_DELETE');
-		JText::script('COM_FABRIK_CSV_DOWNLOADING');
-		JText::script('COM_FABRIK_FILE_TYPE');
-		JText::script('COM_FABRIK_ADVANCED_SEARCH');
-		JText::script('COM_FABRIK_FORM_FIELDS');
-		JText::script('COM_FABRIK_VIEW');
+		Text::script('COM_FABRIK_PREV');
+		Text::script('COM_FABRIK_SELECT_ROWS_FOR_DELETION');
+		Text::script('JYES');
+		Text::script('JNO');
+		Text::script('COM_FABRIK_SELECT_COLUMNS_TO_EXPORT');
+		Text::script('COM_FABRIK_INCLUDE_FILTERS');
+		Text::script('COM_FABRIK_INCLUDE_DATA');
+		Text::script('COM_FABRIK_INCLUDE_RAW_DATA');
+		Text::script('COM_FABRIK_INCLUDE_CALCULATIONS');
+		Text::script('COM_FABRIK_EXPORT');
+		Text::script('COM_FABRIK_START');
+		Text::script('COM_FABRIK_NEXT');
+		Text::script('COM_FABRIK_END');
+		Text::script('COM_FABRIK_PAGE');
+		Text::script('COM_FABRIK_OF');
+		Text::script('COM_FABRIK_LOADING');
+		Text::script('COM_FABRIK_RECORDS');
+		Text::script('COM_FABRIK_SAVING_TO');
+		Text::script('COM_FABRIK_CONFIRM_DROP');
+		Text::script('COM_FABRIK_CONFIRM_DELETE_1');
+		Text::script('COM_FABRIK_NO_RECORDS');
+		Text::script('COM_FABRIK_CSV_COMPLETE');
+		Text::script('COM_FABRIK_CSV_DOWNLOAD_HERE');
+		Text::script('COM_FABRIK_CONFIRM_DELETE');
+		Text::script('COM_FABRIK_CSV_DOWNLOADING');
+		Text::script('COM_FABRIK_FILE_TYPE');
+		Text::script('COM_FABRIK_ADVANCED_SEARCH');
+		Text::script('COM_FABRIK_FORM_FIELDS');
+		Text::script('COM_FABRIK_VIEW');
 
 		// Keyboard short cuts
-		JText::script('COM_FABRIK_LIST_SHORTCUTS_ADD');
-		JText::script('COM_FABRIK_LIST_SHORTCUTS_EDIT');
-		JText::script('COM_FABRIK_LIST_SHORTCUTS_DELETE');
-		JText::script('COM_FABRIK_LIST_SHORTCUTS_FILTER');
+		Text::script('COM_FABRIK_LIST_SHORTCUTS_ADD');
+		Text::script('COM_FABRIK_LIST_SHORTCUTS_EDIT');
+		Text::script('COM_FABRIK_LIST_SHORTCUTS_DELETE');
+		Text::script('COM_FABRIK_LIST_SHORTCUTS_FILTER');
 	}
 
 	/**
@@ -403,9 +411,9 @@ class FabrikViewListBase extends FabrikView
 			return;
 		}
 
-		$fbConfig = JComponentHelper::getParams('com_fabrik');
-		$profiler = JProfiler::getInstance('Application');
-		$input    = $this->app->input;
+		$fbConfig = ComponentHelper::getParams('com_fabrik');
+		$profiler = Profiler::getInstance('Application');
+		$input    = $this->app->getInput();
 		$itemId   = FabrikWorker::itemId();
 
 		/** @var FabrikFEModelList $model */
@@ -419,10 +427,11 @@ class FabrikViewListBase extends FabrikView
 		// Force front end templates
 		$tmpl            = $model->getTmpl();
 		$this->_basePath = COM_FABRIK_FRONTEND . '/views';
-		$jTmplFolder     = FabrikWorker::j3() ? 'tmpl' : 'tmpl25';
+//		$jTmplFolder     = FabrikWorker::j3() ? 'tmpl' : 'tmpl25';
+		$jTmplFolder     = 'tmpl';
 		$this->addTemplatePath($this->_basePath . '/' . $this->_name . '/' . $jTmplFolder . '/' . $tmpl);
 
-		$root = $this->app->isAdmin() ? JPATH_ADMINISTRATOR : JPATH_SITE;
+		$root = $this->app->isClient('administrator') ? JPATH_ADMINISTRATOR : JPATH_SITE;
 		$this->addTemplatePath($root . '/templates/' . $this->app->getTemplate() . '/html/com_fabrik/list/' . $tmpl);
 		$item = $model->getTable();
 		$data = $model->render();
@@ -479,9 +488,9 @@ class FabrikViewListBase extends FabrikView
 		$this->emptyStyle           = $this->nodata ? '' : 'display:none';
 		$params                     = $model->getParams();
 
-		if (!class_exists('JSite'))
+		if (!class_exists('\Joomla\CMS\Application\SiteApplication')) //should never be the case
 		{
-			require_once JPATH_ROOT . '/includes/application.php';
+			require_once JPATH_ROOT . '/includes/app.php';
 		}
 
 		$this->setTitle($w, $params, $model);
@@ -489,7 +498,7 @@ class FabrikViewListBase extends FabrikView
 		// Deprecated (keep in case people use them in old templates)
 		$this->table                = new stdClass;
 		$this->table->label         = FabrikString::translate($w->parseMessageForPlaceHolder($item->label, $_REQUEST));
-		$this->table->intro         = $params->get('show_into', 1) == 0 ? '' : FabrikString::translate($w->parseMessageForPlaceHolder($item->introduction));
+		$this->table->intro         = $params->get('show_intro', 1) == 0 ? '' : FabrikString::translate($w->parseMessageForPlaceHolder($item->introduction));
 		$this->table->outro         = $params->get('show_outro', 1) == 0 ? '' : FabrikString::translate($w->parseMessageForPlaceHolder($params->get('outro')));
 		$this->table->id            = $item->id;
 		$this->table->renderid      = $model->getRenderContext();
@@ -533,7 +542,7 @@ class FabrikViewListBase extends FabrikView
 		{
 			$this->csvImportLink = 'index.php?option=com_' . $this->package . '&view=import&filetype=csv&listid=' . $item->id;
 			$this->csvImportLink .= empty($itemId) ? '' : '&Itemid=' . $itemId;
-			$this->csvImportLink = JRoute::_($this->csvImportLink);
+			$this->csvImportLink = Route::_($this->csvImportLink);
 		}
 		else
 		{
@@ -562,21 +571,21 @@ class FabrikViewListBase extends FabrikView
 		{
 			$this->rssLink = $model->getRSSFeedLink();
 
-			if ($this->rssLink != '' && $this->app->input->get('format') === 'html')
+			if ($this->rssLink != '' && $this->app->getInput()->get('format') === 'html')
 			{
 				$attribs = array('type' => 'application/rss+xml', 'title' => 'RSS 2.0');
 				$this->doc->addHeadLink($this->rssLink, 'alternate', 'rel', $attribs);
 			}
 		}
 
-		if ($this->app->isAdmin())
+		if ($this->app->isClient('administrator'))
 		{
 			// Admin always uses com_fabrik option
-			$this->pdfLink = JRoute::_('index.php?option=com_fabrik&task=list.view&listid=' . $item->id . '&format=pdf&tmpl=component');
+			$this->pdfLink = Route::_('index.php?option=com_fabrik&task=list.view&listid=' . $item->id . '&format=pdf&tmpl=component');
 		}
 		else
 		{
-			$pdfLink = 'index.php?option=com_' . $this->package . '&view=list&format=pdf&listid=' . $item->id;
+			$pdfLink = 'index.php?option=com_' . $this->package . '&Itemid=' . $itemId . '&view=list&format=pdf&listid=' . $item->id;
 
 			if (!$this->nodata)
 			{
@@ -584,14 +593,14 @@ class FabrikViewListBase extends FabrikView
 				$pdfLink .= '&resetfilters=0';
 			}
 
-			if ($this->app->input->get('group_by', '') !== '')
+			if ($this->app->getInput()->get('group_by', '') !== '')
             {
-                $pdfLink .= '&group_by=' . $this->app->input->get('group_by', '');
+                $pdfLink .= '&group_by=' . $this->app->getInput()->get('group_by', '');
             }
 
             // Add the listref so we get the right filters if doing PDF from a module or content plugin
             $pdfLink .= '&setListRefFromRequest=1&listref=' . $model->getRenderContext();
-			$this->pdfLink = JRoute::_($pdfLink);
+			$this->pdfLink = Route::_($pdfLink);
 		}
 
 		list($this->headings, $groupHeadings, $this->headingClass, $this->cellClass) = $model->getHeadings();
@@ -600,13 +609,14 @@ class FabrikViewListBase extends FabrikView
 		$this->filter_action   = $model->getFilterAction();
 		JDEBUG ? $profiler->mark('fabrik getfilters start') : null;
 		$this->filters = $model->getFilters('listform_' . $this->renderContext);
-
+		$this->filterMode       = (int) $params->get('show-table-filters');
 		$fKeys                 = array_keys($this->filters);
-		$this->bootShowFilters = count($fKeys) === 1 && $fKeys[0] === 'all' ? false : true;
+
+		$this->bootShowFilters = (count($fKeys) === 1 && $fKeys[0] === 'all') || $this->filterMode === 0 ? false : true;
 
 		$this->clearFliterLink = $model->getClearButton();
 		JDEBUG ? $profiler->mark('fabrik getfilters end') : null;
-		$this->filterMode       = (int) $params->get('show-table-filters');
+		
 		$this->toggleFilters    = in_array($this->filterMode, array(2, 4, 5));
 		$this->showFilters      = $model->getShowFilters();
 		$this->filterCols       = (int) $params->get('list_filter_cols', '1');
@@ -627,7 +637,7 @@ class FabrikViewListBase extends FabrikView
 		$this->getManagementJS($this->rows);
 
 		// Get dropdown list of other tables for quick nav in admin
-		$this->tablePicker = $params->get('show-table-picker', $input->get('list-picker', true)) && $this->app->isAdmin() && $this->app->input->get('format') !== 'pdf' ? FabrikHelperHTML::tableList($this->table->id) : '';
+		$this->tablePicker = $params->get('show-table-picker', $input->get('list-picker', true)) && $this->app->isClient('administrator') && $this->app->getInput()->get('format') !== 'pdf' ? FabrikHelperHTML::tableList($this->table->id) : '';
 
 		$this->buttons();
 		$this->pluginTopButtons = $model->getPluginTopButtons();
@@ -644,14 +654,14 @@ class FabrikViewListBase extends FabrikView
 	{
 		if (!$model->canPublish())
 		{
-			echo FText::_('COM_FABRIK_LIST_NOT_PUBLISHED');
+			echo Text::_('COM_FABRIK_LIST_NOT_PUBLISHED');
 
 			return false;
 		}
 
 		if (!$model->canView())
 		{
-			echo FText::_('JERROR_ALERTNOAUTHOR');
+			echo Text::_('JERROR_ALERTNOAUTHOR');
 
 			return false;
 		}
@@ -670,7 +680,7 @@ class FabrikViewListBase extends FabrikView
 	 */
 	protected function setTitle($w, &$params, $model)
 	{
-		$input = $this->app->input;
+		$input = $this->app->getInput();
 		$menus = $this->app->getMenu();
 		$menu  = $menus->getActive();
 
@@ -681,16 +691,16 @@ class FabrikViewListBase extends FabrikView
 		 */
 		if (is_object($menu) && !$this->isMambot)
 		{
-			$menu_params = new Registry((string) $menu->params);
-			$params->set('page_heading', FText::_($menu_params->get('page_heading')));
+			$menu_params = new Registry((string) $menu->getParams());
+			$params->set('page_heading', Text::_($menu_params->get('page_heading')));
 			$params->set('show_page_heading', $menu_params->get('show_page_heading'));
 			$params->set('pageclass_sfx', $menu_params->get('pageclass_sfx'));
-			$params->set('page_title', FText::_($menu_params->get('page_title', $menu->title)));
+			$params->set('page_title', Text::_($menu_params->get('page_title', $menu->title)));
 		}
 		else
 		{
 			$params->set('show_page_heading', $input->getInt('show_page_heading', 0));
-			$params->set('page_heading', FText::_($input->get('title', '', 'string')));
+			$params->set('page_heading', Text::_($input->get('title', '', 'string')));
 		}
 
 		$params->set('show-title', $input->getInt('show-title', $params->get('show-title')));
@@ -715,7 +725,7 @@ class FabrikViewListBase extends FabrikView
 	 */
 	protected function output()
 	{
-		$profiler = JProfiler::getInstance('Application');
+		$profiler = Profiler::getInstance('Application');
 		$text     = $this->loadTemplate();
 		JDEBUG ? $profiler->mark('template loaded') : null;
 		$model  = $this->getModel();
@@ -723,7 +733,7 @@ class FabrikViewListBase extends FabrikView
 
 		if ($params->get('process-jplugins'))
 		{
-			$cloak = $params->get('cloak_emails', '0') === '1' && $this->app->input->get('format') !== 'pdf';
+			$cloak = $params->get('cloak_emails', '0') === '1' && $this->app->getInput()->get('format') !== 'pdf';
 			FabrikHelperHTML::runContentPlugins($text, $cloak);
 		}
 
@@ -743,25 +753,25 @@ class FabrikViewListBase extends FabrikView
 		$model                     = $this->getModel();
 		$this->buttons             = new stdClass;
 		$buttonProperties          = array('class' => 'fabrikTip', 'opts' => '{"notice":true}',
-			'title' => '<span>' . FText::_('COM_FABRIK_EXPORT_TO_CSV') . '</span>');
-		$buttonProperties['alt']   = FText::_('COM_FABRIK_EXPORT_TO_CSV');
+			'title' => '<span>' . Text::_('COM_FABRIK_EXPORT_TO_CSV') . '</span>');
+		$buttonProperties['alt']   = Text::_('COM_FABRIK_EXPORT_TO_CSV');
 		$this->buttons->csvexport  = FabrikHelperHTML::image('csv-export.png', 'list', $this->tmpl, $buttonProperties);
-		$buttonProperties['title'] = '<span>' . FText::_('COM_FABRIK_IMPORT_FROM_CSV') . '</span>';
-		$buttonProperties['alt']   = FText::_('COM_FABRIK_IMPORT_TO_CSV');
+		$buttonProperties['title'] = '<span>' . Text::_('COM_FABRIK_IMPORT_FROM_CSV') . '</span>';
+		$buttonProperties['alt']   = Text::_('COM_FABRIK_IMPORT_TO_CSV');
 		$this->buttons->csvimport  = FabrikHelperHTML::image('csv-import.png', 'list', $this->tmpl, $buttonProperties);
-		$buttonProperties['title'] = '<span>' . FText::_('COM_FABRIK_SUBSCRIBE_RSS') . '</span>';
-		$buttonProperties['alt']   = FText::_('COM_FABRIK_SUBSCRIBE_RSS');
+		$buttonProperties['title'] = '<span>' . Text::_('COM_FABRIK_SUBSCRIBE_RSS') . '</span>';
+		$buttonProperties['alt']   = Text::_('COM_FABRIK_SUBSCRIBE_RSS');
 		$this->buttons->feed       = FabrikHelperHTML::image('feed.png', 'list', $this->tmpl, $buttonProperties);
-		$buttonProperties['title'] = '<span>' . FText::_('COM_FABRIK_EMPTY') . '</span>';
-		$buttonProperties['alt']   = FText::_('COM_FABRIK_EMPTY');
+		$buttonProperties['title'] = '<span>' . Text::_('COM_FABRIK_EMPTY') . '</span>';
+		$buttonProperties['alt']   = Text::_('COM_FABRIK_EMPTY');
 		$this->buttons->empty      = FabrikHelperHTML::image('trash.png', 'list', $this->tmpl, $buttonProperties);
 
-		$buttonProperties['title'] = '<span>' . FText::_('COM_FABRIK_GROUP_BY') . '</span>';
-		$buttonProperties['alt']   = FText::_('COM_FABRIK_GROUP_BY');
+		$buttonProperties['title'] = '<span>' . Text::_('COM_FABRIK_GROUP_BY') . '</span>';
+		$buttonProperties['alt']   = Text::_('COM_FABRIK_GROUP_BY');
 		$this->buttons->groupby    = FabrikHelperHTML::image('list-view', 'list', $this->tmpl, $buttonProperties);
 
 		unset($buttonProperties['title']);
-		$buttonProperties['alt'] = FText::_('COM_FABRIK_FILTER');
+		$buttonProperties['alt'] = Text::_('COM_FABRIK_FILTER');
 		$this->buttons->filter   = FabrikHelperHTML::image('filter', 'list', $this->tmpl, $buttonProperties);
 
 		$addLabel                  = $model->addLabel();
@@ -769,8 +779,8 @@ class FabrikViewListBase extends FabrikView
 		$buttonProperties['alt']   = $addLabel;
 		$this->buttons->add        = FabrikHelperHTML::image('plus-sign.png', 'list', $this->tmpl, $buttonProperties);
 
-		$buttonProperties['title'] = '<span>' . FText::_('COM_FABRIK_PDF') . '</span>';
-		$buttonProperties['alt']   = FText::_('COM_FABRIK_PDF');
+		$buttonProperties['title'] = '<span>' . Text::_('COM_FABRIK_PDF') . '</span>';
+		$buttonProperties['alt']   = Text::_('COM_FABRIK_PDF');
 		$this->buttons->pdf        = FabrikHelperHTML::image('pdf.png', 'list', $this->tmpl, $buttonProperties);
 	}
 
@@ -952,7 +962,7 @@ class FabrikViewListBase extends FabrikView
 	 */
 	protected function loadTemplateBottom()
 	{
-		$input  = $this->app->input;
+		$input  = $this->app->getInput();
 		$itemId = FabrikWorker::itemId();
 		$model  = $this->getModel();
 		$item   = $model->getTable();
@@ -979,7 +989,7 @@ class FabrikViewListBase extends FabrikView
 
 		// Removed in favour of using list_{id}_limit dropdown box
 		$this->hiddenFields[] = '<input type="hidden" name="fabrik_referrer" value="' . $reffer . '" />';
-		$this->hiddenFields[] = JHTML::_('form.token');
+		$this->hiddenFields[] = HTMLHelper::_('form.token');
 		$this->hiddenFields[] = '<input type="hidden" name="format" value="html" />';
 
 		// $packageId = $input->getInt('packageId', 0);
@@ -987,7 +997,7 @@ class FabrikViewListBase extends FabrikView
 		$packageId            = $model->packageId;
 		$this->hiddenFields[] = '<input type="hidden" name="packageId" value="' . $packageId . '" />';
 
-		if ($this->app->isAdmin())
+		if ($this->app->isClient('administrator'))
 		{
 			$this->hiddenFields[] = '<input type="hidden" name="task" value="list.view" />';
 		}
@@ -1022,7 +1032,7 @@ class FabrikViewListBase extends FabrikView
 	 */
 	protected function advancedSearch($tpl)
 	{
-		$input      = $this->app->input;
+		$input      = $this->app->getInput();
 		$model      = $this->getModel();
 		$id         = $model->getState('list.id');
 		$this->tmpl = $model->getTmpl();
@@ -1045,11 +1055,11 @@ class FabrikViewListBase extends FabrikView
 	{
 		$url = '';
 
-		if (!$this->app->isAdmin() && !$this->isMambot)
+		if (!$this->app->isClient('administrator') && !$this->isMambot)
 		{
 			$model = $this->getModel();
 			$id    = $model->getId();
-			$url   = JRoute::_('index.php?option=com_' . $this->package . '&view=list&listid=' . $id);
+			$url   = Route::_('index.php?option=com_' . $this->package . '&view=list&listid=' . $id);
 		}
 
 		return $url;

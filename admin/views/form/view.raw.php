@@ -11,6 +11,13 @@
 // No direct access
 defined('_JEXEC') or die('Restricted access');
 
+use Joomla\CMS\Toolbar\ToolbarHelper;
+use Joomla\CMS\Language\Text;
+use Joomla\CMS\MVC\View\HtmlView;
+use Joomla\CMS\Table\Table;
+use Joomla\CMS\Form\Form;
+use Joomla\CMS\Factory;
+
 jimport('joomla.application.component.view');
 
 /**
@@ -20,19 +27,19 @@ jimport('joomla.application.component.view');
  * @subpackage  Fabrik
  * @since       3.0
  */
-class FabrikAdminViewForm extends JViewLegacy
+class FabrikAdminViewForm extends HtmlView
 {
 	/**
 	 * Form
 	 *
-	 * @var JForm
+	 * @var Form
 	 */
 	protected $form;
 
 	/**
 	 * Form item
 	 *
-	 * @var JTable
+	 * @var Table
 	 */
 	protected $item;
 
@@ -52,7 +59,7 @@ class FabrikAdminViewForm extends JViewLegacy
 	 */
 	public function display($tpl = null)
 	{
-		$model = JModelLegacy::getInstance('Form', 'FabrikFEModel');
+		$model = Factory::getApplication()->bootComponent('com_fabrik')->getMVCFactory()->createModel('Form', 'FabrikFEModel');
 		$model->render();
 
 		if (!$this->canAccess())
@@ -163,28 +170,28 @@ class FabrikAdminViewForm extends JViewLegacy
 	 */
 	protected function addToolbar()
 	{
-		$app = JFactory::getApplication();
+		$app = Factory::getApplication();
 		$input = $app->input;
 		$input->set('hidemainmenu', true);
-		$user = JFactory::getUser();
+		$user = Factory::getUser();
 		$userId = $user->get('id');
 		$isNew = ($this->item->id == 0);
 		$checkedOut = !($this->item->checked_out == 0 || $this->item->checked_out == $user->get('id'));
 		$canDo = FabrikAdminHelper::getActions($this->state->get('filter.category_id'));
-		$title = $isNew ? FText::_('COM_FABRIK_MANAGER_FORM_NEW') : FText::_('COM_FABRIK_MANAGER_FORM_EDIT') . ' "' . $this->item->label . '"';
-		JToolBarHelper::title($title, 'file-2');
+		$title = $isNew ? Text::_('COM_FABRIK_MANAGER_FORM_NEW') : Text::_('COM_FABRIK_MANAGER_FORM_EDIT') . ' "' . $this->item->label . '"';
+		ToolBarHelper::title($title, 'file-2');
 
 		if ($isNew)
 		{
 			// For new records, check the create permission.
 			if ($canDo->get('core.create'))
 			{
-				JToolBarHelper::apply('form.apply', 'JTOOLBAR_APPLY');
-				JToolBarHelper::save('form.save', 'JTOOLBAR_SAVE');
-				JToolBarHelper::addNew('form.save2new', 'JTOOLBAR_SAVE_AND_NEW');
+				ToolBarHelper::apply('form.apply', 'JTOOLBAR_APPLY');
+				ToolBarHelper::save('form.save', 'JTOOLBAR_SAVE');
+				ToolBarHelper::addNew('form.save2new', 'JTOOLBAR_SAVE_AND_NEW');
 			}
 
-			JToolBarHelper::cancel('form.cancel', 'JTOOLBAR_CANCEL');
+			ToolBarHelper::cancel('form.cancel', 'JTOOLBAR_CANCEL');
 		}
 		else
 		{
@@ -194,26 +201,26 @@ class FabrikAdminViewForm extends JViewLegacy
 				// Since it's an existing record, check the edit permission, or fall back to edit own if the owner.
 				if ($canDo->get('core.edit') || ($canDo->get('core.edit.own') && $this->item->created_by == $userId))
 				{
-					JToolBarHelper::apply('form.apply', 'JTOOLBAR_APPLY');
-					JToolBarHelper::save('form.save', 'JTOOLBAR_SAVE');
+					ToolBarHelper::apply('form.apply', 'JTOOLBAR_APPLY');
+					ToolBarHelper::save('form.save', 'JTOOLBAR_SAVE');
 
 					// We can save this record, but check the create permission to see if we can return to make a new one.
 					if ($canDo->get('core.create'))
 					{
-						JToolBarHelper::addNew('form.save2new', 'JTOOLBAR_SAVE_AND_NEW');
+						ToolBarHelper::addNew('form.save2new', 'JTOOLBAR_SAVE_AND_NEW');
 					}
 				}
 			}
 
 			if ($canDo->get('core.create'))
 			{
-				JToolBarHelper::custom('form.save2copy', 'save-copy.png', 'save-copy_f2.png', 'JTOOLBAR_SAVE_AS_COPY', false);
+				ToolBarHelper::custom('form.save2copy', 'save-copy.png', 'save-copy_f2.png', 'JTOOLBAR_SAVE_AS_COPY', false);
 			}
 
-			JToolBarHelper::cancel('form.cancel', 'JTOOLBAR_CLOSE');
+			ToolBarHelper::cancel('form.cancel', 'JTOOLBAR_CLOSE');
 		}
 
-		JToolBarHelper::divider();
-		JToolBarHelper::help('JHELP_COMPONENTS_FABRIK_FORMS_EDIT');
+		ToolBarHelper::divider();
+		ToolBarHelper::help('JHELP_COMPONENTS_FABRIK_FORMS_EDIT');
 	}
 }

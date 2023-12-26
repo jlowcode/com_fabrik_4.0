@@ -11,6 +11,10 @@
 // No direct access
 defined('_JEXEC') or die('Restricted access');
 
+use Joomla\CMS\Language\Text;
+use Joomla\CMS\Session\Session;
+use Joomla\CMS\Factory;
+
 jimport('joomla.application.component.controllerform');
 
 require_once 'fabcontrollerform.php';
@@ -38,8 +42,8 @@ class FabrikAdminControllerConnection extends FabControllerForm
 	 */
 	public function test()
 	{
-		JSession::checkToken() or die('Invalid Token');
-		$app = JFactory::getApplication();
+		Session::checkToken() or die('Invalid Token');
+		$app = Factory::getApplication();
 		$input = $app->input;
 		$cid = $input->get('cid', array(), 'array');
 		$cid = array((int) $cid[0]);
@@ -47,18 +51,19 @@ class FabrikAdminControllerConnection extends FabControllerForm
 
 		foreach ($cid as $id)
 		{
-			$model = JModelLegacy::getInstance('Connection', 'FabrikFEModel');
+			$model = Factory::getApplication()->bootComponent('com_fabrik')->getMVCFactory()->createModel('Connection', 'FabrikFEModel');
 			$model->setId($id);
 
 			if ($model->testConnection() == false)
 			{
-				JError::raiseWarning(500, FText::_('COM_FABRIK_UNABLE_TO_CONNECT'));
+//				JError::raiseWarning(500, Text::_('COM_FABRIK_UNABLE_TO_CONNECT'));
+				\Joomla\CMS\Factory::getApplication()->enqueueMessage(Text::_('COM_FABRIK_UNABLE_TO_CONNECT'), 'warning');
 				$this->setRedirect($link);
 
 				return;
 			}
 		}
 
-		$this->setRedirect($link, FText::_('COM_FABRIK_CONNECTION_SUCESSFUL'));
+		$this->setRedirect($link, Text::_('COM_FABRIK_CONNECTION_SUCESSFUL'));
 	}
 }

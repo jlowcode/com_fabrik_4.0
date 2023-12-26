@@ -12,6 +12,10 @@
 // No direct access
 defined('_JEXEC') or die('Restricted access');
 
+use Joomla\CMS\Table\Table;
+use Joomla\CMS\Component\ComponentHelper;
+use Joomla\CMS\Factory;
+
 require_once 'fabmodellist.php';
 
 /**
@@ -35,7 +39,11 @@ class FabrikAdminModelForms extends FabModelList
 	{
 		if (empty($config['filter_fields']))
 		{
-			$config['filter_fields'] = array('f.id', 'f.label', 'f.published');
+			$config['filter_fields'] = [
+				'f.id', 
+				'f.label', 
+				'f.published', 'published'
+			];
 		}
 
 		parent::__construct($config);
@@ -54,7 +62,7 @@ class FabrikAdminModelForms extends FabModelList
 
 		// Select the required fields from the table.
 		$query->select($this->getState('list.select', 'DISTINCT f.id, f.*, l.id AS list_id, "" AS group_id'));
-		$query->from('#__{package}_forms AS f');
+		$query->from('#__fabrik_forms AS f');
 
 		// Filter by published state
 		$published = $this->getState('filter.published');
@@ -80,9 +88,9 @@ class FabrikAdminModelForms extends FabModelList
 		// Join over the users for the checked out user.
 		$query->select('u.name AS editor');
 		$query->join('LEFT', '#__users AS u ON checked_out = u.id');
-		$query->join('LEFT', '#__{package}_lists AS l ON l.form_id = f.id');
+		$query->join('LEFT', '#__fabrik_lists AS l ON l.form_id = f.id');
 
-		$query->join('INNER', '#__{package}_formgroup AS fg ON fg.form_id = f.id');
+		$query->join('INNER', '#__fabrik_formgroup AS fg ON fg.form_id = f.id');
 
 		// Add the list ordering clause.
 		$orderCol  = $this->state->get('list.ordering');
@@ -105,7 +113,7 @@ class FabrikAdminModelForms extends FabModelList
 	 * @param   string $prefix A prefix for the table class name. Optional.
 	 * @param   array  $config Configuration array for model. Optional.
 	 *
-	 * @return  JTable    A database object
+	 * @return  Table    A database object
 	 */
 	public function getTable($type = 'Form', $prefix = 'FabrikTable', $config = array())
 	{
@@ -127,16 +135,16 @@ class FabrikAdminModelForms extends FabModelList
 	protected function populateState($ordering = null, $direction = null)
 	{
 		// Initialise variables.
-		$app = JFactory::getApplication('administrator');
+		$app = Factory::getApplication('administrator');
 
 		// Load the parameters.
-		$params = JComponentHelper::getParams('com_fabrik');
+		$params = ComponentHelper::getParams('com_fabrik');
 		$this->setState('params', $params);
 
-		$published = $app->getUserStateFromRequest($this->context . '.filter.published', 'filter_published', '');
+		$published = $this->getUserStateFromRequest($this->context . '.filter.published', 'filter_published', '');
 		$this->setState('filter.published', $published);
 
-		$search = $app->getUserStateFromRequest($this->context . '.filter.search', 'filter_search');
+		$search = $this->getUserStateFromRequest($this->context . '.filter.search', 'filter_search');
 		$this->setState('filter.search', $search);
 
 		// List state information.

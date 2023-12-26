@@ -12,6 +12,12 @@
 // No direct access
 defined('_JEXEC') or die('Restricted access');
 
+use Joomla\CMS\Language\Text;
+use Joomla\CMS\MVC\Model\BaseDatabaseModel;
+use Joomla\CMS\Version;
+use Joomla\CMS\Form\Form;
+use Joomla\CMS\Factory;
+
 /**
  * Fabrik Admin Plugin Model
  * Used for loading via ajax form plugins
@@ -20,7 +26,7 @@ defined('_JEXEC') or die('Restricted access');
  * @subpackage  Fabrik
  * @since       3.0.6
  */
-class FabrikAdminModelPlugin extends JModelLegacy
+class FabrikAdminModelPlugin extends BaseDatabaseModel
 {
 	/**
 	 * Render the plugins fields
@@ -29,11 +35,11 @@ class FabrikAdminModelPlugin extends JModelLegacy
 	 */
 	public function render()
 	{
-		$app   = JFactory::getApplication();
+		$app   = Factory::getApplication();
 		$input = $app->input;
 
 		/** @var FabrikFEModelPluginmanager $pluginManager */
-		$pluginManager             = JModelLegacy::getInstance('Pluginmanager', 'FabrikFEModel');
+		$pluginManager             = Factory::getApplication()->bootComponent('com_fabrik')->getMVCFactory()->createModel('Pluginmanager', 'FabrikFEModel');
 		$plugin                    = $pluginManager->getPlugIn($this->getState('plugin'), $this->getState('type'));
 		$feModel                   = $this->getPluginModel();
 		$plugin->getJForm()->model = $feModel;
@@ -41,7 +47,8 @@ class FabrikAdminModelPlugin extends JModelLegacy
 		$data = $this->getData();
 		$input->set('view', $this->getState('type'));
 
-		$mode = FabrikWorker::j3() ? 'nav-tabs' : '';
+//		$mode = FabrikWorker::j3() ? 'nav-tabs' : '';
+		$mode = 'nav-tabs';
 		$str  = $plugin->onRenderAdminSettings($data, $this->getState('c'), $mode);
 		$input->set('view', 'plugin');
 
@@ -125,7 +132,7 @@ class FabrikAdminModelPlugin extends JModelLegacy
 		if ($type !== 'validationrule')
 		{
 			// Set the parent model e.g. form/list
-			$feModel = JModelLegacy::getInstance($type, 'FabrikFEModel');
+			$feModel = Factory::getApplication()->bootComponent('com_fabrik')->getMVCFactory()->createModel($type, 'FabrikFEModel');
 			$feModel->setId($this->getState('id'));
 		}
 
@@ -142,14 +149,12 @@ class FabrikAdminModelPlugin extends JModelLegacy
 	{
 		$data                   = $this->getData();
 		$c                      = $this->getState('c') + 1;
-		$version                = new JVersion;
-		$j3                     = version_compare($version->RELEASE, '3.0') >= 0 ? true : false;
-		$class                  = $j3 ? 'form-horizontal ' : 'adminform ';
+		$class                  = '';
 		$str                    = array();
 		$str[]                  = '<div class="pane-slider content pane-down accordion-inner">';
 		$str[]                  = '<fieldset class="' . $class . 'pluginContainer" id="formAction_' . $c . '"><ul>';
 		$formName               = 'com_fabrik.' . $this->getState('type') . '-plugin';
-		$topForm                = new JForm($formName, array('control' => 'jform'));
+		$topForm                = new Form($formName, array('control' => 'jform'));
 		$topForm->repeatCounter = $c;
 		$xmlFile                = JPATH_SITE . '/administrator/components/com_fabrik/models/forms/' . $this->getState('type') . '-plugin.xml';
 		
@@ -167,31 +172,16 @@ class FabrikAdminModelPlugin extends JModelLegacy
 
 			foreach ($topForm->getFieldset($fieldset->name) as $field)
 			{
-				if (!$j3)
-				{
-					$str[] = '<li>' . $field->label . $field->input . '</li>';
-				}
-				else
-				{
-					$str[] = '<div class="control-group"><div class="control-label">' . $field->label;
-					$str[] = '</div><div class="controls">' . $field->input . '</div></div>';
-				}
+				$str[] = '<div class="control-group"><div class="control-label">' . $field->label;
+//				$str[] = '</div><div class="controls">' . $field->input . '</div></div>';
+				$str[] = '</div><div>' . $field->input . '</div></div>';
 			}
 		}
 
 		$str[] = '</ul>';
 		$str[] = '<div class="pluginOpts" style="clear:left"></div>';
-
-		if ($j3)
-		{
-			$str[] = '<div class="form-actions"><a href="#" class="btn btn-danger" data-button="removeButton">';
-			$str[] = '<i class="icon-delete"></i> ' . FText::_('COM_FABRIK_DELETE') . '</a></div>';
-		}
-		else
-		{
-			$str[] = '<a href="#" class="delete removeButton">' . FText::_('COM_FABRIK_DELETE') . '</a>';
-		}
-
+		$str[] = '<div class="form-actions"><a href="#" class="btn btn-danger" data-button="removeButton">';
+		$str[] = '<i class="icon-delete"></i> ' . Text::_('COM_FABRIK_DELETE') . '</a></div>';
 		$str[] = '</fieldset>';
 		$str[] = '</div>';
 

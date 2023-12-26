@@ -11,6 +11,9 @@
 // No direct access
 defined('_JEXEC') or die('Restricted access');
 
+use Joomla\CMS\Language\Text;
+use Joomla\CMS\Factory;
+
 /**
  * This is a file to add template specific chrome to pagination rendering.
  *
@@ -67,10 +70,10 @@ defined('_JEXEC') or die('Restricted access');
 function fabrik_pagination_list_footer($list)
 {
 	// Initialise variables.
-	$lang = JFactory::getLanguage();
+	$lang = Factory::getApplication()->getLanguage();
 	$html = "<div class=\"container\"><div class=\"pagination\">\n";
 
-	$html .= "\n<div class=\"limit\">" . FText::_('JGLOBAL_DISPLAY_NUM') . $list['limitfield'] . "</div>";
+	$html .= "\n<div class=\"limit\">" . Text::_('JGLOBAL_DISPLAY_NUM') . $list['limitfield'] . "</div>";
 	$html .= $list['pageslinks'];
 	$html .= "\n<div class=\"limit\">" . $list['pagescounter'] . "</div>";
 
@@ -87,7 +90,7 @@ function fabrik_pagination_list_footer($list, $paginator)
 	// Initialize variables
 	$html = array();
 	$html[] = '<div class="list-footer">';
-	$limitLabel = $paginator->showDisplayNum ? FText::_('COM_FABRIK_DISPLAY_NUM') : '';
+	$limitLabel = $paginator->showDisplayNum ? Text::_('COM_FABRIK_DISPLAY_NUM') : '';
 	$html[] = '<div class="limit input-prepend"><button class="add-on">' . $limitLabel  . '</button>' . $list['limitfield'] . '</div>';
 	$html[] = $list['pageslinks'];
 	$html[] = '<div class="counter">' . $list['pagescounter'] . '</div>';
@@ -112,7 +115,7 @@ if (!function_exists('fabrik_pagination_item_active'))
 			default:
 				$rel = '';
 		}
-		return '<a ' . $rel . 'title="' . $item->text . '" href="' . $item->link . '">' . $item->text . '</a>';
+		return '<a ' . $rel . 'title="' . $item->text . '" href="' . $item->link . '" class="page-link">' . $item->text . '</a>';
 	}
 }
 
@@ -120,6 +123,6 @@ if (!function_exists('fabrik_pagination_item_inactive'))
 {
 	function fabrik_pagination_item_inactive(&$item)
 	{
-		return '<a href="#">' . $item->text . '</a>';
+		return '<a href="#" class="page-link">' . $item->text . '</a>';
 	}
 }

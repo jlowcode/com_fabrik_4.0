@@ -12,6 +12,9 @@
 // No direct access
 defined('_JEXEC') or die('Restricted access');
 
+use Joomla\CMS\Language\Text;
+use Joomla\CMS\Form\FormField;
+
 /**
  * Renders a Fabrik Help link
  *
@@ -19,7 +22,7 @@ defined('_JEXEC') or die('Restricted access');
  * @since    3.0.9
  */
 
-class JFormFieldStripewebhook extends JFormField
+class JFormFieldStripewebhook extends FormField
 {
 	/**
 	 * Element name
@@ -41,7 +44,7 @@ class JFormFieldStripewebhook extends JFormField
 
 		if (empty($formId))
 		{
-			$url = FText::_('Available once form saved');
+			$url = Text::_('Available once form saved');
 		}
 		else
 		{

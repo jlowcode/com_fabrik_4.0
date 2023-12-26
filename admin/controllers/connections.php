@@ -12,6 +12,11 @@
 // No direct access
 defined('_JEXEC') or die('Restricted access');
 
+use Joomla\CMS\Language\Text;
+use Joomla\CMS\Router\Route;
+use Joomla\CMS\Session\Session;
+use Joomla\CMS\Factory;
+
 require_once 'fabcontrolleradmin.php';
 
 /**
@@ -62,7 +67,7 @@ class FabrikAdminControllerConnections extends FabControllerAdmin
 	 *
 	 * @return  J model
 	 */
-	public function &getModel($name = 'Connection', $prefix = 'FabrikAdminModel')
+	public function &getModel($name = 'Connection', $prefix = 'FabrikAdminModel', $config = array())
 	{
 		$model = parent::getModel($name, $prefix, array('ignore_request' => true));
 
@@ -79,8 +84,8 @@ class FabrikAdminControllerConnections extends FabControllerAdmin
 	public function setDefault()
 	{
 		// Check for request forgeries
-		JSession::checkToken() or die(FText::_('JINVALID_TOKEN'));
-		$app = JFactory::getApplication();
+		Session::checkToken() or die(Text::_('JINVALID_TOKEN'));
+		$app = Factory::getApplication();
 		$input = $app->input;
 
 		// Get items to publish from the request.
@@ -91,12 +96,14 @@ class FabrikAdminControllerConnections extends FabControllerAdmin
 
 		if ($value == 0)
 		{
-			$this->setMessage(FText::_('COM_FABRIK_CONNECTION_CANT_UNSET_DEFAULT'));
+			$this->setMessage(Text::_('COM_FABRIK_CONNECTION_CANT_UNSET_DEFAULT'));
 		}
 
 		if (empty($cid))
 		{
-			JError::raiseWarning(500, FText::_($this->text_prefix . '_NO_ITEM_SELECTED'));
+//			JError::raiseWarning(500, Text::_($this->text_prefix . '_NO_ITEM_SELECTED'));
+			\Joomla\CMS\Factory::getApplication()->enqueueMessage(Text::_($this->text_prefix . '_NO_ITEM_SELECTED'), 'warning');
+
 		}
 		else
 		{
@@ -110,15 +117,16 @@ class FabrikAdminControllerConnections extends FabControllerAdmin
 				// Publish the items.
 				if (!$model->setDefault($cid, $value))
 				{
-					JError::raiseWarning(500, $model->getError());
+//					JError::raiseWarning(500, $model->getError());
+					\Joomla\CMS\Factory::getApplication()->enqueueMessage($model->getError(), 'error');
 				}
 				else
 				{
-					$this->setMessage(FText::_('COM_FABRIK_CONNECTION_SET_DEFAULT'));
+					$this->setMessage(Text::_('COM_FABRIK_CONNECTION_SET_DEFAULT'));
 				}
 			}
 		}
 
-		$this->setRedirect(JRoute::_('index.php?option=' . $this->option . '&view=' . $this->view_list, false));
+		$this->setRedirect(Route::_('index.php?option=' . $this->option . '&view=' . $this->view_list, false));
 	}
 }

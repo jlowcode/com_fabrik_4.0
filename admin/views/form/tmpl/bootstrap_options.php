@@ -12,10 +12,12 @@
 // No direct access
 defined('_JEXEC') or die('Restricted access');
 
+use Joomla\CMS\Language\Text;
 ?>
 <div class="tab-pane" id="tab-options">
 
-    <fieldset class="form-horizontal">
+	<legend><?php echo Text::_('COM_FABRIK_OPTIONS'); ?></legend>
+    <fieldset>
 		<?php foreach ($this->form->getFieldset('options') as $this->field) :
 			echo $this->loadTemplate('control_group');
 		endforeach;

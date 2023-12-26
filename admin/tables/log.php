@@ -11,6 +11,8 @@
 // No direct access
 defined('_JEXEC') or die('Restricted access');
 
+use Joomla\CMS\Table\Table;
+
 /**
  * Log Fabrik Table
  *
@@ -18,7 +20,7 @@ defined('_JEXEC') or die('Restricted access');
  * @subpackage  Fabrik
  * @since       3.0
  */
-class FabrikTableLog extends JTable
+class FabrikTableLog extends Table
 {
 	/**
 	 * Constructor
@@ -27,6 +29,6 @@ class FabrikTableLog extends JTable
 	 */
 	public function __construct(&$db)
 	{
-		parent::__construct('#__{package}_log', 'id', $db);
+		parent::__construct('#__fabrik_log', 'id', $db);
 	}
 }

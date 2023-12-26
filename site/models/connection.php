@@ -11,6 +11,12 @@
 // No direct access
 defined('_JEXEC') or die('Restricted access');
 
+use Joomla\CMS\Language\Text;
+use Joomla\CMS\Table\Table;
+use Joomla\CMS\Version;
+use Joomla\Database\DatabaseDriver;
+use Joomla\CMS\HTML\HTMLHelper;
+
 jimport('joomla.application.component.model');
 
 /**
@@ -25,14 +31,14 @@ class FabrikFEModelConnection extends FabModel
 	/**
 	 * Current connection
 	 *
-	 * @var JTable
+	 * @var Table
 	 */
 	protected $connection = null;
 
 	/**
 	 * Default connection table
 	 *
-	 * @var JTable
+	 * @var Table
 	 */
 	protected $defaultConnection = null;
 
@@ -102,15 +108,13 @@ class FabrikFEModelConnection extends FabModel
 	 */
 	public function getDriverInstance($options)
 	{
-		$version = new JVersion;
-
-		return $version->RELEASE > 2.5 ? JDatabaseDriver::getInstance($options) : JDatabase::getInstance($options);
+		return DatabaseDriver::getInstance($options);
 	}
 
 	/**
 	 * Decrypt once a connection password - if its params->encryptedPw option is true
 	 *
-	 * @param   JTable  &FabrikTableConnection  Connection
+	 * @param   Table  &FabrikTableConnection  Connection
 	 *
 	 * @since   3.1rc1
 	 *
@@ -149,7 +153,7 @@ class FabrikFEModelConnection extends FabModel
 
 		if (!is_object($this->connection))
 		{
-			if ($this->id == -1 || $this->id == '')
+			if ($this->id == -1 || $this->id == '' || $this->id == 0)
 			{
 				$this->connection = $this->loadDefaultConnection();
 			}
@@ -162,7 +166,7 @@ class FabrikFEModelConnection extends FabModel
 			$this->decryptPw($this->connection);
 		}
 
-		if ($this->connection->get('published') !== '1')
+		if ($this->connection->get('published') != '1')
 		{
 			throw new RuntimeException('Connection ID #' . $this->connection->get('id') . ' is unpublished or trashed', E_ERROR);
 		}
@@ -184,7 +188,7 @@ class FabrikFEModelConnection extends FabModel
 
 		$error = false;
 		$cn = $this->getConnection();
-		$input = $this->app->input;
+		$input = $this->app->getInput();
 
 		if ($input->get('task') == 'test')
 		{
@@ -226,16 +230,22 @@ class FabrikFEModelConnection extends FabModel
 				if ($cn->default == 1 && $input->get('task') !== 'test')
 				{
 					self::$dbs[$cn->id] = FabrikWorker::getDbo();
+					
+					/*Throw meaningful error message*/
+					if (!self::$dbs[$cn->id]->connect()) {
+						$eMessage = JDEBUG ? $e->getMessage() : '';
+						throw new RuntimeException($eMessage.' Fabrik could not connect to database cid = ' . $cn->id );
+					}
 
 					// $$$rob remove the error from the error stack
 					// if we don't do this the form is not rendered
-					JError::getError(true);
+					//JError::getError(true);
 				}
 				else
 				{
-					if (!$this->app->isAdmin())
+					if (!$this->app->isClient('administrator'))
 					{
-						throw new RuntimeException('Could not connection to database', E_ERROR);
+						throw new RuntimeException('Fabrik could not connect to database', E_ERROR);
 					}
 					else
 					{
@@ -251,7 +261,7 @@ class FabrikFEModelConnection extends FabModel
 							$level = E_ERROR;
 						}
 
-						throw new RuntimeException('Could not connection to database cid = ' . $cn->id, $level);
+						throw new RuntimeException('Fabrik could not connect to database cid = ' . $cn->id, $level);
 					}
 				}
 			}
@@ -318,7 +328,6 @@ class FabrikFEModelConnection extends FabModel
 		$driver = $conf->get('dbtype');
 
 		// Test for swapping db table names
-		$driver .= '_fab';
 		$options = array('driver' => $driver, 'host' => $host, 'user' => $user, 'password' => $password, 'database' => $database, 'prefix' => $prefix);
 
 		return $options;
@@ -357,7 +366,7 @@ class FabrikFEModelConnection extends FabModel
 	{
 		$connectionTables = array();
 		$connectionTables[-1] = array();
-		$connectionTables[-1][] = JHTML::_('select.option', '-1', FText::_('COM_FABRIK_PLEASE_SELECT'));
+		$connectionTables[-1][] = HTMLHelper::_('select.option', '-1', Text::_('COM_FABRIK_PLEASE_SELECT'));
 
 		foreach ($connections as $cn)
 		{
@@ -369,13 +378,13 @@ class FabrikFEModelConnection extends FabModel
 				$this->id = $cn->id;
 				$fabrikDb = $this->getDb();
 				$tables = $fabrikDb->getTableList();
-				$connectionTables[$cn->value][] = JHTML::_('select.option', '', '- Please select -');
+				$connectionTables[$cn->value][] = HTMLHelper::_('select.option', '', '- Please select -');
 
 				if (is_array($tables))
 				{
 					foreach ($tables as $table)
 					{
-						$connectionTables[$cn->value][] = JHTML::_('select.option', $table, $table);
+						$connectionTables[$cn->value][] = HTMLHelper::_('select.option', $table, $table);
 					}
 				}
 			}
@@ -396,7 +405,6 @@ class FabrikFEModelConnection extends FabModel
 		$this->getConnection();
 		$fabrikDb = $this->getDb();
 		$tables = $fabrikDb->getTableList();
-
 		if (is_array($tables))
 		{
 			if ($addBlank)
@@ -441,7 +449,7 @@ class FabrikFEModelConnection extends FabModel
 		if (!$this->defaultConnection)
 		{
 			// $$$ rob connections are pooled for all packages - each package should use
-			// jos_fabrik_connections and not jos_{package}_connections
+			// jos_fabrik_connections and not jos_fabrik_connections
 			$row = FabTable::getInstance('Connection', 'FabrikTable');
 			$row->load(array('default' => 1));
 			$this->decryptPw($row);

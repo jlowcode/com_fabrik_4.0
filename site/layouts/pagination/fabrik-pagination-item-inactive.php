@@ -1,4 +1,7 @@
 <?php
+
+use Joomla\CMS\Factory;
+
 /**
  * Layout: List Pagination Inactive Item
  *
@@ -11,9 +14,9 @@
 
 $d    = $displayData;
 $item = $d->item;
-$app  = JFactory::getApplication();
+$app  = Factory::getApplication();
 
-if ($app->isAdmin()) :
+if ($app->isClient('administrator')) :
 	?>
 	<span><?php echo $item->text; ?></span>
 	<?php

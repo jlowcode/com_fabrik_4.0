@@ -11,16 +11,12 @@
 // No direct access
 defined('_JEXEC') or die('Restricted access');
 
+use Joomla\CMS\MVC\View\HtmlView;
+use Joomla\CMS\Factory;
+
 jimport('joomla.application.component.view');
 
-/**
- * View to make ajax json object reporting csv file creation progress.
- *
- * @package     Joomla.Administrator
- * @subpackage  Fabrik
- * @since       1.5
- */
-class FabrikAdminViewList extends JViewLegacy
+class FabrikAdminViewList extends HtmlView
 {
 	/**
 	 * Display the list
@@ -32,11 +28,11 @@ class FabrikAdminViewList extends JViewLegacy
 
 	public function display($tpl = null)
 	{
-		$session = JFactory::getSession();
-		$app = JFactory::getApplication();
+		$session = Factory::getSession();
+		$app = Factory::getApplication();
 		$input = $app->input;
-		$exporter = JModelLegacy::getInstance('Csvexport', 'FabrikFEModel');
-		$model = JModelLegacy::getInstance('list', 'FabrikFEModel');
+		$exporter = Factory::getApplication()->bootComponent('com_fabrik')->getMVCFactory()->createModel('Csvexport', 'FabrikFEModel');
+		$model = Factory::getApplication()->bootComponent('com_fabrik')->getMVCFactory()->createModel('List', 'FabrikFEModel');
 		$model->setId($input->getInt('listid'));
 		$model->setOutPutFormat('csv');
 		$exporter->model =& $model;

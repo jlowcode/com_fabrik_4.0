@@ -64,6 +64,18 @@ table.mceLayout {
 	clear: both;
 }
 
+/* May not be compatible with BS5 in J!4 */
 .textarea {
 	height: auto;
+}
+
+/* J!4 adjustments for pre-filter table fields */
+.table>:not(caption)>*>* {
+    padding: 0.75rem 0.3rem;
+}
+div#prefilters label.btn {
+	padding: 0.1rem 0.6rem 0.1rem 0.2rem;
+}
+.switcher {
+    width: 10rem;
 }

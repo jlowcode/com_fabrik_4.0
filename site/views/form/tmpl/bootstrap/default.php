@@ -11,6 +11,7 @@
 
 // No direct access
 defined('_JEXEC') or die('Restricted access');
+use Joomla\CMS\Language\Text;
 
 $form = $this->form;
 $model = $this->getModel();
@@ -44,8 +45,8 @@ echo $form->intro;
 echo $this->plugintop;
 ?>
 
-<div class="fabrikMainError alert alert-error fabrikError<?php echo $active?>">
-	<button class="close" data-dismiss="alert">×</button>
+<div class="fabrikMainError alert alert-danger alert-dismissible fabrikError<?php echo $active?>">
+	<button class="btn-close" data-bs-dismiss="alert" aria-label="<?php echo Text::_('JCLOSE'); ?>"></button>
 	<?php echo $form->error; ?>
 </div>
 
@@ -70,7 +71,7 @@ foreach ($this->groups as $group) :
 	<fieldset class="<?php echo $group->class; ?>" id="group<?php echo $group->id;?>" style="<?php echo $group->css;?>">
 		<?php
 		if ($group->showLegend) :?>
-			<legend class="legend"><?php echo $group->title;?></legend>
+			<legend class="mt-3 legend"><?php echo $group->title;?></legend>
 		<?php
 		endif;
 

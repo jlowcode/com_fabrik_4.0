@@ -11,7 +11,12 @@
 // No direct access
 defined('_JEXEC') or die('Restricted access');
 
+use Joomla\CMS\Language\Text;
+use Joomla\CMS\Component\ComponentHelper;
+use Joomla\CMS\Menu\AbstractMenu;
+use Joomla\CMS\Factory;
 use Joomla\Utilities\ArrayHelper;
+use Fabrik\Helpers\Worker;
 
 /**
  * if using file extensions sef and htaccess :
@@ -33,7 +38,7 @@ use Joomla\Utilities\ArrayHelper;
 function fabrikBuildRoute(&$query)
 {
 	$segments = array();
-	$app = JFactory::getApplication();
+	$app = Factory::getApplication();
 	$menu = $app->getMenu();
 
 	if (empty($query['Itemid']))
@@ -148,11 +153,13 @@ function fabrikBuildRoute(&$query)
 		unset($query['rowid']);
 	}
 
+	/* $$$trob: Don't use calculations as SEF segment (there may be old wrong Fabrik 2/3 menu links, it will break SEF list view)
 	if (isset($query['calculations']))
 	{
 		$segments[] = $query['calculations'];
 		unset($query['calculations']);
 	}
+	*/
 
 	if (isset($query['filetype']))
 	{
@@ -247,7 +254,7 @@ function _fabrikRouteMatchesMenuItem($query, $menuItem)
  * @return  array vars
  */
 
-function fabrikParseRoute($segments)
+function fabrikParseRoute(&$segments)
 {
 	// $vars are what Joomla then uses for its $_REQUEST array
 	$vars = array();
@@ -267,6 +274,7 @@ function fabrikParseRoute($segments)
 	 * loaded (some bizarre 3rd party system plugin doing funky things), and since we don't need
 	 * what our wrapper does for this simple usage ... yes, we could specifically load our helper here,
 	 * and (dear reader) if you wanna do that be my guest.
+	 * J!4: unset processed segments
 	 */
 
 	$viewFound = true;
@@ -280,21 +288,33 @@ function fabrikParseRoute($segments)
 			$vars['formid'] = ArrayHelper::getValue($segments, 1, 0);
 			$vars['rowid'] = ArrayHelper::getValue($segments, 2, '');
 			$vars['format'] = ArrayHelper::getValue($segments, 3, 'html');
+			unset($segments[0]);
+			unset($segments[1]);
+			unset($segments[2]);
+			unset($segments[3]);
 			break;
 		case 'table':
 		case 'list':
 			$vars['view'] = ArrayHelper::getValue($segments, 0, '');
 			$vars['listid'] = ArrayHelper::getValue($segments, 1, 0);
+			unset($segments[0]);
+			unset($segments[1]);
 			break;
 		case 'import':
 			$vars['view'] = 'import';
 			$vars['listid'] = ArrayHelper::getValue($segments, 1, 0);
 			$vars['filetype'] = ArrayHelper::getValue($segments, 2, 0);
+			unset($segments[0]);
+			unset($segments[1]);
+			unset($segments[2]);
 			break;
 		case 'visualization':
 			$vars['view'] = 'visualization';
 			$vars['id'] = ArrayHelper::getValue($segments, 1, 0);
 			$vars['format'] = ArrayHelper::getValue($segments, 2, 'html');
+			unset($segments[0]);
+			unset($segments[1]);
+			unset($segments[2]);
 			break;
 		default:
 			$viewFound = false;
@@ -307,15 +327,15 @@ function fabrikParseRoute($segments)
 	  *
 	  * 7/25/2017, made this behavior an option, as can cause SEF issues with duplicate pages
 	 */
-
-    $config = JComponentHelper::getParams('com_fabrik');
+/* //Henk removed this for J!4
+    $config = ComponentHelper::getParams('com_fabrik');
     $home404 = $config->get('fabrik_home_404', '0') === '1';
 
 	if (!$home404 && !$viewFound)
 	{
-		$app   = JFactory::getApplication();
-		$app->enqueueMessage(JText::_('JGLOBAL_RESOURCE_NOT_FOUND'));
-		$menus = JMenu::getInstance('site');
+		$app   = Factory::getApplication();
+		$app->enqueueMessage(Text::_('JGLOBAL_RESOURCE_NOT_FOUND'));
+		$menus = AbstractMenu::getInstance('site');
 		$menu  = $menus->getActive();
 		$link  = parse_url($menu->link);
 		$qs    = array();
@@ -360,11 +380,18 @@ function fabrikParseRoute($segments)
 			}
 		}
 	}
-
+*/
 	if (!$viewFound)
 	{
-		//JError::raiseError(404, JText::_('JGLOBAL_RESOURCE_NOT_FOUND'));
-        throw new \Exception('JGLOBAL_RESOURCE_NOT_FOUND.', 404);
+		//JError::raiseError(404, Text::_('JGLOBAL_RESOURCE_NOT_FOUND'));
+        throw new \Exception(Text::_('JGLOBAL_RESOURCE_NOT_FOUND'), 404);
+	}
+	
+	//J!4 Router will fail if there are unprocessed segments. So create warning/log and reset segments
+	if (count($segments) >0)
+	{
+		FabrikWorker::logError('Incomplete Fabrik routing. vars: ' . implode(',',$vars) . '; ignored segments: '. implode(',',$segments), 'warning');
+		$segments = [];
 	}
 
 	return $vars;

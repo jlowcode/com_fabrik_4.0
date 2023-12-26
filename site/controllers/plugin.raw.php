@@ -11,6 +11,12 @@
 // No direct access
 defined('_JEXEC') or die('Restricted access');
 
+use Joomla\CMS\MVC\Model\BaseDatabaseModel;
+use Joomla\CMS\MVC\Controller\BaseController;
+use Joomla\CMS\Plugin\PluginHelper;
+use Joomla\CMS\Factory;
+use Joomla\String\StringHelper;
+
 jimport('joomla.application.component.controller');
 
 /**
@@ -21,7 +27,7 @@ jimport('joomla.application.component.controller');
  * @subpackage  Fabrik
  * @since       1.5
  */
-class FabrikControllerPlugin extends JControllerLegacy
+class FabrikControllerPlugin extends BaseController
 {
 	/**
 	 * Means that any method in Fabrik 2, e.e. 'ajax_upload' should
@@ -36,13 +42,13 @@ class FabrikControllerPlugin extends JControllerLegacy
 
 	public function pluginAjax()
 	{
-		$app = JFactory::getApplication();
-		$input = $app->input;
+		$app = Factory::getApplication();
+		$input = $app->getInput();
 		$plugin = $input->get('plugin', '');
 		$method = $input->get('method', '');
 		$group = $input->get('g', 'element');
 
-		if (!JPluginHelper::importPlugin('fabrik_' . $group, $plugin))
+		if (!PluginHelper::importPlugin('fabrik_' . $group, $plugin))
 		{
 			$o = new stdClass;
 			$o->err = 'unable to import plugin fabrik_' . $group . ' ' . $plugin;
@@ -51,14 +57,15 @@ class FabrikControllerPlugin extends JControllerLegacy
 			return;
 		}
 
-		$dispatcher = JEventDispatcher::getInstance();
-
 		if (substr($method, 0, 2) !== 'on')
 		{
-			$method = 'on' . JString::ucfirst($method);
+			$method = 'on' . StringHelper::ucfirst($method);
 		}
 
-		$dispatcher->trigger($method);
+//		$dispatcher = JEventDispatcher::getInstance();
+//		$dispatcher    = Factory::getApplication()->getDispatcher();
+//		$dispatcher->triggerEvent($method);
+		$dispatcher = Factory::getApplication()->triggerEvent($method);
 	}
 
 	/**
@@ -71,8 +78,8 @@ class FabrikControllerPlugin extends JControllerLegacy
 	{
 		$db = FabrikWorker::getDbo();
 		require_once COM_FABRIK_FRONTEND . '/user_ajax.php';
-		$app = JFactory::getApplication();
-		$method = $app->input->get('method', '');
+		$app = Factory::getApplication();
+		$method = $app->getInput()->get('method', '');
 		$userAjax = new userAjax($db);
 
 		if (method_exists($userAjax, $method))
@@ -92,10 +99,10 @@ class FabrikControllerPlugin extends JControllerLegacy
 	public function doCron(&$pluginManager)
 	{
 		$db = FabrikWorker::getDbo();
-		$app = JFactory::getApplication();
-		$cid = $app->input->get('element_id', array(), 'array');
+		$app = Factory::getApplication();
+		$cid = $app->getInput()->get('element_id', array(), 'array');
 		$query = $db->getQuery(true);
-		$query->select('id, plugin')->from('#__{package}_cron');
+		$query->select('id, plugin')->from('#__fabrik_cron');
 
 		if (!empty($cid))
 		{
@@ -104,7 +111,8 @@ class FabrikControllerPlugin extends JControllerLegacy
 
 		$db->setQuery($query);
 		$rows = $db->loadObjectList();
-		$viewModel = JModelLegacy::getInstance('view', 'FabrikFEModel');
+		// FabrikFEModelview does not exsist !!
+		$viewModel = BaseDatabaseModel::getInstance('view', 'FabrikFEModel');
 		$c = 0;
 
 		foreach ($rows as $row)
@@ -126,7 +134,7 @@ class FabrikControllerPlugin extends JControllerLegacy
 		}
 
 		$query = $db->getQuery();
-		$query->update('#__{package}_cron')->set('lastrun=NOW()')->where('id IN (' . implode(',', $cid) . ')');
+		$query->update('#__fabrik_cron')->set('lastrun=NOW()')->where('id IN (' . implode(',', $cid) . ')');
 		$db->setQuery($query);
 		$db->execute();
 	}

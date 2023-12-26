@@ -12,6 +12,9 @@
 // No direct access
 defined('_JEXEC') or die('Restricted access');
 
+use Joomla\CMS\Language\Text;
+use Joomla\CMS\Factory;
+
 $form = $this->form;
 $model = $this->getModel();
 $groupTmpl = $model->editable ? 'group' : 'group_details';
@@ -19,8 +22,8 @@ $active = ($form->error != '') ? '' : ' fabrikHide';
 
 if ($model->isMultiPage() && FabrikHelperHTML::isDebug())
 {
-	$app = JFactory::getApplication();
-	$app->enqueueMessage(FText::_('COM_FABRIK_ERR_TAB_FORM_TEMPLATE_INCOMPATIBLE_WITH_MULTIPAGE_FORMS'), 'error');
+	$app = Factory::getApplication();
+	$app->enqueueMessage(Text::_('COM_FABRIK_ERR_TAB_FORM_TEMPLATE_INCOMPATIBLE_WITH_MULTIPAGE_FORMS'), 'error');
 }
 
 if ($this->params->get('show_page_heading', 1)) : ?>
@@ -44,18 +47,18 @@ echo $form->intro;
 echo $this->plugintop;
 ?>
 
-<div class="fabrikMainError alert alert-error fabrikError<?php echo $active?>">
-	<button class="close" data-dismiss="alert">×</button>
+<div class="fabrikMainError alert alert-danger alert-dismissible fabrikError<?php echo $active?>">
+	<button class="btn-close" data-bs-dismiss="alert" aria-label="<?php echo Text::_('JCLOSE'); ?>"></button>
 	<?php echo $form->error?>
 </div>
 
 <div class="row-fluid nav">
-	<div class="span6 pull-right">
+	<div class="col-sm-6 pull-right">
 		<?php
 		echo $this->loadTemplate('buttons');
 		?>
 	</div>
-	<div class="span6">
+	<div class="col-sm-6">
 		<?php
 		echo $this->loadTemplate('relateddata');
 		?>
@@ -75,7 +78,7 @@ foreach ($this->groups as $group) :
 			break;
 		}
 	}
-	$err_class = $is_err ? 'fabrikErrorGroup' : '';
+	$err_class = $is_err ? ' fabrikErrorGroup' : '';
 	$tabId = $this->form->id . '_' . (int)$this->rowid . '_' . $i;
 	// If this is multi-page then groups are consolidated until a group with a page break
 	// So we should only show a tab if: it is first tab, or if it is a page break
@@ -83,8 +86,7 @@ foreach ($this->groups as $group) :
 		$is_err = false;
 		$tab = new stdClass;
 		$tab->id = 'group' . $group->id . '_tab';
-		$tab->class = $i === 0 ? 'active ' . $err_class : $err_class;
-		$tab->class .= ' ' . $tab->id . '_tab';
+		$tab->class = $err_class;
 		$tab->css = $group->css;
 		$tab->href = 'group-tab' . $tabId;
 		$tab->label = !empty($group->title) ? $group->title : $group->name;;
@@ -117,7 +119,7 @@ echo FabrikHelperHTML::getLayout('fabrik-tabs')->render((object) array('tabs' =>
 			<fieldset class="<?php echo $group->class; ?>" id="group<?php echo $group->id;?>" style="<?php echo $group->css;?>">
 				<?php
 				if ($group->showLegend) : ?>
-					<legend class="legend"><?php echo $group->title;?></legend>
+					<legend class="legend mt-3"><?php echo $group->title;?></legend>
 				<?php
 				endif;
 

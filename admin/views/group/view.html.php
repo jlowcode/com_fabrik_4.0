@@ -11,7 +11,12 @@
 // No direct access
 defined('_JEXEC') or die('Restricted access');
 
-jimport('joomla.application.component.view');
+use Joomla\CMS\Toolbar\ToolbarHelper;
+use Joomla\CMS\Language\Text;
+use Joomla\CMS\MVC\View\HtmlView;
+use Joomla\CMS\Table\Table;
+use Joomla\CMS\Form\Form;
+use Joomla\CMS\Factory;
 
 /**
  * View to edit a group.
@@ -21,19 +26,19 @@ jimport('joomla.application.component.view');
  * @since       3.0
  */
 
-class FabrikAdminViewGroup extends JViewLegacy
+class FabrikAdminViewGroup extends HtmlView
 {
 	/**
 	 * Form
 	 *
-	 * @var JForm
+	 * @var Form
 	 */
 	protected $form;
 
 	/**
 	 * Group item
 	 *
-	 * @var JTable
+	 * @var Table
 	 */
 	protected $item;
 
@@ -73,6 +78,31 @@ class FabrikAdminViewGroup extends JViewLegacy
 		FabrikHelperHTML::script($srcs);
 
 		parent::display($tpl);
+
+		/* The following is a hack to fix an issue with the list and group admin forms losing
+		 * the sidebar menu item above the one the user clicks on before fabrik is fully loaded. 
+		 * This hack forces it to redisplay 
+		*/
+		Factory::getDocument()->addScriptDeclaration('
+			function onReady() {
+			    var details = document.getElementById("btn-details");
+			    if (typeof Fabrik !== "undefined" && details !== null) {
+			    	var buttons = ["btn-details", "btn-repeat", "btn-layout", "btn-multipage"];
+			    	for (var idx = 0; idx < buttons.length; idx++) {
+			    		button = document.getElementById(buttons[idx]);
+			    		if (button.style.display == "none") button.style.display = "block";
+			    	}
+			    } else {
+			    	setTimeout(onReady, 100);
+			    }
+			}
+
+			if (document.readyState !== "loading") {
+			    onReady();
+			} else {
+				document.addEventListener("DOMContentLoaded", onReady());
+			}'
+		);
 	}
 
 	/**
@@ -83,28 +113,28 @@ class FabrikAdminViewGroup extends JViewLegacy
 
 	protected function addToolbar()
 	{
-		$app = JFactory::getApplication();
+		$app = Factory::getApplication();
 		$input = $app->input;
 		$input->set('hidemainmenu', true);
-		$user = JFactory::getUser();
+		$user = Factory::getUser();
 		$isNew = ($this->item->id == 0);
 		$userId = $user->get('id');
 		$checkedOut	= !($this->item->checked_out == 0 || $this->item->checked_out == $user->get('id'));
 		$canDo = FabrikAdminHelper::getActions($this->state->get('filter.category_id'));
-		$title = $isNew ? FText::_('COM_FABRIK_MANAGER_GROUP_NEW') : FText::_('COM_FABRIK_MANAGER_GROUP_EDIT') . ' "' . $this->item->name . '"';
-		JToolBarHelper::title($title, 'stack');
+		$title = $isNew ? Text::_('COM_FABRIK_MANAGER_GROUP_NEW') : Text::_('COM_FABRIK_MANAGER_GROUP_EDIT') . ' "' . $this->item->name . '"';
+		ToolBarHelper::title($title, 'stack');
 
 		if ($isNew)
 		{
 			// For new records, check the create permission.
 			if ($canDo->get('core.create'))
 			{
-				JToolBarHelper::apply('group.apply', 'JTOOLBAR_APPLY');
-				JToolBarHelper::save('group.save', 'JTOOLBAR_SAVE');
-				JToolBarHelper::addNew('group.save2new', 'JTOOLBAR_SAVE_AND_NEW');
+				ToolBarHelper::apply('group.apply', 'JTOOLBAR_APPLY');
+				ToolBarHelper::save('group.save', 'JTOOLBAR_SAVE');
+				ToolBarHelper::addNew('group.save2new', 'JTOOLBAR_SAVE_AND_NEW');
 			}
 
-			JToolBarHelper::cancel('group.cancel', 'JTOOLBAR_CANCEL');
+			ToolBarHelper::cancel('group.cancel', 'JTOOLBAR_CANCEL');
 		}
 		else
 		{
@@ -114,26 +144,26 @@ class FabrikAdminViewGroup extends JViewLegacy
 				// Since it's an existing record, check the edit permission, or fall back to edit own if the owner.
 				if ($canDo->get('core.edit') || ($canDo->get('core.edit.own') && $this->item->created_by == $userId))
 				{
-					JToolBarHelper::apply('group.apply', 'JTOOLBAR_APPLY');
-					JToolBarHelper::save('group.save', 'JTOOLBAR_SAVE');
+					ToolBarHelper::apply('group.apply', 'JTOOLBAR_APPLY');
+					ToolBarHelper::save('group.save', 'JTOOLBAR_SAVE');
 
 					// We can save this record, but check the create permission to see if we can return to make a new one.
 					if ($canDo->get('core.create'))
 					{
-						JToolBarHelper::addNew('group.save2new', 'JTOOLBAR_SAVE_AND_NEW');
+						ToolBarHelper::addNew('group.save2new', 'JTOOLBAR_SAVE_AND_NEW');
 					}
 				}
 			}
 
 			if ($canDo->get('core.create'))
 			{
-				JToolBarHelper::custom('group.save2copy', 'save-copy.png', 'save-copy_f2.png', 'JTOOLBAR_SAVE_AS_COPY', false);
+				ToolBarHelper::custom('group.save2copy', 'save-copy.png', 'save-copy_f2.png', 'JTOOLBAR_SAVE_AS_COPY', false);
 			}
 
-			JToolBarHelper::cancel('group.cancel', 'JTOOLBAR_CLOSE');
+			ToolBarHelper::cancel('group.cancel', 'JTOOLBAR_CLOSE');
 		}
 
-		JToolBarHelper::divider();
-		JToolBarHelper::help('JHELP_COMPONENTS_FABRIK_GROUPS_EDIT', false, FText::_('JHELP_COMPONENTS_FABRIK_GROUPS_EDIT'));
+		ToolBarHelper::divider();
+		ToolBarHelper::help('JHELP_COMPONENTS_FABRIK_GROUPS_EDIT', false, Text::_('JHELP_COMPONENTS_FABRIK_GROUPS_EDIT'));
 	}
 }

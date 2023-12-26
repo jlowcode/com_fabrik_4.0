@@ -12,9 +12,14 @@
 // No direct access
 defined('_JEXEC') or die('Restricted access');
 
+use Joomla\CMS\Form\FormHelper;
+use Joomla\CMS\HTML\HTMLHelper;
+use Joomla\CMS\Language\Text;
+use Joomla\CMS\Form\Field\ListField;
+
 require_once JPATH_ADMINISTRATOR . '/components/com_fabrik/helpers/element.php';
 
-JFormHelper::loadFieldClass('list');
+FormHelper::loadFieldClass('list');
 
 /**
  * Renders a SQL element
@@ -23,7 +28,7 @@ JFormHelper::loadFieldClass('list');
  * @since    3.0
  */
 
-class JFormFieldSQL2 extends JFormFieldList
+class JFormFieldSQL2 extends ListField
 {
 	/**
 	 * Element name
@@ -39,14 +44,15 @@ class JFormFieldSQL2 extends JFormFieldList
 	 * @return  array  The field option objects.
 	 */
 
-	protected function getOptions()
+	protected function getInput()
 	{
 		$db = FabrikWorker::getDbo(true);
-		$check = $this->element['checkexists'] ? (bool) $this->element['checkexists'] : false;
+		$attributes = $this->element->attributes();
+		$check = strtolower((string)$attributes->checkexists) == 'true' ? true : false;
 
 		if ($check)
 		{
-			$q = explode(" ", $this->element['query']);
+			$q = explode(" ", (string)$attributes->query);
 			$i = array_search('FROM', $q);
 
 			if (!$i)
@@ -62,24 +68,24 @@ class JFormFieldSQL2 extends JFormFieldList
 
 			if (!$found)
 			{
-				return array(JHTML::_('select.option', $tbl . ' not found', ''));
+				$this->addOption(htmlspecialchars($tbl . ' not found'), ['value'=>'']);
+				return array(HTMLHelper::_('select.option', $tbl . ' not found', ''));
 			}
 		}
 
-		$db->setQuery($this->element['query']);
-		$key = $this->element['key_field'] ? $this->element['key_field'] : 'value';
-		$val = $this->element['value_field'] ? $this->element['value_field'] : $this->name;
+		$db->setQuery((string)$attributes->query);
+		$rows = $db->loadObjectList();
 
-		if ($this->element['add_select'])
+		if (strtolower((string)$attributes->add_select) == 'true')
 		{
-			$rows = array(JHTML::_('select.option', ''));
-			$rows = array_merge($rows, (array) $db->loadObjectList());
-		}
-		else
-		{
-			$rows = $db->loadObjectList();
+			$this->addOption(htmlspecialchars(Text::_('COM_FABRIK_PLEASE_SELECT')), ['value'=>'']);
 		}
 
-		return $rows;
+		foreach ($rows as $row) {
+			$this->addOption(htmlspecialchars($row->text), ['value'=>$row->value]);
+		}
+
+		return parent::getInput();
 	}
+
 }

@@ -11,6 +11,9 @@
 // No direct access
 defined('_JEXEC') or die('Restricted access');
 
+use Joomla\CMS\Table\Table;
+use Joomla\CMS\Factory;
+
 jimport('joomla.application.component.model');
 
 /**
@@ -56,7 +59,7 @@ class PlgFabrik_Cron extends FabrikPlugin
 	{
 		if (!$this->row || $force)
 		{
-			JTable::addIncludePath(JPATH_ADMINISTRATOR . '/components/com_fabrik/tables');
+			Table::addIncludePath(JPATH_ADMINISTRATOR . '/components/com_fabrik/tables');
 			$row = FabTable::getInstance('Cron', 'FabrikTable');
 			$row->load($this->id);
 			$this->row = $row;
@@ -98,12 +101,12 @@ class PlgFabrik_Cron extends FabrikPlugin
 		$params = $this->getParams();
 		
 		// Felixkat
-		$session = JFactory::getSession();
+		$session = Factory::getSession();
 		$fabrikCron = new stdClass();
 		$fabrikCron->dropData = $params->get('cron_importcsv_dropdata');
 		$fabrikCron->requireJS = $params->get('require_qs');
 		$secret = $params->get('require_qs_secret', '');
-		$fabrikCron->secret = $this->app->input->getString('fabrik_cron', '') === $secret;
+		$fabrikCron->secret = $this->app->getInput()->getString('fabrik_cron', '') === $secret;
 		$session->set('fabrikCron', $fabrikCron);
 		// Felixkat
 
@@ -116,11 +119,11 @@ class PlgFabrik_Cron extends FabrikPlugin
 		// check to see if a specific keyword is needed to run this plugin
 		if ($secret = $params->get('require_qs_secret', ''))
 		{
-			return $this->app->input->getString('fabrik_cron', '') === $secret;
+			return $this->app->getInput()->getString('fabrik_cron', '') === $secret;
 		}
 		else
 		{
-			return $this->app->input->getInt('fabrik_cron', 0) === 1;
+			return $this->app->getInput()->getInt('fabrik_cron', 0) === 1;
 		}
 	}
 

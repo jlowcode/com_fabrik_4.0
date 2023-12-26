@@ -11,8 +11,11 @@
 // No direct access
 defined('_JEXEC') or die('Restricted access');
 
+use Joomla\CMS\Layout\LayoutInterface;
+use Joomla\CMS\Profiler\Profiler;
 use Fabrik\Helpers\LayoutFile;
 use Joomla\Utilities\ArrayHelper;
+use Joomla\String\StringHelper;
 
 jimport('joomla.application.component.model');
 
@@ -209,7 +212,7 @@ class PlgFabrik_Form extends FabrikPlugin
 	 */
 	public function getProcessData()
 	{
-		$profiler = JProfiler::getInstance('Application');
+		$profiler = Profiler::getInstance('Application');
 		JDEBUG ? $profiler->mark("getProcessData: start") : null;
 
 		$model = $this->getModel();
@@ -232,7 +235,7 @@ class PlgFabrik_Form extends FabrikPlugin
 	 */
 	public function getEmailData()
 	{
-		$profiler = JProfiler::getInstance('Application');
+		$profiler = Profiler::getInstance('Application');
 		JDEBUG ? $profiler->mark("getEmailData: start") : null;
 
 		/**
@@ -472,7 +475,7 @@ class PlgFabrik_Form extends FabrikPlugin
 	{
 		$formModel = $this->getModel();
 		$ext       = FabrikHelperHTML::isDebug() ? '.js' : '-min.js';
-		$name      = $this->get('_name');
+		$name      = $this->_name;
 		static $jsClasses;
 
 		if (!isset($jsClasses))
@@ -532,7 +535,7 @@ class PlgFabrik_Form extends FabrikPlugin
 	}
 
 	/**
-	 * Get the element's JLayout file
+	 * Get the element's LayoutInterface file
 	 * Its actually an instance of LayoutFile which inverses the ordering added include paths.
 	 * In LayoutFile the addedPath takes precedence over the default paths, which makes more sense!
 	 *
@@ -543,7 +546,7 @@ class PlgFabrik_Form extends FabrikPlugin
 	public function getLayout($type)
 	{
 		$name     = get_class($this);
-		$name     = strtolower(JString::str_ireplace('PlgFabrik_Form', '', $name));
+		$name     = strtolower(StringHelper::str_ireplace('PlgFabrik_Form', '', $name));
 		$basePath = COM_FABRIK_BASE . '/plugins/fabrik_form/' . $name . '/layouts';
 		$layout   = new LayoutFile('fabrik-form-' . $name . '-' . $type, $basePath, array('debug' => false, 'component' => 'com_fabrik', 'client' => 'site'));
 		$layout->addIncludePaths(JPATH_THEMES . '/' . $this->app->getTemplate() . '/html/layouts');
@@ -633,7 +636,7 @@ class PlgFabrik_Form extends FabrikPlugin
 		if ($this->log === null)
 		{
 			$this->log                = FabTable::getInstance('log', 'FabrikTable');
-			$this->log->referring_url = $this->app->input->server->getString('REQUEST_URI');
+			$this->log->referring_url = $this->app->getInput()->server->getString('REQUEST_URI');
 		}
 		$this->log->message_type = $msgType;
 		$this->log->message      = $msg;

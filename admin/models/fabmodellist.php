@@ -12,6 +12,9 @@
 // No direct access
 defined('_JEXEC') or die('Restricted access');
 
+use Joomla\CMS\MVC\Model\ListModel;
+use Joomla\CMS\Factory;
+
 jimport('joomla.application.component.modellist');
 
 /**
@@ -21,7 +24,7 @@ jimport('joomla.application.component.modellist');
  * @subpackage  Fabrik
  * @since       3.0
  */
-class FabModelList extends JModelList
+class FabModelList extends ListModel
 {
 	/**
 	 * Constructor.
@@ -50,7 +53,7 @@ class FabModelList extends JModelList
 
 		// Select the required fields from the table.
 		$query->select('id AS value, label AS text');
-		$query->from('#__{package}_forms')->where('published <> -2');
+		$query->from('#__fabrik_forms')->where('published <> -2');
 		$query->order('label ASC');
 		$db->setQuery($query);
 		$rows = $db->loadObjectList();
@@ -66,10 +69,11 @@ class FabModelList extends JModelList
 	 *
 	 * @return  array    value/text objects
 	 */
-	public function getPackageOptions()
+
+/*	public function getPackageOptions()
 	{
 		// Initialise variables. Always use J db here no matter what package we are using
-		$db    = JFactory::getDbo();
+		$db    = Factory::getDbo();
 		$query = $db->getQuery(true);
 
 		// Select the required fields from the table.
@@ -81,7 +85,7 @@ class FabModelList extends JModelList
 
 		return $rows;
 	}
-
+*/
 	/**
 	 * Doesnt seem to be used 3.0.6
 	 *
@@ -98,12 +102,12 @@ class FabModelList extends JModelList
 
 		// Select the required fields from the table.
 		$query->select('g.id AS value, g.name AS text');
-		$query->from('#__{package}_groups AS g');
+		$query->from('#__fabrik_groups AS g');
 		$query->where('published <> -2');
 
 		if ($formId !== '')
 		{
-			$query->join('INNER', '#__{package}_formgroup AS fg ON fg.group_id = g.id');
+			$query->join('INNER', '#__fabrik_formgroup AS fg ON fg.group_id = g.id');
 			$query->where('fg.form_id = ' . (int) $formId);
 		}
 
@@ -143,9 +147,10 @@ class FabModelList extends JModelList
 	 *
 	 * @return  void
 	 */
+	/*
 	protected function populateState($ordering = null, $direction = null)
 	{
-		$app = JFactory::getApplication('administrator');
+		$app = Factory::getApplication('administrator');
 
 		// Load the package state
 		$package = $app->getUserStateFromRequest('com_fabrik.package', 'package', '');
@@ -154,4 +159,5 @@ class FabModelList extends JModelList
 		// List state information.
 		parent::populateState($ordering, $direction);
 	}
+	*/
 }

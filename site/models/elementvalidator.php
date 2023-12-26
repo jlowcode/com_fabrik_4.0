@@ -11,6 +11,10 @@
 // No direct access
 defined('_JEXEC') or die('Restricted access');
 
+use Joomla\CMS\Plugin\PluginHelper;
+use Joomla\CMS\Factory;
+use Joomla\String\StringHelper;
+
 jimport('joomla.application.component.model');
 
 /**
@@ -82,8 +86,9 @@ class FabrikFEModelElementValidator extends FabModel
 		$pluginManager->getPlugInGroup('validationrule');
 		$c = 0;
 		$this->validations = array();
-		$dispatcher = JEventDispatcher::getInstance();
-		JPluginHelper::importPlugin('fabrik_validationrule');
+//		$dispatcher = JEventDispatcher::getInstance();
+		$dispatcher    = Factory::getApplication()->getDispatcher();
+		PluginHelper::importPlugin('fabrik_validationrule');
 		$i = 0;
 
 		foreach ($usedPlugins as $usedPlugin)
@@ -94,14 +99,16 @@ class FabrikFEModelElementValidator extends FabModel
 
 				if ($isPublished)
 				{
-					$class = 'PlgFabrik_Validationrule' . JString::ucfirst($usedPlugin);
+					$class = 'PlgFabrik_Validationrule' . StringHelper::ucfirst($usedPlugin);
 					$conf = array();
-					$conf['name'] = JString::strtolower($usedPlugin);
-					$conf['type'] = JString::strtolower('fabrik_Validationrule');
+					$conf['name'] = StringHelper::strtolower($usedPlugin);
+					$conf['type'] = StringHelper::strtolower('fabrik_Validationrule');
 
 					/** @var PlgFabrik_Validationrule $plugIn */
 					$plugIn = new $class($dispatcher, $conf);
-					JPluginHelper::getPlugin('fabrik_validationrule', $usedPlugin);
+					//bootPlugin($plugin, $type)  where $type = fabrik_element and $plugin = field
+//					$plugIn = Factory::getApplication()->bootPlugin($conf['name'], $conf['type']);
+					PluginHelper::getPlugin('fabrik_validationrule', $usedPlugin);
 					$plugIn->elementModel = $this->elementModel;
 					$this->validations[] = $plugIn;
 
@@ -163,7 +170,8 @@ class FabrikFEModelElementValidator extends FabModel
 	 */
 	public function getIcon($c = null)
 	{
-		$j3 = FabrikWorker::j3();
+//		$j3 = FabrikWorker::j3();
+//		$j3 = true;
 		$validations = $this->findAll();
 
 		if (!$this->showIcon())
@@ -173,8 +181,8 @@ class FabrikFEModelElementValidator extends FabModel
 
 		if (!empty($validations))
 		{
-			if ($j3)
-			{
+//			if ($j3)
+//			{
 				if (is_null($c))
 				{
 					return $validations[0]->iconImage();
@@ -183,7 +191,7 @@ class FabrikFEModelElementValidator extends FabModel
 				{
 					return $validations[$c]->iconImage();
 				}
-			}
+//			}
 		}
 
 		$internal = $this->elementModel->internalValidationIcon();
@@ -193,7 +201,8 @@ class FabrikFEModelElementValidator extends FabModel
 			return $internal;
 		}
 
-		return $j3 ? 'star.png' : 'notempty.png';
+//		return $j3 ? 'star.png' : 'notempty.png';
+		return 'star.png';
 	}
 
 	/**
@@ -232,7 +241,7 @@ class FabrikFEModelElementValidator extends FabModel
 	public function labelIcons()
 	{
 		$tmpl = $this->elementModel->getFormModel()->getTmpl();
-		$validations = array_unique($this->findAll());
+		$validations = array_unique($this->findAll(),SORT_REGULAR);
 		$emptyIcon = $this->getIcon();
 		$icon = empty($emptyIcon) && empty($validations) ? "" : FabrikHelperHTML::image($emptyIcon, 'form', $tmpl, $this->iconOpts) . ' ';
 
@@ -268,7 +277,7 @@ class FabrikFEModelElementValidator extends FabModel
 		if ($this->elementModel->isEditable())
 		{
 			$tmpl = $this->elementModel->getFormModel()->getTmpl();
-			$validations = array_unique($this->findAll());
+			$validations = array_unique($this->findAll(),SORT_REGULAR);
 
 			foreach ($validations as $c => $validation)
 			{
