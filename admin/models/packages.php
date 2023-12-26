@@ -180,4 +180,75 @@ class FabrikAdminModelPackages extends FabModelList
 
 		return $items;
 	}
+
+    /**
+     * Method that lists the information, the database, the packages created.
+     *
+     * @return mixed
+     */
+	public function getListPackages(){
+        $db = $this->getDbo();
+        $query = "SELECT
+                    pkg.`id`,
+                    pkg.`name`,
+                    pkg.file,
+                    pkg.record,
+                    DATE_FORMAT(pkg.date_time,'%d/%m/%Y %H:%i:%s') as date_time,
+                    users.`name` AS usuario,
+                    pkg.params
+                    FROM
+                    #__fabrik_pkgs AS pkg
+                    LEFT JOIN #__users AS users ON pkg.users_id = users.id
+                    ORDER BY
+                    pkg.id DESC;";
+
+        $db->setQuery($query);
+
+        return $db->loadObjectList();
+    }
+
+    /**
+     * Checks whether the fabrik_pkgs table exists in the database.
+     *
+     * @return mixed
+     *
+     * @since version
+     */
+    public function getExistTablePkgs(){
+        $db = $this->getDbo();
+
+        $query = "select count(table_name) AS pkgs
+                    FROM INFORMATION_SCHEMA.TABLES
+                    WHERE table_name like '%fabrik_pkgs';";
+
+        $db->setQuery($query);
+
+        return $db->loadObject();
+    }
+
+    /**
+     * Table creation structure fabrik_pkgs, if it has not already been created at installation.
+     *
+     * @return mixed
+     *
+     * @since version
+     */
+    public function getCreateTablePackages(){
+        $db = $this->getDbo();
+
+        $query = "CREATE TABLE IF NOT EXISTS `#__fabrik_pkgs` (
+                  `id` INT(11) NOT NULL AUTO_INCREMENT,
+                  `name` TEXT,
+                  `file` TEXT,
+                  `record` INT(255) DEFAULT NULL,
+                  `date_time` datetime DEFAULT NULL,
+                  `users_id` INT(11) DEFAULT NULL,
+                  `params` VARCHAR(255) DEFAULT NULL,
+                  PRIMARY KEY (`id`)
+                ) ENGINE=InnoDB DEFAULT CHARSET=utf8;;";
+
+        $db->setQuery($query);
+
+        return $db->execute();
+    }
 }

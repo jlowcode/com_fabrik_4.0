@@ -139,6 +139,7 @@ class FabrikAdminModelForm extends FabModelAdmin
 		$data['params']['plugin_locations']   = array_values((array) FArrayHelper::getValue($jForm, 'plugin_locations'));
 		$data['params']['plugin_events']      = array_values((array) FArrayHelper::getValue($jForm, 'plugin_events'));
 		$data['params']['plugin_description'] = array_values((array) FArrayHelper::getValue($jForm, 'plugin_description'));
+        $data['params']['plugin_condition'] = array_values((array) FArrayHelper::getValue($jForm, 'plugin_condition'));
 
 		/**
 		 * Move back into the main data array some values we are rendering as

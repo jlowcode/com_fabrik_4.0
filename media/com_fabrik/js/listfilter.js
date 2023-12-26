@@ -59,6 +59,19 @@ define(['jquery', 'fab/fabrik', 'fab/advanced-search'], function (jQuery, Fabrik
                 self.submitClearForm();
             });
 
+
+            Fabrik.addEvent('fabrik.listfilter.clear', function () {
+                // Reset list filter all that contain previously selected values
+                self.container.find('.fabrik_filter').each(function (i, f) {
+                    if(jQuery(f).prop('name').contains('fabrik_list_filter_all')){
+                        self.clearAFilter(jQuery(f));
+                    }
+                });
+
+                self.clearPlugins();
+                self.submitClearForm();
+            });
+
             advancedSearchButton = this.container.find('.advanced-search-link');
             advancedSearchButton.on('click', function (e) {
                 e.preventDefault();

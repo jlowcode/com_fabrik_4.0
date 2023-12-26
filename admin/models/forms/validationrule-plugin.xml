@@ -77,6 +77,17 @@
 					<option value="1">JYES</option>
 			</field>
 
+	    	<!-- Id task: 170 -->
+			<field name="new_repetible_line"
+				type="radio"
+				class="btn-group"
+				default="1"
+				repeat="true"
+				label="COM_FABRIK_LABEL_NEW_REPETIBLE_LINE_LABEL"
+				description="COM_FABRIK_LABEL_NEW_REPETIBLE_LINE_DESC">
+					<option value="0">JNO</option>
+					<option value="1">JYES</option>
+			</field>
 		</fieldset>
 	</fields>
 

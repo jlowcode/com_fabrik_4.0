@@ -705,6 +705,16 @@ form.fabrikForm label.radio {
 	text-align: start;
 }
 
+.tagSearched {
+	display: inline-block;
+	margin-right: 4px;
+	margin-bottom: 4px;
+	padding: 2px 8px 2px 8px;
+	border-radius: 10px;
+	background-color: #EEEEEF;
+	font-weight: normal;
+}
+
 /** Prevent links from showing in print view - Bootstrap related */
 
 @media print {

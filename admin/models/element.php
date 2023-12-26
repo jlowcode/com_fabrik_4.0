@@ -233,6 +233,9 @@ class FabrikAdminModelElement extends FabModelAdmin
 		$on            = (array) FArrayHelper::getNestedValue($item->params, 'validations.validation_on', array());
 		$hidden        = (array) FArrayHelper::getNestedValue($item->params, 'validations.validate_hidden', array());
 
+		//Id task: 170
+		$new_repetible_line = (array) FArrayHelper::getNestedValue($item->params, 'validations.new_repetible_line', array());
+
 		$return = array();
 
 		for ($i = 0; $i < count($plugins); $i++)
@@ -245,6 +248,8 @@ class FabrikAdminModelElement extends FabModelAdmin
 			$o->validate_in     = FArrayHelper::getValue($in, $i, 'both');
 			$o->validation_on   = FArrayHelper::getValue($on, $i, 'both');
 			$o->validate_hidden = FArrayHelper::getValue($hidden, $i, 1);
+			//Id task: 170
+			$o->new_repetible_line = FArrayHelper::getValue($new_repetible_line, $i, '1');
 			$return[]         = $o;
 		}
 

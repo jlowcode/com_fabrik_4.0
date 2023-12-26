@@ -68,5 +68,6 @@ class FabrikAdminViewPlugin extends JViewLegacy
 		$model->setState('validate_in', $input->get('validate_in'));
 		$model->setState('validation_on', $input->get('validation_on'));
 		$model->setState('validate_hidden', $input->get('validate_hidden'));
+		$model->setState('new_repetible_line', $input->get('new_repetible_line'));	//Id task: 170
 	}
 }

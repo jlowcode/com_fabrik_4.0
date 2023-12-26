@@ -77,6 +77,7 @@ class FabrikFEModelElementValidator extends FabModel
 		$validationOn = FArrayHelper::getValue($validations, 'validation_on', array());
 		$mustValidate = FArrayHelper::getValue($validations, 'must_validate', array());
 		$validateHidden = FArrayHelper::getValue($validations, 'validate_hidden', array());
+		$newRepetibleLine = FArrayHelper::getValue($validations, 'new_repetible_line', array());	//Id task: 170
 
 		$pluginManager = FabrikWorker::getPluginManager();
 		$pluginManager->getPlugInGroup('validationrule');
@@ -113,6 +114,7 @@ class FabrikFEModelElementValidator extends FabModel
 					$plugIn->getParams()->set('validation_on', FArrayHelper::getValue($validationOn, $i, 'both'));
 					$plugIn->getParams()->set('must_validate', FArrayHelper::getValue($mustValidate, $i, '0'));
 					$plugIn->getParams()->set('validate_hidden', FArrayHelper::getValue($validateHidden, $i, '1'));
+					$plugIn->getParams()->set('new_repetible_line', FArrayHelper::getValue($newRepetibleLine, $i, '0'));	//Id task: 170
 					$plugIn->js();
 					$c++;
 				}

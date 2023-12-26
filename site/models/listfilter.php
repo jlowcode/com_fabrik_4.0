@@ -451,6 +451,9 @@ class FabrikFEModelListfilter extends FabModel
 			$this->_db->setQuery('SHOW VARIABLES LIKE \'ft_min_word_len\'');
 			$res = $this->_db->loadObject();
 			$min = (int) $res->Value;
+			if($min > 2){
+				$min = 2;
+			}
 		}
 
 		if ($mode !== 'exact')

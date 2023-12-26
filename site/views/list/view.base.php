@@ -297,7 +297,15 @@ class FabrikViewListBase extends FabrikView
 		$this->_row        = new stdClass;
 		$this->_row->id    = '';
 		$this->_row->class = 'fabrik_row';
-		echo $this->loadTemplate('row');
+		// nasty hack for div templates
+		if (JFile::exists(JPATH_ROOT . '/components/com_fabrik/views/list/tmpl/' . $tmpl . '/default_empty_row.php'))
+		{
+			echo $this->loadTemplate('empty_row');
+		}
+		else
+		{
+			echo $this->loadTemplate('row');
+		}
 		$opts->itemTemplate = ob_get_contents();
 		ob_end_clean();
 
@@ -451,6 +459,12 @@ class FabrikViewListBase extends FabrikView
 
 			foreach ($elementModels as $elementModel)
 			{
+				$element = $elementModel->getElement();
+				if (isset($element->filter_type) && $element->filter_type <> '')
+				{
+					$this->filter_type = $element->filter_type;
+				}
+				
 				$elementModel->setContext($groupModel, $form, $model);
 				$elementModel->setRowClass($data);
 			}
@@ -587,6 +601,7 @@ class FabrikViewListBase extends FabrikView
 		list($this->headings, $groupHeadings, $this->headingClass, $this->cellClass) = $model->getHeadings();
 
 		$this->groupByHeadings = $model->getGroupByHeadings();
+		$this->layoutsHeadings = $model->getLayoutsHeadings();
 		$this->filter_action   = $model->getFilterAction();
 		JDEBUG ? $profiler->mark('fabrik getfilters start') : null;
 		$this->filters = $model->getFilters('listform_' . $this->renderContext);
@@ -610,6 +625,7 @@ class FabrikViewListBase extends FabrikView
 
 		$this->hasButtons     = $model->getHasButtons();
 		$this->grouptemplates = $model->groupTemplates;
+		$this->grouptemplatesExtra = $model->groupTemplatesExtra;
 		$this->gotOptionalFilters = $model->gotOptionalFilters();
 		$this->params         = $params;
 		$this->loadTemplateBottom();

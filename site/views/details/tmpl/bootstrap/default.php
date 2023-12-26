@@ -78,3 +78,36 @@ echo $this->loadTemplate('actions');
 echo '</div>';
 echo $form->outro;
 echo $this->pluginend;
+echo "<script>
+
+jQuery('div#edu_solicitacoes___tipo_solicitacao_ro.fabrikElementReadOnly').on('mouseout', function() {
+    const text = this.innerText;
+    switch(text) {
+    case 'Diárias':
+        jQuery('#group51').hide();
+        jQuery('#group52').hide();
+        jQuery('#group56').hide();    
+        jQuery('#group57').hide();
+        jQuery('#group58').hide();
+        jQuery('#group60').hide();
+        jQuery('#group55').hide();
+        jQuery('#group67').hide();
+        jQuery('#group71').hide();
+        jQuery('#group66').hide();
+        jQuery('#group36').hide();
+        jQuery('#group38').hide();
+        break;
+    case 'Diarias -B-P':
+        jQuery('#group32').hide();
+        jQuery('#group33').hide();
+        jQuery('#group34').hide();
+        break;
+    case 'Diarias -B-P':
+        jQuery('#group32').hide();
+        jQuery('#group33').hide();
+        jQuery('#group34').hide();
+        break;
+    }
+});
+
+</script>";

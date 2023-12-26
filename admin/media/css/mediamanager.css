@@ -1,0 +1,46 @@
+.form-horizontal .control-group {
+    margin-bottom: 0 !important;
+}
+
+#zone_pitt{
+    height: 360px !important;
+    z-index: 0 !important;
+    overflow-x: auto !important;
+}
+
+#area_paginationPitt{
+    background-color: #FFFFFF !important;
+}
+
+#thumb, #crop{
+    display: none;
+    float: left;
+}
+
+#system-message-container.j-toggle-main,
+#j-main-container.j-toggle-main,
+#system-debug.j-toggle-main {
+    float: none !important;
+    position: absolute !important;
+    z-index: 9999 !important;
+    width: 90% !important;
+}
+
+.pag_li{
+    cursor: pointer !important;
+    color: #3071a9 !important;
+    background-color: #fff !important;
+}
+
+.hidden-phone:hover{
+    color: #999 !important;
+    background-color: #909090 !important;
+}
+
+#search_pitt{
+    display: none;
+}
+
+li.imgOutline.thumbnail.height-80.width-80.center {
+    float: left;
+}
