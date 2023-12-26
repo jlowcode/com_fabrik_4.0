@@ -55,10 +55,37 @@ class FabrikAdminViewPackages extends JViewLegacy
 	{
 		// Initialise variables.
 		$app = JFactory::getApplication();
+        $doc = JFactory::getDocument();
 		$input = $app->input;
 		$this->items = $this->get('Items');
-		$this->pagination = $this->get('Pagination');
-		$this->state = $this->get('State');
+
+		$exist_table = $this->get('ExistTablePkgs');
+
+		if($exist_table->pkgs === '0'){
+            $this->get('CreateTablePackages');
+        }
+
+		$this->text_message = $string_array = implode("|", array(JText::_('JYES'),JText::_('JNO'),JText::_('JMESSAGE'),
+            JText::_('COM_FABRIK_PACKAGES_CREATE_MESSAGE_QUESTION_FILE'), JText::_('COM_FABRIK_PACKAGES_CREATE_MESSAGE_QUESTION_PACKAGE'),
+            JText::_('JSUCCESS'), JText::_('COM_FABRIK_PACKAGES_CREATE_MESSAGE_SUCCESS'), JText::_('COM_FABRIK_PACKAGES_LIST_TABLE_MESSAGE_SUCCESS')));
+
+        $folder_path = pathinfo($_SERVER['SCRIPT_FILENAME']);
+
+        $this->folder = $folder_path['dirname']. '/components/com_fabrik/packagesupload';
+
+        $this->files = scandir($this->folder);
+
+        $this->list_packages = $this->get('ListPackages');
+
+        $doc->addStyleSheet('components/com_fabrik/media/css/alertify.min.css');
+        $doc->addStyleSheet('components/com_fabrik/media/css/bootstrap.min.css');
+        $doc->addStyleSheet('components/com_fabrik/media/css/packages.css');
+        $doc->addScript('../media/jui/js/jquery.min.js');
+        $doc->addScript('components/com_fabrik/media/js/alertify.min.js');
+        $doc->addScript('components/com_fabrik/media/js/packages.js');
+
+        $this->pagination = $this->get('Pagination');
+        $this->state = $this->get('State');
 
 		// Check for errors.
 		if (count($errors = $this->get('Errors')))
@@ -96,45 +123,6 @@ class FabrikAdminViewPackages extends JViewLegacy
 		$canDo = FabrikAdminHelper::getActions($this->state->get('filter.category_id'));
 		JToolBarHelper::title(FText::_('COM_FABRIK_MANAGER_PACKAGES'), 'box-add');
 
-		/*
-		if ($canDo->get('core.create'))
-		{
-			JToolBarHelper::addNew('package.add', 'JTOOLBAR_NEW');
-		}
-
-		if ($canDo->get('core.edit'))
-		{
-			JToolBarHelper::editList('package.edit', 'JTOOLBAR_EDIT');
-		}
-
-		JToolBarHelper::custom('package.export', 'export.png', 'export_f2.png', 'COM_FABRIK_MANAGER_PACKAGE_EXPORT', true);
-
-		if ($canDo->get('core.edit.state'))
-		{
-			if ($this->state->get('filter.state') != 2)
-			{
-				JToolBarHelper::divider();
-				JToolBarHelper::custom('packages.publish', 'publish.png', 'publish_f2.png', 'JTOOLBAR_PUBLISH', true);
-				JToolBarHelper::custom('packages.unpublish', 'unpublish.png', 'unpublish_f2.png', 'JTOOLBAR_UNPUBLISH', true);
-			}
-		}
-
-		if (JFactory::getUser()->authorise('core.manage', 'com_checkin'))
-		{
-			JToolBarHelper::custom('packages.checkin', 'checkin.png', 'checkin_f2.png', 'JTOOLBAR_CHECKIN', true);
-		}
-
-		if ($this->state->get('filter.published') == -2 && $canDo->get('core.delete'))
-		{
-			JToolBarHelper::deleteList('', 'packages.delete', 'JTOOLBAR_EMPTY_TRASH');
-		}
-		elseif ($canDo->get('core.edit.state'))
-		{
-			JToolBarHelper::trash('packages.trash', 'JTOOLBAR_TRASH');
-		}
-
-		*/
-
 		if ($canDo->get('core.admin'))
 		{
 			JToolBarHelper::divider();
@@ -143,19 +131,5 @@ class FabrikAdminViewPackages extends JViewLegacy
 
 		JToolBarHelper::divider();
 		JToolBarHelper::help('JHELP_COMPONENTS_FABRIK_PACKAGES', false, FText::_('JHELP_COMPONENTS_FABRIK_PACKAGES'));
-
-		/*
-		if (FabrikWorker::j3())
-		{
-			JHtmlSidebar::setAction('index.php?option=com_fabrik&view=packages');
-
-			$publishOpts = JHtml::_('jgrid.publishedOptions', array('archived' => false));
-			JHtmlSidebar::addFilter(
-			FText::_('JOPTION_SELECT_PUBLISHED'),
-			'filter_published',
-			JHtml::_('select.options', $publishOpts, 'value', 'text', $this->state->get('filter.published'), true)
-			);
-		}
-		*/
 	}
 }

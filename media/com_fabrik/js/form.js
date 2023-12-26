@@ -1079,6 +1079,7 @@ define(['jquery', 'fab/encoder', 'fab/fabrik', 'lib/debounce/jquery.ba-throttle-
                     this._completeValidaton(e, id, origid);
                 }.bind(this)
             }).send();
+            localStorage.setItem('popUpForm', JSON.stringify(this.getFormData()));
         },
 
         /**
@@ -1550,6 +1551,7 @@ define(['jquery', 'fab/encoder', 'fab/fabrik', 'lib/debounce/jquery.ba-throttle-
                                 });
                         }
                         else {
+                            localStorage.setItem('popUpForm', JSON.stringify(this.getFormData()));
                             var myajax = new Request.JSON({
                                 'url': this.form.action,
                                 'data': data,

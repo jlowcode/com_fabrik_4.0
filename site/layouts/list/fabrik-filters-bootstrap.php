@@ -77,15 +77,6 @@ EOT;
         </div>
             <?php
     endif;
-    if ($d->filter_action != 'onchange') :
         ?>
-        <div class="row-fluid">
-            <div class="span12">
-                <input type="button" class="pull-right  btn-info btn fabrik_filter_submit button"
-                        value="<?php echo FText::_('COM_FABRIK_GO'); ?>" name="filter">
-            </div>
-        </div>
-        <?php
-    endif;
     ?>
 </div>

@@ -104,3 +104,10 @@ echo $this->loadTemplate('actions');
 echo $form->outro;
 echo $this->pluginend;
 echo FabrikHelperHTML::keepalive();
+echo '<script>
+	jQuery(".icon-eye-open.small").each(function() {
+		jQuery(this).parent().append("<span style=\\"color:red\\">*</span>");
+		jQuery(this).remove()
+	});
+	
+</script>';

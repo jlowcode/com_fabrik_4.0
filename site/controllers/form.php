@@ -576,6 +576,7 @@ class FabrikControllerForm extends JControllerLegacy
 
 		// Validating entire group when navigating form pages
 		$data['errors'] = $model->errors;
+		$data['shouldValidate'] = $model->shouldValidate;	// Id task: 167
 		echo json_encode($data);
 	}
 

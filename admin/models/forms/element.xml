@@ -103,6 +103,10 @@
 				<option value="auto-complete">COM_FABRIK_AUTOCOMPLETE</option>
 				<option value="checkbox">COM_FABRIK_CHECKBOX</option>
 				<option value="multiselect">COM_FABRIK_MULTISELECT</option>
+				<option value="treeview">COM_FABRIK_TREEVIEW</option>
+				<option value="stars">COM_FABRIK_STARS</option>
+				<option value="tagcloud">COM_FABRIK_TAGCLOUD</option>
+				<option value="datetree">COM_FABRIK_DATETREE</option>
 		</field>
 
 		<field name="filter_exact_match"
@@ -187,6 +191,13 @@
 					<option value="2">COM_FABRIK_SHOW_ALL_OPTIONS</option>
 			</field>
 
+			<field name="filter_checkbox_limit"
+				type="text"
+				size="20"
+				default="5"
+				description="COM_FABRIK_FIELD_CHECKBOX_LIMIT_DESCRIPTION"
+				label="COM_FABRIK_FIELD_CHECKBOX_LIMIT_LABEL" />
+
 			<field name="filter_groupby"
 				type="list"
 				default="text"
@@ -195,7 +206,18 @@
 					<option value="text">COM_FABRIK_LABEL</option>
 					<option value="value">COM_FABRIK_VALUE</option>
 					<option value="-1">COM_FABRIK_NONE</option>
+					<option value="count">COM_FABRIK_SHOW_COUNT</option>
 			</field>
+
+			<field name="filter_sortedby"
+				type="list"
+				default="text"
+				description="COM_FABRIK_FIELD_SORTED_BY_DESC"
+				label="COM_FABRIK_FIELD_SORTED_BY">
+					<option value="1">COM_FABRIK_DESCENDING</option>
+					<option value="2">COM_FABRIK_ASCENDING</option>
+			</field>
+			
 			<field name="inc_in_adv_search"
 				type="radio"
 				class="btn-group"
@@ -223,6 +245,31 @@
 					<option value="hidden-phone">COM_FABRIK_RESPONSIVE_CLASS_HIDDEN_PHONE</option>
 					<option value="hidden-tablet">COM_FABRIK_RESPONSIVE_CLASS_HIDDEN_TABLET</option>
 					<option value="hidden-desktop">COM_FABRIK_RESPONSIVE_CLASS_HIDDEN_DESKTOP</option>
+			</field>
+
+			<field name="related_linked_list"
+				type="text"
+				size="200"
+				label="Related Linked List" />
+
+			<field name="add_popup_form_button"
+				type="radio"
+				class="btn-group"
+				default="0"
+				label="COM_FABRIK_FIELD_ADD_BUTTON_FORM_LABEL"
+				description="COM_FABRIK_FIELD_ADD_BUTTON_FORM_DESC">
+					<option value="0">JNO</option>
+					<option value="1">JYES</option>
+			</field>
+
+			<field name="drag_n_drop_treeview"
+				type="list"
+				default="0"
+				description="COM_FABRIK_FIELD_DRAG_N_DROP_TREEVIEW_DESC"
+				label="COM_FABRIK_FIELD_DRAG_N_DROP_TREEVIEW_LABEL">
+					<option value="0">Desligado</option>
+					<option value="1">Recursivo</option>
+					<option value="2">Simples</option>
 			</field>
 
 		</fieldset>
@@ -399,6 +446,12 @@
 					description="COM_FABRIK_FIELD_VIEW_CSS_CELL_DESC"
 					label="COM_FABRIK_FIELD_VIEW_CSS_CELL_LABEL"
 					size="40" />
+
+				<field name="tablecss_cell_li"
+					type="text"
+					description="COM_FABRIK_FIELD_VIEW_CSS_CELL_LI_DESC"
+					label="COM_FABRIK_FIELD_VIEW_CSS_CELL_LI_LABEL"
+					size="100" />
 
 			</fieldset>
 

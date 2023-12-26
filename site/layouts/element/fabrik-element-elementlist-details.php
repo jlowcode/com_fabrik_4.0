@@ -10,7 +10,11 @@ if ($d->condense) :
 		$condensed[] = $ul[0];
 	endforeach;
 
-	echo $d->addHtml ? '<ul class="fabrikRepeatData"><li>' . implode('</li><li>', $condensed) . '</li></ul>' : implode(' ', $condensed);
+	if(!empty($condensed)):
+		echo $d->addHtml ? '<ul class="fabrikRepeatData"><li class="' . $d->classCSS . '">' . implode('</li><li class="' . $d->classCSS . '">', $condensed) . '</li></ul>' : implode(' ', $condensed);
+	else:
+		echo '';
+	endif;
 else:
 	if ($d->addHtml) : ?>
 		<ul class="fabrikRepeatData"><li>
@@ -19,7 +23,7 @@ else:
 	<?php foreach ($d->uls as $ul) :
 	if ($d->addHtml) :?>
 		<ul class="fabrikRepeatData"><li>
-		<?php echo implode('</li><li>', $ul);
+		<?php echo implode('</li><li class="' . $d->classCSS . '">', $ul);
 		echo '</li></ul>';
 	else:
 		echo implode($d->sepChar, $ul);

@@ -112,7 +112,7 @@ define(['jquery', 'fab/fabrik'], function (jQuery, Fabrik) {
         },
 
         addTop: function (plugin) {
-            var published, show_icon, validate_in, validation_on, must_validate, validate_hidden;
+            var published, show_icon, validate_in, validation_on, must_validate, validate_hidden, new_repetible_line; //Id task: 170
             if (typeOf(plugin) === 'string') {
                 published = 1;
                 show_icon = false;
@@ -121,6 +121,7 @@ define(['jquery', 'fab/fabrik'], function (jQuery, Fabrik) {
                 plugin = plugin ? plugin : '';
                 validate_in = '';
                 validation_on = '';
+                new_repetible_line = true;  //Id task: 170
             } else {
                 // Validation plugins
                 published = plugin ? plugin.published : 1;
@@ -129,6 +130,7 @@ define(['jquery', 'fab/fabrik'], function (jQuery, Fabrik) {
                 validate_hidden = plugin ? plugin.validate_hidden : 1;
                 validate_in = plugin ? plugin.validate_in : 'both';
                 validation_on = plugin ? plugin.validation_on : 'both';
+                new_repetible_line = plugin ? plugin.new_repetible_line : 1;    //Id task: 110
                 plugin = plugin ? plugin.plugin : '';
             }
 
@@ -166,7 +168,8 @@ define(['jquery', 'fab/fabrik'], function (jQuery, Fabrik) {
                 'validate_in'     : validate_in,
                 'validation_on'   : validation_on,
                 'c'               : this.topTotal,
-                'id'              : this.id
+                'id'              : this.id,
+                'new_repetible_line' : new_repetible_line   //Id task: 170
             };
 
             var request = new Request.HTML({

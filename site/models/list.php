@@ -1580,6 +1580,13 @@ class FabrikFEModelList extends JModelForm
 				{
 					if ($canEdit == 1)
 					{
+						
+						if ($this->canViewDetails($row) && $this->floatingDetailLink())
+						{
+							$row->fabrik_view = $viewLink;
+							$row->fabrik_actions['fabrik_view'] = $j3 ? $row->fabrik_view : '<li class="fabrik_view">' . $row->fabrik_view . '</li>';
+						}
+
 						if ($params->get('editlink') || ($actionMethod == 'floating' || $j3))
 						{
 							$row->fabrik_edit = $editLink;
@@ -1587,12 +1594,6 @@ class FabrikFEModelList extends JModelForm
 						}
 
 						$row->fabrik_edit_url = $edit_link;
-
-						if ($this->canViewDetails($row) && $this->floatingDetailLink())
-						{
-							$row->fabrik_view = $viewLink;
-							$row->fabrik_actions['fabrik_view'] = $j3 ? $row->fabrik_view : '<li class="fabrik_view">' . $row->fabrik_view . '</li>';
-						}
 					}
 					else
 					{
@@ -2313,7 +2314,6 @@ class FabrikFEModelList extends JModelForm
 			$class = ' fabrik_edit';
 		}
 
-
 		$loadMethod = $this->getLoadMethod('custom_link');
 		$class = 'fabrik___rowlink ' . $class;
 		$dataList = 'list_' . $this->getRenderContext();
@@ -2664,8 +2664,8 @@ class FabrikFEModelList extends JModelForm
 			*/
 			if (!empty($ids))
 			{
-
-				if ($lookUpNames[$lookupC] !== $table->db_primary_key)
+				$params = $this->getParams();
+				if ($lookUpNames[$lookupC] !== $table->db_primary_key && !$params->get('reduce_query'))
 				{
 					$query->where($lookUpNames[$lookupC] . ' IN (' . implode(array_unique($ids), ',') . ')');
 				}
@@ -3536,7 +3536,7 @@ class FabrikFEModelList extends JModelForm
 	 *
 	 * @return  array	nofilter, filter sql
 	 */
-	private function _filtersToSQL(&$filters, $startWithWhere = true, $incPlugin = true)
+	public function _filtersToSQL(&$filters, $startWithWhere = true, $incPlugin = true)
 	{
 		$prefilters = $this->groupFilterSQL($filters, 'prefilter');
 		$menuFilters = $this->groupFilterSQL($filters, 'menuPrefilter');
@@ -4428,6 +4428,16 @@ class FabrikFEModelList extends JModelForm
 	}
 
 	/**
+	 * Checks parameter to hide tablenamejoin_id and tablenamejoin___params from csv
+	 *
+	 * @return  bool  access allowed
+	 */
+	public function hideDbJoinItens()
+	{
+		return $this->getParams()->get('csv_include_dbjoin_params');
+	}
+
+	/**
 	 * Checks user access for exporting csv
 	 *
 	 * @return  bool  access allowed
@@ -4461,25 +4471,36 @@ class FabrikFEModelList extends JModelForm
 
 	/**
 	 * Checks user access for adding records
-	 *
+	 * Updated for workflow plugin
 	 * @return  bool  access allowed
 	 */
 	public function canAdd()
 	{
-		if (!array_key_exists('add', $this->access))
-		{
-			$input = $this->app->input;
-			$groups = $this->user->getAuthorisedViewLevels();
-			$this->access->add = in_array($this->getParams()->get('allow_add'), $groups);
-			$hideAdd = $input->getBool('hide-add', false);
+	    if (!array_key_exists('add', $this->access))
+	    {
+		    $input = $this->app->input;
+		    $groups = $this->user->getAuthorisedViewLevels();
+		    $this->access->add = in_array($this->getParams()->get('allow_add'), $groups);
+		    $hideAdd = $input->getBool('hide-add', false);
 
-			if ($hideAdd)
-			{
-				$this->access->add = false;
-			}
-		}
 
-		return $this->access->add;
+		    /**
+		     * @author Marcel Ferrante <marcelf@gmail.com>
+		     */
+		    if ($_REQUEST['wfl_action'] == 'request' && in_array($this->getParams()->get('allow_request_record'), $groups))
+		    {
+		            $this->access->add = true;
+		    }
+
+
+		    if ($hideAdd)
+		    {
+		            $this->access->add = false;
+		    }
+	    }
+
+
+	    return $this->access->add;
 	}
 
 	/**
@@ -6543,6 +6564,12 @@ class FabrikFEModelList extends JModelForm
 					$f->id = isset($filter->id) ? $filter->id : '';
 					$f->element = $filter->filter;
 					$f->required = array_key_exists('required', $filter) ? $filter->required : '';
+					$f->filter_type = $filter->filter_type;
+					if(isset($filter->popupform)){
+						$f->popupform = $filter->popupform;
+					}
+					$f->btnpopupform = $filter->btnpopupform;
+					$f->related_linked_list = $filter->related_linked_list;
 					$f->displayValue = is_array($filter->displayValue) ? implode(', ', $filter->displayValue) :
 							$filter->displayValue;
 					$this->viewfilters[$filter->name] = $f;
@@ -6662,6 +6689,21 @@ class FabrikFEModelList extends JModelForm
 						$o->name = $elementModel->getFullName(true, false);
 						$o->id = $elementModel->getHTMLId() . 'value';
 						$o->filter = $elementModel->getFilter($counter, true, $container);
+						$o->filter_type = $element->filter_type;
+
+						$elParams = json_decode($element->params);
+						if(isset($elParams->related_linked_list) && !empty($elParams->related_linked_list)){
+							$o->related_linked_list = $elParams->related_linked_list;
+						}
+
+						if(is_a($elementModel, 'PlgFabrik_ElementDatabasejoin')){
+							if(isset($elParams->tree_parent_id) && !empty($elParams->tree_parent_id)){
+								$o->popupform = $elementModel->getPopUpId();
+							}
+						}
+
+						$o->btnpopupform = isset($elParams->add_popup_form_button) && $elParams->add_popup_form_button == 1 ? true : false;
+						
 						$fScript[] = $elementModel->filterJS(true, $container);
 						$o->required = $elementModel->getParams()->get('filter_required');
 						$o->label = $elementModel->getListHeading();
@@ -6765,6 +6807,7 @@ class FabrikFEModelList extends JModelForm
 		$newFields = array();
 		$db = $this->getDb();
 		$this->temp_db_key_addded = false;
+		$hideDbjoin = is_null($this->hideDbJoinItens()) ? false : $this->hideDbJoinItens();
 		/* $$$ rob if no fields specified presume we are requesting CSV file from URL and return
 		 * all fields otherwise set the fields to be those selected in fabrik window
 		* or defined in the lists csv export settings
@@ -6798,7 +6841,7 @@ class FabrikFEModelList extends JModelForm
 								$elModel->isJoin() && (
 									strstr($f, $db->qn($name . '___params'))
 									|| strstr($f, $db->qn($name . '_id'))
-								)
+								) && !$hideDbjoin
 							)
 						)
 						{
@@ -11376,6 +11419,9 @@ class FabrikFEModelList extends JModelForm
 		$tmpl = $this->getTmpl();
 		$jTmplFolder = FabrikWorker::j3() ? 'tmpl' : 'tmpl25';
 
+		$usersConfig = JComponentHelper::getParams('com_fabrik');
+		$paramPitt  = $usersConfig->get('load_path_url');
+
 		// Check for a form template file (code moved from view)
 		if ($tmpl != '')
 		{
@@ -11383,6 +11429,9 @@ class FabrikFEModelList extends JModelForm
 
 			// $$$rob need &amp; for pdf output which is parsed through xml parser otherwise fails
 			$qs .= '&amp;buttoncount=' . $this->rowActionCount;
+
+			// $$$karine - if the user wants to change the loading gif for a new one
+			$qs .= '&amp;loadinggif=' . $paramPitt;
 
 			// $$$ hugh - adding format, so custom CSS can do things like adding overrides for PDF
 			$qs .= '&amp;format=' . $this->app->input->get('format', 'html');
@@ -11414,6 +11463,10 @@ class FabrikFEModelList extends JModelForm
 
 				FabrikHelperHTML::stylesheetFromPath($path);
 			}
+
+			// File added only for customized gif
+			$pathGif = 'components/com_fabrik/views/list/tmpl/customized_gif.php' . $qs;
+			FabrikHelperHTML::stylesheetFromPath($pathGif);
 		}
 	}
 
@@ -11571,6 +11624,60 @@ class FabrikFEModelList extends JModelForm
 					$a[$thisUrl] = $o;
 				}
 			}
+		}
+
+		return $a;
+	}
+
+	/**
+	 * Get lists layouts headings
+	 *
+	 * @return   array  heading names
+	 */
+	public function getLayoutsHeadings()
+	{
+		$formModel = $this->getFormModel();
+		$input = $this->app->input;
+		$base = JURI::getInstance();
+		$base = $base->toString(array('scheme', 'user', 'pass', 'host', 'port', 'path'));
+		$qs = $input->server->get('QUERY_STRING', '', 'string');
+
+		if (JString::stristr($qs, 'layout')) {
+			$qs = FabrikString::removeQSVar($qs, 'layout');
+			$qs = FabrikString::ltrimword($qs, '?');
+			$qs = str_replace('&', '&amp;', $qs);
+		}
+
+		$url = $base;
+
+		if (!empty($qs)) {
+			$url .= JString::strpos($url, '?') !== false ? '&amp;' : '?';
+			$url .= $qs;
+		}
+
+		$url .= JString::strpos($url, '?') !== false ? '&amp;' : '?';
+
+		$a = array();
+
+		$path = 'components/com_fabrik/views/list/tmpl';
+		$directories = JFolder::listFolderTree($path, $filter = '.', $maxLevel = 3, $level = 0, $parent = 0);
+		$files = JFolder::files($path, $filter = '.', $recurse = false, $fullpath = true);
+		$layouts = ''; //;
+
+		foreach ($files as $file) {
+			if (strpos($file, 'names.json') !== false) {
+				$layouts = json_decode(file_get_contents($file));
+			}
+		}
+
+		foreach ($directories as $directory) {
+			$dname = $directory['name'];
+			$layouts->$dname;
+			
+			$o = new stdClass;
+			$o->label = $layouts->$dname;
+			$o->layout = $dname;
+			$a[$url . 'layout='. $dname] = $o;
 		}
 
 		return $a;

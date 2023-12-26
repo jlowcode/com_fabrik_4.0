@@ -87,6 +87,7 @@ class FabrikAdminModelPlugin extends JModelLegacy
 		$data['validationrule']['validate_hidden']  = $this->getState('validate_hidden');
 		$data['validationrule']['validate_in']      = $this->getState('validate_in');
 		$data['validationrule']['validation_on']    = $this->getState('validation_on');
+		$data['validationrule']['new_repetible_line'] = $this->getState('new_repetible_line');	//Id task: 170
 
 		$c = $this->getState('c') + 1;
 
@@ -95,11 +96,13 @@ class FabrikAdminModelPlugin extends JModelLegacy
 		$locations    = (array) FArrayHelper::getValue($data, 'plugin_locations');
 		$events       = (array) FArrayHelper::getValue($data, 'plugin_events');
 		$descriptions = (array) FArrayHelper::getValue($data, 'plugin_description');
+		$conditions   = (array) FArrayHelper::getValue($data, 'plugin_condition');
 
 		$data['params']['plugin_state'] = FArrayHelper::getValue($state, $c, 1);
 		$data['plugin_locations']       = FArrayHelper::getValue($locations, $c);
 		$data['plugin_events']          = FArrayHelper::getValue($events, $c);
 		$data['plugin_description']     = FArrayHelper::getValue($descriptions, $c);
+        $data['plugin_condition']     = FArrayHelper::getValue($conditions, $c);
 
 		// For list plugins view
 		$data['params']['plugin_description'] = FArrayHelper::getValue($descriptions, $c);

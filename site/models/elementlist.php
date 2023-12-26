@@ -362,8 +362,8 @@ class PlgFabrik_ElementList extends PlgFabrik_Element
 		$elName = $this->getFullName(true, false);
 		$params = $this->getParams();
 		$v = $this->filterName($counter, $normal);
-
-		if (in_array($element->filter_type, array('range', 'dropdown', '', 'checkbox', 'multiselect')))
+		
+		if (in_array($element->filter_type, array('range', 'dropdown', '', 'checkbox', 'multiselect', 'tagcloud')))
 		{
 			$rows = $this->filterValueList($normal);
 
@@ -374,7 +374,7 @@ class PlgFabrik_ElementList extends PlgFabrik_Element
 
 			$this->getFilterDisplayValues($default, $rows);
 
-			if (!in_array('', $values) && !in_array($element->filter_type, array('checkbox', 'multiselect')))
+			if (!in_array('', $values) && !in_array($element->filter_type, array('range', 'checkbox', 'multiselect', 'tagcloud')))
 			{
 				array_unshift($rows, JHTML::_('select.option', '', $this->filterSelectLabel()));
 			}
@@ -388,12 +388,19 @@ class PlgFabrik_ElementList extends PlgFabrik_Element
 
 				if (!is_array($default))
 				{
-					$default = array('', '');
+					$default = array();
 				}
 
-				$this->rangedFilterFields($default, $return, $rows, $v, 'list');
+				// $this->rangedFilterFields($default, $return, $rows, $v, 'list');
+				$return = $this->rangeSliderFilter($default, $rows, $v);
 				break;
+
+			case 'tagcloud':
+				$return = $this->tagCloudFilter($rows, $default, $v);
+				break;
+
 			case 'checkbox':
+			case 'backupcheckbox':
 				$return[] = $this->checkboxFilter($rows, $default, $v);
 				break;
 			case 'dropdown':
@@ -540,6 +547,18 @@ class PlgFabrik_ElementList extends PlgFabrik_Element
 		$rows = $elementModel->filterValueList(true, '', $label);
 		$v = $app->input->get('value', '', 'string');
 
+		/*
+		* Adding array of characters accentuated for auto-complete
+		* recognize words with and without accent
+		*/
+		$withAccents = array('à', 'á', 'â', 'ã', 'ä', 'å', 'ç', 'è', 'é', 'ê', 'ë', 'ì', 
+		'í', 'î', 'ï', 'ñ', 'ò', 'ó', 'ô', 'õ', 'ö', 'ù', 'ü', 'ú', 'ÿ', 'À', 'Á', 'Â', 
+		'Ã', 'Ä', 'Å', 'Ç', 'È', 'É', 'Ê', 'Ë', 'Ì', 'Í', 'Î', 'Ï', 'Ñ', 'Ò', 'Ó', 'Ô', 
+		'Õ', 'Ö', 'O', 'Ù', 'Ü', 'Ú');
+		$withoutAccents = array('a', 'a', 'a', 'a', 'a', 'a', 'c', 'e', 'e', 'e', 'e', 'i', 
+		'i', 'i', 'i', 'n', 'o', 'o', 'o', 'o', 'o', 'u', 'u', 'u', 'y', 'A', 'A', 'A', 'A', 'A', 
+		'A', 'C', 'E', 'E', 'E', 'E', 'I', 'I', 'I', 'I', 'N', 'O', 'O', 'O', 'O', 'O', '0', 'U', 'U', 'U');
+
 		// Search for every word separately in the result rather than the single string (of multiple words)
 		$regex  = "/(?=.*" .
 			implode(")(?=.*",
@@ -551,8 +570,11 @@ class PlgFabrik_ElementList extends PlgFabrik_Element
 		{
 			$rows[$i]->text = strip_tags($rows[$i]->text);
 
-			// Check that search strings are not in the HTML we just stripped
-			if (!preg_match($regex, $rows[$i]->text))
+			/**
+			 * Check that search strings are not in the HTML we just stripped
+			 * 01/06/2020 Check if the string is part of the array with and without accent
+			 */
+			if (!preg_match(str_replace($withAccents, $withoutAccents, $regex), str_replace($withAccents, $withoutAccents, $rows[$i]->text)))
 			{
 				unset($rows[$i]);
 			}
@@ -705,7 +727,8 @@ class PlgFabrik_ElementList extends PlgFabrik_Element
 			'uls' => $uls,
 			'condense' => $condense,
 			'addHtml' => $addHtml,
-			'sepChar' => ArrayHelper::getValue($opts, 'sepChar', ' ')
+			'sepChar' => ArrayHelper::getValue($opts, 'sepChar', ' '),
+			'classCSS' => $params->get('tablecss_cell_li')
 		);
 
         JDEBUG ? $profiler->mark("renderListData: parent: end: {$this->element->name}") : null;
@@ -1059,7 +1082,7 @@ class PlgFabrik_ElementList extends PlgFabrik_Element
 			{
 				if ($multiple && $this->renderWithHTML)
 				{
-					$lis[] = '<li>' . $l . '</li>';
+					$lis[] = '<li class="badge">' . $l . '</li>';
 				}
 				else
 				{

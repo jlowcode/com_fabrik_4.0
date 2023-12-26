@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<form>
+
+	<fields name="filter">
+
+		<field
+			name="search"
+			type="text"
+			label="COM_FABRIK_SEARCH_IN_TITLE"
+			description="COM_FABRIK_SEARCH_IN_TITLE"
+			hint="JSEARCH_FILTER"
+		/>
+
+		<field
+			name="published"
+			type="status"
+			label="JOPTION_SELECT_PUBLISHED"
+			onchange="this.form.submit();"
+			>
+			<option value="">JOPTION_SELECT_PUBLISHED</option>
+		</field>
+
+	</fields>
+
+	<fields name="list">
+
+		<field
+			name="fullordering"
+			type="list"
+			label="JGLOBAL_SORT_BY"
+			default="c.label ASC"
+			onchange="this.form.submit();"
+			>
+			<option value="">JGLOBAL_SORT_BY</option>
+			<option value="c.label ASC">COM_FABRIK_LABEL_ASC</option>
+			<option value="c.label DESC">COM_FABRIK_LABEL_DESC</option>
+			<option value="c.id ASC">JGRID_HEADING_ID_ASC</option>
+			<option value="c.id DESC">JGRID_HEADING_ID_DESC</option>
+			<option value="c.frequency ASC">COM_FABRIK_FREQ_ASC</option>
+			<option value="c.frequency DESC">COM_FABRIK_FREQ_DESC</option>
+			<option value="c.lastrun ASC">COM_FABRIK_LAST_ASC</option>
+			<option value="c.lastrun DESC">COM_FABRIK_LAST_DESC</option>
+			<option value="c.published ASC">JSTATUS_ASC</option>
+			<option value="c.published DESC">JSTATUS_DESC</option>
+		</field>
+
+		<field
+			name="limit"
+			type="limitbox"
+			label="JGLOBAL_LIST_LIMIT"
+			default="25"
+			onchange="this.form.submit();"
+		/>
+	</fields>
+</form>

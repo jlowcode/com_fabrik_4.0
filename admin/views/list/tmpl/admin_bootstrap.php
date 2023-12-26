@@ -36,6 +36,19 @@ JHtml::_('behavior.keepalive');
 			}
 		});
 	}
+	if (window.opener) {
+		// if is target=_blank window
+		jQuery(document).ready(function () {
+			// Hide navbar-fixed-top
+			jQuery('.navbar-fixed-top').css({'display': 'none'});
+		
+			// remove padding from top
+			jQuery('body').css({'padding-top': '0px'});
+
+			jQuery('.subhead').css({'top': '0px'});
+			
+		});
+	} 
 </script>
 
 <form action="<?php JRoute::_('index.php?option=com_fabrik'); ?>" method="post" name="adminForm" id="adminForm" class="form-validate">
