@@ -3259,7 +3259,7 @@ class PlgFabrik_Element extends FabrikPlugin
 			if (is_array($default))
 			{
 				// Hidden querystring filters can be using ranged valued though
-				if (!in_array($fType, array('hidden', 'checkbox', 'multiselect', 'range')))
+				if (!in_array($fType, array('hidden', 'checkbox', 'multiselect', 'range', 'treeview', 'stars', 'tagcloud', 'datetree')))
 				{
 					// Weird thing on meow where when you first load the task list the id element had a date range filter applied to it????
 					$default = '';
@@ -3283,7 +3283,7 @@ class PlgFabrik_Element extends FabrikPlugin
 	{
 		$fType = $this->getElement()->filter_type;
 
-		return in_array($fType, array('range', 'checkbox', 'multiselect'));
+		return in_array($fType, array('range', 'checkbox', 'multiselect', 'treeview', 'stars', 'tagcloud', 'datetree'));
 	}
 
 	/**
@@ -3347,12 +3347,12 @@ class PlgFabrik_Element extends FabrikPlugin
 		$this->filterDisplayValues = array($default);
 		$return                    = array();
 
-		if (in_array($element->filter_type, array('range', 'dropdown', 'checkbox', 'multiselect')))
+		if (in_array($element->filter_type, array('range', 'dropdown', 'checkbox', 'multiselect', 'treeview', 'tagcloud', 'datetree')))
 		{
 			$rows = $this->filterValueList($normal);
 			$this->unmergeFilterSplits($rows);
 
-			if (!in_array($element->filter_type, array('checkbox', 'multiselect')))
+			if (!in_array($element->filter_type, array('range', 'checkbox', 'multiselect', 'treeview', 'tagcloud', 'datetree')))
 			{
 				array_unshift($rows, HTMLHelper::_('select.option', '', $this->filterSelectLabel()));
 			}
@@ -3391,12 +3391,44 @@ class PlgFabrik_Element extends FabrikPlugin
 
 		switch ($element->filter_type)
 		{
+			// Begin - Databasejoin Modificado
 			case 'range':
-				$this->rangedFilterFields($default, $return, $rows, $v, 'list');
+				// $this->rangedFilterFields($default, $return, $rows, $v, 'list');
+				$return = $this->rangeSliderFilter($default, $rows, $v);
+				break;
+
+			case 'stars':
+				$return[] = $this->starsFilter($default, $v);
+				break;
+
+			case 'tagcloud':
+				$return = $this->tagCloudFilter($rows, $default, $v);
+				break;
+
+			case 'datetree': 
+				$defaultLabel = $this->getLabelForValue($default);				
+				$return 	  = $this->dateTreeFilter($rows, $default, $v, $defaultLabel, $normal, $container, null);
 				break;
 			case 'checkbox':
+				$this->countForField($dbElName, $rows);
 				$return[] = $this->checkboxFilter($rows, $default, $v);
 				break;
+			case 'treeview':
+				$defaultLabel = $this->getLabelForValue($default);
+				if($this->getParams()->get('database_join_display_style') == 'only-autocomplete'){
+					$defaultLabel = $this->getLabelForValue($default);
+					$autoComplete = $this->autoCompleteFilter($default, $v, $defaultLabel, $normal, $container);
+					$return       = array_merge($return, $autoComplete);
+					break;
+				}
+				if ($this->getParams()->get('tree_parent_id')) {
+					$treeview = $this->treeviewFilterNovo($rows, $default, $v, $defaultLabel, $normal, $container, null);
+					$return       = array_merge($return, $treeview);
+				} else {
+					$return[] = $this->checkboxFilter($rows, $default, $v);
+				}
+				break;
+				// End - Databasejoin Modificado
 			case 'dropdown':
 			case 'multiselect':
 				$return[] = $this->selectFilter($rows, $default, $v);
@@ -3441,6 +3473,17 @@ class PlgFabrik_Element extends FabrikPlugin
 	 */
 	protected function selectFilter($rows, $default, $v)
 	{
+		$params = $this->getParams();
+		//if the Order By is count
+		if($params->get('filter_groupby') == 'count'){
+			foreach ($rows as $row) {
+				if (isset($row->counter)) {
+					$row->text = $row->text . " (" . $row->counter . ")";
+				}
+			}
+		}
+	
+
 		$class   = $this->filterClass();
 		$element = $this->getElement();
 		$id      = $this->getHTMLId() . 'value';
@@ -3619,7 +3662,7 @@ class PlgFabrik_Element extends FabrikPlugin
 		$id      = $this->getHTMLId() . 'value';
 
 		return '<input type="' . $type . '" data-filter-name="' . $this->getFullName(true, false) .
-		'" name="' . $v . '" class="' . $class . '" size="' . $size . '" value="' . $default . '" id="'
+		'" name="' . $v . '" class="' . $class . ' single_field" size="' . $size . '" value="' . $default . '" id="'
 		. $id . '" />';
 	}
 
@@ -3654,10 +3697,12 @@ class PlgFabrik_Element extends FabrikPlugin
 		 */
 		$return   = array();
 		$return[] = '<input type="hidden" " data-filter-name="' . $this->getFullName(true, false) .
-			'" name="' . $v . '" class="' . $class . ' ' . $id . '" value="' . $default . '" />';
+			' autocomplete-trigger" name="' . $v . '" class="' . $class . ' ' . $id . '" value="' . $default . '" />';
 		$return[] = '<input type="text" name="auto-complete' . $this->getElement()->id . '" class="' . $class . ' autocomplete-trigger '
 			. $id . '-auto-complete" size="' . $size . '" value="' . $labelValue . '" />';
 		$opts     = array();
+
+		$opts['listRef'] = 'list_' . $listModel->getRenderContext();
 
 		if ($normal)
 		{
@@ -4031,14 +4076,23 @@ class PlgFabrik_Element extends FabrikPlugin
 	public function filterValueList($normal, $tableName = '', $label = '', $id = '', $incJoin = true)
 	{
 		$filterBuild = $this->getFilterBuildMethod();
+		$params = $this->getParams();
 
 		if ($filterBuild == 2 && $this->hasSubElements)
 		{
-			return $this->filterValueList_All($normal, $tableName, $label, $id, $incJoin);
+			if ($params->get('filter_groupby') == 'count') {
+				return $this->filterValueList_All_Count($normal, $tableName, $label, $id, $incJoin);
+			} else {
+				return $this->filterValueList_All($normal, $tableName, $label, $id, $incJoin);
+			}
 		}
 		else
 		{
-			return $this->filterValueList_Exact($normal, $tableName, $label, $id, $incJoin);
+			if ($params->get('filter_groupby') == 'count') {
+				return $this->filterValueList_Exact_Count($normal, $tableName, $label, $id, $incJoin, false);
+			} else {
+				return $this->filterValueList_Exact($normal, $tableName, $label, $id, $incJoin);
+			}
 		}
 	}
 
@@ -4109,7 +4163,12 @@ class PlgFabrik_Element extends FabrikPlugin
 		$joinStr   = $incJoin ? $listModel->buildQueryJoin() : $this->buildFilterJoin();
 
 		// New option not to order elements - required if you want to use db joins 'Joins where and/or order by statement'
-		$groupBy = $this->getOrderBy('filter');
+		$params  = $this->getParams();
+		if ($params->get('filter_groupby') == 'count') {
+			$groupBy = $this->getOrderByForCount('filter');
+		} else {
+			$groupBy = $this->getOrderBy('filter');
+		}
 
 		foreach ($listModel->getJoins() as $aJoin)
 		{
@@ -4143,6 +4202,18 @@ class PlgFabrik_Element extends FabrikPlugin
 			$id     = 'AES_DECRYPT(' . $id . ', ' . $fabrikDb->quote($secret) . ')';
 		}
 
+		if(isset($parentName)){
+			$matches = array();
+			preg_match('/AS \K`\w+`(?!ON)/', strstr($joinStr, 'JOIN ' . $fabrikDb->qn($fromTable)), $matches);
+
+			$buildParentAsSql = '';
+			$buildIdAsSql = '';
+			if(isset($matches[0])){
+				$buildParentAsSql = $matches[0] . '.' . $fabrikDb->qn($parentName);
+				$buildIdAsSql = $matches[0] . '.' . $fabrikDb->qn('id');
+			}
+		}
+
 		$origTable = $tableName == '' ? $origTable : $tableName;
 		/**
 		 * $$$ rob - 2nd sql was blowing up for me on my test table - why did we change to it?
@@ -4151,13 +4222,28 @@ class PlgFabrik_Element extends FabrikPlugin
 		 */
 		if (strstr($joinStr, 'JOIN ' . $fabrikDb->qn($fromTable)))
 		{
-			$sql = 'SELECT DISTINCT(' . $label . ') AS ' . $fabrikDb->qn('text') . ', ' . $id . ' AS ' . $fabrikDb->qn('value')
+			if(isset($buildParentAsSql) && !empty($buildParentAsSql) && isset($buildIdAsSql) && !empty($buildIdAsSql)){
+				$sql = 'SELECT DISTINCT(' . $label . ') AS ' . $fabrikDb->qn('text') . ', ' . $label . ' AS ' . $fabrikDb->qn('name') . ', ' . $buildIdAsSql . ' AS ' . $fabrikDb->qn('value') . ', '
+				. $buildParentAsSql . ' AS ' . $fabrikDb->qn('parent') . ' FROM ' . $fabrikDb->qn($origTable) . ' ' . $joinStr . "\n";
+			} else {
+				$sql = 'SELECT DISTINCT(' . $label . ') AS ' . $fabrikDb->qn('text') . ', ' . $id . ' AS ' . $fabrikDb->qn('value')
 				. ' FROM ' . $fabrikDb->qn($origTable) . ' ' . $joinStr . "\n";
+			}
 		}
 		else
 		{
-			$sql = 'SELECT DISTINCT(' . $label . ') AS ' . $fabrikDb->qn('text') . ', ' . $id . ' AS ' . $fabrikDb->qn('value')
-				. ' FROM ' . $fabrikDb->qn($fromTable) . ' ' . $joinStr . "\n";
+			if(isset($buildParentAsSql) && !empty($buildParentAsSql) && isset($buildIdAsSql) && !empty($buildIdAsSql)){
+				$sql = 'SELECT DISTINCT(' . $label . ') AS ' . $fabrikDb->qn('text') . ', ' . $label . ' AS ' . $fabrikDb->qn('name') . ', ' . $buildIdAsSql . ' AS ' . $fabrikDb->qn('value') . ', '
+				. $buildParentAsSql . ' AS ' . $fabrikDb->qn('parent') . ' FROM ' . $fabrikDb->qn($origTable) . ' ' . $joinStr . "\n";
+			} else {
+				if ($element->filter_type == 'datetree') {
+					$sql = 'SELECT DISTINCT YEAR(' . $label . ') AS ' . $fabrikDb->qn('text') . ', YEAR(' . $label . ') AS ' . $fabrikDb->qn('name') . ', YEAR(' . $id . ') AS ' . $fabrikDb->qn('value')
+					. ' FROM ' . $fabrikDb->qn($fromTable) . ' ' . $joinStr . "\n";
+				} else {
+					$sql = 'SELECT DISTINCT(' . $label . ') AS ' . $fabrikDb->qn('text') . ', ' . $id . ' AS ' . $fabrikDb->qn('value')
+					. ' FROM ' . $fabrikDb->qn($fromTable) . ' ' . $joinStr . "\n";
+				}
+			}
 		}
 
 		if (!$this->isJoin())
@@ -4354,7 +4440,7 @@ class PlgFabrik_Element extends FabrikPlugin
 	 */
 	protected function getFilterCondition()
 	{
-		if ($this->getElement()->filter_type == 'auto-complete')
+		if ($this->getElement()->filter_type == 'auto-complete' || $this->getElement()->filter_type == 'datetree')
 		{
 			$cond = 'contains';
 		}
@@ -8310,5 +8396,1529 @@ class PlgFabrik_Element extends FabrikPlugin
 		if (strlen($bsClass) > 0) $bsClass = ' '.$bsClass;
 
 		return $bsClass;
+	}
+
+	/**
+	 * Count all occurrences for filter using element field 
+	 *
+	 *
+	 * @return  array    Number of occurrences for each checkbox
+	 */
+	protected function countForField($dbElName, $rows) {
+		// Get element and table names
+		$pointPosition = strpos($dbElName, '.');
+		$tableName = substr($dbElName, 0, $pointPosition);
+		$elementName = substr($dbElName, $pointPosition+1);
+
+		$params = $this->getParams();
+
+		// @TODO?? - Verify if is field if not, skip function
+
+		// @TODO - Order by count
+
+		// $orderBy = $params->get('filter_groupby');
+		// if($orderBy = "count") {
+		// }		
+
+		// Get db object
+		$db = JFactory::getDBO();
+
+		
+		$countArray = array();
+		
+		// Count for every filter checkbox
+		foreach($rows as $row) {
+			// New query object
+			$query = $db->getQuery(true);
+
+			// Select 
+			$query->select('count(*) as countNumber');
+			
+			// Where
+			$query->where("{$db->quoteName($elementName)} = '{$row->value}'");
+
+			// From 
+			$query->from($db->quoteName($tableName));
+			
+			// Execute
+			$db->setQuery($query);
+
+			$db->execute();
+			$r = $db->loadObjectList();
+			$row->counter = $r[0]->countNumber;
+		}
+	}
+
+	/**
+	 * Build ranged filter fields either as range slider fields
+	 *
+	 * @param   array  $default Filter values (max and min)
+	 * @param   array  $rows    Filter list options
+	 * @param   string $v       Filter name
+	 *
+	 * @return void HTML
+	 */
+	protected function rangeSliderFilter($default, $rows, $v)
+	{
+		$element    = $this->getElement();
+		$fullName   = $this->getFullName(true, false);
+		$default    = (array) $default;
+		$return 	= array();
+		
+		$values 	= array_column($rows, 'value'); // Return the values from a single column in the input array
+		$valueMin 	= min($values);
+		$valueMax 	= max($values);
+
+		// When the page does not come from a search the default will be the minimum and maximum values of the possible options
+		if (count($default) === 1) {
+			$default[0] = $valueMin;
+			$default[1] = $valueMax;
+		}
+
+		$return[] = '<div class="slider-range">';
+			$return[] = '<div class="ui-slider-handle">';
+				$return[] = '<div class="click"></div>'; // DIV that expands the click space of the handle
+				$return[] = '<div class="custom-handle"  id="handle_filter_range_0">' . $default[0] . '</div>'; 
+			$return[] = '</div>';
+			
+			$return[] = '<div class="ui-slider-handle">';
+				$return[] = '<div class="click"></div>'; // DIV that expands the click space of the handle
+				$return[] = '<div class="custom-handle" id="handle_filter_range_1">' . $default[1] . '</div>';
+			$return[] = '</div>';
+		$return[] = '</div>';
+	
+		$return[] = '<input type="hidden" class="single_field fabrik_filter"  id="' . $element->name . '_filter_range_0" 
+		name="' . $v . '[0]" data-filter-name="' . $fullName . '"  value="' . $default[0] . '"/>'; 
+		$return[] = '<input type="hidden" class="single_field fabrik_filter" id="' . $element->name . '_filter_range_1" 
+		name="' . $v . '[1]" data-filter-name="' . $fullName . '"  value="' . $default[1] . '"/>';
+		
+		FabrikHelperHTML::rangeSlider($valueMax, $valueMin, $element->name); // Import additional files, like css and javascript, to the filter
+
+		return $return;
+	}
+
+	/**
+	 * Build the HTML for the Tag Cloud filter
+	 *
+	 * @param   array  $rows    Filter list options with counter
+	 * @param   string $default Selected filter values
+	 * @param   string $v       Field name
+	 *
+	 * @return  array  HTML bits
+	 */
+	protected function tagCloudFilter($rows, $default, $v)
+	{
+		$element     = $this->getElement();
+		$fullName    = $this->getFullName(true, false);
+		$size      	 = (int) $this->getParams()->get('filter_length', 20);
+
+		$return   	 = array();
+		$max 		 = max(array_column($rows, 'counter')); // Higher value of options
+
+		$fontSizeMax = 20; // Establish a maximum value for the font
+		$fontSizeMin = 9;  // Establish a minimum value for the font
+		
+		// The length entered by the user will be the maximum number of words
+		if (count((array) $rows) > $size) {
+			$rows = array_slice($rows, 0, $size);
+		}
+
+		/* Shuffle an array that is sorted in descending order by the number of 
+		words to make it look more like a cloud of words */
+		shuffle($rows); 
+		
+		// Style CSS - included here because sterilization is little
+		$return[] = '<style> .tagcloud { max-width: 400px; border: 1px solid rgb(226, 226, 226); border-radius: 5px; padding: 3px;
+			word-wrap: break-word; line-height: 1em; } .tag:hover { text-decoration: underline !important; } </style>';
+			
+		$return[] = '<div class="tagcloud">';
+
+		foreach ($rows as $row) {
+			$fontSize = round($fontSizeMax * $row->counter / $max); // Ensure that it will not exceed the maximum amount
+	        if ($fontSize < $fontSizeMin) $fontSize = $fontSizeMin; // Make sure it does not pass the minimum amount
+			
+			$return[] = '<a class="tag" style="font-size:' . $fontSize . 'px" value="' . $row->value . '">' . $row->text . '</a>&nbsp; ';
+		}
+		
+		$return[] = '</div>';	
+		$return[] = '<input type="hidden" id="' . $element->name . '_filter_tagcloud" name="' . $v . '" 
+				data-filter-name="' . $fullName . '"  value="' . $default . '" class="fabrik_filter"/>'; // Filter values must be within form elements
+
+		FabrikHelperHTML::tagCloud($element->name); // Import additional files, like css and javascript, to the filter
+		
+		return $return;
+	}
+
+	/**
+	 * Stars filter
+	 *
+	 * @param   array  $default Selected filter values
+	 * @param   string $v       Filter name
+	 *
+	 * @return  string  Stars filter JLayout HTML
+	 */
+	protected function starsFilter($default, $v)
+	{
+		// star icons, also have option class="text-warning"
+		$icon = "<svg width='1em' height='1em' viewBox='0 0 16 16' class='bi bi-star-fill' fill='currentColor' xmlns='http://www.w3.org/2000/svg'>
+  					<path d='M3.612 15.443c-.386.198-.824-.149-.746-.592l.83-4.73L.173 6.765c-.329-.314-.158-.888.283-.95l4.898-.696L7.538.792c.197-.39.73-.39.927 0l2.184 4.327 4.898.696c.441.062.612.636.283.95l-3.523 3.356.83 4.73c.078.443-.36.79-.746.592L8 13.187l-4.389 2.256z'/>
+				</svg>&nbsp;";
+		$labels[] = 'All';
+
+		for ($i=5; $i > 0; $i--) { 
+			$label = "";
+			for ($j=$i; $j > 0; $j--) { 
+				$label .= $icon ;
+			}
+			$labels[] = $label;
+		}
+
+		$values = array('', '5.00', '4.00', '3.00', '2.00', '1.00'); // static values of the 'rating' element
+		
+		$params = $this->getParams();
+
+		$default = (array) $default;
+		$layout                   	= $this->getLayout('list-filter-checkbox');
+		$displayData              	= new stdClass;
+		$displayData->values      	= $values;
+		$displayData->labels      	= $labels;
+		$displayData->default     	= $default;
+		$displayData->elementName 	= $this->getFullName(true, false);
+		$displayData->name        	= $v;
+		$displayData->maxCheckboxes = 6;
+		$res                      	= $layout->render($displayData);
+		
+		// If no custom list layout found revert to the default list.filter.fabrik-filter-checkbox renderer
+		if ($res === '') {
+			$layout = $this->getListModel()->getLayout('list.filter.fabrik-filter-checkbox');
+			$res    = $layout->render($displayData);
+		}
+
+		return $res;
+	}
+
+	/**
+	 * TreeView filter
+	 *
+	 * @param   array  $rows    Filter list options
+	 * @param   array  $default Selected filter values
+	 * @param   string $v       Filter name
+	 *
+	 * @since 3.0.7
+	 *
+	 * @return  string  TreeView filter JLayout HTML
+	 */
+	protected function treeviewFilter($rows, $default, $v)
+	{
+		$values = array();
+		$labels = array();
+		foreach ($rows as $row) {
+			$values[] = $row->value;
+			if (isset($row->counter)) {
+				$labels[] = $row->text . " (" . $row->counter . ")";
+			} else {
+				$labels[] = $row->text;
+			}
+		}
+
+		$params = $this->getParams();
+
+		$default = (array) $default;
+		$displayData				= new stdClass;
+		$displayData->default		= $default;
+		$displayData->elementName	= $this->getFullName(true, false);
+		$displayData->name			= $v;
+		$displayData->labels      = $labels;
+		$displayData->values      = $values;
+		$displayData->filterBuild = $params->get('filter_groupby');
+
+		if ($displayData->filterBuild == "count") {
+			$jsonUrlEncode = urlencode(json_encode($rows));
+			$displayData->countArray  = '<input class="count_filter" type="hidden" value="' . $jsonUrlEncode . '"/>';
+		}
+
+		if ($this->getParams()->get('tree_parent_id')) {
+			$displayData->data = '<input class="join_name" type="hidden" value="' . $this->getParams()->get('join_db_name') . '"/>' .
+				'<input class="join_val_column" type="hidden" value="' . $this->getParams()->get('join_val_column') . '"/>' .
+				'<input class="join_key_column" type="hidden" value="' . $this->getParams()->get('join_key_column') . '"/>' .
+				'<input class="root_url" type="hidden" value="' . JURI::root() . '"/>' .
+				'<input class="name" type="hidden" value="' . $displayData->name . '"/>' .
+				'<input class="element_name" type="hidden" value="' . $displayData->elementName . '"/>' .
+				'<input class="tree_parent_id" type="hidden" value="' . $this->getParams()->get('tree_parent_id') . '"/>' .
+				'<input class="filter_sortedby" type="hidden" value="' . $this->getParams()->get('filter_sortedby') . '"/>';
+			if ($this->getParams()['database_join_display_type']) {
+				if ($this->getParams()['database_join_display_style'] == 'both-treeview-autocomplete') {
+					$layout = $this->getListModel()->getLayout('list.filter.fabrik-filter-treeview-autocomplete');
+				} else {
+					$layout = $this->getListModel()->getLayout('list.filter.fabrik-filter-treeview');
+				}
+			} else {
+				$layout = $this->getListModel()->getLayout('list.filter.fabrik-filter-checkbox');
+			}
+		} else {
+			$layout = $this->getListModel()->getLayout('list.filter.fabrik-filter-checkbox');
+		}
+
+		$res = $layout->render($displayData);
+
+		return $res;
+	}
+
+	/**
+	 * Build the HTML ////for the auto-complete filter
+	 *
+	 * @param   string $default    Label
+	 * @param   string $v          Field name
+	 * @param   string $labelValue Label value
+	 * @param   bool   $normal     Do we render as a normal filter or as an advanced search filter
+	 *                             if normal include the hidden fields as well (default true, use false for advanced
+	 *                             filter rendering)
+	 *
+	 * @return  array  HTML bits
+	 */
+	protected function treeViewFilterNovo($rows, $default, $v, $labelValue = null, $normal = true, $container=null, $popUpId=null)
+	{
+		$return   = array();
+
+		if ($this->getParams()->get('tree_parent_id')) {
+			if (is_null($labelValue)) {
+				$labelValue = $default;
+			}
+
+			$listModel		= $this->getListModel();
+			$id        		= $this->getHTMLId() . 'value';
+			$fullName  		= $this->getFullName(true, false);
+			$class     		= $this->filterClass();
+			$size      		= (int) $this->getParams()->get('filter_length', 20);
+			$typeFilter		= $this->getParams()['database_join_display_style'];
+
+			$return   = array();
+			$return[] = '<div id="selected-values-' . $fullName . '">';
+			/**
+			 * creating the hidden checkbox to do filter, otherwise Fabrik doesn't know which one was
+			 * select
+			 */
+			if (!empty($default)) {
+				foreach ($default as $val) {
+					$return[] = '<input type="checkbox" data-filter-name="' . $fullName .
+						'" tree-input-filter="' . $fullName . '" ' . 'class="fabrikinput fabrik_filter pitt_tree_input" value="' . $val . '" checked="true" style="display: none;"/>';
+				}
+			}
+			$return[] = '</div>';
+			if ($typeFilter == 'both-treeview-autocomplete') {
+				$return[] = '<input type="text" name="' . $this->getElement()->id . '" class="' . $class . ' '
+					. $id . '-auto-complete" size="' . $size . '" />';
+			}
+			$return[] = '<div id="tree-' . $fullName . '"></div>';
+			$opts     = array();
+
+			if ($normal) {
+				$opts['menuclass'] = 'auto-complete-container';
+
+				if (empty($container)) {
+					$container = 'listform_' . $listModel->getRenderContext();
+				}
+
+				$selectorAutoComplete          = '#' . $container . ' .' . $id;
+				$selectorDivSelectedValues = '#' . 'selected-values-' . $fullName;
+				$selectorDivTree = '#' . 'tree-' . $fullName;
+			} else {
+				$selectorAutoComplete          = '.advancedSearch_' . $listModel->getRenderContext() . ' .' . $id;
+				$opts['menuclass'] = 'auto-complete-container advanced';
+			}
+
+			$rowsCategory = array();
+			if($this->getParams()->get('root_category')){
+				//se for mostrar tudo e nao for count procurar na chave id, senão é dados gravados então procurar na chave value
+				if($this->getParams()->get('filter_build_method') == 2 &&  $this->getParams()->get('filter_groupby') == "text"){
+					$keyPai = array_search($this->getParams()->get('root_category'), array_column($rows, 'id'));
+				} else {
+					$keyPai = array_search($this->getParams()->get('root_category'), array_column($rows, 'value'));
+				}
+
+				if(isset($keyPai)){
+					$rowsCategory[] = $rows[$keyPai];
+					$arrS = array_keys(array_column($rows, 'parent'), $this->getParams()->get('root_category'));
+					if($arrS){
+						foreach ($arrS as $key) {
+							$rowsCategory[] = $rows[$key];
+						}
+					}
+				}
+			}
+
+			$opts['nameElement'] = $v;
+			$opts['fullName'] = $fullName;
+			$opts['singleName'] = $this->getElement()->name;
+			$opts['listForm'] = 'list_' . $listModel->getRenderContext();
+			
+			if($this->getParams()->get('root_category')){
+				if(empty($rowsCategory)){
+					$opts['count'] = json_encode($rows);
+				} else {
+					$opts['rootCategory'] = $this->getParams()->get('root_category');
+					$opts['count'] = json_encode($rowsCategory);
+				}
+			} else {
+				$opts['count'] = json_encode($rows);
+			}
+			
+			$opts['count'] = json_encode($rows);
+			$opts['sortedBy'] = $this->getParams()->get('filter_sortedby');
+			$opts['default'] = $default;
+			$opts['defaultLabel'] = $labelValue;
+			$opts['buildMethod'] = $this->getParams()->get('filter_build_method');
+			$opts['dragndropProp'] = (int) $this->getParams()->get('drag_n_drop_treeview');
+			$opts['popUpId'] = $popUpId;
+			$opts['userGroups'] = $this->user->getAuthorisedViewLevels();
+
+			$element = $this->getElement();
+			$formId  = $this->getFormModel()->getId();
+			$opts['listId'] = $formId;
+			FabrikHelperHTML::treeView($selectorAutoComplete, $selectorDivSelectedValues, $selectorDivTree, $element->id, $formId, $element->plugin, $opts, $typeFilter);
+		} else {
+			$return = $this->checkboxFilter($rows, $default, $v);
+		}
+		return $return;
+	}
+
+	/**
+	 * Organizar os anos em séculos, décadas ou anos
+	 * 
+	 * @param   array $rows  Data
+	 * 
+	 * @return  array data formated
+	 */
+	protected function formatDateTree($rows) 
+	{
+		$values = array_column($rows, 'value');
+		$params	= $this->getParams();
+		$max 	= max($values);
+		$min 	= min($values);
+
+		$newRows  = array();
+		$interval = $max-$min;
+
+		if ($interval > 100) {    
+			foreach ($rows as $year) {
+				if (substr($year->text, -2, 2) == '00') {
+					$century = (int) substr($year->text, 0, 2);
+				} else {
+					$century = (int) substr($year->text, 0, 2) + 1;
+				}
+				
+				$firstPart  = $century-1 . '01';
+				$secondPart = $century . '00';
+				$text       = $firstPart . ' - ' . $secondPart;
+				$value      = $firstPart . '/01/01 - ' . $secondPart . '/12/31';
+				
+				$key        = count((array) $newRows) > 0 ? array_search($text, array_column($newRows, 'text')) : false;
+				
+				if (!$key) {
+					$newRows[] = new stdClass(); 
+					
+					end($newRows);
+					$key = key($newRows);
+
+					$newRows[$key]->text  = $text; 
+					$newRows[$key]->name  = $text; 
+					$newRows[$key]->value = $value;
+
+					if ($params->get('filter_groupby') == 'count') $newRows[$key]->counter = $year->counter;
+				} else {
+					if ($params->get('filter_groupby') == 'count') $newRows[$key]->counter += $year->counter;
+				}
+			}
+
+		} else if ($interval > 10) {
+			foreach ($rows as $year) {
+				$firstPart  = (int) substr($year->text, 0, 3) . '0';
+				$secondPart = $firstPart + 9;
+				$text       = $firstPart . ' - ' . $secondPart;
+				$value      = $firstPart . '/01/01 - ' . $secondPart . '/12/31';
+				
+				$key        = count((array) $newRows) > 0 ? array_search($text, array_column($newRows, 'text')) : false;
+
+				if ($key === false) {
+					$newRows[] = new stdClass(); 
+					
+					end($newRows);
+					$key = key($newRows);
+
+					$newRows[$key]->text  = $text; 
+					$newRows[$key]->name  = $text; 
+					$newRows[$key]->value = $value;
+					
+					if ($params->get('filter_groupby') == 'count') $newRows[$key]->counter = $year->counter;
+				} else {
+					if ($params->get('filter_groupby') == 'count') $newRows[$key]->counter += $year->counter;
+				}
+			}
+				
+		} else {
+			foreach ($rows as $year) {
+				$value = $year->value . '/01/01 - ' . $year->value . '/12/31';
+
+				$newRows[] = new stdClass(); 
+					
+				end($newRows);
+				$key = key($newRows);
+
+				$newRows[$key]->text  = $year->text; 
+				$newRows[$key]->name  = $year->name; 
+				$newRows[$key]->value = $value;
+				
+				if ($params->get('filter_groupby') == 'count') $newRows[$key]->counter = $year->counter;
+			}
+		}
+
+		return $newRows;
+	}
+
+	/**
+	 * Consultar meses registrados no banco de dados
+	 * 
+	 * @param   int	  $search  Ano de referência dos meses buscados
+	 * 
+	 * @return  array consulta SQL
+	 */
+	protected function dateTreeGetMonth($search)
+	{
+		$listModel = $this->getListModel();
+		$params    = $this->getParams();
+		$db  	   = $listModel->getDb();
+		$query     = $db->getQuery(true);
+		$table     = $listModel->getTable();
+		$tableName = $table->db_table_name;
+		$fullName  = $this->getFullName(false, false);
+
+		if (!$this->isJoin()) {
+			$ids = $listModel->getColumnData($fullName);
+		
+			// For ids that are text with apostrophes in
+			for ($x = count($ids) - 1; $x >= 0; $x--) {
+				if ($ids[$x] == '') {
+					unset($ids[$x]);
+				} else {
+					$ids[$x] = addslashes($ids[$x]);
+				}
+			}
+		}
+
+		$sortedBy  = $params->get('filter_sortedby') == 1 ? ' DESC' : ' ASC';
+		
+		$query
+			->select("MONTH(" . $db->quoteName($fullName) . ") AS `text`,
+					CASE 
+						WHEN MONTH(" . $db->quoteName($fullName) . ") = 1 THEN 'Janeiro'
+						WHEN MONTH(" . $db->quoteName($fullName) . ") = 2 THEN 'Fevereiro'
+						WHEN MONTH(" . $db->quoteName($fullName) . ") = 3 THEN 'Março'
+						WHEN MONTH(" . $db->quoteName($fullName) . ") = 4 THEN 'Abril'
+						WHEN MONTH(" . $db->quoteName($fullName) . ") = 5 THEN 'Maio'
+						WHEN MONTH(" . $db->quoteName($fullName) . ") = 6 THEN 'Junho'
+						WHEN MONTH(" . $db->quoteName($fullName) . ") = 7 THEN 'Julho'
+						WHEN MONTH(" . $db->quoteName($fullName) . ") = 8 THEN 'Agosto'
+						WHEN MONTH(" . $db->quoteName($fullName) . ") = 9 THEN 'Setembro'
+						WHEN MONTH(" . $db->quoteName($fullName) . ") = 10 THEN 'Outubro'
+						WHEN MONTH(" . $db->quoteName($fullName) . ") = 11 THEN 'Novembro'
+						WHEN MONTH(" . $db->quoteName($fullName) . ") = 12 THEN 'Dezembro'
+					END AS `name`,
+					CONCAT(
+						'" . $search . "/', MONTH(" . $db->quoteName($fullName) . "), '/01 - '," . 
+						"DATE_FORMAT(LAST_DAY(
+							CONCAT('" . $search . "/', MONTH(" . $db->quoteName($fullName) . "), '/01')
+						), '%Y/%m/%d')
+					) AS `value`");
+							  
+		if ($params->get('filter_groupby') == 'count') $query->select("COUNT(*) AS " . $db->quoteName('counter'));
+
+		$query
+			->from($db->quoteName($tableName))
+			->where("YEAR(" . $db->quoteName($fullName) . ") = " . $search)
+			->where($fullName . " IN ('" . implode("','", $ids) . "')")
+			->group("MONTH(" . $db->quoteName($fullName) . ")");
+
+		if ($params->get('filter_groupby') == 'count') {
+			$query->order($db->quoteName('counter') . $sortedBy . ", " . $db->quoteName('text')  . " ASC");
+		} else {
+			$query->order($db->quoteName('text') . $sortedBy);
+		}
+
+		$db->setQuery($query);
+		
+		return $db->loadObjectList();
+	}
+
+
+	/**
+	 * Build the HTML for the datatree filter
+	 *
+	 * @param   string $default    Label
+	 * @param   string $v          Field name
+	 * @param   string $labelValue Label value
+	 * @param   bool   $normal     Do we render as a normal filter or as an advanced search filter
+	 *                             if normal include the hidden fields as well (default true, use false for advanced
+	 *                             filter rendering)
+	 *
+	 * @return  array  HTML bits
+	 */
+	protected function dateTreeFilter($rows, $default, $v, $labelValue = null, $normal = true, $container=null, $popUpId=null)
+	{
+		$return = array();
+
+		// Only work with date type elements
+		if ($this->getElement()->plugin == 'date') {
+			
+			if (is_null($labelValue)) {
+				$labelValue = $default;
+			}
+
+			$params 	  = $this->getParams();
+			$element 	  = $this->getElement();
+			$typeFilter	  = $element->filter_type;
+			$listModel	  = $this->getListModel();
+			$id        	  = $this->getHTMLId() . 'value';
+			$formId  	  = $this->getFormModel()->getId();
+			$fullName  	  = $this->getFullName(true, false);
+			$opts     	  = array();
+			
+			if (count((array) $rows) > 0) {
+				if (count((array) $rows) == 1) {
+					$rows = $this->dateTreeGetMonth($rows[0]->text);
+				} else {
+					$rows = $this->formatDateTree($rows);
+				}
+			}
+
+			// Creating the hidden checkbox to do filter, otherwise Fabrik doesn't know which one was select
+			$return[] = '<div id="selected-values-' . $fullName . '">';
+				if (!empty($default)) {
+					foreach ($default as $val) {
+						$return[] = '<input type="checkbox" data-filter-name="' . $fullName . '" 
+						tree-input-filter="' . $fullName . '" class="fabrikinput fabrik_filter pitt_tree_input" 
+						value="' . $val . '" checked="true" style="display: none;"/>';
+					}
+				}
+			$return[] = '</div>';
+
+			$return[] = '<div id="tree-' . $fullName . '"></div>';
+
+			if ($normal) {
+				$opts['menuclass'] = 'auto-complete-container';
+
+				if (empty($container)) {
+					$container = 'listform_' . $listModel->getRenderContext();
+				}
+
+				$selectorDivTree 		   = '#' . 'tree-' . $fullName;
+				$selectorAutoComplete      = '#' . $container . ' .' . $id;
+				$selectorDivSelectedValues = '#' . 'selected-values-' . $fullName;
+			} else {
+				$opts['menuclass'] 	  = 'auto-complete-container advanced';
+				$selectorAutoComplete = '.advancedSearch_' . $listModel->getRenderContext() . ' .' . $id;
+			}
+
+			$opts['nameElement'] 	= $v;
+			$opts['listId'] 		= $formId;
+			$opts['popUpId'] 		= $popUpId;
+			$opts['default'] 		= $default;
+			$opts['fullName'] 	 	= $fullName;
+			$opts['typeFilter'] 	= $typeFilter;
+			$opts['defaultLabel'] 	= $labelValue;
+			$opts['singleName']  	= $element->name;
+			$opts['count'] 			= json_encode($rows);
+			$opts['rootCategory'] 	= $params->get('root_category');
+			$opts['sortedBy'] 		= $params->get('filter_sortedby');
+			$opts['buildMethod'] 	= $params->get('filter_build_method');
+			$opts['userGroups'] 	= $this->user->getAuthorisedViewLevels();
+			$opts['listForm'] 	 	= 'list_' . $listModel->getRenderContext();		
+			$opts['dragndropProp'] 	= (int) $params->get('drag_n_drop_treeview');
+			
+			FabrikHelperHTML::treeView($selectorAutoComplete, $selectorDivSelectedValues, $selectorDivTree, 
+										$element->id, $formId, $element->plugin, $opts, $typeFilter);
+
+		} else {
+			$return[] = '<div class="alert alert-danger alert-dismissible show" role="alert">';
+				$return[] = 'You must choose a <strong>date</strong> element!';
+				$return[] = '<button type="button" class="close" data-dismiss="alert" aria-label="Close">';
+					$return[] = '<span aria-hidden="true">&times;</span>';
+				$return[] = '</button>';
+			$return[] = '</div>';
+		}
+	
+		return $return;
+	}
+
+	/**
+	 * Create an array of label/values which will be used to populate the elements filter dropdown
+	 * returns only data found in the table you are filtering on
+	 *
+	 * @param   bool   $normal    do we render as a normal filter or as an advanced search filter
+	 * @param   string $tableName table name to use - defaults to element's current table
+	 * @param   string $label     field to use, defaults to element name
+	 * @param   string $id        field to use, defaults to element name
+	 * @param   bool   $incJoin   include join
+	 *
+	 * @throws ErrorException
+	 *
+	 * @return  array    filter value and labels
+	 */
+	protected function filterValueList_Exact_Count($normal, $tableName = '', $label = '', $id = '', $incJoin = true, $isUnion)
+	{
+		$listModel = $this->getListModel();
+		$fbConfig  = JComponentHelper::getParams('com_fabrik');
+		$fabrikDb  = $listModel->getDb();
+		$table     = $listModel->getTable();
+		$element   = $this->getElement();
+		$origTable = $table->db_table_name;
+		$elName    = $this->getFullName(true, false);
+		$elName2   = $this->getFullName(false, false);
+		$parentName = $this->getParams()->get('tree_parent_id');
+		$filterType = $element->filter_type;
+
+		if (!$this->isJoin()) {
+			$ids = $listModel->getColumnData($elName2);
+
+			// For ids that are text with apostrophes in
+			for ($x = count($ids) - 1; $x >= 0; $x--) {
+				if ($ids[$x] == '') {
+					unset($ids[$x]);
+				} else {
+					$ids[$x] = addslashes($ids[$x]);
+				}
+			}
+		}
+
+		$incJoin = $this->isJoin() ? false : $incJoin;
+		/**
+		 * filter the drop downs lists if the table_view_own_details option is on
+		 * other wise the lists contain data the user should not be able to see
+		 * note, this should now use the prefilter data to filter the list
+		 */
+
+		// Check if the elements group id is on of the table join groups if it is then we swap over the table name
+		$fromTable = $this->isJoin() ? $this->getJoinModel()->getJoin()->table_join : $origTable;
+		$joinStr   = $incJoin ? $listModel->buildQueryJoin() : $this->buildFilterJoin();
+
+		// New option not to order elements - required if you want to use db joins 'Joins where and/or order by statement'
+		
+		$groupBy = $this->getOrderByForCount('filter');
+	
+		foreach ($listModel->getJoins() as $aJoin) {
+			// Not sure why the group id key wasn't found - but put here to remove error
+			if (property_exists($aJoin, 'group_id')) {
+				if ($aJoin->group_id == $element->group_id && $aJoin->element_id == 0) {
+					$fromTable = $aJoin->table_join;
+					$elName    = preg_replace('/^' . $origTable . '\./', $fromTable . '.', $elName2);
+				}
+			}
+		}
+
+		$elName = FabrikString::safeColName($elName);
+
+		if ($label == '') {
+			$label = $this->isJoin() ? $this->getElement()->name : $elName;
+		}
+
+		if ($id == '') {
+			$id = $this->isJoin() ? 'id' : $elName;
+		}
+
+		$matches = array();
+		preg_match('/AS \K`\w+`(?!ON)/', strstr($joinStr, 'JOIN ' . $fabrikDb->qn($fromTable)), $matches);
+
+		$buildParentAsSql = '';
+		$buildIdAsSql = '';
+		if(isset($matches[0])){
+			$buildParentAsSql = $matches[0] . '.' . $fabrikDb->qn($parentName);
+			$buildIdAsSql = $matches[0] . '.' . $fabrikDb->qn('id');
+		}
+
+		if ($this->encryptMe()) {
+			$secret = $this->config->getValue('secret');
+			$label  = 'AES_DECRYPT(' . $label . ', ' . $fabrikDb->quote($secret) . ')';
+			$id     = 'AES_DECRYPT(' . $id . ', ' . $fabrikDb->quote($secret) . ')';
+		}
+
+		$origTable = $tableName == '' ? $origTable : $tableName;
+		/**
+		 * $$$ rob - 2nd sql was blowing up for me on my test table - why did we change to it?
+		 * http://localhost/fabrik2.0.x/index.php?option=com_fabrik&view=table&listid=12&calculations=0&resetfilters=0&Itemid=255&lang=en
+		 * so added test for initial fromtable in join str and if found use origtable
+		 */
+		if(isset($parentName) && !empty($parentName)){
+			if (strstr($joinStr, 'JOIN ' . $fabrikDb->qn($fromTable))) {
+				$sql = 'SELECT ' . $label . ' AS ' . $fabrikDb->qn('text') . ', ' . $label . ' AS ' . $fabrikDb->qn('name') . ', ';
+				if(isset($buildParentAsSql) && !empty($buildParentAsSql) && isset($buildIdAsSql) && !empty($buildIdAsSql)){
+					$sql .= $buildParentAsSql . ' AS ' . $fabrikDb->qn('parent') . ', ' . $buildIdAsSql . ' AS ' . $fabrikDb->qn('value');
+				} else {
+					$sql .= $id . ' AS ' . $fabrikDb->qn('value') . ', ' . $fabrikDb->qn($this->getParams()->get('join_db_name')) . '.' . $fabrikDb->qn($parentName) . ' AS ' . 'parent';
+				}
+				$sql .= ', COUNT(*) AS ' . $fabrikDb->qn('counter') . ' FROM ' . $fabrikDb->qn($origTable) . ' ' . $joinStr . "\n";
+			} else {
+				$sql = 'SELECT ' . $label . ' AS ' . $fabrikDb->qn('text') . ', ' . $label . ' AS ' . $fabrikDb->qn('name') . ', ';
+				if(isset($buildParentAsSql) && !empty($buildParentAsSql) && isset($buildIdAsSql) && !empty($buildIdAsSql)){
+					$sql .= $buildParentAsSql . ' AS ' . $fabrikDb->qn('parent') . ', ' . $buildIdAsSql . ' AS ' . $fabrikDb->qn('value');
+				} else {
+					$sql .= $id . ' AS ' . $fabrikDb->qn('value') . ', ' . $fabrikDb->qn($this->getParams()->get('join_db_name')) . '.' . $fabrikDb->qn($parentName) . ' AS ' . 'parent';
+				}
+				$sql .= ', COUNT(*) AS ' . $fabrikDb->qn('counter') . ' FROM ' . $fabrikDb->qn($fromTable) . ' ' . $joinStr . "\n";
+			}
+		} else {
+			if (strstr($joinStr, 'JOIN ' . $fabrikDb->qn($fromTable))) {
+				$sql = 'SELECT ' . $label . ' AS ' . $fabrikDb->qn('text') . ', ' . $label . ' AS ' . $fabrikDb->qn('name') . ', '  . $id . ' AS ' . $fabrikDb->qn('value')
+					. ', COUNT(*) AS ' . $fabrikDb->qn('counter') . ' FROM ' . $fabrikDb->qn($origTable) . ' ' . $joinStr . "\n";
+			} else {
+				if ($filterType == 'datetree') {
+					$sql = 'SELECT YEAR(' . $label . ') AS ' . $fabrikDb->qn('text') . ', YEAR(' . $label . ') AS ' . $fabrikDb->qn('name') . ', YEAR(' . $id . ') AS ' . $fabrikDb->qn('value')
+						. ', COUNT(*) AS ' . $fabrikDb->qn('counter') . ' FROM ' . $fabrikDb->qn($fromTable) . ' ' . $joinStr . "\n";
+				} else {
+					$sql = 'SELECT ' . $label . ' AS ' . $fabrikDb->qn('text') . ', ' . $label . ' AS ' . $fabrikDb->qn('name') . ', ' . $id . ' AS ' . $fabrikDb->qn('value')
+						. ', COUNT(*) AS ' . $fabrikDb->qn('counter') . ' FROM ' . $fabrikDb->qn($fromTable) . ' ' . $joinStr . "\n";
+				}
+			}
+		}
+
+		if (!$this->isJoin()) {
+			$sql .= 'WHERE ' . $id . ' IN (\'' . implode("','", $ids) . '\')';
+		}
+
+		// Disregard null years or zeros
+		if ($filterType == 'datetree') {
+			$sql .= ' AND (YEAR(' . $label . ') IS NOT NULL AND YEAR(' . $label . ') <> 0)';
+		}
+
+		// Apply element where/order by statements to the filter (e.g. dbjoins 'Joins where and/or order by statement')
+		$elementWhere = $this->buildQueryWhere(array(), true, null, array('mode' => 'filter'));
+
+		if (StringHelper::stristr($sql, 'WHERE ') && StringHelper::stristr($elementWhere, 'WHERE ')) {
+			// $$$ hugh - only replace the WHERE with AND if it's the first word, so we don't munge sub-queries
+			// $elementWhere = StringHelper::str_ireplace('WHERE ', 'AND ', $elementWhere);
+			$elementWhere = preg_replace("#^(\s*)(WHERE)(.*)#i", "$1AND$3", $elementWhere);
+		} else if (StringHelper::stristr($sql, 'WHERE ') && !empty($elementWhere) && !StringHelper::stristr($elementWhere, 'WHERE ')) {
+			// if we have a WHERE in the main query, and the element clause isn't empty but doesn't start with WHERE ...
+			$elementWhere = 'AND ' . $elementWhere;
+		}
+
+		$sql .= ' ' . $elementWhere;
+
+		if ($filterType == 'datetree') {
+			$sql .= "\n GROUP BY YEAR(" . $label . ")\n" . $groupBy;
+		} else {
+			$sql .= "\n GROUP BY " . $label . "\n" . $groupBy;
+		}
+
+		if (($filterType == 'treeview' || $filterType == 'checkbox'  || $filterType == 'tagcloud') && !preg_match('/ORDER BY/', $sql)) {
+			$sortedBy = $this->getParams()->get('filter_sortedby') == 1 ? ' DESC' : ' ASC';
+			$sql .= ' ORDER BY counter ' . $sortedBy;
+		}
+
+		$sql = $listModel->pluginQuery($sql);
+		$fabrikDb->setQuery($sql, 0, $fbConfig->get('filter_list_max', 100));
+		FabrikHelperHTML::debug((string) $fabrikDb->getQuery(), 'element filterValueList_Exact:');
+
+		//if is show all and count
+		if($isUnion){
+			return $sql;
+		}
+
+		try {
+			$rows = $fabrikDb->loadObjectList();
+		} catch (RuntimeException $e) {
+			throw new ErrorException('filter query error: ' . $this->getElement()->name . ' ' . $fabrikDb->getErrorMsg(), 500);
+		}
+
+		return $rows;
+	}
+
+	/**
+	 * Get options order by
+	 *
+	 * @param   string              $view  View mode '' or 'filter'
+	 * @param   JDatabaseQuery|bool $query Set to false to return a string
+	 *
+	 * @return  string  order by statement
+	 */
+	protected function getOrderByForCount($view = '', $query = false)
+	{
+		$params  = $this->getParams();
+
+		if (isset($this->orderBy)) {
+			return $this->orderBy;
+		} else {
+			if ($params->get('filter_sortedby') == '1') {
+				return "ORDER BY counter DESC, text ASC";
+			}
+			return "ORDER BY counter ASC, text ASC";
+		}
+	}
+
+	/**
+	 * Create an array of label/values which will be used to populate the elements filter dropdown
+	 * returns all possible options
+	 *
+	 * @param   bool   $normal    do we render as a normal filter or as an advanced search filter
+	 * @param   string $tableName table name to use - defaults to element's current table
+	 * @param   string $label     field to use, defaults to element name
+	 * @param   string $id        field to use, defaults to element name
+	 * @param   bool   $incjoin   include join
+	 *
+	 * @return  array    filter value and labels
+	 */
+	protected function filterValueList_All_Count($normal, $tableName = '', $label = '', $id = '', $incjoin = true)
+	{
+		/*
+		 * list of all tables that have been joined to -
+		* if duplicated then we need to join using a table alias
+		*/
+		$listModel     = $this->getlistModel();
+		$fabrikDb      = $listModel->getDb();
+		$joinTable     = $this->getParams()->get('join_db_name');
+		$joinKey       = $this->getJoinValueColumn();
+		$joinVal       = $this->getJoinLabelColumn();
+		$join          = $this->getJoin();
+		$joinTableName = $join->table_join_alias;
+		$parentName = $this->getParams()->get('tree_parent_id');
+		
+		if ($joinTable == '') {
+			$joinTable = $joinTableName;
+		}
+
+		$sqlUnion = $this->filterValueList_Exact_Count($normal, $tableName, $label, $id, $incJoin, true);
+
+		if(!$this->isJoin()){
+			// $$$ hugh - select all values for performance gain over selecting distinct records from recorded data
+			if(isset($parentName) && !empty($parentName)){
+				$parentLabel = $fabrikDb->qn($joinTableName . '.' . $parentName);
+				$sql   = "SELECT DISTINCT( $joinVal ) AS text, $joinVal AS name, $parentLabel AS parent, $joinKey AS value, '0' AS `count` \n FROM " . $fabrikDb->qn($joinTable) . ' AS '
+				. $fabrikDb->qn($joinTableName) . " \n ";
+			} else {
+				$sql   = "SELECT DISTINCT( $joinVal ) AS text, $joinVal AS name, $joinKey AS value \n FROM " . $fabrikDb->qn($joinTable) . ' AS '
+				. $fabrikDb->qn($joinTableName) . " \n ";
+			}
+			
+			$where = $this->buildQueryWhere(array(), true, null, array('mode' => 'filter'));
+
+			// Ensure table pre-filter is applied to query
+			$preFilterWhere = $listModel->buildQueryPrefilterWhere($this);
+			$elementName    = FabrikString::safeColName($this->getFullName(false, false));
+			$preFilterWhere = str_replace($elementName, $joinKey, $preFilterWhere);
+
+			if (trim($where) == '') {
+				/* $$$ hugh - Sanity check - won't this screw things up if we have a complex preFilter with multiple filters using AND grouping? */
+				$preFilterWhere = str_replace('AND', 'WHERE', $preFilterWhere);
+			} else {
+				if (!preg_match('/^\s*WHERE\s+/i', $where)) {
+					$where = 'WHERE ' . $where;
+				}
+			}
+			$where .= $preFilterWhere;
+			$sql .= $where;
+			if (!StringHelper::stristr($where, 'order by')) {
+				$sql .= $this->getOrderBy('filter');
+			}
+		} else {
+			$db        = $this->getDb();
+			$query     = $db->getQuery(true);
+			$joinTable = $db->qn($join->table_join);
+			$tableAlias = $join->table_join;
+			$shortName = $db->qn($this->getElement()->name);
+			$parentName = $this->getParentName();
+
+			if (is_null($groupBy)) {
+				$groupBy = 'value';
+			}
+
+			$to    = $this->getDbName();
+			$key   = $db->qn($to . '.' . $this->getJoinValueFieldName());
+			$label = $db->qn($to . '.' . $this->getLabelParamVal());
+			$v     = $joinTable . '.' . $shortName;
+			$parentLabel = empty($parentName) ? '' : $db->qn($to . '.' . $parentName) . ' AS `parent`, ';
+
+			// If rendering as multi/checkbox then {thistable} should not refer to the joining repeat table, but the end table.
+			if ($this->isJoin()) {
+				$jKey  = $this->getLabelOrConcatVal();
+				$jKey  = !strstr($jKey, 'CONCAT') ? $label : $jKey;
+				$label = str_replace($join->table_join_alias, $to, $jKey);
+				$label = str_replace($join->table_join, $to, $label);
+				$tableAlias = $to;
+			}
+
+			$query->select($to . '.id AS value, ' . $parentLabel . $label . ' AS `name`, ' . $label . ' AS `text`, "0" AS count')->from($to);
+			$this->buildQueryWhere(array(), true, $tableAlias, array('mode' => 'filter', 'value' => $parentId), $query);
+
+			// If there is a pre-filter then is applied to query
+			//MEXI AQUI, PASSAR PARA O REPOSITORIO DATABASEJOIN
+			$filters = $this->getlistModel()->getFilterArray();
+			if (isset($filters)) {
+				$sqlprefilter = $this->getlistModel()->_filtersToSQL($filters, true, false)[0];
+				if (isset($sqlprefilter) && !empty($sqlprefilter) && $this->getFilterBuildMethod() == 1) {
+					$table_name = $this->getTableName();
+					if (isset($table_name) && !empty($table_name)) {
+						$query->join('LEFT', $table_name . ' ON ' . $db->qn($table_name . '.' . 'id') . ' = ' .  $joinTable . '.' . '`parent_id`');
+						$sqlprefilter = str_replace('WHERE', '', $sqlprefilter);
+						$query->where($sqlprefilter);
+					}
+				}
+			}
+
+			$db->setQuery($query, $offset, $limit);
+			$sortedBy = $this->getParams()->get('filter_sortedby') == 1 ? ' DESC' : ' ASC';
+			$query->order($label . $sortedBy);
+
+			$rows    = $db->loadObjectList();
+		}
+
+		//the element is dbjoin multi
+		if(isset($sqlUnion) && is_array($sqlUnion)){
+			$result = array_merge($sqlUnion, $rows);
+			$details = $this->unique_multidim_array((array) $result, 'value');
+			return $details;
+		}
+
+		$sqlFinal = '(' . $sqlUnion . ') UNION (' . $sql . ')';
+		$sqlFinal = $listModel->pluginQuery($sqlFinal);
+
+		$fabrikDb->setQuery($sqlFinal);
+		FabrikHelperHTML::debug((string) $fabrikDb->getQuery(), 'fabrikdatabasejoin getFilter');
+		$rows = $fabrikDb->loadObjectList();
+		
+		//retira os valores duplicados
+		$details = $this->unique_multidim_array((array) $rows, 'value');
+		return $details;
+	}
+
+	protected function unique_multidim_array($array, $key) {
+		$temp_array = array();
+		$i = 0;
+		$key_array = array();
+		
+		foreach($array as $val) {
+			if (!in_array($val->$key, $key_array)) {
+				$key_array[$i] = $val->$key;
+				$temp_array[$i] = $val;
+			}
+			$i++;
+		}
+		return $temp_array;
+	}
+
+	/**
+	 * Set array of options for onTreeview_options method (required)
+	 *
+	 * @return  string  json encoded options
+	 */
+	public function joinOpts($opts, $value)
+	{
+		$db = JFactory::getDbo();
+
+		$opts['joinName'] 		= $this->getParams()->get('join_db_name');
+		$opts['joinValColumn'] 	= $this->getParams()->get('join_val_column');
+		$opts['joinKeyColumn'] 	= $this->getParams()->get('join_key_column');
+		$opts['filterSortedBy'] = $this->getParams()->get('filter_sortedby');
+		$opts['treeParentId'] 	= $this->getParams()->get('tree_parent_id');
+		$opts['sortedBy'] = $this->getParams()->get('filter_sortedby') == 1 ? ' DESC' : ' ASC';
+		$opts['filterGroupBy'] = $this->getParams()->get('filter_groupby');
+
+		$opts['concat'] = is_null($this->getParams()->get('join_val_column_concat')) ? '' : 'CONCAT(' . $this->getParams()->get('join_val_column_concat') . ')';
+		$opts['tableJoin'] = $db->qn($this->getJoin()->table_join);
+		$opts['shortName'] = $db->qn($this->getElement()->name);
+		$opts['dataWhere'] = trim($this->getParams()->get('database_join_where_sql', ''));
+		$opts['key'] = $db->qn($this->getParams()->get('join_db_name') . '.' . $this->getJoinValueFieldName());
+		$label = $db->qn($this->getDbName() . '.' . $this->getLabelParamVal());
+		if ($this->isJoin()) {
+			$jKey  = $this->getLabelOrConcatVal();
+			$jKey  = !strstr($jKey, 'CONCAT') ? $label : $jKey;
+			$label = str_replace($this->getJoin()->table_join_alias, $this->getParams()->get('join_db_name'), $jKey);
+			$label = str_replace($this->getJoin()->table_join, $this->getParams()->get('join_db_name'), $label);
+		}
+		$opts['labelJoin'] = $label;
+
+		return $opts;
+	}
+
+	/**
+	 * Ajax call to get treeview options (now caches results)
+	 *
+	 * @return  string  json encoded options
+	 */
+	public function onTreeview_options()
+	{
+		// Needed for ajax update (since we are calling this method via dispatcher element is not set)
+		$input 	= $this->app->input;
+
+		$this->setId($input->getInt('element_id'));
+		$this->loadMeForAjax();
+
+		$opts 		= array();
+		$cache  	= FabrikWorker::getCache();
+		$typeFilter	= $this->getElement()->filter_type;
+		$search 	= $input->get('value', '', 'string');
+		
+		if ($typeFilter == 'datetree') {
+			$fun = 'cacheDateTreeOptions';
+		} else {
+			$opts = $this->joinOpts($opts, $search);
+			$fun  = 'cacheTreeviewOptionsNovo';
+		}
+
+		// uh oh, can't serialize PDO db objects so no can cache, as J! serializes the args
+		if ($this->config->get('dbtype') === 'pdomysql') {
+			echo $this->$fun($this, $search, $opts);
+		} else {
+			echo $cache->call(array(get_class($this), $fun), $this, $search, $opts);
+		}
+	}
+
+	/**
+	 * Cache method to populate datetree options
+	 *
+	 * @param   plgFabrik_Element $elementModel element model
+	 * @param   string            $search       search string
+	 * @param   array             $opts         options, 'label' => field to use for label (db join)
+	 *
+	 * @since   3.0.7
+	 *
+	 * @return string  json encoded search results
+	 */
+	public static function cacheDateTreeOptions($elementModel, $search, $opts = array())
+	{
+		$fullName 	= $elementModel->getFullName(false, false);
+		$elementModel->encryptFieldName($fullName);
+
+		$listModel 	= $elementModel->getListModel();
+		$params 	= $elementModel->getParams();
+		$db        	= $listModel->getDb();
+		$query     	= $db->getQuery(true);
+		$results	= array();
+		$children 	= array();
+		
+		$tableName 	= explode('.', $fullName);
+		$tableName 	= $tableName[0];
+
+		if (!$elementModel->isJoin()) {
+			$ids = $listModel->getColumnData($fullName);
+		
+			// For ids that are text with apostrophes in
+			for ($x = count($ids) - 1; $x >= 0; $x--) {
+				if ($ids[$x] == '') {
+					unset($ids[$x]);
+				} else {
+					$ids[$x] = addslashes($ids[$x]);
+				}
+			}
+		}
+		
+		if (strlen($search) == 4 && is_numeric($search)) {
+			$children = $elementModel->dateTreeGetMonth($search);
+		} else {
+			$years = explode(' - ', $search);
+			
+			if (count($years) == 2 && is_numeric($years[0]) && is_numeric($years[1])) {
+				$sortedBy = $params->get('filter_sortedby') == 1 ? ' DESC' : ' ASC';
+
+				$query
+					->select("YEAR(" . $db->quoteName($fullName) . ") AS `text`, 
+							  YEAR(" . $db->quoteName($fullName) . ") AS `name`,
+							  YEAR(" . $db->quoteName($fullName) . ") AS `value`");
+							  
+				if ($params->get('filter_groupby') == 'count') $query->select("COUNT(*) AS " . $db->quoteName('counter'));
+
+				$query
+					->from($db->quoteName($tableName))
+					->where("YEAR(" . $db->quoteName($fullName) . ") BETWEEN " . $years[0] . " AND " . $years[1])
+					->where($fullName . " IN ('" . implode("','", $ids) . "')")
+					->group("YEAR(" . $db->quoteName($fullName) . ")");
+
+				if ($params->get('filter_groupby') == 'count') {
+					$query->order($db->quoteName('counter') . $sortedBy . ", " . $db->quoteName('name')  . " ASC");
+				} else {
+					$query->order($db->quoteName('name') . $sortedBy);
+				}
+
+				$db->setQuery($query);
+				$children = $db->loadObjectList();
+
+				if (count((array) $children) > 0) {
+					$children = $elementModel->formatDateTree($children);
+				}
+			}			
+		}
+		
+		if (isset($children[0]->value) && !is_null($children[0]->value) && !empty($children[0]->value)) {
+			$results = $children;
+		
+			foreach ($children as $ch) {
+				$ch->children = array(array('' => ''));
+			}
+		} else {
+			$results = array();
+		}
+
+		return json_encode($results);
+	}
+
+	/**
+	 * Cache method to populate treeview options
+	 *
+	 * @param   plgFabrik_Element $elementModel element model
+	 * @param   string            $search       search string
+	 * @param   array             $opts         options, 'label' => field to use for label (db join)
+	 *
+	 * @since   3.0.7
+	 *
+	 * @return string  json encoded search results
+	 */
+	public static function cacheTreeviewOptionsNovo($elementModel, $search, $opts = array())
+	{
+		$name = $elementModel->getFullName(false, false);
+		$elementModel->encryptFieldName($name);
+		$listModel = $elementModel->getListModel();
+		$db        = $listModel->getDb();
+		$query     = $db->getQuery(true);
+		$results = array();
+		$parentLabel = empty($opts['joinName']) ? '' : $db->qn($opts['joinName'] . '.' . $opts['treeParentId']) . ' AS `parent`, ';
+		$value = $db->qn($opts['joinName'] . '.' . $opts['joinKeyColumn']);
+		$v = $opts['tableJoin'] . '.' . $opts['shortName'];
+
+		//Se não tem nenhum valor selecionado, busca os nós pai
+		if (empty($search)) {
+			//if it is a _repeat_ table do a join
+			if (preg_match('/repeat/', $opts['tableJoin'])) {
+				$query->select(empty($parentLabel) ? $opts['tableJoin'] . '.parent_id, ' : $parentLabel . $opts['tableJoin'] . '.parent_id, ' . $value . ' AS `value`,' . $opts['labelJoin'] . ' AS `name`, ' . $opts['labelJoin'] . ' AS `text` ')->from($opts['tableJoin'])
+					->join('RIGHT', $db->quoteName($opts['joinName']) . ' ON ' . $opts['key'] . ' = ' . $opts['tableJoin'] . '.' . $opts['shortName'])->group($opts['labelJoin']);
+			} else {
+				$query->select($parentLabel . $value . ' AS `value`,' . $opts['labelJoin'] . ' AS `name`, ' . $opts['labelJoin'] . ' AS `text` ')->from($opts['tableJoin']);
+			}
+
+			if ($opts['filterGroupBy'] == 'count') {
+				$query->select('COUNT(' . $v . ') AS counter');
+				$query->order('`counter`' . $opts['sortedBy']);
+			}
+
+			$query->order($opts['labelJoin'] . $opts['sortedBy']);
+
+			if (empty($opts['dataWhere'])) {
+				$query->where(empty($opts['joinName']) ? '' : $db->qn($opts['joinName'] . '.' . $opts['treeParentId']) . ' IS NULL');
+			} else {
+				//if there is {$my->id} clauses in data-WHERE then replace fot the user id
+				if(preg_match('/{\$my->id}/', $opts['dataWhere'])){
+					$opts['dataWhere'] = str_replace('{$my->id}', JFactory::getUser()->get('id'), $opts['dataWhere']);
+				}
+				//if there are {thistable} clauses in data-WHERE then replace all of them to the table name
+				if(preg_match('/{thistable}/', $opts['dataWhere'])){
+					if(preg_match('/repeat/', $opts['tableJoin'])){
+						$opts['dataWhere'] = str_replace('{thistable}', $opts['joinName'], $opts['dataWhere']);
+					} else {
+						$opts['dataWhere'] = str_replace('{thistable}', $opts['tableJoin'], $opts['dataWhere']);
+					}
+				}
+				$query->where(empty($opts['joinName']) ? '' : $db->qn($opts['joinName'] . '.' . $opts['treeParentId']) . ' IS NULL')->where($opts['dataWhere']);
+			}
+		} else {
+			//if it is a _repeat_ table do a join
+			if (preg_match('/repeat/', $opts['tableJoin'])) {
+				$query->select(empty($parentLabel) ? $opts['tableJoin'] : $parentLabel . $opts['tableJoin'] . '.parent_id, ' . $value . ' AS `value`,' . $opts['labelJoin'] . ' AS `name`, ' . $opts['labelJoin'] . ' AS `text` ')->from($opts['tableJoin'])
+					->join('RIGHT', $db->quoteName($opts['joinName']) . ' ON ' . $opts['key'] . ' = ' . $opts['tableJoin'] . '.' . $opts['shortName'])->group($opts['labelJoin']);
+			} else {
+				$query->select($parentLabel . $value . ' AS `value`,' . $opts['labelJoin'] . ' AS `name`, ' . $opts['labelJoin'] . ' AS `text` ')->from($opts['tableJoin']);
+			}
+
+			//if the user selected as count in administrator filter properties
+			if ($opts['filterGroupBy'] == 'count') {
+				$query->select('COUNT(' . $v . ') AS counter');
+				$query->order('`counter`' . $opts['sortedBy']);
+			}
+
+			$query->order($opts['labelJoin'] . $opts['sortedBy']);
+
+			//if the user wrote any Where conditional in fabrik administrator
+			if (empty($opts['dataWhere'])) {
+				$query->where($db->quoteName($opts['treeParentId']) . ' = ' . $search);
+			} else {
+				//if there is {$my->id} clauses in data-WHERE then replace fot the user id
+				if(preg_match('/{\$my->id}/', $opts['dataWhere'])){
+					$opts['dataWhere'] = str_replace('{$my->id}', JFactory::getUser()->get('id'), $opts['dataWhere']);
+				}
+
+				//if there are {thistable} clauses in data-WHERE then replace all of them to the table name
+				if(preg_match('/{thistable}/', $opts['dataWhere'])){
+					if(preg_match('/repeat/', $opts['tableJoin'])){
+						$opts['dataWhere'] = str_replace('{thistable}', $opts['joinName'], $opts['dataWhere']);
+					} else {
+						$opts['dataWhere'] = str_replace('{thistable}', $opts['tableJoin'], $opts['dataWhere']);
+					}
+				}
+				$query->where($db->quoteName($opts['treeParentId']) . ' = ' . $search)->where($opts['dataWhere']);
+			}
+		}
+
+		$db->setQuery($query);
+		$children = $db->loadObjectList();
+		if (isset($children[0]->value) && !is_null($children[0]->value) && !empty($children[0]->value)) {
+			$results = $children;
+			foreach ($children as $ch) {
+				$ch->children = array(array('' => ''));
+			}
+		} else {
+			$results = array();
+		}
+
+		return json_encode($results);
+	}
+
+	/**
+	 * Cache method to populate treeview options
+	 *
+	 * @param   plgFabrik_Element $elementModel element model
+	 * @param   string            $search       search string
+	 * @param   array             $opts         options, 'label' => field to use for label (db join)
+	 *
+	 * @since   3.0.7
+	 *
+	 * @return string  json encoded search results
+	 */
+	public static function cacheTreeviewOptions($elementModel, $search, $opts = array())
+	{
+		$name = $elementModel->getFullName(false, false);
+		$elementModel->encryptFieldName($name);
+		$listModel = $elementModel->getListModel();
+		$db        = $listModel->getDb();
+		$query     = $db->getQuery(true);
+		$results = array();
+		if (empty($search)) {
+			$v = $opts['tableJoin'] . '.' . $opts['shortName'];
+			$parentLabel = empty($opts['joinName']) ? '' : $db->qn($opts['joinName'] . '.' . $opts['treeParentId']) . ' AS `parent`, ';
+			$value = $db->qn($opts['joinName'] . '.' . $opts['joinKeyColumn']);
+
+			if (empty($opts['concat'])) {
+				$query->select(empty($parentLabel) ? $opts['tableJoin'] : $parentLabel . $opts['tableJoin'] . '.parent_id, ' . $value . ' AS `value`,' . $opts['labelJoin'] . ' AS `name`, ' . $opts['labelJoin'] . ' AS `text` ')->from($opts['tableJoin'])
+					->join('RIGHT', $db->quoteName($opts['joinName']) . ' ON ' . $opts['key'] . ' = ' . $opts['tableJoin'] . '.' . $opts['shortName'])->group($opts['labelJoin']);
+			} else {
+				$query->select(empty($parentLabel) ? $opts['tableJoin'] : $parentLabel . $opts['tableJoin'] . '.parent_id, ' . $value . ' AS `value`')->select($opts['labelJoin'] . 'AS name, ' . $opts['labelJoin'] . ' AS `text` ')->from($opts['tableJoin'])
+					->join('RIGHT', $db->quoteName($opts['joinName']) . ' ON ' . $opts['key'] . ' = ' . $opts['tableJoin'] . '.' . $opts['shortName'])->group($opts['labelJoin']);
+			}
+
+			if ($opts['filterGroupBy'] == 'count') {
+				$query->select('COUNT(' . $v . ') AS counter');
+				$query->order('`counter`' . $opts['sortedBy']);
+			}
+
+			$query->order($opts['labelJoin'] . $opts['sortedBy']);
+
+			if (empty($opts['dataWhere'])) {
+				$query->where(empty($opts['joinName']) ? '' : $db->qn($opts['joinName'] . '.' . $opts['treeParentId']) . ' IS NULL');
+			} else {
+				$query->where(empty($opts['joinName']) ? '' : $db->qn($opts['joinName'] . '.' . $opts['treeParentId']) . ' IS NULL')->where($opts['dataWhere']);
+			}
+
+			$db->setQuery($query);
+			$children = $db->loadObjectList();
+			if (!is_null($children)) {
+				$results = $children;
+				foreach ($children as $ch) {
+					$ch->children = array(array('' => ''));
+				}
+			} else {
+				$results = array();
+			}
+		} else {
+			$v = $opts['tableJoin'] . '.' . $opts['shortName'];
+			$parentLabel = empty($opts['joinName']) ? '' : $db->qn($opts['joinName'] . '.' . $opts['treeParentId']) . ' AS `parent`, ';
+			$value = $db->qn($opts['joinName'] . '.' . $opts['joinKeyColumn']);
+
+			if (empty($opts['concat'])) {
+				$query->select(empty($parentLabel) ? $opts['tableJoin'] : $parentLabel . $opts['tableJoin'] . '.parent_id, ' . $value . ' AS `value`, ' . $opts['labelJoin'] . ' AS `name` ')->from($opts['tableJoin'])
+					->join('RIGHT', $db->quoteName($opts['joinName']) . ' ON ' . $opts['key'] . ' = ' . $opts['tableJoin'] . '.' . $opts['shortName'])->group($opts['labelJoin']);
+			} else {
+				$query->select(empty($parentLabel) ? $opts['tableJoin'] : $parentLabel . $opts['tableJoin'] . '.parent_id, ' . $value . ' AS `value`, ' . $opts['labelJoin'] . ' AS `name` ')->select($opts['concat'] . 'AS name')->from($opts['tableJoin'])
+					->join('RIGHT', $db->quoteName($opts['joinName']) . ' ON ' . $opts['key'] . ' = ' . $opts['tableJoin'] . '.' . $opts['shortName'])->group($opts['labelJoin']);
+			}
+
+			if ($opts['filterGroupBy'] == 'count') {
+				$query->select('COUNT(' . $v . ') AS counter');
+				$query->order('`counter`' . $opts['sortedBy']);
+			}
+
+			$query->order($opts['labelJoin'] . $opts['sortedBy']);
+
+			if (empty($opts['dataWhere'])) {
+				$query->where($db->quoteName($opts['treeParentId']) . ' = ' . $search);
+			} else {
+				$query->where($db->quoteName($opts['treeParentId']) . ' = ' . $search)->where($opts['dataWhere']);
+			}
+
+			$db->setQuery($query);
+			$children = $db->loadObjectList();
+			if (!is_null($children)) {
+				$results = $children;
+				foreach ($children as $ch) {
+					$ch->children = array(array('' => ''));
+				}
+			} else {
+				$results = array();
+			}
+		}
+
+		return json_encode($results);
+	}
+
+	/**
+
+	 * Ajax call to get treeview options (now caches results)
+
+	 *
+
+	 * @return  string  json encoded options
+
+	 */
+
+	public function onFileUploadElements_options()
+	{
+		// Needed for ajax update (since we are calling this method via dispatcher element is not set)
+		$input = $this->app->input;
+
+		$this->setId($input->getInt('element_id'));
+
+		$this->loadMeForAjax();
+
+		$search = $input->get('value', '', 'string');
+
+		$cache  = FabrikWorker::getCache();
+
+		// uh oh, can't serialize PDO db objects so no can cache, as J! serializes the args
+		if ($this->config->get('dbtype') === 'pdomysql') {
+			echo $this->cacheFileUploadElements($this, $search);
+		} else {
+			echo $cache->call(array(get_class($this), 'cacheFileUploadElements'), $this, $search);
+		}
+	}
+
+
+	/**
+	 * Ajax call to get fileupload elements options (now caches results)
+	 * 
+	 *
+	 * @return  string  json encoded options
+	 */
+	public function cacheFileUploadElements($elementModel, $rowId)
+	{
+		$formModel = $elementModel->getFormModel();
+		$data      = $formModel->getData($rowId);
+
+		$groups = $formModel->getGroupsHiarachy();
+		$arrFileUploadEl = array();
+		foreach ($groups as $groupModel) {
+			$elementModels = $groupModel->getPublishedElements();
+			foreach ($elementModels as $elementModel) {
+				$fullKey = $elementModel->getFullName(true, false);
+				if($elementModel->isUpload()){
+					if(is_array($data[$fullKey])){
+						foreach($data[$fullKey] as $key => $value){
+							$objEl = new stdClass();
+							$objEl->strImg = $value;
+							$objEl->name = $fullKey;
+							$objEl->value = $data[$fullKey . '_raw'][$key];
+							$objEl->param = explode("//..*..//", $data[$fullKey . '___params'])[$key];
+							$arrFileUploadEl[] = $objEl;
+						}
+						
+					}
+				}
+			}
+		}
+
+		return json_encode($arrFileUploadEl);
+	}
+
+	/**
+
+	 * Ajax call to get form row options (now caches results)
+
+	 *
+
+	 * @return  string  json encoded options
+
+	 */
+
+	public function onFormrow_options()
+	{
+		// Needed for ajax update (since we are calling this method via dispatcher element is not set)
+		$input = $this->app->input;
+
+		$this->setId($input->getInt('element_id'));
+
+		$this->loadMeForAjax();
+
+		$search = $input->get('value', '', 'string');
+
+		$cache  = FabrikWorker::getCache();
+
+		// uh oh, can't serialize PDO db objects so no can cache, as J! serializes the args
+		if ($this->config->get('dbtype') === 'pdomysql') {
+			echo $this->cacheRowForm($this, $search);
+		} else {
+			echo $cache->call(array(get_class($this), 'cacheRowForm'), $this, $search);
+		}
+	}
+
+	/**
+	 * Cache method to get information about form plugin parameters PITT - treeview recursivo
+	 * 
+	 * Get the element name relation between origin and destination when the element type is 'treeview recursivo' for ajax request
+	 *  
+	 * @param   plgFabrik_Element $elementModel element model
+	 * @param   string            $search       search string
+	 *
+	 * @since   3.0.7
+	 *
+	 * @return string  json encoded search results
+	 */
+	public static function cacheRowForm($elementModel, $search)
+	{
+		if(isset($search) && !empty($search)){
+			$db    = FabrikWorker::getDbo(true);
+			$query = $db->getQuery(true);
+
+			/**
+			 * $$$ PITT: karine - Here I had to change the variables to make sense according to the plugin form.. so the origin is the destination and the destination is the origin
+			 */
+			$destinoElArr = json_decode($elementModel->getFormModel()->getParams()->get('list_elemento_origem'));
+			//get in the fabrik_elements table all the names and id that match with the plugin form origin element name
+			if(isset($destinoElArr) && !empty($destinoElArr->elemento_origem)){
+				$query->select('id, name')->from('`zzz_fabrik_elements`')->where('group_id = ' . $elementModel->getListModel()->getId());
+				$query->where($db->quoteName('id') . ' IN ( ' . implode(', ', $destinoElArr->elemento_origem) . ')');
+			}
+
+			$db->setQuery($query);
+			$db->execute();
+			$resultDestino = $db->loadObjectList();
+
+			$origemElArr = json_decode($elementModel->getFormModel()->getParams()->get('list_elemento_destino'));
+			$queryOri = $db->getQuery(true);
+			//get in the fabrik_elements table all the names and id that match with the plugin form destination element name
+			if(isset($origemElArr) && !empty($origemElArr->elemento_destino)){
+				$queryOri->select('id, name')->from('`zzz_fabrik_elements`')->where('group_id = ' . $elementModel->getListModel()->getId());
+				$queryOri->where($db->quoteName('id') . ' IN ( ' . implode(', ', $origemElArr->elemento_destino) . ')');
+			}
+
+			$db->setQuery($queryOri);
+			$db->execute();
+			$resultOrigem = $db->loadObjectList();
+			
+			$listModel  = $elementModel->getListModel();
+			$table  = $listModel->getTable();
+
+			$resultStr = '';
+			if($resultOrigem && $resultDestino){
+				foreach($resultOrigem as $key => $value){
+					if($table->db_table_name . '___' . $value->name == $elementModel->getFullName(true, false)){
+						$resultStr = $table->db_table_name . '___' . $resultDestino[$key]->name;
+					}
+				}
+			}
+
+			return $resultStr;
+		}
 	}
 }

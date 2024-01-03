@@ -12543,4 +12543,17 @@ class FabrikFEModelList extends FormModel
 		return $layout;
 	}
 
+	/**
+	 * For some reason the function _filtersToSQL() became private
+	 * 
+	 * @param   array  &$filters        filters
+	 * @param   bool   $startWithWhere  start the statement with 'where' (true is for j1.5 way of making queries, false for j1.6+)
+	 * @param   bool   $incPlugin       include the pluginQueryWhere statements
+	 * 
+	 * @since 4.0
+	 */
+	public function _filtersToSQLPublic(&$filters, $startWithWhere = true, $incPlugin = true) 
+	{
+		return $this->_filtersToSQL($filters, $startWithWhere, $incPlugin);
+	}
 }
