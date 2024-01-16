@@ -406,6 +406,7 @@
 				<option value="3">COM_FABRIK_FILTER_UNDER_HEADINGS</option>
 				<option value="4">COM_FABRIK_FILTER_UNDER_HEADINGS_TOGGLE</option>
 				<option value="5">COM_FABRIK_FILTER_POPUP</option>
+				<option value="6">COM_FABRIK_FILTER_LEFT_SIDE</option>
 			</field>
 
 			<field name="advanced-filter"
