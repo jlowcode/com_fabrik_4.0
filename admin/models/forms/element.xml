@@ -104,6 +104,10 @@
 				<option value="auto-complete">COM_FABRIK_AUTOCOMPLETE</option>
 				<option value="checkbox">COM_FABRIK_CHECKBOX</option>
 				<option value="multiselect">COM_FABRIK_MULTISELECT</option>
+				<option value="treeview">COM_FABRIK_TREEVIEW</option>
+				<option value="stars">COM_FABRIK_STARS</option>
+				<option value="tagcloud">COM_FABRIK_TAGCLOUD</option>
+				<option value="datetree">COM_FABRIK_DATETREE</option>
 		</field>
 
 		<field name="filter_exact_match"
