@@ -205,6 +205,7 @@
 					<option value="text">COM_FABRIK_LABEL</option>
 					<option value="value">COM_FABRIK_VALUE</option>
 					<option value="-1">COM_FABRIK_NONE</option>
+					<option value="count">COM_FABRIK_SHOW_COUNT</option> 
 			</field>
 			<field name="inc_in_adv_search"
 				type="radio"

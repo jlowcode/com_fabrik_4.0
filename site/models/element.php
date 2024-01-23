@@ -9348,10 +9348,9 @@ class PlgFabrik_Element extends FabrikPlugin
 			$this->buildQueryWhere(array(), true, $tableAlias, array('mode' => 'filter', 'value' => $parentId), $query);
 
 			// If there is a pre-filter then is applied to query
-			//MEXI AQUI, PASSAR PARA O REPOSITORIO DATABASEJOIN
 			$filters = $this->getlistModel()->getFilterArray();
 			if (isset($filters)) {
-				$sqlprefilter = $this->getlistModel()->_filtersToSQL($filters, true, false)[0];
+				$sqlprefilter = $this->getlistModel()->_filtersToSQLPublic($filters, true, false)[0];
 				if (isset($sqlprefilter) && !empty($sqlprefilter) && $this->getFilterBuildMethod() == 1) {
 					$table_name = $this->getTableName();
 					if (isset($table_name) && !empty($table_name)) {
