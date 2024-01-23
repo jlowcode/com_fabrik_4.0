@@ -1683,7 +1683,7 @@ class FabrikFEModelList extends FormModel
 					if ($buttonAction == 'dropdown')
 					{
 //						$row->fabrik_actions['delete_divider'] = $j3 ? '' : '<li class="divider"></li>';
-						$row->fabrik_actions['delete_divider'] = '';
+						//$row->fabrik_actions['delete_divider'] = '';
 					}
 
 					$row->fabrik_actions['fabrik_delete'] = $this->deleteButton();
