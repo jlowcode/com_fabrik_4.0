@@ -85,6 +85,13 @@ define(['jquery', 'fab/encoder', 'fab/fabrik', 'lib/debounce/jquery.ba-throttle-
                             }
                         }
                     }
+
+                    //if the input value is empty then clear the autocomplete filter
+                    var v = this.getInputElement().get('value');
+                    if (v === '') {
+                        this.element.value = '';
+                        Fabrik.fireEvent('fabrik.list.dofilter', [this]);
+                    }
                 }.bind(this));
             //}.bind(this));
         },
@@ -261,6 +268,7 @@ define(['jquery', 'fab/encoder', 'fab/fabrik', 'lib/debounce/jquery.ba-throttle-
                 // with a CDD that watches it.
                 this.element.fireEvent('change', new Event.Mock(this.element, 'change'), 700);
                 this.element.fireEvent('blur', new Event.Mock(this.element, 'blur'), 700);
+                Fabrik.fireEvent('fabrik.list.dofilter', [this]);
                 // $$$ hugh - fire a Fabrik event, just for good luck.  :)
                 Fabrik.fireEvent('fabrik.autocomplete.selected', [this, this.element.value]);
             } else {

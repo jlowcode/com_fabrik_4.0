@@ -6,8 +6,8 @@
  */
 
 define(['jquery', 'fab/fabrik', 'fab/list-toggle', 'fab/list-grouped-toggler', 'fab/list-keys',
-        'fab/list-actions', 'fab/mootools-ext'],
-    function (jQuery, Fabrik, FbListToggle, FbGroupedToggler, FbListKeys, FbListActions) {
+        'fab/list-actions', 'lib/debounce/jquery.ba-throttle-debounce', 'fab/mootools-ext'],
+    function (jQuery, Fabrik, FbListToggle, FbGroupedToggler, FbListKeys, FbListActions, debounce) {
         var FbList = new Class({
             Binds: [],
 
@@ -92,6 +92,14 @@ define(['jquery', 'fab/fabrik', 'fab/list-toggle', 'fab/list-grouped-toggler', '
                 this.watchAll(false);
                 Fabrik.addEvent('fabrik.form.submitted', function () {
                     self.updateRows();
+                });
+
+                Fabrik.addEvent('fabrik.list.dofilter', function () {
+                    self.doFilter();
+                });
+
+                Fabrik.addEvent('fabrik.list.watchfilters', function () {
+                    self.watchFilters();
                 });
 
                 /**
@@ -821,6 +829,28 @@ define(['jquery', 'fab/fabrik', 'fab/list-toggle', 'fab/list-grouped-toggler', '
             },
 
             /**
+             * Add a tag near to clear filters button, to represent the selected filter
+             */
+            addSearchedTag: function(text){
+                var divFilteredEls = jQuery('.filteredTags')[0];
+                if(divFilteredEls){
+                    jQuery('.filteredTags').append('<span tag-value="'+ text + '" class="tagSearched">' + text + '</span>');
+                }
+            },
+
+            /**
+             * Remove tag
+             */
+            deleteSearchedTag: function(text){
+                var divFilteredEls = jQuery('.filteredTags')[0];
+                if(divFilteredEls){
+                    if(jQuery(divFilteredEls).find("span[tag-value='" + text + "']")[0]){
+                        jQuery(divFilteredEls).find("span[tag-value='" + text + "']")[0].remove();
+                    }
+                }
+            },
+
+            /**
              * Watch filters, for changes which may trigger the list to be re-rendered
              */
             watchFilters: function () {
@@ -830,12 +860,51 @@ define(['jquery', 'fab/fabrik', 'fab/list-toggle', 'fab/list-grouped-toggler', '
 
                 this.getFilters().each(function (x, f) {
                     f = jQuery(f);
-                    e = f.prop('tagName') === 'SELECT' || f.prop('type') === 'checkbox' ? 'change' : 'blur';
-                    if (self.options.filterMethod !== 'submitform') {
+                    e = f.prop('tagName') === 'SELECT' || f.prop('type') === 'checkbox' || f.prop('type') === 'radio' ? 'change' : 'blur';
+
+                    var lastAdded = '';
+                    if(f.prop('type') === 'text' && f.hasClass('single_field')) {
+                        f.bind('keyup', debounce(1000, function (e) {
+                            self.doFilter();
+                            if(lastAdded != f.val()){
+                                self.deleteSearchedTag(lastAdded);
+                                lastAdded = f.val();
+                                self.addSearchedTag(f.val());
+                            }
+                        }));
+                    }
+
+                    if (f.prop('type') === 'checkbox' || f.prop('type') === 'radio' || f.prop('tagName') === 'SELECT' || self.options.filterMethod !== 'submitform') {
                         f.off(e);
                         f.on(e, function (e) {
                             e.preventDefault();
-                            if (f.prop('type') === 'checkbox' || f.data('initialvalue') !== f.val()) {
+                            if (f.prop('type') === 'checkbox' || f.prop('type') === 'radio' || f.prop('tagName') === 'SELECT' || f.data('initialvalue') !== f.val()) {
+                                var divFilteredEls = jQuery('.filteredTags')[0];
+                                if(divFilteredEls){
+                                    //verifica se o campo é checkbox e se ouve mudança
+                                    if(f.prop('type') === 'checkbox' && f.prop('checked')){
+                                        self.addSearchedTag(f.prop('value'));
+                                    } else {
+                                        self.deleteSearchedTag(f.prop('value'));
+                                    }
+                                    
+                                    //campo é drop-down
+                                    if(f.prop('tagName') === 'SELECT' && f.val() != ""){
+                                        var prevSelect = '';
+                                        // var thisSelect = f.val();    // Codigo original
+                                        var thisSelect = jQuery('#'+f.prop('id')+ ' option:selected').text();
+
+                                        f.change(function() {
+                                            prevSelect = thisSelect;
+                                            thisSelect = f.val();
+                                            self.deleteSearchedTag(prevSelect);
+                                        });
+                                        //debugger
+                                        if(thisSelect && thisSelect != ''){
+                                            self.addSearchedTag(thisSelect);
+                                        }
+                                    }
+                                }
                                 self.doFilter();
                             }
                         });
@@ -952,7 +1021,9 @@ define(['jquery', 'fab/fabrik', 'fab/list-toggle', 'fab/list-grouped-toggler', '
 
             submit: function (task) {
                 this.getForm();
-                var doAJAX = this.options.ajax,
+                var doAJAX = true,
+                //Original, above changed to remove the problem with exclusion files in modules
+                //var doAJAX = this.options.ajax,
                     self = this,
                     form = jQuery(this.form);
                 if (task === 'list.doPlugin.noAJAX') {
@@ -1021,6 +1092,19 @@ define(['jquery', 'fab/fabrik', 'fab/list-toggle', 'fab/list-grouped-toggler', '
                                 Fabrik['filter_listform_' + self.options.listRef].onUpdateData();
                                 Fabrik['filter_listform_' + self.options.listRef].updateFilterCSS(json);
                                 jQuery('#searchall_' + self.options.listRef).val(json.searchallvalue);
+                                // Set value to apllied advanced search tag
+                                const searchText = jQuery('#searchall_' + self.options.listRef).val();
+                                const searchTag = jQuery(document.getElementById('searchTag'));
+                                if(searchText != '' && searchText != ' ') {
+                                    searchTag.css({"padding": "2px 8px 2px 8px",
+                                                    "border-radius": "10px", 
+                                                    "background-color": "#EEEEEF",
+                                                    "font-weight": "normal"});
+                                    searchTag.text(searchText);
+                                } else {
+                                    searchTag.text("");
+                                    searchTag.css({"border-radius": "10px", "background-color": "#FFF"});
+                                }
                                 Fabrik.fireEvent('fabrik.list.submit.ajax.complete', [self, json]);
                                 if (json.msg && json.showmsg) {
                                     window.alert(json.msg);
