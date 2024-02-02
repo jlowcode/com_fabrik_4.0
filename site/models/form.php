@@ -5165,8 +5165,21 @@ class FabrikFEModelForm extends FabModelForm
 			if (array_key_exists('apply', $this->formData))
 			{
 				$url = 'index.php?option=com_fabrik&task=form.view&formid=' . $input->getInt('formid') . '&rowid=' . $input->getString('rowid', '', 'string');
-			}
-			else
+				
+			} 
+			else if (array_key_exists('SubmitAndDetails', $this->formData)) 
+			{
+				$url = 'index.php?option=com_fabrik&view=details/' . $input->getInt('formid') . '/' . $input->getInt('rowid');
+			} 
+			else if (array_key_exists('SubmitAndNew',  $this->formData)) 
+			{
+				$url = 'index.php?option=com_fabrik&view=form/' . $input->getInt('formid');
+			} 
+			else if (array_key_exists('Submit',  $this->formData)) 
+			{
+				$url = 'index.php?option=com_fabrik&view=list&listid=' . $input->getInt('listid');
+			} 
+			else 
 			{
 				$url = 'index.php?option=com_fabrik&task=list.view&listid=' . $this->getListModel()->getId();
 			}
@@ -5178,6 +5191,24 @@ class FabrikFEModelForm extends FabModelForm
 				$url = 'index.php?option=com_fabrik&view=form&formid=' . $input->getInt('formid') . '&rowid=' . $input->getString('rowid', '', 'string')
 					. '&listid=' . $input->getInt('listid');
 				$itemId = (int) FabrikWorker::itemId();
+				if ($itemId !== 0)
+					$url = $url . '&Itemid=' . $itemId;
+			} 
+			else if (array_key_exists('SubmitAndDetails', $this->formData)) 
+			{
+				$url = 'index.php?option=com_fabrik&view=details/' . $input->getInt('formid') . '/' . $input->getInt('rowid');
+				if ($itemId !== 0)
+					$url = $url . '&Itemid=' . $itemId;
+			} 
+			else if (array_key_exists('SubmitAndNew',  $this->formData)) 
+			{
+				$url = 'index.php?option=com_fabrik&view=form/' . $input->getInt('formid');
+				if ($itemId !== 0)
+					$url = $url . '&Itemid=' . $itemId;
+			} 
+			else if (array_key_exists('Submit',  $this->formData)) 
+			{
+				$url = 'index.php?option=com_fabrik&view=list&listid=' . $input->getInt('listid');
 				if ($itemId !== 0)
 					$url = $url . '&Itemid=' . $itemId;
 			}

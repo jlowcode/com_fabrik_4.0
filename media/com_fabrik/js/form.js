@@ -2846,29 +2846,32 @@ define(['jquery', 'fab/encoder', 'fab/fabrik', 'lib/debounce/jquery.ba-throttle-
         },
 
         toggleSubmit: function (on) {
-            var submit = this._getButton('Submit');
-            if (typeOf(submit) !== 'null') {
-                if (on === true) {
-                    submit.disabled = '';
-                    submit.setStyle('opacity', 1);
-	                if (this.options.toggleSubmitTip !== '') {
-		                jQuery(this.form).find('.fabrikSubmitWrapper').tooltip('destroy');
-		                this.toggleSubmitTipAdded = false;
-	                }
+            var nameButtons = ['Submit', 'SubmitAndNew', 'SubmitAndDetails', 'apply'];
+            for (var name of nameButtons) {
+                var submit = this._getButton(name);
+                if (typeOf(submit) !== 'null') {
+                    if (on === true) {
+                        submit.disabled = '';
+                        submit.setStyle('opacity', 1);
+                        if (this.options.toggleSubmitTip !== '') {
+                            jQuery(this.form).find('.fabrikSubmitWrapper').tooltip('destroy');
+                            this.toggleSubmitTipAdded = false;
+                        }
+                    }
+                    else {
+                        submit.disabled = 'disabled';
+                        submit.setStyle('opacity', 0.5);
+                        if (this.options.toggleSubmitTip !== '') {
+                            if (!this.toggleSubmitTipAdded) {
+                                //jQuery(this.form).find('.fabrikSubmitWrapper').data('toggle', 'tooltip');
+                                //jQuery(this.form).find('.fabrikSubmitWrapper').attr('title', 'Your form cannot be saved until all inputs have been validated');
+                                jQuery(this.form).find('.fabrikSubmitWrapper').tooltip();
+                                this.toggleSubmitTipAdded = true;
+                            }
+                        }
+                    }
+                    Fabrik.fireEvent('fabrik.form.togglesubmit', [this, on]);
                 }
-                else {
-                    submit.disabled = 'disabled';
-                    submit.setStyle('opacity', 0.5);
-	                if (this.options.toggleSubmitTip !== '') {
-	                    if (!this.toggleSubmitTipAdded) {
-		                    //jQuery(this.form).find('.fabrikSubmitWrapper').data('toggle', 'tooltip');
-		                    //jQuery(this.form).find('.fabrikSubmitWrapper').attr('title', 'Your form cannot be saved until all inputs have been validated');
-		                    jQuery(this.form).find('.fabrikSubmitWrapper').tooltip();
-		                    this.toggleSubmitTipAdded = true;
-	                    }
-	                }
-                }
-                Fabrik.fireEvent('fabrik.form.togglesubmit', [this, on]);
             }
         },
 
