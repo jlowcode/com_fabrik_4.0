@@ -8513,7 +8513,7 @@ class PlgFabrik_Element extends FabrikPlugin
 		$size      	 = (int) $this->getParams()->get('filter_length', 20);
 
 		$return   	 = array();
-		$max 		 = max(array_column($rows, 'counter')); // Higher value of options
+		!empty(array_column($rows, 'counter')) ? $max = max(array_column($rows, 'counter')) : $max = 20; // Higher value of options
 
 		$fontSizeMax = 20; // Establish a maximum value for the font
 		$fontSizeMin = 9;  // Establish a minimum value for the font
@@ -9063,7 +9063,7 @@ class PlgFabrik_Element extends FabrikPlugin
 	 *
 	 * @return  array    filter value and labels
 	 */
-	protected function filterValueList_Exact_Count($normal, $tableName = '', $label = '', $id = '', $incJoin = true, $isUnion)
+	protected function filterValueList_Exact_Count($normal, $tableName = '', $label = '', $id = '', $incJoin = true, $isUnion=false)
 	{
 		$listModel = $this->getListModel();
 		$fbConfig  = JComponentHelper::getParams('com_fabrik');
