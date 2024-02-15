@@ -56,11 +56,29 @@ echo <<<EOT
 
 /* BEGIN - Your CSS styling starts here */
 
+.fabrikElement .button {
+	color: #333840 !important;
+}
+
+.fabrikgrid_radio label {
+	margin-bottom: 0px !important;
+	font-weight: 400 !important;
+}
+
+.fabrikgrid_radio {
+	display: flex !important;
+    align-items: center !important;
+}
+
+.btn-check {
+	position: relative !important;
+}
+
+#fabrik-comments .button {
+	color: #333840 !important;
+}
 
 /* Begin - Fileupload style */
-.plupload a, .plupload tr {
-	color: #A6A6A6 !important;
-}
 
 .plupload table {
 	border: 2px solid #eee !important;
@@ -69,7 +87,6 @@ echo <<<EOT
 
 .plg-fileupload input {
 	padding: 10px;
-	color: #A6A6A6 !important;
 }
 
 .fabrikWindow-modal .button {
@@ -157,10 +174,6 @@ textarea, input, select {
 
 label {
 	font-weight: bold;
-}
-
-label, span, select {
-	color: #A6A6A6 !important;
 }
 
 .platform-content {
@@ -299,8 +312,27 @@ label, span, select {
 	}
 }
 
-.dropdown-menu > li > a {
+.dropdown-menu > li > a, .select2-dropdown ul > li {
     white-space: normal !important;
+	color: #011627 !important;
+}
+
+.dropdown-menu > li > a:hover {
+	font-weight: 700;
+	background: none !important;
+}
+
+.select2-dropdown ul > li:hover {
+	font-weight: 700;
+	background-color: inherit !important;
+}
+
+.select2-container--default .select2-results__option--highlighted[aria-selected] {
+	background-color: inherit !important;
+}
+
+.select2-container--default .select2-results__option[aria-selected=true] {
+	background-color: #ddd !important;
 }
 
 .pull-right > .btn.btn-default{

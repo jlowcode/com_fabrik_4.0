@@ -39,6 +39,11 @@ $c = $_REQUEST['c'];
 echo <<<EOT
 /* BEGIN - Your CSS styling starts here */
 
+thead .fabrik___heading a,
+.fabrik___heading select {
+    color: #011627 !important;
+}
+
 .g-menu-item span {
 	color: #032B43 !important;
     font-weight: 400 !important;
@@ -119,20 +124,19 @@ form .fabrikButtonsContainer .nav {
     margin-bottom: 30px !important;
 }
 
-.fabrikButtonsContainer ul li span,  .fabrikButtonsContainer ul li a, .heading span {
-    color: #A6A6A6 !important;
-}
-
 .fabrikButtonsContainer ul li {
     padding: 0px 30px;
 }
 
-.addbutton, .tagSearched, .addRecord {
+.addbutton, .tagSearched, .addRecord, .process_mapper-modal-footer button {
     border-radius: 12px;
     padding: 16px 32px;
     color: #fff !important;
     background-color: #003EA1;
     width: 188px !important;
+}
+
+.addbutton, .tagSearched, .addRecord {
     height: 52px !important;
     display: flex;
     justify-content: center;
@@ -188,9 +192,15 @@ form a, table a {
     color: #011627 !important;
 }
 
-thead .fabrik___heading a,
-.fabrik___heading select {
-    color: #A6A6A6 !important;
+.dropdown-menu > li > a {
+    white-space: normal !important;
+	color: #011627 !important;
+}
+
+.dropdown-menu > li > a:hover {
+	font-weight: 700;
+	background: none !important;
+    cursor: pointer;
 }
 
 
@@ -272,6 +282,7 @@ h1,
 	color: #000;
     font-weight: 500;
     border-radius: 5px;
+    background-color: #FBFBFB;
 }
 
 .btn.fabrik_view{
@@ -327,16 +338,9 @@ h1,
 .fabrik_actions.fabrik_element{
     text-align: right;
 }
-.fabrikFilterContainer .row-fluid .span12,
-.fabrikorder,
-.clearFilters {
-	color: #A6A6A6 !important;
-}
 
 .fabrikFilterContainer {
-    color: #A6A6A6;
     height: 100%;
-    background-color: #FBFBFB;
 }
 
 .page-header{

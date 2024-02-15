@@ -38,12 +38,11 @@ $c = $_REQUEST['c'];
 echo <<<EOT
 /* BEGIN - Your CSS styling starts here */
 
-
-/* Begin - Repeat groups styles */
-.repeatGroupTable tr {
-    color: #A6A6A6 !important;
+#fabrik-comments .button {
+	color: #333840 !important;
 }
 
+/* Begin - Repeat groups styles */
 .fabrikElementReadOnly {
 	margin-top: 0px !important;
 }
@@ -85,7 +84,6 @@ echo <<<EOT
 
 .fabrikLabel {
     font-weight: 900;
-    color: #A6A6A6 !important;
 }
 
 .fabrikDetails a, .fabrikElement > div {
@@ -191,14 +189,11 @@ h1 {
 .btn.btn-default{
     text-shadow: none !important;
 	border: none !important;
-	width: 15% !important;
     display: block !important;
 	font-weight: 300 !important;
 	margin: 0px !important;
-    background-color: #032b43 !important;
     color: #fff !important;
     float: right;
-
 }
 
 .btn.btn-default:hover{

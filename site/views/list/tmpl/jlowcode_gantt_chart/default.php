@@ -10,6 +10,8 @@
  * @since       3.1
  */
 
+use Joomla\CMS\Language\Text;
+
 // No direct access
 defined('_JEXEC') or die('Restricted access');
 
@@ -20,7 +22,7 @@ if ($pageClass !== '') :
 endif;
 
 if ($this->tablePicker != '') : ?>
-    <div style="text-align:right"><?php echo FText::_('COM_FABRIK_LIST') ?>: <?php echo $this->tablePicker; ?></div>
+    <div style="text-align:right"><?php echo Text::_('COM_FABRIK_LIST') ?>: <?php echo $this->tablePicker; ?></div>
 <?php
 endif;
 

@@ -20,7 +20,7 @@ $form = $this->form;
 		<div>
 			<div class="btn-group btn-group-save">
 				<ul class="ul-btn-actions">
-					<li><button type="submit" class="btn-save-back button btn-group-actions btn salvar" name="Submit" id="fabrikSubmit_<?php echo $form->id; ?>">
+					<li><button type="submit" class="btn-save-back button btn-group-actions btn salvar" name="Submit" id="fabrikSubmit_<?php echo $form->id; ?>_A">
 							Salvar e Voltar <i class="fa-icon-down fa fa-angle-down fa-lg" aria-hidden="true"></i></button>
 
 						<ul>
@@ -28,9 +28,9 @@ $form = $this->form;
 								<li><button type="submit" class="btn-save-copy button btn-group-actions btn" name="Copy">
 									Salvar e Copiar</button></li>
 							<?php endif; ?>
-							<li><button type="submit" class="btn-save-new button btn-group-actions btn salvar" name="SubmitAndNew" id="fabrikSubmit_<?php echo $form->id; ?>">
+							<li><button type="submit" class="btn-save-new button btn-group-actions btn salvar" name="SubmitAndNew" id="fabrikSubmit_<?php echo $form->id; ?>_B">
 									Salvar e Novo</button></li>
-							<li><button type="submit" class="btn-save-details button btn-group-actions btn salvar" name="SubmitAndDetails" id="fabrikSubmit_<?php echo $form->id; ?>">
+							<li><button type="submit" class="btn-save-details button btn-group-actions btn salvar" name="SubmitAndDetails" id="fabrikSubmit_<?php echo $form->id; ?>_C">
 									Salvar e Ver</button></li>
 							<li><button type="submit" class="btn-save-only button btn-group-actions btn salvar" name="apply">Salvar</button></li>
 						</ul>

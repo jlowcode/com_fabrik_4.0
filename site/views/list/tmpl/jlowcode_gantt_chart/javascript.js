@@ -95,7 +95,7 @@ window.addEvent('fabrik.loaded', function () {
 	})
 
 		var name_list = jQuery('tbody.fabrik_groupdata')[0].classList[1]
-		jQuery(".fabrik_ordercell").each(function(index) {
+		jQuery(".fabrik___heading .fabrik_ordercell").each(function(index) {
 			var i = 0;
 			var linhas = jQuery('.'+name_list+' .fabrik_row');
 	

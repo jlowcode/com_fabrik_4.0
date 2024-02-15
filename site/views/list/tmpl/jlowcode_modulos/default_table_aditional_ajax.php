@@ -7,6 +7,9 @@
  * @copyright   Copyright (C) 2018-2018  Marcel Ferrante - All rights reserved.
  * @license     GNU/GPL http://www.gnu.org/copyleft/gpl.html
  */
+
+use Joomla\CMS\Language\Text;
+
 // No direct access
 defined('_JEXEC') or die('Restricted access');
 
@@ -33,17 +36,17 @@ $showContainer = $_REQUEST['wfl_action'] == 'list_requests' ? 'in' : 'hide';
 <!--        </li>-->
 
 <!--        orderBySelect-->
-        <li class="span1"><label  for="requestTypeSelect"><?php echo FText::_('PLG_FORM_WORKFLOW_REQUEST_STATUS_LABEL'); ?></label></li>
+        <li class="span1"><label  for="requestTypeSelect"><?php echo Text::_('PLG_FORM_WORKFLOW_REQUEST_STATUS_LABEL'); ?></label></li>
         <li class="span3">
             <select id="requestTypeSelect">
             </select>
         </li>
-        <li class="span2"><label  for="orderBySelect"><?php echo FText::_('PLG_FORM_WORKFLOW_REQUEST_ORDER_BY_LABEL'); ?></label></li>
+        <li class="span2"><label  for="orderBySelect"><?php echo Text::_('PLG_FORM_WORKFLOW_REQUEST_ORDER_BY_LABEL'); ?></label></li>
         <li class="span3">
             <select id="orderBySelect">
             </select>
         </li>
-        <li class="span1"><label  for="searchTable"><?php echo FText::_('PLG_FORM_WORKFLOW_REQUEST_SEARCH_LABEL'); ?></label></li>
+        <li class="span1"><label  for="searchTable"><?php echo Text::_('PLG_FORM_WORKFLOW_REQUEST_SEARCH_LABEL'); ?></label></li>
         <li class="span3"><input  name="searchTable" id="searchTable" type="text" placeholder="Search"></li>
 
     </ul>
