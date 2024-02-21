@@ -39,6 +39,10 @@ $c = $_REQUEST['c'];
 echo <<<EOT
 /* BEGIN - Your CSS styling starts here */
 
+.fabrik_actions img {
+    max-width: inherit;
+}
+
 thead .fabrik___heading a,
 .fabrik___heading select {
     color: #011627 !important;
