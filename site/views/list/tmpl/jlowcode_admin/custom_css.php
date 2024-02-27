@@ -110,7 +110,7 @@ input.fabrik_filter {
     align-items: center;
 }
 
-.fabrik_filter {
+.fabrik_filter, .fabrikinput {
     border: 2px solid #eee !important;
     height: 50px !important;
     background-color: #fff !important;
