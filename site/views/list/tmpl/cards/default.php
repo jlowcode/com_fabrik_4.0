@@ -12,6 +12,8 @@
 // No direct access
 defined('_JEXEC') or die('Restricted access');
 
+use Joomla\CMS\Language\Text;
+
 // The number of columns to split the list rows into
 $columns = 2;
 
@@ -31,7 +33,7 @@ endif;
 ?>
 
 <?php if ($this->tablePicker != '') { ?>
-	<div style="text-align:right"><?php echo FText::_('COM_FABRIK_LIST') ?>: <?php echo $this->tablePicker; ?></div>
+	<div style="text-align:right"><?php echo Text::_('COM_FABRIK_LIST') ?>: <?php echo $this->tablePicker; ?></div>
 <?php }
 
 if ($this->params->get('show_page_heading')) :
@@ -76,7 +78,7 @@ if ($this->showTitle == 1) { ?>
 					foreach ($this->rows as $groupedBy => $group) : ?>
 						<?php
 						if ($this->isGrouped) :
-							$imgProps = array('alt' => FText::_('COM_FABRIK_TOGGLE'), 'data-role' => 'toggle', 'data-expand-icon' => 'fa fa-arrow-down', 'data-collapse-icon' => 'fa fa-arrow-right');
+							$imgProps = array('alt' => Text::_('COM_FABRIK_TOGGLE'), 'data-role' => 'toggle', 'data-expand-icon' => 'fa fa-arrow-down', 'data-collapse-icon' => 'fa fa-arrow-right');
 						?>
 							<div class="fabrik_groupheading">
 								<?php echo $this->layoutGroupHeading($groupedBy, $group); ?>
