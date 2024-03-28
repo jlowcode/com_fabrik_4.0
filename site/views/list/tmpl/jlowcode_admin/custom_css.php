@@ -40,51 +40,51 @@ echo <<<EOT
 /* BEGIN - Your CSS styling starts here */
 
 .filterContent .span12 {
-	width: 1030px !important;
+	width: 91.48936170212765%;
 }
 
 .filterContent .span11 {
-	width: 940px !important;
+	width: 82.97872340425532%;
 }
 
 .filterContent .span10 {
-	width: 860px !important;
+	width: 74.46808510638297%;
 }
 
 .filterContent .span9 {
-	width: 780px !important;
+	width: 65.95744680851064%;
 }
 
 .filterContent .span8 {
-	width: 700px !important;
+	width: 57.44680851063829%;
 }
 
 .filterContent .span7 {
-	width: 620px !important;
+	width: 48.93617021276595%;
 }
 
 .filterContent .span6 {
-	width: 540px !important;
+	width: 40.42553191489362%;
 }
 
 .filterContent .span5 {
-	width: 460px !important;
+	width: 31.914893617021278%;
 }
 
 .filterContent .span4 {
-	width: 380px !important;
+	width: 23.404255319148934%;
 }
 
 .filterContent .span3 {
-	width: 300px !important;
+	width: 14.893617021276595%;
 }
 
 .filterContent .span2 {
-	width: 220px !important;
+	width: 6.382978723404255%;
 }
 
 .filterContent .span1 {
-	width: 140px !important;
+	width: 6.382978723404255%;
 }
 
 .fabrik_actions img {
