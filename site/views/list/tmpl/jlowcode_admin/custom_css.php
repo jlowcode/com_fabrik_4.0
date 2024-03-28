@@ -39,6 +39,54 @@ $c = $_REQUEST['c'];
 echo <<<EOT
 /* BEGIN - Your CSS styling starts here */
 
+.filterContent .span12 {
+	width: 1030px !important;
+}
+
+.filterContent .span11 {
+	width: 940px !important;
+}
+
+.filterContent .span10 {
+	width: 860px !important;
+}
+
+.filterContent .span9 {
+	width: 780px !important;
+}
+
+.filterContent .span8 {
+	width: 700px !important;
+}
+
+.filterContent .span7 {
+	width: 620px !important;
+}
+
+.filterContent .span6 {
+	width: 540px !important;
+}
+
+.filterContent .span5 {
+	width: 460px !important;
+}
+
+.filterContent .span4 {
+	width: 380px !important;
+}
+
+.filterContent .span3 {
+	width: 300px !important;
+}
+
+.filterContent .span2 {
+	width: 220px !important;
+}
+
+.filterContent .span1 {
+	width: 140px !important;
+}
+
 .fabrik_actions img {
     max-width: inherit;
 }
