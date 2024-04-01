@@ -14,7 +14,7 @@ defined('_JEXEC') or die('Restricted access');
 
 $element = $this->element;
 if($element->column == '') {
-	$element->column = 'col-sm-10 mx-auto';
+	$element->column = 'w-100';
 } 
 ?>
 <div class="<?php echo $element->containerClass .' '. $element->column;?>">
