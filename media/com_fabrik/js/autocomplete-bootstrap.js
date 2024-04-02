@@ -78,7 +78,8 @@ define(['jquery', 'fab/encoder', 'fab/fabrik', 'lib/debounce/jquery.ba-throttle-
 
                 this.getInputElement().addEvent('blur', function (e) {
                     if (this.options.storeMatchedResultsOnly) {
-                        if (!this.matchedResult) {
+                        // Id task: 203
+                        if (!this.matchedResult && this.element.id == e.target.id) {
                             if (typeof(this.data) === 'undefined' ||
                                 !(this.data.length === 1 && this.options.autoLoadSingleResult)) {
                                 this.element.value = '';
