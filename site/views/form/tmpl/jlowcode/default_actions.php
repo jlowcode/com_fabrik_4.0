@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Bootstrap Form Template - Actions
+ * Jlowcode Form Template - Actions
  *
  * @package     Joomla
  * @subpackage  Fabrik
@@ -25,7 +25,8 @@ $multiButtonsOthers = (bool) $params->reset_button || (bool) $params->delete_but
 			<div class="btn-group btn-group-save">
 				<ul class="ul-btn-actions" style="width: 170px;">
 					<li>
-						<button type="submit" class="btn-save-only button btn-group-actions btn salvar" name="apply">Salvar
+					<button type="submit" class="btn-save-back button btn-group-actions btn salvar" name="Submit" id="fabrikSubmit_<?php echo $form->id; ?>">
+							Salvar e Voltar
 							<?php if ($multiButtonsSave) : ?>	
 								<i class="fa-icon-down fa fa-angle-down fa-lg" aria-hidden="true"></i>
 							<?php endif; ?>
@@ -34,7 +35,7 @@ $multiButtonsOthers = (bool) $params->reset_button || (bool) $params->delete_but
 						<ul>
 							<?php if ((bool) $params->copy_button) : ?>
 								<li>
-									<button type="submit" class="btn-save-copy button btn-group-actions btn " <?php echo $prams->copy_button_class ?> name="Copy">
+									<button type="submit" class="btn-save-only button btn-group-actions btn salvar " <?php echo $prams->copy_button_class ?> name="apply">
 										<?php echo $params->copy_button_label ?>
 									</button>
 								</li>
@@ -57,8 +58,8 @@ $multiButtonsOthers = (bool) $params->reset_button || (bool) $params->delete_but
 							<?php endif; ?>
 							
 							<?php if (explode('_', $form->formid)[2]) : ?>
-								<button type="submit" class="btn-save-back button btn-group-actions btn salvar" name="Submit" id="fabrikSubmit_<?php echo $form->id; ?>">
-									Salvar e Voltar
+								<button type="submit" class="btn-save-copy button btn-group-actions btn" name="Copy">
+									Salvar e copiar
 								</button>
 							<?php endif; ?>
 						</ul>
