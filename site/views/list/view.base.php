@@ -612,7 +612,7 @@ class FabrikViewListBase extends FabrikView
 		$this->filterMode       = (int) $params->get('show-table-filters');
 		$fKeys                 = array_keys($this->filters);
 
-		$this->bootShowFilters = (count($fKeys) === 1 && $fKeys[0] === 'all') || $this->filterMode === 0 ? false : true;
+		$this->bootShowFilters = (count($fKeys) === 1 && $fKeys[0] === 'all') ? false : true;
 
 		$this->clearFliterLink = $model->getClearButton();
 		JDEBUG ? $profiler->mark('fabrik getfilters end') : null;
