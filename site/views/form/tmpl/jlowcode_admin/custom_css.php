@@ -236,19 +236,19 @@ label {
 }
 
 .btn-save-new{
-	background-color: #2196f3 !important;
+	background-color: #0a85d0 !important;
 }
 .btn-save-copy{
-	background-color: #1465bb !important;
+	background-color: #2591d4 !important;
 }
 .btn-save-details{
-	background-color: #81c9fa !important;
+	background-color: #08629a !important;
 }
 .btn-save-back{
-	background-color: #003785 !important;
+	background-color: #032b43 !important;
 }
 .btn-save-only{
-	background-color: #003EA1 !important;
+	background-color: #054267 !important;
 }
 
 .btn-cancel-back {

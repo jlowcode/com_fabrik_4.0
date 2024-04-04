@@ -33,14 +33,12 @@ $multiButtonsOthers = (bool) $params->reset_button || (bool) $params->delete_but
 						</button>
 
 						<ul>
-							<?php if ((bool) $params->copy_button) : ?>
-								<li>
-									<button type="submit" class="btn-save-only button btn-group-actions btn salvar " <?php echo $prams->copy_button_class ?> name="apply">
-										<?php echo $params->copy_button_label ?>
-									</button>
-								</li>
+							<?php if (explode('_', $form->formid)[2]) : ?>
+								<button type="submit" class="btn-save-copy button btn-group-actions btn" name="Copy">
+									Salvar e copiar
+								</button>
 							<?php endif; ?>
-
+							
 							<?php if ((bool) $params->apply_button) : ?>
 								<li>
 									<button type="submit" class="btn-save-new button btn-group-actions btn salvar " <?php echo $prams->apply_button_class ?> name="SubmitAndNew" id="fabrikSubmit_<?php echo $form->id; ?>_B">
@@ -56,11 +54,13 @@ $multiButtonsOthers = (bool) $params->reset_button || (bool) $params->delete_but
 									</button>
 								</li>
 							<?php endif; ?>
-							
-							<?php if (explode('_', $form->formid)[2]) : ?>
-								<button type="submit" class="btn-save-copy button btn-group-actions btn" name="Copy">
-									Salvar e copiar
-								</button>
+
+							<?php if ((bool) $params->copy_button) : ?>
+								<li>
+									<button type="submit" class="btn-save-only button btn-group-actions btn salvar " <?php echo $prams->copy_button_class ?> name="apply">
+										<?php echo $params->copy_button_label ?>
+									</button>
+								</li>
 							<?php endif; ?>
 						</ul>
 					</li>
