@@ -90,10 +90,6 @@ echo <<<EOT
 	color: #333840 !important;
 }
 
-.fabrikDetails a {
-    text-decoration: underline !important;
-}
-
 textarea, input, select {
     background-color: #fff !important;
 	border-radius: 12px !important;
