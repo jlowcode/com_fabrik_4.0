@@ -87,7 +87,7 @@ echo <<<EOT
 }
 
 .fabrikDetails a, .fabrikElement > div {
-	color: #333840 !important;
+	color: #333840;
 }
 
 textarea, input, select {
