@@ -391,10 +391,6 @@ h1,
     text-align: right;
 }
 
-.fabrikFilterContainer {
-    height: 100%;
-}
-
 .page-header{
     color: #032B43;
 }

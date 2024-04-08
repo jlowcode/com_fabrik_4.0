@@ -47,13 +47,13 @@ echo $this->loadTemplate('modal');
 ?>
 <form class="fabrikForm form-search" action="<?php echo $this->table->action; ?>" method="post" id="<?php echo $this->formid; ?>" name="fabrikList" style="width: 100%;">
 
-    <div class="<?php echo $this->params['show-table-filters'] === '6' ? 'row' : ''; ?>" style="width: 100%;">
+    <div class="<?php echo in_array($this->params['show-table-filters'], [6, 7]) ? 'row' : ''; ?>" style="width: 100%;">
         <?php
         if ($this->hasButtons) :
             echo $this->loadTemplate('buttons');
         endif; ?>
 
-        <div class="filterContent <?php echo $this->params['show-table-filters'] === '6' ? ' col-md-12 col-lg-3' : ''; ?>">
+        <div class="filterContentfabrikFilterContainer <?php echo in_array($this->params['show-table-filters'], [6, 7]) ? ' col-md-12 col-lg-3' : ''; ?>">
             <?php
             if ($this->showFilters && $this->bootShowFilters) :
                 echo $this->layoutFilters();
@@ -65,7 +65,7 @@ echo $this->loadTemplate('modal');
             echo $this->loadTemplate('tabs');
             ?>
         </div>
-        <div class="listContent fabrikDataContainer<?php echo $this->params['show-table-filters'] === '6' ? ' col-md-12 col-lg-9' : ''; ?>">
+        <div class="listContent fabrikDataContainer<?php echo in_array($this->params['show-table-filters'], [6]) ? ' col-md-12 col-lg-9' : ''; ?>">
 
             <?php foreach ($this->pluginBeforeList as $c) :
                 echo $c;
