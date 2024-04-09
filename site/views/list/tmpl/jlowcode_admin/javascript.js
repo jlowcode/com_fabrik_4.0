@@ -90,16 +90,18 @@ window.addEvent('fabrik.loaded', function () {
 	})
 	
 
-		var name_list = jQuery('tbody.fabrik_groupdata')[0].classList[1]
-		jQuery(".fabrik_ordercell").each(function(index) {
+	jQuery('tbody.fabrik_groupdata').each(function() {
+		var name_list = this.classList[1];
+		jQuery(this.parentNode).find(".fabrik_ordercell").each(function(index) {
 			var i = 0;
-			var linhas = jQuery('.'+name_list+' .fabrik_row');
-	
+			var linhas = jQuery(this).closest('table').find('.' + name_list + ' .fabrik_row');
+
 			while (i < (linhas.length)) {
 				linhas[i].children[index].setAttribute('data-content', this.outerText);
 				i++;
 			}
 		});
+	});
 })
 
 
