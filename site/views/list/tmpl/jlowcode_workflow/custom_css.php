@@ -57,8 +57,8 @@ h1,
     margin: 10px 0px !important;
 }
 
-a.btn.btn-default.delete {
-    background-color: #bd362f;
+i.icon-warning {
+    color: #bd362f;
 }
 
 .fabrikForm {
