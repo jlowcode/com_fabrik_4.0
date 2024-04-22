@@ -211,7 +211,7 @@ form .fabrikButtonsContainer .nav {
     border-bottom: 2px solid #eee;
 }
 
-.platform-content {
+main .platform-content {
     background-color: #fff;
     border-radius: 12px;
     padding: 50px !important;
