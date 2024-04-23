@@ -153,7 +153,7 @@ h1 {
 	border-bottom: 2px solid #eee !important;
 }
 
-.platform-content {
+main .platform-content {
     background-color: #fff;
     border-radius: 12px;
     padding: 50px !important;

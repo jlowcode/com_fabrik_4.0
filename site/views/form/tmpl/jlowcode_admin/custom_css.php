@@ -176,7 +176,7 @@ label {
 	font-weight: bold;
 }
 
-.platform-content {
+main .platform-content {
     background-color: #fff;
     border-radius: 12px;
     padding: 50px !important;
