@@ -39,6 +39,12 @@ $c = $_REQUEST['c'];
 echo <<<EOT
 /* BEGIN - Your CSS styling starts here */
 
+textarea, input, select {
+    background-color: #fff !important;
+	border-radius: 12px !important;
+    border: 2px solid #eee !important;
+}
+
 .modal-content {
     border-radius: 20px !important;
     box-shadow: 0px 6px 6px 0px #3c3939;
