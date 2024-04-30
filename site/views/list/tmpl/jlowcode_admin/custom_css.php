@@ -39,6 +39,12 @@ $c = $_REQUEST['c'];
 echo <<<EOT
 /* BEGIN - Your CSS styling starts here */
 
+.modal-content {
+    border-radius: 20px !important;
+    box-shadow: 0px 6px 6px 0px #3c3939;
+}
+
+
 .filterContent .span12 {
 	width: 91.48936170212765%;
 }

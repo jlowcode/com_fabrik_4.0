@@ -56,6 +56,11 @@ echo <<<EOT
 
 /* BEGIN - Your CSS styling starts here */
 
+.modal-content {
+    border-radius: 20px !important;
+    box-shadow: 0px 6px 6px 0px #3c3939;
+}
+
 .fabrikElement .button {
 	color: #333840 !important;
 }
