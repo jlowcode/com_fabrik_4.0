@@ -11,7 +11,6 @@
 
 // No direct access
 defined('_JEXEC') or die('Restricted access');
-
 use Joomla\CMS\Language\Text;
 
 $btnLayout  = $this->getModel()->getLayout('fabrik-button');
@@ -20,12 +19,10 @@ $layoutData = (object) array(
 	'name' => 'filter',
 	'label' => FabrikHelperHTML::image('filter.png') . "<span>" . Text::_('COM_FABRIK_GO') . "</span>"
 );
-
 // Workflow code
 $req_status = $_REQUEST['wfl_status'];
 // Workflow code end
 ?>
-
 	<tr class="fabrik___heading">
 		<?php foreach ($this->headings as $key => $heading) :
 		// Workflow code

@@ -12,8 +12,26 @@
 
 // No direct access
 defined('_JEXEC') or die('Restricted access');
-
 use Joomla\CMS\Language\Text;
+
+// Workflow code
+if (isset($_REQUEST['workflow'])) {
+	$this->showAddRequest = $_REQUEST['workflow']['showAddRequest'];
+	$this->addRequestLink = $_REQUEST['workflow']['addRequestLink'];
+	$this->requestLabel = $_REQUEST['workflow']['requestLabel'];
+} else {
+	$this->showAddRequest = null;
+	$this->addRequestLink = null;
+	$this->requestLabel = null;
+}
+// End workflow code
+// Action code 
+if (isset($_REQUEST['action']) && isset($_REQUEST['action']['showButton'])) {
+	$this->showActionButton = $_REQUEST['action']['showButton'];
+} else {
+	$this->showActionButton = null;
+}
+// End action code 
 
 ?>
 <div class="header">
@@ -41,8 +59,8 @@ use Joomla\CMS\Language\Text;
         // Workflow code
         if ($this->showAddRequest) :?>
             <li>
-                <a class="addbutton addRecord" href="<?php echo $this->addRequestLink;?>" style="margin-left: 20px">
-                <?php echo FabrikHelperHTML::icon('icon-plus', $this->requestLabel);?>
+                <a class="addbutton addRecord" href="<?php echo $this->addRequestLink;?>">
+                <?php echo FabrikHelperHTML::icon('icon-plus', $this->addLabel);?>
                 </a>
             </li>
         <?php

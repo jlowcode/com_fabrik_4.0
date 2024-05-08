@@ -39,6 +39,7 @@ $c = $_REQUEST['c'];
 echo <<<EOT
 /* BEGIN - Your CSS styling starts here */
 
+
 textarea, input, select {
     background-color: #fff !important;
 	border-radius: 12px !important;
@@ -49,7 +50,6 @@ textarea, input, select {
     border-radius: 20px !important;
     box-shadow: 0px 6px 6px 0px #3c3939;
 }
-
 
 .filterContent .span12 {
 	width: 91.48936170212765%;
@@ -268,13 +268,6 @@ form a, table a {
 }
 
 
-
-
-
-
-
-
-
 #listform_$c {
 	margin-top: 25px !important;
 }
@@ -286,6 +279,36 @@ form a, table a {
 h1, 
 .nav {
     margin: 10px 0px !important;
+}
+
+
+.fabrikForm {
+    font-size: 1rem;
+}
+
+.active>.page-link, .page-link.active{
+    z-index: 1 !important;
+    background-color: #eceff3;
+}
+
+.table-aditional.in {
+    display: inline-block;
+}
+
+#eventsContainer ul {
+    list-style: none;
+}
+
+li.page-item a {
+    padding: 0.1rem  0.6rem;
+}
+
+i.fas.fa-exclamation-triangle.fa-sm{
+    padding: 0rem 0.3rem;
+}
+
+#g-footer {
+    padding: 0px;
 }
 
 #conteudo{
@@ -342,28 +365,27 @@ h1,
 }
 
 .filterContentNotEmpty {
+    background-color: #FBFBFB;
 	padding: 10px;
 	color: #000;
     font-weight: 500;
     border-radius: 5px;
-    background-color: #FBFBFB;
 }
 
 .btn.fabrik_view{
     color: #054267;
 }
-
 .btn.fabrik_edit{
     color: #0E534A;
 }
-
 .btn.delete{
     color: #A41623;
 }
 
 .btn.btn-default.delete,
 .btn.fabrik_view,
-.btn.fabrik_edit{
+.btn.fabrik_edit
+.btn.fabrik_report{
     background: #e3ecf1 !important;
     padding: 0.2rem 0.4rem;
     border-radius: 5px !important;
@@ -490,10 +512,82 @@ h1,
         content: attr(data-content) !important;
     }
 
+    /*Joyce*/
+    .pagination ul {
+        display: flex !important;
+        flex-wrap: wrap !important;
+    }
+    
+    /*Joyce*/
+    .pagination-list li {
+        margin: 0px !important;
+    }
+   
+    /*Joyce*/
+    #searchall_34_com_fabrik_34.fabrik_filter.search-query.input-medium,
+    #searchall_93_com_fabrik_93.fabrik_filter.search-query.input-medium,
+    #searchall_27_com_fabrik_27.fabrik_filter.search-query.input-medium,
+    #searchall_91_com_fabrik_91.fabrik_filter.search-query.input-medium,
+    #searchall_95_com_fabrik_95.fabrik_filter.search-query.input-medium,
+    #searchall_97_com_fabrik_97.fabrik_filter.search-query.input-medium {
+        width:100%
+    }
+
+    /*Joyce*/
+    .filterContent.filterContentNotEmpty .fabrikFilterContainer .row-fluid .span4 {
+        width: 100% !important;
+    }
 }
 
 .dropdown-menu > li > a {
     white-space: normal !important;
+}
+
+.autocomplete-trigger {
+    border: 1px solid rgba(0, 0, 0, 0.1) !important; 
+    height: 28px;
+}
+
+.single_field {
+    border: 1px solid rgba(0, 0, 0, 0.1) !important; 
+    height: 28px;
+}
+
+.search-icon-button {
+    top: 5px !important;
+}
+
+
+
+/*Joyce*/
+.filterContent.filterContentNotEmpty .fabrikFilterContainer .row-fluid .span4 {
+    width: 31.5%;
+}
+
+/*Joyce*/
+.btn.php-1.listplugin.btn-default{
+    background: #e3ecf1 !important;
+    padding: 0.2rem 0.4rem;
+    border-radius: 5px !important;
+    margin-left: 5px !important;
+    border: 1px solid #BAD0DC;
+    color: #0E534A;
+}
+
+/*Joyce*/
+.btn.link-1.listplugin.btn-default{
+    background: #e3ecf1 !important;
+    padding: 0.2rem 0.4rem;
+    border-radius: 5px !important;
+    margin-left: 5px !important;
+    border: 1px solid #BAD0DC;
+    color: #07102a;
+}
+
+
+/*WORKFLOW*/
+.btn-outline-primary{
+    border: 1px solid #003EA1 !important;
 }
 
 /* END - Your CSS styling ends here */

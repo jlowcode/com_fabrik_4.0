@@ -21,12 +21,7 @@ requirejs(['fab/fabrik', 'fab/bootstrap_tree'], function (Fabrik, BootstrapTree)
 	});
 
 	Fabrik.addEvent('fabrik.list.loaded', function (list) {
-
-		
-
-
 		var dataRow = list.list.getElementsByClassName('fabrik_row');
-		
 
 		Array.from(dataRow).each(function (row) {
 			var btnAction = row.getElementsByClassName('fabrik_action');
@@ -36,7 +31,7 @@ requirejs(['fab/fabrik', 'fab/bootstrap_tree'], function (Fabrik, BootstrapTree)
 				});
 			}
 		})
-
+		
 	});
 });
 
@@ -102,6 +97,10 @@ window.addEvent('fabrik.loaded', function () {
 			}
 		});
 	});
+	
+	jQuery(".fabrikLightBoxImage").each(function(){
+		jQuery(this).nextUntil(".fabrikLightBoxImage").addBack().wrapAll('<a href="'+this.currentSrc+'" target="_blank"/>')
+	})
 })
 
 

@@ -9,13 +9,12 @@
  */
 // No direct access
 defined('_JEXEC') or die('Restricted access');
-
 use Joomla\CMS\Language\Text;
 
-$this->requestsTabs = $_REQUEST['workflow']['requests_tabs'];
-$this->headings = $_REQUEST['workflow']['requests_headings'];
-$this->colCount = $_REQUEST['workflow']['requests_colCount'];
-$this->rows = $_REQUEST['workflow']['requests_list'];
+$this->requestsTabsWorkflow = $_REQUEST['workflow']['requests_tabs'];
+$this->headingsWorkflow = $_REQUEST['workflow']['requests_headings'];
+$this->colCountWorkflow = $_REQUEST['workflow']['requests_colCount'];
+$this->rowsWorkflow = $_REQUEST['workflow']['requests_list'];
 //$this->isGrouped = $_REQUEST['workflow']['requests_isGrouped'];
 //$this->grouptemplates = $_REQUEST['workflow']['requests_grouptemplates'];
 ////$this->group_by_show_count = $_REQUEST['workflow']['requests_group_by_show_count'];
@@ -52,7 +51,7 @@ $showContainer = $_REQUEST['wfl_action'] == 'list_requests' ? 'in' : 'hide';
 
     <table  style="min-height: 400px;" id="tblEntAttributes" class="<?php $this->list->class; ?>">
         <thead>
-            <?php echo $this->loadTemplate('headings') ?>
+            <?php echo $this->loadTemplate('headings_workflow') ?>
         </thead>
         <tbody>
 

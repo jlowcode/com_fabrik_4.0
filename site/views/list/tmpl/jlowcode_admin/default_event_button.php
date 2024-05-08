@@ -19,7 +19,10 @@ if ($_REQUEST['workflow']['showEventsButton'] == true):
         <!--<a class="showRequests" href="javascript://" onclick="showRequests();">-->
         <a id="showRequests" class="showRequests" href="<?php echo $url ?>">
             <?php //echo $this->buttons->requests; ?>
-            <?php echo $_REQUEST['workflow']['eventsButton'] ?>(<?php echo $_REQUEST['workflow']['requests_count'] ?>)
+            <?php echo $_REQUEST['workflow']['eventsButton'] ?>
+            <span class="badge bg-primary rounded-pill">
+                <?php echo $_REQUEST['workflow']['requests_count'] ?>
+            </span>
         </a>
     </li>
 <?php endif; ?>

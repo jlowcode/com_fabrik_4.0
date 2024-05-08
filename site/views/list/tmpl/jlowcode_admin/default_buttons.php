@@ -12,7 +12,6 @@
 
 // No direct access
 defined('_JEXEC') or die('Restricted access');
-
 use Joomla\CMS\Language\Text;
 
 // Workflow code
@@ -39,7 +38,6 @@ if(isset($_REQUEST['action']) && isset($_REQUEST['action']['showButton'])) {
 ?>
 <div class="fabrikButtonsContainer row-fluid">
 	<ul class="nav nav-pills pull-right">
-
 		<?php 
 		if ($this->showToggleCols) :
 			echo $this->loadTemplate('togglecols');

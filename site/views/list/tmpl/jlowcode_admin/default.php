@@ -12,7 +12,6 @@
 
 // No direct access
 defined('_JEXEC') or die('Restricted access');
-
 use Joomla\CMS\Language\Text;
 
 $pageClass = '';
@@ -26,7 +25,6 @@ if ($this->tablePicker != '') : ?>
     <div style="text-align:right"><?php echo Text::_('COM_FABRIK_LIST') ?>: <?php echo $this->tablePicker; ?></div>
 <?php
 endif;
-
 echo $this->loadTemplate('header');
 
 // Intro outside of form to allow for other lists/forms to be injected.
@@ -44,7 +42,22 @@ echo $this->loadTemplate('modal');
         if ($this->hasButtons) :
             echo $this->loadTemplate('buttons');
         endif; ?>
-
+        
+          <?php
+        // Workflow code
+        if ($_REQUEST['workflow']['showEventsButton'] == true) :
+        ?>
+            <script type="text/javascript">
+                function showRequests() {
+                    document.getElementById('eventsContainer').toggle();
+                    //document.getElementById('list_<?php echo $this->table->renderid; ?>').toggle();
+                };
+            </script>
+        <?php
+            echo $this->loadTemplate('table_aditional_ajax');
+        endif;
+        // End workflow code
+        ?>
         <div class="filterContent fabrikFilterContainer <?php echo in_array($this->params['show-table-filters'], [6, 7]) ? ' col-md-12 col-lg-3 ' : ''; echo $this->showFilters === true ? 'filterContentNotEmpty' :''?>">
             <?php
             if ($this->showFilters && $this->bootShowFilters) :
@@ -54,7 +67,7 @@ echo $this->loadTemplate('modal');
             //template causes an error as $this->_path['template'] doesn't contain the correct
             // path to this template - go figure!
             $headingsHtml = $this->loadTemplate('headings');
-            echo $this->loadTemplate('tabs'); ?>
+            echo $this->loadTemplate('tabs');?>
         </div>
         <div class="listContent fabrikDataContainer<?php echo in_array($this->params['show-table-filters'], [6]) ? ' col-md-12 col-lg-9' : ''; ?>">
 
@@ -141,21 +154,7 @@ echo $this->loadTemplate('modal');
                 endforeach ?>
             </table>
             <?php print_r($this->hiddenFields); ?>
-            <?php
-            // Workflow code
-                if ($_REQUEST['workflow']['showEventsButton'] == true):
-                    ?>
-                    <script type="text/javascript">
-                        function showRequests() {
-                            document.getElementById('eventsContainer').toggle();
-                            //document.getElementById('list_<?php echo $this->table->renderid;?>').toggle();
-                        };
-                    </script>
-                    <?php
-                    echo $this->loadTemplate('table_aditional_ajax');
-                endif;
-            // End workflow code
-            ?>
+            
         </div>
     </div>
 </form>
