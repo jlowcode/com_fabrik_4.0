@@ -445,7 +445,38 @@ i.fas.fa-exclamation-triangle.fa-sm{
     margin: 0px 10px;
 }
 
-@media (max-width: 600px){
+@media (max-width: 800px){
+    .platform-content {
+        padding: 10px !important;
+    }
+
+    .g-content {
+        padding: 10px 15px !important;
+    }
+
+    .input-append input {
+        width: 200px !important;
+    }
+
+    .fabrikButtonsContainer {
+        padding: 0px !important;
+    }
+
+    .filterContent {
+        padding-left: 0px !important;
+        padding-right: 0px !important;
+    }
+
+    .fabrikButtonsContainer ul li {
+        margin-bottom: 10px;
+        padding: 0px 5px;
+    }
+
+    .header {
+        flex-direction: column;
+        padding-bottom: 20px;
+    }
+
     .fabrikDateListFilterRange,
     .fabrikDateListFilterRange .input-append {
         width: 100%;
