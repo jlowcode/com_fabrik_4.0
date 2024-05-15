@@ -9,10 +9,10 @@ requirejs(['fab/fabrik', 'fab/bootstrap_tree'], function (Fabrik, BootstrapTree)
 
 	jQuery(document).ready(function () {
 		// console.log('debug: bootstrap tree init called');
-		BootstrapTree.init(Fabrik.liveSite);
+		//BootstrapTree.init(Fabrik.liveSite);
 		Fabrik.addEvent('fabrik.list.update', function (list) {
 			// console.log('debug: event triggered update tree');
-			BootstrapTree.init(Fabrik.liveSite);
+			//BootstrapTree.init(Fabrik.liveSite);
 			// console.log(list);
 			let lists = document.querySelectorAll('.fabrik___rowlink')
 

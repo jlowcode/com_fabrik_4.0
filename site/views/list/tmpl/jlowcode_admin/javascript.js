@@ -9,11 +9,11 @@ requirejs(['fab/fabrik', 'fab/bootstrap_tree'], function (Fabrik, BootstrapTree)
 
 	jQuery(document).ready(function () {
 		// console.log('debug: bootstrap tree init called');
-		BootstrapTree.init(Fabrik.liveSite);
+		//BootstrapTree.init(Fabrik.liveSite);
 
 		Fabrik.addEvent('fabrik.list.update', function (list) {
 			// console.log('debug: event triggered update tree');
-			BootstrapTree.init(Fabrik.liveSite);
+			//BootstrapTree.init(Fabrik.liveSite);
 			// console.log(list);
 			return list;
 		});
@@ -21,7 +21,12 @@ requirejs(['fab/fabrik', 'fab/bootstrap_tree'], function (Fabrik, BootstrapTree)
 	});
 
 	Fabrik.addEvent('fabrik.list.loaded', function (list) {
+
+		
+
+
 		var dataRow = list.list.getElementsByClassName('fabrik_row');
+		
 
 		Array.from(dataRow).each(function (row) {
 			var btnAction = row.getElementsByClassName('fabrik_action');
@@ -31,7 +36,7 @@ requirejs(['fab/fabrik', 'fab/bootstrap_tree'], function (Fabrik, BootstrapTree)
 				});
 			}
 		})
-		
+
 	});
 });
 
@@ -85,22 +90,18 @@ window.addEvent('fabrik.loaded', function () {
 	})
 	
 
-	jQuery('tbody.fabrik_groupdata').each(function() {
-		var name_list = this.classList[1];
-		jQuery(this.parentNode).find(".fabrik_ordercell").each(function(index) {
+		var name_list = jQuery('tbody.fabrik_groupdata')[0].classList[1]
+		jQuery(".fabrik___heading .fabrik_ordercell").each(function(index) {
 			var i = 0;
-			var linhas = jQuery(this).closest('table').find('.' + name_list + ' .fabrik_row');
-
+			var linhas = jQuery('.'+name_list+' .fabrik_row');
+	
 			while (i < (linhas.length)) {
-				linhas[i].children[index].setAttribute('data-content', this.outerText);
+				linhas[i].children[index].setAttribute('data-content', this.outerText)
 				i++;
 			}
 		});
-	});
+
 	
-	jQuery(".fabrikLightBoxImage").each(function(){
-		jQuery(this).nextUntil(".fabrikLightBoxImage").addBack().wrapAll('<a href="'+this.currentSrc+'" target="_blank"/>')
-	})
 })
 
 
