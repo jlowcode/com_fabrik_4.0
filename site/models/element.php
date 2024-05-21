@@ -8762,7 +8762,7 @@ class PlgFabrik_Element extends FabrikPlugin
 			} else {
 				$opts['count'] = json_encode($rows);
 			}
-			
+
 			$opts['count'] = json_encode($rows);
 			$opts['sortedBy'] = $this->getParams()->get('filter_sortedby');
 			$opts['default'] = $default;
@@ -9465,7 +9465,7 @@ class PlgFabrik_Element extends FabrikPlugin
 		if ($this->config->get('dbtype') === 'pdomysql') {
 			echo $this->$fun($this, $search, $opts);
 		} else {
-			echo $cache->call(array(get_class($this), $fun), $this, $search, $opts);
+			echo $cache->get(array(get_class($this), $fun), [$this, $search, $opts]);
 		}
 	}
 
@@ -9789,7 +9789,7 @@ class PlgFabrik_Element extends FabrikPlugin
 		if ($this->config->get('dbtype') === 'pdomysql') {
 			echo $this->cacheFileUploadElements($this, $search);
 		} else {
-			echo $cache->call(array(get_class($this), 'cacheFileUploadElements'), $this, $search);
+			echo $cache->get(array(get_class($this), 'cacheFileUploadElements'), [$this, $search]);
 		}
 	}
 
@@ -9857,7 +9857,7 @@ class PlgFabrik_Element extends FabrikPlugin
 		if ($this->config->get('dbtype') === 'pdomysql') {
 			echo $this->cacheRowForm($this, $search);
 		} else {
-			echo $cache->call(array(get_class($this), 'cacheRowForm'), $this, $search);
+			echo $cache->get(array(get_class($this), 'cacheRowForm'), [$this, $search]);
 		}
 	}
 
