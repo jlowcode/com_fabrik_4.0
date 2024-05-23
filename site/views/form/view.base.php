@@ -710,6 +710,18 @@ class FabrikViewFormBase extends FabrikView
 					{
 						$ref = $elementModel->elementJavascript($c);
 
+						/**
+						 * Begin - Toogle Submit in solicitações
+						 * Adding auto-complete element in formElements at JS
+						 * 
+						 * Id Task: 116
+						 */
+						if(is_array($ref) && count($ref) == 2) {
+							$elementJs[] = $ref[1];
+							$ref = $ref[0];
+						}
+						// END - Toogle Submit in solicitações
+
 						if (!empty($ref))
 						{
 							$elementJs[] = $ref;
