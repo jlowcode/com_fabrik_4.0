@@ -64,7 +64,7 @@ window.addEvent('fabrik.loaded', function () {
 	searchButton.css({
 		'position': 'absolute',
 		'top': '15px',
-		'left': '15px',
+		'left': '30px',
 		'cursor': 'pointer',
 		'font-size': '18px',
 		'z-index': '10',
