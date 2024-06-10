@@ -16,7 +16,7 @@ use Joomla\CMS\Language\Text;
 
 ?>
 <li class="dropdown togglecols">
-	<a href="#" class="dropdown-toggle" data-toggle="dropdown">
+	<a href="#" class="dropdown-toggle" data-bs-toggle="dropdown">
 		<?php echo FabrikHelperHTML::image("view.png", 'list'); ?>
 		<span><?php echo Text::_('COM_FABRIK_TOGGLE')?></span>
 		<b class="caret"></b>

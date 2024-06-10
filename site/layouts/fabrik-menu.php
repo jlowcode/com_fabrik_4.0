@@ -28,7 +28,7 @@ $i = 0;
 	?>
 
 				<a 	role="tab" 
-					data-toggle="pill"
+					data-bs-toggle="pill"
 					<?php echo implode(' ', $style); ?>
 					href="<?php echo $href; ?>"
 					id="<?php echo $tab->id; ?>">
@@ -40,7 +40,7 @@ $i = 0;
 	?>
 
 				<a 	role="tab" 
-					data-toggle="pill" 
+					data-bs-toggle="pill" 
 					class="nav-link"
 					href="#<?php echo $href; ?>"
 					id="<?php echo $tab->id; ?>"

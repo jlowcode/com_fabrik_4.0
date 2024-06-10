@@ -116,7 +116,7 @@ if(isset($_REQUEST['action'])) {
 			<li>
 				<?php if ($this->filterMode === 5) :
 				?>
-					<a href="#filter_modal" data-toggle="modal">
+					<a href="#filter_modal" data-bs-toggle="modal">
 						<?php echo $this->buttons->filter; ?>
 						<span><?php echo Text::_('COM_FABRIK_FILTER'); ?></span>
 					</a>

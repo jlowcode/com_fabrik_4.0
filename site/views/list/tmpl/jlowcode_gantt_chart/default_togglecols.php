@@ -15,7 +15,7 @@ use Joomla\CMS\Language\Text;
 defined('_JEXEC') or die('Restricted access');
 ?>
 <li class="dropdown togglecols">
-	<a href="#" class="dropdown-toggle" data-toggle="dropdown">
+	<a href="#" class="dropdown-toggle" data-bs-toggle="dropdown">
 		<?php echo FabrikHelperHTML::icon('icon-eye-open', Text::_('COM_FABRIK_TOGGLE')); ?>
 		<b class="caret"></b>
 	</a>

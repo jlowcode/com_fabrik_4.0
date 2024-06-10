@@ -24,7 +24,7 @@ $showContainer = $_REQUEST['wfl_action'] == 'list_requests' ? 'in' : 'hide';
     <ul style="display: flex;">
 <!--        <li class="span2">-->
 <!--            <div class="dropdown" id="orderBy">-->
-<!--                <a href="#" class="dropdown-toggle orderBy" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">-->
+<!--                <a href="#" class="dropdown-toggle orderBy" data-bs-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">-->
 <!--                    <i data-isicon="true" class="icon-upload"></i>		Order By		<b class="caret"></b>-->
 <!--                </a>-->
 <!--                <ul class="dropdown-menu" id="orderByUl">-->
