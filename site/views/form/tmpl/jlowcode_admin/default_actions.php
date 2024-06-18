@@ -86,7 +86,7 @@ $multiButtonsOthers = (bool) $params->reset_button || (bool) $params->delete_but
 				<ul class="ul-btn-actions" style="width: 170px;">
 					<?php if ((bool) $params->goback_button) : ?>
 						<li>
-							<button type="button" class="btn button btn-cancel-back btn-group-actions" onclick="javascript:window.location.href='/index.php?option=com_fabrik&view=list&listid=<?php echo $form->id; ?>'" name="Goback">
+							<button type="button" class="btn button btn-cancel-back btn-group-actions" <?php echo $this->getModel()->isAjax() ? '' : FabrikWorker::goBackAction(); ?> name="Goback">
 								<?php echo $params->goback_button_label ?>
 								<?php if ($multiButtonsOthers) : ?>	
 									<i class="fa-icon-down fa fa-angle-down fa-lg" aria-hidden="true"></i>
