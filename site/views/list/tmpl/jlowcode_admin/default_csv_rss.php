@@ -18,7 +18,7 @@ use Joomla\CMS\Language\Text;
 if ($this->showCSV) :
 	if ($this->showCSVImport) :?>
 		<li>
-			<a href="' <?php $this->csvImportLink ?> '" class="csvImportButton"> 
+			<a href="<?php echo $this->csvImportLink ?>" class="csvImportButton"> 
 				<?php echo $this->buttons->csvimport ?>
 				<span><?php echo Text::_('COM_FABRIK_IMPORT_FROM_CSV') ?></span>
 			</a>
