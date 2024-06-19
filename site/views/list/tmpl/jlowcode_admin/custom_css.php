@@ -582,10 +582,6 @@ i.fas.fa-exclamation-triangle.fa-sm{
         max-width: 100%;
         border-collapse: collapse;
     }
-
-    .fabrik_groupdata td:before {
-        width: 30%;
-    }
 }
 
 .dropdown-menu > li > a {
