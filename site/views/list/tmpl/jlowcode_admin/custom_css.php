@@ -446,8 +446,8 @@ i.fas.fa-exclamation-triangle.fa-sm{
 }
 
 @media (max-width: 800px){
-    .platform-content {
-        padding: 10px !important;
+    main .platform-content {
+        padding: 5px !important;
     }
 
     .g-content {
@@ -567,6 +567,24 @@ i.fas.fa-exclamation-triangle.fa-sm{
     /*Joyce*/
     .filterContent.filterContentNotEmpty .fabrikFilterContainer .row-fluid .span4 {
         width: 100% !important;
+    }
+}
+
+@media (max-width: 500px) {
+    .listContent.fabrikDataContainer {
+        width: 100%;
+        max-width: 100%;
+        overflow-x: auto;
+    }
+    
+    table {
+        width: 100%;
+        max-width: 100%;
+        border-collapse: collapse;
+    }
+
+    .fabrik_groupdata td:before {
+        width: 30%;
     }
 }
 

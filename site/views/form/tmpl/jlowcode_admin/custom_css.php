@@ -306,13 +306,30 @@ main .platform-content {
 	display:none !important;
 }
 
-@media (max-width: 600px){
+@media (max-width: 700px){
     .row-fluid.footer-btn {
         display: inline-flex;
     }
 	.row-fluid.footer-btn > .span6 {
 		max-width: 50%;
 
+	}
+
+	main .platform-content {
+    	padding: 5px !important;
+	}
+
+	.footer-btn {
+		flex-direction: column
+	}
+
+	.footer-btn > div {
+	    justify-content: center;
+	    display: flex;
+	}
+	
+	.g-content {
+		padding: 1rem !important;
 	}
 }
 
