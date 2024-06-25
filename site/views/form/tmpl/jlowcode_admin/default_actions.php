@@ -25,39 +25,26 @@ $multiButtonsOthers = (bool) $params->reset_button || (bool) $params->delete_but
 			<div class="btn-group btn-group-save">
 				<ul class="ul-btn-actions" style="width: 170px;">
 					<li>
+
 						<button type="submit" class="btn-save-back button btn-group-actions btn salvar" name="Submit" id="fabrikSubmit_<?php echo $form->id; ?>_A">
-							Salvar e Voltar
-							<?php if ($multiButtonsSave) : ?>	
+							<?php echo $params->submit_button_label ?>
+							<?php if ($multiButtonsSave) : ?>
 								<i class="fa-icon-down fa fa-angle-down fa-lg" aria-hidden="true"></i>
 							<?php endif; ?>
 						</button>
 
-						<ul>
-							<?php if (explode('_', $form->formid)[2]) : ?>
-								<button type="submit" class="btn-save-copy button btn-group-actions btn" name="Copy">
-									Salvar e copiar
-								</button>
-							<?php endif; ?>
-							
+						<ul>							
 							<?php if ((bool) $params->apply_button) : ?>
 								<li>
-									<button type="submit" class="btn-save-new button btn-group-actions btn salvar " <?php echo $prams->apply_button_class ?> name="SubmitAndNew" id="fabrikSubmit_<?php echo $form->id; ?>_B">
+									<button type="submit" class="btn-save-only button btn-group-actions btn salvar " <?php echo $params->apply_button_class ?> name="apply" id="fabrikSubmit_<?php echo $form->id; ?>_B">
 										<?php echo $params->apply_button_label ?>
 									</button>
 								</li>
 							<?php endif; ?>
-							
-							<?php if ((bool) $params->submit_button) : ?>
-								<li>
-									<button type="submit" class="btn-save-details button btn-group-actions btn salvar " <?php echo $prams->submit_button_class ?> name="SubmitAndDetails" id="fabrikSubmit_<?php echo $form->id; ?>_C">
-										<?php echo $params->submit_button_label ?>
-									</button>
-								</li>
-							<?php endif; ?>
 
-							<?php if ((bool) $params->copy_button) : ?>
+							<?php if ((bool) $params->copy_button && explode('_', $form->formid)[2]) : ?>
 								<li>
-									<button type="submit" class="btn-save-only button btn-group-actions btn salvar " <?php echo $prams->copy_button_class ?> name="apply">
+									<button type="submit" class="btn-save-copy button btn-group-actions btn " <?php echo $params->copy_button_class ?> name="Copy">
 										<?php echo $params->copy_button_label ?>
 									</button>
 								</li>
