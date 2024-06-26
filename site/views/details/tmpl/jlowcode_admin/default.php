@@ -30,7 +30,7 @@ if ($this->params->get('show-title', 1)) : ?>
 		</div>
 		<div class="breadcum">
 			<span class="h6">
-				<a href="index.php?option=com_fabrik&view=list&listid=<?php echo $form->id; ?>"><i class="fa fa-angle-left" aria-hidden="true"></i> VOLTAR</a>
+				<a <?php echo FabrikWorker::goBackAction();?>><i class="fa fa-angle-left" aria-hidden="true"></i> VOLTAR</a>
 			</span>
 		</div>
 	</div>
