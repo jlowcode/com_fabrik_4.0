@@ -106,7 +106,7 @@ if ($this->access == 2) : ?>
 								
 		<div>
 			<div class="btn-group">
-			<a href="index.php?option=com_fabrik&view=list&listid=<?php echo $form->id; ?>" title="Voltar"><button class="btn btn_jlowcode_admin btn_jlowcode_admin_back">Voltar</button></a>
+			<a <?php echo FabrikWorker::goBackAction();?> title="Voltar"><button class="btn btn_jlowcode_admin btn_jlowcode_admin_back">Voltar</button></a>
 			</div>
 		</div>
 	</div>
