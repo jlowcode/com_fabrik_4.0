@@ -28,6 +28,7 @@ use Joomla\Registry\Registry;
 use Joomla\Utilities\ArrayHelper;
 use Joomla\String\StringHelper;
 use Joomla\CMS\Factory;
+use Joomla\CMS\Uri\Uri;
 
 jimport('joomla.application.component.model');
 require_once 'fabrikmodelform.php';
@@ -5208,9 +5209,10 @@ class FabrikFEModelForm extends FabModelForm
 			} 
 			else if (array_key_exists('Submit',  $this->formData)) 
 			{
-				$url = 'index.php?option=com_fabrik&view=list&listid=' . $input->getInt('listid');
-				if ($itemId !== 0)
-					$url = $url . '&Itemid=' . $itemId;
+				//$url = 'index.php?option=com_fabrik&view=list&listid=' . $input->getInt('listid');
+				if ($itemId !== 0) $url = $url . '&Itemid=' . $itemId;
+
+				$url = filter_var(ArrayHelper::getValue($_POST, 'fabrik_referrer'), FILTER_SANITIZE_URL);
 			}
 			else
 			{
