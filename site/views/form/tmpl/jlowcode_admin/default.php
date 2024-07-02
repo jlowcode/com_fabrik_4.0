@@ -12,6 +12,8 @@
 // No direct access
 defined('_JEXEC') or die('Restricted access');
 
+use Joomla\Utilities\ArrayHelper;
+
 $form = $this->form;
 $model = $this->getModel();
 $groupTmpl = $model->editable ? 'group' : 'group_details';
@@ -31,7 +33,7 @@ if ($this->params->get('show-title', 1)) :?>
 	</div>
 	<div class="breadcum">
 		<span class="h6">
-			<a <?php echo FabrikWorker::goBackAction();?>>
+			<a onclick="parent.location='/<?php echo explode('/', filter_var(ArrayHelper::getValue($_SERVER, 'REDIRECT_URL'), FILTER_SANITIZE_URL))[1]; ?>'">
 			<i class="fa fa-angle-left" aria-hidden="true"></i>VOLTAR</a>
 		</span>
 	</div>
