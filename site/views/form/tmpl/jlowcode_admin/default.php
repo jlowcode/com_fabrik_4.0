@@ -33,7 +33,7 @@ if ($this->params->get('show-title', 1)) :?>
 	</div>
 	<div class="breadcum">
 		<span class="h6">
-			<a onclick="parent.location='/<?php echo explode('/', filter_var(ArrayHelper::getValue($_SERVER, 'REDIRECT_URL'), FILTER_SANITIZE_URL))[1]; ?>'">
+			<a onclick="parent.location='/<?php echo explode('/', filter_var(ArrayHelper::getValue($_SERVER, 'REQUEST_URI'), FILTER_SANITIZE_URL))[1]; ?>'">
 			<i class="fa fa-angle-left" aria-hidden="true"></i>VOLTAR</a>
 		</span>
 	</div>

@@ -32,7 +32,7 @@ if ($this->params->get('show-title', 1)) : ?>
 		</div>
 		<div class="breadcum">
 			<span class="h6">
-				<a onclick="parent.location='/<?php echo explode('/', filter_var(ArrayHelper::getValue($_SERVER, 'REDIRECT_URL'), FILTER_SANITIZE_URL))[1]; ?>'"><i class="fa fa-angle-left" aria-hidden="true"></i> VOLTAR</a>
+				<a onclick="parent.location='/<?php echo explode('/', filter_var(ArrayHelper::getValue($_SERVER, 'REQUEST_URI'), FILTER_SANITIZE_URL))[1]; ?>'"><i class="fa fa-angle-left" aria-hidden="true"></i> VOLTAR</a>
 			</span>
 		</div>
 	</div>
@@ -101,14 +101,14 @@ if ($this->access == 2) : ?>
 	<div class="footer-btn">
 		<div>
 			<div class="btn-group ">
-			<a onclick="parent.location='/<?php echo explode('/', filter_var(ArrayHelper::getValue($_SERVER, 'REDIRECT_URL'), FILTER_SANITIZE_URL))[1]; ?>/form/<?php echo $form->id; ?>/<?php echo $this->rowid; ?>'" title="Editar"><button  class="btn btn_jlowcode_admin btn_jlowcode_admin_edit" name="edit" id="fabrikSubmit_19">Editar</button></a>
+			<a onclick="parent.location='/<?php echo explode('/', filter_var(ArrayHelper::getValue($_SERVER, 'REQUEST_URI'), FILTER_SANITIZE_URL))[1]; ?>/form/<?php echo $form->id; ?>/<?php echo $this->rowid; ?>'" title="Editar"><button  class="btn btn_jlowcode_admin btn_jlowcode_admin_edit" name="edit" id="fabrikSubmit_19">Editar</button></a>
 			</div>
 		</div>
 	
 								
 		<div>
 			<div class="btn-group">
-			<a onclick="parent.location='/<?php echo explode('/', filter_var(ArrayHelper::getValue($_SERVER, 'REDIRECT_URL'), FILTER_SANITIZE_URL))[1]; ?>'" title="Voltar"><button class="btn btn_jlowcode_admin btn_jlowcode_admin_back">Voltar</button></a>
+			<a onclick="parent.location='/<?php echo explode('/', filter_var(ArrayHelper::getValue($_SERVER, 'REQUEST_URI'), FILTER_SANITIZE_URL))[1]; ?>'" title="Voltar"><button class="btn btn_jlowcode_admin btn_jlowcode_admin_back">Voltar</button></a>
 			</div>
 		</div>
 	</div>

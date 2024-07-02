@@ -75,7 +75,7 @@ $multiButtonsOthers = (bool) $params->reset_button || (bool) $params->delete_but
 				<ul class="ul-btn-actions" style="width: 170px;">
 					<?php if ((bool) $params->goback_button) : ?>
 						<li>
-							<button type="button" class="btn button btn-cancel-back btn-group-actions" <?php echo $this->getModel()->isAjax() ? '' : 'onclick="parent.location=\'/' . explode('/', filter_var(ArrayHelper::getValue($_SERVER, 'REDIRECT_URL'), FILTER_SANITIZE_URL))[1] . '\'"' ?> name="Goback">
+							<button type="button" class="btn button btn-cancel-back btn-group-actions" <?php echo $this->getModel()->isAjax() ? '' : 'onclick="parent.location=\'/' . explode('/', filter_var(ArrayHelper::getValue($_SERVER, 'REQUEST_URI'), FILTER_SANITIZE_URL))[1] . '\'"' ?> name="Goback">
 								<?php echo $params->goback_button_label ?>
 								<?php if ($multiButtonsOthers) : ?>	
 									<i class="fa-icon-down fa fa-angle-down fa-lg" aria-hidden="true"></i>
