@@ -68,12 +68,10 @@ define(['jquery', 'fab/encoder', 'fab/fabrik', 'lib/debounce/jquery.ba-throttle-
                 var self = this;
                 jQuery(this.getInputElement()).bind('keyup', debounce(this.options.debounceDelay, function (e) {
                     self.search(e);
-                    //console.log('heyup');
                 }));
 
                 jQuery(this.getInputElement()).bind('input', debounce(this.options.debounceDelay, function (e) {
                     self.search(e);
-                    //console.log('input');
                 }));
 
                 this.getInputElement().addEvent('blur', function (e) {
@@ -103,7 +101,7 @@ define(['jquery', 'fab/encoder', 'fab/fabrik', 'lib/debounce/jquery.ba-throttle-
              * NOTE that because we use a jQuery event to trigger this, e is a jQuery event, so keyCode
              * instead of code, and e.preventDefault() instead of e.stop()
              */
-            if (!this.isMinTriggerlength()) {
+            if (!this.isMinTriggerlength() && !e.target.hasAttribute('suggest')) {
                 return;
             }
 
@@ -122,7 +120,7 @@ define(['jquery', 'fab/encoder', 'fab/fabrik', 'lib/debounce/jquery.ba-throttle-
             if (v === '') {
                 this.element.value = '';
             }
-            if (v !== this.searchText && v !== '') {
+            if ((v !== this.searchText && v !== '') || (e.target.hasAttribute('suggest') && v === '')) {
                 if (this.options.storeMatchedResultsOnly === false) {
                     this.element.value = v;
                 }
@@ -294,7 +292,7 @@ define(['jquery', 'fab/encoder', 'fab/fabrik', 'lib/debounce/jquery.ba-throttle-
 
         openMenu: function () {
             if (!this.shown) {
-                if (this.isMinTriggerlength()) {
+                if (this.isMinTriggerlength() || this.options.labelelement.hasAttribute('suggest')) {
                     this.menu.show();
                     this.shown = true;
                     this.doCloseEvent = this.doTestMenuClose.bind(this);
