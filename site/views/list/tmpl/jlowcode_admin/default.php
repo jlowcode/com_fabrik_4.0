@@ -14,6 +14,12 @@
 defined('_JEXEC') or die('Restricted access');
 use Joomla\CMS\Language\Text;
 
+$width_list = (int) $this->params->get('width_list');
+if($width_list) {
+    if($width_list > 100) $cssOverflow = 'overflow-x: scroll;';
+    $cssWidth = "width: $width_list%;";
+}
+
 $pageClass = '';
 //$this->params->get('pageclass_sfx', '');
 
@@ -69,13 +75,13 @@ echo $this->loadTemplate('modal');
             $headingsHtml = $this->loadTemplate('headings');
             echo $this->loadTemplate('tabs');?>
         </div>
-        <div class="listContent fabrikDataContainer<?php echo in_array($this->params['show-table-filters'], [6]) ? ' col-md-12 col-lg-9' : ''; ?>">
+        <div style="<?php echo $cssOverflow; ?>" class="listContent fabrikDataContainer<?php echo in_array($this->params['show-table-filters'], [6]) ? ' col-md-12 col-lg-9' : ''; ?>">
 
             <?php foreach ($this->pluginBeforeList as $c) :
                 echo $c;
             endforeach;
             ?>
-            <table class="<?php echo $this->list->class; ?>" id="list_<?php echo $this->table->renderid; ?>">
+            <table style="<?php echo $cssWidth; ?>" class="<?php echo $this->list->class; ?>" id="list_<?php echo $this->table->renderid; ?>">
                 <colgroup>
                     <?php foreach ($this->headings as $key => $heading) : ?>
                         <col class="col-<?php echo $key; ?>">
