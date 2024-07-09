@@ -39,6 +39,12 @@ $c = $_REQUEST['c'];
 echo <<<EOT
 /* BEGIN - Your CSS styling starts here */
 
+.fabrik___heading .fabrik_ordercell a, .fabrik___heading .fabrik_ordercell span {
+    max-width: 90%; 
+    overflow: hidden; 
+    text-overflow: ellipsis; 
+    white-space: nowrap;
+}
 
 textarea, input, select {
     background-color: #fff !important;
