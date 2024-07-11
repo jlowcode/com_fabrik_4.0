@@ -14,11 +14,17 @@
 defined('_JEXEC') or die('Restricted access');
 
 use Joomla\Utilities\ArrayHelper;
+use Joomla\CMS\Factory;
 
 $form = $this->form;
 $params = json_decode($form->params);
 $multiButtonsSave = (bool) $params->copy_button || (bool) $params->apply_button || (bool) $params->submit_button || explode('_', $form->formid)[2] ? true : false;
 $multiButtonsOthers = (bool) $params->reset_button || (bool) $params->delete_button ? true : false;
+
+$app = Factory::getApplication();
+$menu = $app->getMenu();
+$menuItem = $menu->getActive();
+$alias = $menuItem->alias;
 ?>
 
 <div class="fabrikActions form-actions">
@@ -75,7 +81,7 @@ $multiButtonsOthers = (bool) $params->reset_button || (bool) $params->delete_but
 				<ul class="ul-btn-actions" style="width: 170px;">
 					<?php if ((bool) $params->goback_button) : ?>
 						<li>
-							<button type="button" class="btn button btn-cancel-back btn-group-actions" <?php echo $this->getModel()->isAjax() ? '' : 'onclick="parent.location=\'/' . explode('/', filter_var(ArrayHelper::getValue($_SERVER, 'REQUEST_URI'), FILTER_SANITIZE_URL))[1] . '\'"' ?> name="Goback">
+							<button type="button" class="btn button btn-cancel-back btn-group-actions" <?php echo $this->getModel()->isAjax() ? '' : 'onclick="parent.location=\'/' . $alias . '\'"' ?> name="Goback">
 								<?php echo $params->goback_button_label ?>
 								<?php if ($multiButtonsOthers) : ?>	
 									<i class="fa-icon-down fa fa-angle-down fa-lg" aria-hidden="true"></i>

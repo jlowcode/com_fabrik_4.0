@@ -13,11 +13,17 @@
 defined('_JEXEC') or die('Restricted access');
 
 use Joomla\Utilities\ArrayHelper;
+use Joomla\CMS\Factory;
 
 $form = $this->form;
 $model = $this->getModel();
 $groupTmpl = $model->editable ? 'group' : 'group_details';
 $active = ($form->error != '') ? '' : ' fabrikHide';
+
+$app = Factory::getApplication();
+$menu = $app->getMenu();
+$menuItem = $menu->getActive();
+$alias = $menuItem->alias;
 
 if ($this->params->get('show_page_heading', 1)) : ?>
 	<div class="componentheading<?php echo $this->params->get('pageclass_sfx')?>">
@@ -33,7 +39,7 @@ if ($this->params->get('show-title', 1)) :?>
 	</div>
 	<div class="breadcum">
 		<span class="h6">
-			<a onclick="parent.location='/<?php echo explode('/', filter_var(ArrayHelper::getValue($_SERVER, 'REQUEST_URI'), FILTER_SANITIZE_URL))[1]; ?>'">
+			<a onclick="parent.location='/<?php echo $alias ?>'">
 			<i class="fa fa-angle-left" aria-hidden="true"></i>VOLTAR</a>
 		</span>
 	</div>

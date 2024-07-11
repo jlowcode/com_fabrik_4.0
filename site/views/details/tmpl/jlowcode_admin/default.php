@@ -14,9 +14,15 @@
 defined('_JEXEC') or die('Restricted access');
 
 use Joomla\Utilities\ArrayHelper;
+use Joomla\CMS\Factory;
 
 $form = $this->form;
 $model = $this->getModel();
+
+$app = Factory::getApplication();
+$menu = $app->getMenu();
+$menuItem = $menu->getActive();
+$alias = $menuItem->alias;
 
 if ($this->params->get('show_page_heading', 1)) : ?>
 	<div class="componentheading<?php echo $this->params->get('pageclass_sfx') ?>">
@@ -32,7 +38,7 @@ if ($this->params->get('show-title', 1)) : ?>
 		</div>
 		<div class="breadcum">
 			<span class="h6">
-				<a onclick="parent.location='/<?php echo explode('/', filter_var(ArrayHelper::getValue($_SERVER, 'REQUEST_URI'), FILTER_SANITIZE_URL))[1]; ?>'"><i class="fa fa-angle-left" aria-hidden="true"></i> VOLTAR</a>
+				<a onclick="parent.location='/<?php echo $alias ?>'"><i class="fa fa-angle-left" aria-hidden="true"></i> VOLTAR</a>
 			</span>
 		</div>
 	</div>
@@ -101,20 +107,21 @@ if ($this->access == 2) : ?>
 	<div class="footer-btn">
 		<div>
 			<div class="btn-group ">
-			<a onclick="parent.location='/<?php echo explode('/', filter_var(ArrayHelper::getValue($_SERVER, 'REQUEST_URI'), FILTER_SANITIZE_URL))[1]; ?>/form/<?php echo $form->id; ?>/<?php echo $this->rowid; ?>'" title="Editar"><button  class="btn btn_jlowcode_admin btn_jlowcode_admin_edit" name="edit" id="fabrikSubmit_19">Editar</button></a>
+			<a onclick="parent.location='/<?php echo $alias ?>/form/<?php echo $form->id; ?>/<?php echo $this->rowid; ?>'" title="Editar"><button  class="btn btn_jlowcode_admin btn_jlowcode_admin_edit" name="edit" id="fabrikSubmit_19">Editar</button></a>
 			</div>
 		</div>
 	
 								
 		<div>
 			<div class="btn-group">
-			<a onclick="parent.location='/<?php echo explode('/', filter_var(ArrayHelper::getValue($_SERVER, 'REQUEST_URI'), FILTER_SANITIZE_URL))[1]; ?>'" title="Voltar"><button class="btn btn_jlowcode_admin btn_jlowcode_admin_back">Voltar</button></a>
+			<a onclick="parent.location='/<?php echo $alias ?>'" title="Voltar"><button class="btn btn_jlowcode_admin btn_jlowcode_admin_back">Voltar</button></a>
 			</div>
 		</div>
 	</div>
 </div>
 	<?php
 endif;
+
 echo '</div>';
 echo $form->outro;
 echo $this->pluginend;
