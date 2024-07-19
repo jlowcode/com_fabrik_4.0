@@ -1716,6 +1716,16 @@ class PlgFabrik_Element extends FabrikPlugin
 		$element = $this->getElement();
 		$label   = $params->get('alt_list_heading') == '' ? $element->label : $params->get('alt_list_heading');
 
+		if($element->get('plugin') == 'databasejoin') {
+			$app = Factory::getApplication();
+			$menu = $app->getMenu();
+			
+			$idPopupForm = $params->get('databasejoin_popupform');
+			$menuLinked = $menu->getItems('link', "index.php?option=com_fabrik&view=list&listid=$idPopupForm", true);
+			$alias = $menuLinked->alias;
+			$label = "<a href='/$alias' target='_blank'>$label</a>";
+		}
+
 		return Text::_($label);
 	}
 
