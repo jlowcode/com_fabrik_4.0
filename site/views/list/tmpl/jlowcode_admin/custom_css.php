@@ -39,6 +39,10 @@ $c = $_REQUEST['c'];
 echo <<<EOT
 /* BEGIN - Your CSS styling starts here */
 
+.fabrikFilterContainer a {
+    text-decoration: underline;
+}
+
 .fabrik___heading .fabrik_ordercell a, .fabrik___heading .fabrik_ordercell span {
     max-width: 90%; 
     overflow: hidden; 
