@@ -53,7 +53,7 @@ echo $this->loadTemplate('modal');
             echo $this->loadTemplate('buttons');
         endif; ?>
 
-        <div class="filterContentfabrikFilterContainer <?php echo in_array($this->params['show-table-filters'], [6, 7]) ? ' col-md-12 col-lg-3' : ''; ?>">
+        <div class="filterContentfabrikFilterContainer <?php echo in_array($this->params['show-table-filters'], [6, 7]) && $this->showFilters ? ' col-md-12 col-lg-3' : ''; ?>">
             <?php
             if ($this->showFilters && $this->bootShowFilters) :
                 echo $this->layoutFilters();
@@ -65,7 +65,7 @@ echo $this->loadTemplate('modal');
             echo $this->loadTemplate('tabs');
             ?>
         </div>
-        <div class="listContent fabrikDataContainer<?php echo in_array($this->params['show-table-filters'], [6]) ? ' col-md-12 col-lg-9' : ''; ?>">
+        <div class="listContent fabrikDataContainer<?php echo in_array($this->params['show-table-filters'], [6]) && $this->showFilters ? ' col-md-12 col-lg-9' : ''; ?>">
 
             <?php foreach ($this->pluginBeforeList as $c) :
                 echo $c;

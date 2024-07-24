@@ -53,7 +53,7 @@ echo $this->loadTemplate('modal');
             echo $this->loadTemplate('buttons');
         endif; ?>
 
-        <div class="filterContent fabrikFilterContainer <?php echo in_array($this->params['show-table-filters'], [6, 7]) ? ' col-md-12 col-lg-3 ' : ''; echo $this->showFilters === true ? 'filterContentNotEmpty' :''?>">
+        <div class="filterContent fabrikFilterContainer <?php echo in_array($this->params['show-table-filters'], [6, 7]) && $this->showFilters ? ' col-md-12 col-lg-3 ' : ''; echo $this->showFilters === true ? 'filterContentNotEmpty' :''?>">
             <?php
             if ($this->showFilters && $this->bootShowFilters) :
                 echo $this->layoutFilters();
@@ -70,7 +70,7 @@ echo $this->loadTemplate('modal');
         echo $this->loadTemplate('gantt_kanban');
         ?>
            
-        <div class="listContent fabrikDataContainer<?php echo in_array($this->params['show-table-filters'], [6]) ? ' col-md-12 col-lg-9' : ''; ?>">
+        <div class="listContent fabrikDataContainer<?php echo in_array($this->params['show-table-filters'], [6]) && $this->showFilters ? ' col-md-12 col-lg-9' : ''; ?>">
 
             <?php foreach ($this->pluginBeforeList as $c) :
                 echo $c;

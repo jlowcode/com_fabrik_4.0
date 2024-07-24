@@ -64,7 +64,7 @@ echo $this->loadTemplate('modal');
         endif;
         // End workflow code
         ?>
-        <div class="filterContent fabrikFilterContainer <?php echo in_array($this->params['show-table-filters'], [6, 7]) ? ' col-md-12 col-lg-3 ' : ''; echo $this->showFilters === true ? 'filterContentNotEmpty' :''?>">
+        <div class="filterContent fabrikFilterContainer <?php echo in_array($this->params['show-table-filters'], [6, 7]) && $this->showFilters ? ' col-md-12 col-lg-3 ' : ''; echo $this->showFilters === true ? 'filterContentNotEmpty' :''?>">
             <?php
             if ($this->showFilters && $this->bootShowFilters) :
                 echo $this->layoutFilters();
@@ -75,7 +75,7 @@ echo $this->loadTemplate('modal');
             $headingsHtml = $this->loadTemplate('headings');
             echo $this->loadTemplate('tabs');?>
         </div>
-        <div style="<?php echo $cssOverflow; ?>" class="listContent fabrikDataContainer<?php echo in_array($this->params['show-table-filters'], [6]) ? ' col-md-12 col-lg-9' : ''; ?>">
+        <div style="<?php echo $cssOverflow; ?>" class="listContent fabrikDataContainer<?php echo in_array($this->params['show-table-filters'], [6]) && $this->showFilters ? ' col-md-12 col-lg-9' : ''; ?>">
 
             <?php foreach ($this->pluginBeforeList as $c) :
                 echo $c;
