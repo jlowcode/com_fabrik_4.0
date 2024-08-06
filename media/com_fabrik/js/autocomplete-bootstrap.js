@@ -335,7 +335,7 @@ define(['jquery', 'fab/encoder', 'fab/fabrik', 'lib/debounce/jquery.ba-throttle-
                     this.openMenu();
                 }
             } else {
-                if (!this.isMinTriggerlength()) {
+                if (!this.isMinTriggerlength() && !e.target.hasAttribute('suggest')) {
                     e.stop();
                     this.closeMenu();
                 }
