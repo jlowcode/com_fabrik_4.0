@@ -14,7 +14,7 @@ defined('_JEXEC') or die('Restricted access');
 echo "
 <div id=\"modal\" class=\"modalContainer\">
 	<div class=\"modalContent\">
-		<span class=\"modalCloseBtn\">&times;</span>
+		<span class=\"modalCloseBtn\">" . FabrikHelperHTML::image('close.png', 'list') . "</span>
 		<div class=\"modalBody\">
 		</div>
 	</div>

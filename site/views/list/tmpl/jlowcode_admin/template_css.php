@@ -201,7 +201,6 @@ body {
 	position: absolute;
 	right: 0;
 	top: 0;
-	margin-top: 20px;
 	margin-right: 20px;
 	font-size:20px;
 	cursor: pointer;
