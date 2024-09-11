@@ -21,31 +21,19 @@ $this->rowsWorkflow = $_REQUEST['workflow']['requests_list'];
 $showContainer = $_REQUEST['wfl_action'] == 'list_requests' ? 'in' : 'hide';
 ?>
 <div id="eventsContainer" class="table-aditional <?php echo $showContainer; ?>">
-    <ul style="display: flex;">
-<!--        <li class="span2">-->
-<!--            <div class="dropdown" id="orderBy">-->
-<!--                <a href="#" class="dropdown-toggle orderBy" data-bs-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">-->
-<!--                    <i data-isicon="true" class="icon-upload"></i>		Order By		<b class="caret"></b>-->
-<!--                </a>-->
-<!--                <ul class="dropdown-menu" id="orderByUl">-->
-<!--                    <li><a href="javascript:void(0);"><i data-isicon="true" class="icon-upload"></i> Export to CSV</a></li>-->
-<!--                </ul>-->
-<!--            </div>-->
-<!--        </li>-->
-
-<!--        orderBySelect-->
-        <li class="span1"><label  for="requestTypeSelect"><?php echo Text::_('PLG_FORM_WORKFLOW_REQUEST_STATUS_LABEL'); ?></label></li>
-        <li class="span3">
-            <select id="requestTypeSelect">
+    <ul style="display: flex; align-items: center;">
+        <li style="margin-right: 5px"><label  for="requestTypeSelect"><?php echo Text::_('PLG_FORM_WORKFLOW_REQUEST_STATUS_LABEL'); ?>:</label></li>
+        <li style="margin-right: 40px">
+            <select style="height: 41px" id="requestTypeSelect">
             </select>
         </li>
-        <li class="span2"><label  for="orderBySelect"><?php echo Text::_('PLG_FORM_WORKFLOW_REQUEST_ORDER_BY_LABEL'); ?></label></li>
-        <li class="span3">
-            <select id="orderBySelect">
+        <li style="margin-right: 5px"><label  for="orderBySelect"><?php echo Text::_('PLG_FORM_WORKFLOW_REQUEST_ORDER_BY_LABEL'); ?>:</label></li>
+        <li style="margin-right: 40px">
+            <select style="height: 41px" id="orderBySelect">
             </select>
         </li>
-        <li class="span1"><label  for="searchTable"><?php echo Text::_('PLG_FORM_WORKFLOW_REQUEST_SEARCH_LABEL'); ?></label></li>
-        <li class="span3"><input  name="searchTable" id="searchTable" type="text" placeholder="Search"></li>
+        <li style="margin-right: 5px"><label  for="searchTable"><?php echo Text::_('PLG_FORM_WORKFLOW_REQUEST_SEARCH_LABEL'); ?>:</label></li>
+        <li><input  name="searchTable" id="searchTable" type="text" placeholder="Search"></li>
 
     </ul>
 
