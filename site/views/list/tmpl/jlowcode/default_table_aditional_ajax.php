@@ -24,7 +24,7 @@ $showContainer = $_REQUEST['wfl_action'] == 'list_requests' ? 'in' : 'hide';
 ?>
 <div id="eventsContainer" class="table-aditional <?php echo $showContainer; ?>">
     <ul style="display: flex; align-items: center;">
-        <li style="margin-right: 5px"><label  for="requestTypeSelect"><?php echo Text::_('PLG_FORM_WORKFLOW_REQUEST_STATUS_LABEL'); ?>:</label></li>
+        <li style="margin-right: 5px"><label  for="requestTypeSelect"><?php echo Text::_('PLG_FORM_WORKFLOW_REQ_STATUS_LABEL'); ?>:</label></li>
         <li style="margin-right: 40px">
             <select style="height: 41px" id="requestTypeSelect">
             </select>
