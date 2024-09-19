@@ -237,7 +237,7 @@ main .platform-content {
 }
 
 .btn:hover {
-	color: #ED7D3A !important;
+	color: #C2F6F9 !important;
 }
 
 .btn-save-new{
@@ -368,7 +368,7 @@ main .platform-content {
 }
 
 .pull-right > .btn.btn-default:hover{
-	color: #ED7D3A !important;
+	color: #C2F6F9 !important;
 }
 
 

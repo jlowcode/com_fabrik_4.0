@@ -141,7 +141,7 @@ textarea, input, select {
 }
 
 .btn.btn_jlowcode_admin:hover {
-	color: #ED7D3A !important;
+	color: #C2F6F9 !important;
 }
 /* End - Footer styles */
 
@@ -199,7 +199,7 @@ main .platform-content {
 }
 
 .btn.btn-default:hover{
-	color: #ED7D3A !important;
+	color: #C2F6F9 !important;
 }
 
 .row-striped .row-fluid{

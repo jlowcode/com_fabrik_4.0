@@ -39,6 +39,10 @@ $c = $_REQUEST['c'];
 echo <<<EOT
 /* BEGIN - Your CSS styling starts here */
 
+.btn:hover {
+	color: #C2F6F9 !important;
+}
+
 .fabrikFilterContainer a {
     text-decoration: underline;
 }

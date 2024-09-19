@@ -83,7 +83,7 @@ echo <<<EOT
 }
 
 .btn.btn_edu:hover{
-	color: #ED7D3A !important;
+	color: #C2F6F9 !important;
 }
 
 .btn.btn-default{
@@ -100,7 +100,7 @@ echo <<<EOT
 }
 
 .btn.btn-default:hover{
-	color: #ED7D3A !important;
+	color: #C2F6F9 !important;
 }
 
 .row-striped .row-fluid{

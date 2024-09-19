@@ -39,6 +39,10 @@ $c = $_REQUEST['c'];
 echo <<<EOT
 /* BEGIN - Your CSS styling starts here */
 
+.btn:hover {
+	color: #C2F6F9 !important;
+}
+
 .filterContent .span12 {
 	width: 91.48936170212765%;
 }

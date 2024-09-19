@@ -94,7 +94,7 @@ echo <<<EOT
 }
 
 .btn-group-actions:hover{
-	color: #ED7D3A !important;
+	color: #C2F6F9 !important;
 }
 
 .btn-save-new{
@@ -190,7 +190,7 @@ echo <<<EOT
 }
 
 .pull-right > .btn.btn-default:hover{
-	color: #ED7D3A !important;
+	color: #C2F6F9 !important;
 }
 
 
