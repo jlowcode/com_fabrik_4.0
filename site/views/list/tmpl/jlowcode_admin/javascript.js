@@ -21,13 +21,7 @@ requirejs(['fab/fabrik', 'fab/bootstrap_tree'], function (Fabrik, BootstrapTree)
 	});
 
 	Fabrik.addEvent('fabrik.list.loaded', function (list) {
-
-		
-
-
 		var dataRow = list.list.getElementsByClassName('fabrik_row');
-		
-
 		Array.from(dataRow).each(function (row) {
 			var btnAction = row.getElementsByClassName('fabrik_action');
 			if (btnAction[0]) {
@@ -41,7 +35,6 @@ requirejs(['fab/fabrik', 'fab/bootstrap_tree'], function (Fabrik, BootstrapTree)
 });
 
 window.addEvent('fabrik.loaded', function () {
-
 
 	// Search icon start
 	// Search icon on filters
@@ -88,20 +81,185 @@ window.addEvent('fabrik.loaded', function () {
 			}
 		})
 	})
-	
 
-		var name_list = jQuery('tbody.fabrik_groupdata')[0].classList[1]
-		jQuery(".fabrik___heading .fabrik_ordercell").each(function(index) {
-			var i = 0;
-			var linhas = jQuery('.'+name_list+' .fabrik_row');
-	
-			while (i < (linhas.length)) {
-				linhas[i].children[index].setAttribute('data-content', this.outerText)
-				i++;
-			}
-		});
 
-	
+	// var name_list = jQuery('tbody.fabrik_groupdata')[0].classList[1]
+	// jQuery(".fabrik___heading .fabrik_ordercell").each(function (index) {
+	// 	var i = 0;
+	// 	var linhas = jQuery('.' + name_list + ' .fabrik_row');
+
+	// 	while (i < (linhas.length)) {
+	// 		linhas[i].children[index].setAttribute('data-content', this.outerText)
+	// 		i++;
+	// 	}
+	// });
 })
 
 
+function handleRadioClick(element) {
+	showSpinner();
+	if (element.id === "list-view") {
+		sessionStorage.setItem("modo", "list");
+		enviarDadosParaServidor();
+	} else if (element.id === "grid-view") {
+		sessionStorage.setItem("modo", "grid");
+		enviarDadosParaServidor();
+	} else if (element.id === "tree-view") {
+		sessionStorage.setItem("modo", "tree");
+		enviarDadosParaServidor();
+	}
+};
+
+function carregarModoEscolhido() {
+	var modoExibicao = sessionStorage.getItem("modo");
+	if (modoExibicao == "list") {
+		document.getElementById("list-view").checked = true;
+	} else if (modoExibicao == "grid") {
+		document.getElementById("grid-view").checked = true;
+	} else if (modoExibicao == "tree") {
+		document.getElementById("tree-view").checked = true;
+	}
+}
+
+function enviarDadosParaServidor() {
+	const modoExibicao = sessionStorage.getItem("modo"); // Obtém o valor do sessionStorage
+	var data = {};
+	data['modo'] = modoExibicao;
+
+	// Envia o valor via POST para o servidor
+	var url = window.location.origin + "/index.php?option=com_fabrik&view=list&listid=" + jQuery('[name=listid]').val();
+	jQuery.ajax({
+		url: url,
+		method: 'post',
+		data: data,
+	}).done(function (r) {
+		window.location.reload();
+	});
+}
+
+// Carrega o modo escolhido quando a página é carregada
+document.addEventListener("DOMContentLoaded", carregarModoEscolhido);
+
+function carregarFilhos(paiId, elementoPai) {
+	showSpinner();
+	fetch(window.location.origin + "/index.php?option=com_fabrik&view=list&listid=" + jQuery('[name=listid]').val(), {
+		method: 'POST',
+		headers: {
+			'Content-Type': 'application/x-www-form-urlencoded',
+		},
+		body: new URLSearchParams({ action: 'getFilhos', id: paiId }) // Envia a ação e o ID do pai
+	})
+		.then(response => response.json())
+		.then(data => {
+
+			if (data.length === 0) {
+				if (!elementoPai.querySelector('.no-children')) {
+					const mensagem = document.createElement('div');
+					mensagem.classList.add('no-children');
+					mensagem.textContent = 'Não há filhos para este item.';
+					elementoPai.appendChild(mensagem);
+				}
+				hideSpinner();
+				return;
+			}
+
+			// Verifica se já carregou os filhos
+			if (elementoPai.classList.contains('open')) {
+				elementoPai.classList.remove('open');
+				elementoPai.querySelectorAll('.tree-item').forEach(el => el.remove());
+				hideSpinner();
+				return;
+			}
+
+			elementoPai.classList.add('open');
+
+			// Itera sobre os filhos e os adiciona ao DOM
+			data.forEach(filho => {
+				const itemFilho = document.createElement('div');
+				itemFilho.classList.add('tree-item');
+
+				// Adiciona os elementos ao item filho			
+				const action = document.createElement('span');
+				action.innerHTML = filho.actions;
+
+				itemFilho.appendChild(action);
+				elementoPai.appendChild(itemFilho);
+			});
+			hideSpinner();
+		})
+		.catch(error => {
+			console.error('Erro ao carregar filhos:', error);
+			hideSpinner();
+		});
+}
+
+function showSpinner() {
+	document.getElementById("loadingModal").style.display = 'flex';
+}
+
+function hideSpinner() {
+	document.getElementById('loadingModal').style.display = 'none';
+}
+
+function onReportAbuse(listRowIds) {
+	showSpinner()
+	var options = {};
+	options.user = {};
+	options.user.approve_for_own_records = window.workflowInstance.options.user.approve_for_own_records;
+	options.workflow_owner_element = window.workflowInstance.options.workflow_owner_element;
+
+
+	jQuery.ajax({
+		'url': '',
+		'method': 'get',
+		'data': {
+			'options': options,
+			'listRowIds': listRowIds.attributes[5].value,
+			'option': 'com_fabrik',
+			'task': 'plugin.pluginAjax',
+			'plugin': 'workflow',
+			'method': 'onReportAbuse',
+			'g': 'form',
+		},
+		success: function (data) {
+			alert("Sucesso!");
+			hideSpinner();
+			location.reload();
+		},
+		error: function (err) {
+			alert("Erro ao reportar abuso.");
+			hideSpinner();
+		}
+	});
+}
+
+
+document.addEventListener("DOMContentLoaded", function () {
+	// Certifique-se de que o Sortable está disponível
+	if (typeof Sortable !== 'undefined') {
+		const table = document.getElementById('list_'+jQuery('[name=listid]').val()+'_com_fabrik_'+jQuery('[name=listid]').val());
+		if (table) {
+			// Seleciona o thead para tornar as colunas ordenáveis
+			const thead = table.querySelector('thead tr');
+			// Aplica o SortableJS ao cabeçalho
+			Sortable.create(thead, {
+				animation: 150,
+				onEnd: function (evt) {
+					const oldIndex = evt.oldIndex;
+					const newIndex = evt.newIndex;
+					// Reordena as células no tbody
+					table.querySelectorAll('tbody tr').forEach(function (row) {
+						const cells = Array.from(row.children);
+						const movedCell = cells.splice(oldIndex, 1)[0];
+						cells.splice(newIndex, 0, movedCell);
+						// Atualiza a ordem das células
+						row.innerHTML = '';
+						cells.forEach(function (cell) {
+							row.appendChild(cell);
+						});
+					});
+				}
+			});
+		}
+	}
+});

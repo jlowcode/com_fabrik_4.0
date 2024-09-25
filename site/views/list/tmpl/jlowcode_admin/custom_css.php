@@ -306,7 +306,7 @@ h1,
 }
 
 .table-aditional.in {
-    display: inline-block;
+    display: block;
 }
 
 #eventsContainer ul {
@@ -647,6 +647,177 @@ i.fas.fa-exclamation-triangle.fa-sm{
 /*WORKFLOW*/
 .btn-outline-primary{
     border: 1px solid #003EA1 !important;
+}
+
+
+/* Modo Exibição*/
+.box {
+    position: relative;
+    min-height: 20px;
+    padding: 19px;
+    margin-bottom: 20px;
+    background-color: ##ffffff;
+    border: 1px solid #e3e3e3;
+    -webkit-border-radius: 4px;
+    -moz-border-radius: 4px;
+    border-radius: 4px;
+    -webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.05);
+    -moz-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.05);
+    box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.05);
+}
+
+.radio-group {
+        display: flex;
+        border: 2px solid #ccc;
+        border-radius: 20px;
+        overflow: hidden;
+    }
+
+.radio-group input[type="radio"] {
+    display: none;
+}
+    
+.radio-group label {
+    padding: 0.5rem 0.5rem;
+    cursor: pointer !important;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.2rem;
+    flex: 1;
+    transition: background-color 0.3s, color 0.3s;
+}
+
+.radio-group input[type="radio"]:checked + label {
+    background-color: #eee;
+    color: #0d3e9d;
+}
+    
+/* Estilo do Modal */
+/* Estilo do Modal */
+/* Estilo do Modal */
+.modal {
+    display: none; /* Esconde o modal inicialmente */
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5); /* Fundo semitransparente */
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+}
+
+/* Conteúdo do Modal */
+.modal-content {
+    background-color: white;
+    padding: 20px;
+    border-radius: 5px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+/* Ícone de Carregamento (Spinner) */
+.spinner {
+    border: 4px solid #f3f3f3; /* Cor de fundo do spinner */
+    border-top: 4px solid #3498db; /* Cor da borda do spinner */
+    border-radius: 50%;
+    width: 200px;
+    height: 200px;
+    animation: spin 1s linear infinite;
+    margin-bottom: 10px;
+}
+
+/* Animação do Spinner */
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+
+/* Estilo básico para o contêiner de registros */
+/* Estilo básico para o contêiner de registros */
+#registros-container {
+    padding: 20px;
+    font-family: Arial, sans-serif;
+}
+
+/* Estilo para os itens da árvore */
+.tree-item {
+    margin: 0em 1em;
+    padding: 0;
+    cursor: pointer;
+    position: relative; 
+}
+
+/* Estilo para o símbolo de seta */
+.tree-arrow {
+    cursor: pointer; /* Muda o cursor ao passar sobre a seta */
+    margin-right: 5px;
+    display: inline-block;
+    transition: transform 0.2s; /* Animação de rotação */
+}
+
+/* Estilo para o texto do item */
+.tree-text {
+    margin-left: 5px;
+}
+
+
+.no-children {
+    color: #666;
+    font-style: italic;
+    margin-left: 20px; /* Ajuste conforme necessário */
+}
+
+.tree-item.open > .tree-arrow {
+    transform: rotate(90deg); /* Rotate the arrow to indicate expansion */
+}
+
+.action-menu {
+    position: absolute;
+    background-color: white;
+    border: 1px solid #ccc;
+    list-style: none;
+    padding: 5px;
+    margin: 0;
+    display: none;
+    z-index: 1000;
+}
+
+.action-menu li {
+    padding: 5px;
+    cursor: pointer;
+}
+
+.action-menu li:hover {
+    background-color: #eee;
+}
+
+.dropdown.fabrik_action{
+display: inline;
+}
+
+/* Esconde o dropdown por padrão */
+.tree-item .dropdown.fabrik_action {
+    visibility: hidden;
+    opacity: 0;
+    transition: visibility 0s, opacity 0.3s linear;
+}
+
+/* Aplica o hover apenas ao .dropdown que é filho direto do .tree-item que está sendo hoverado */
+.tree-item:hover > .actions > .dropdown.fabrik_action {
+    visibility: visible;
+    opacity: 1;
+}
+
+
+
+.button.btn.btn-default.btn-mini.dropdown-toggle.dropdown-toggle-no-caret{
+    margin: 0;
 }
 
 /* END - Your CSS styling ends here */

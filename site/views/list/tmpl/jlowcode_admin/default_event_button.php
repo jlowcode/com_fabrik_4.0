@@ -9,8 +9,21 @@
  */
 // No direct access
 defined('_JEXEC') or die('Restricted access');
+?>
 
+<div class="title">Modo de exibição: </div>
+<div class="radio-group">
+    <input type="radio" id="list-view" name="view" onclick="handleRadioClick(this)">
+    <label for="list-view" class="icon-list"></label>
 
+    <input type="radio" id="grid-view" name="view" onclick="handleRadioClick(this)">
+    <label for="grid-view" class="icon-grid"></label>
+
+    <input type="radio" id="tree-view" name="view" onclick="handleRadioClick(this)">
+    <label for="tree-view" class="icon-tree"></label>
+</div>
+
+<?php
 if ($_REQUEST['workflow']['showEventsButton'] == true):
     $url = ($_REQUEST['wfl_action'] == 'list_requests') ? $_REQUEST['workflow']['list_link'] : $_REQUEST['workflow']['requests_link'];
     $active = ($_REQUEST['wfl_action'] == 'list_requests') ? 'active' : '';
