@@ -696,7 +696,7 @@ i.fas.fa-exclamation-triangle.fa-sm{
 /* Estilo do Modal */
 /* Estilo do Modal */
 /* Estilo do Modal */
-.modal {
+#loadingModal {
     display: none; /* Esconde o modal inicialmente */
     position: fixed;
     z-index: 1000;
@@ -708,16 +708,6 @@ i.fas.fa-exclamation-triangle.fa-sm{
     justify-content: center;
     align-items: center;
     text-align: center;
-}
-
-/* Conteúdo do Modal */
-.modal-content {
-    background-color: white;
-    padding: 20px;
-    border-radius: 5px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
 }
 
 /* Ícone de Carregamento (Spinner) */
