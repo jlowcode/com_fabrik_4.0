@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Button to open events
  *
@@ -9,6 +10,22 @@
  */
 // No direct access
 defined('_JEXEC') or die('Restricted access');
+
+$listModel = $this->_models["list"];
+$elsList = $listModel->getElements('id');
+$tree = false;
+
+foreach ($elsList as $el) {
+    $params = $el->getParams();
+    if (
+        str_contains($el->getName(), 'Databasejoin') && $params->get('database_join_display_type') == 'auto-complete'
+        && $params->get('join_db_name') == $listModel->getTable()->get('db_table_name') &&
+        ($params->get('database_join_display_style') == 'both-treeview-autocomplete' || $params->get('database_join_display_style') == 'only-treeview')
+    ) {
+        $tree = true;
+    }
+}
+
 ?>
 
 <div class="title">Modo de exibição: </div>
@@ -19,8 +36,11 @@ defined('_JEXEC') or die('Restricted access');
     <input type="radio" id="grid-view" name="view" onclick="handleRadioClick(this)">
     <label for="grid-view" class="icon-grid"></label>
 
+    <?php
+    if ($tree  == true):?>
     <input type="radio" id="tree-view" name="view" onclick="handleRadioClick(this)">
     <label for="tree-view" class="icon-tree"></label>
+    <?php endif; ?>
 </div>
 
 <?php
