@@ -1046,7 +1046,7 @@ class FabrikAdminModelElement extends FabModelAdmin
 		$ids[]   = $this_id;
 		$db      = FabrikWorker::getDbo(true);
 		$query   = $db->getQuery(true);
-		$query->delete('#__fabrik_jsactions')->where('element_id IN (' . implode(',', $ids) . ')');
+		$query->delete('#__fabrik_jsactions')->where('element_id IN (' . trim(implode(',', $ids), ',') . ')');
 		$db->setQuery($query);
 		$db->execute();
 		$jForm      = $input->get('jform', array(), 'array');
