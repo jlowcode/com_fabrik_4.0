@@ -27,9 +27,9 @@ $showContainer = $_REQUEST['wfl_action'] == 'list_requests' ? 'in' : 'hide';
             <select style="height: 41px" id="requestTypeSelect">
             </select>
         </li>
-        <li style="margin-right: 5px"><label  for="orderBySelect"><?php echo Text::_('PLG_FORM_WORKFLOW_REQUEST_ORDER_BY_LABEL'); ?>:</label></li>
+        <li style="margin-right: 5px; display: none"><label for="orderBySelect"><?php echo Text::_('PLG_FORM_WORKFLOW_REQUEST_ORDER_BY_LABEL'); ?>:</label></li>
         <li style="margin-right: 40px">
-            <select style="height: 41px" id="orderBySelect">
+            <select style="height: 41px; display: none" id="orderBySelect">
             </select>
         </li>
         <li style="margin-right: 5px"><label  for="searchTable"><?php echo Text::_('PLG_FORM_WORKFLOW_REQUEST_SEARCH_LABEL'); ?>:</label></li>

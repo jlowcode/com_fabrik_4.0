@@ -11,7 +11,11 @@
 
 // No direct access
 defined('_JEXEC') or die('Restricted access');
+
 use Joomla\CMS\Language\Text;
+use Joomla\Registry\Registry;
+
+require_once JPATH_PLUGINS . '/fabrik_element/field/field.php';
 
 $btnLayout  = $this->getModel()->getLayout('fabrik-button');
 $layoutData = (object) array(
@@ -20,22 +24,64 @@ $layoutData = (object) array(
 	'label' => FabrikHelperHTML::icon('icon-filter', Text::_('COM_FABRIK_GO'))
 );
 // Workflow code
+$params = new Registry(json_encode(Array(
+	'can_order' => true
+)));
+
+$container = JFactory::getContainer();
+$subject = $container->get(\Joomla\Event\DispatcherInterface::class);
+$classField = new PlgFabrik_ElementField($subject);
+$classField->setParams($params, 0);
+
 $req_status = $_REQUEST['wfl_status'];
+$req_order = $_REQUEST['wfl_order'];
+$l = explode('_', $req_order)[count(explode('_', $req_order)) - 1];
+
+switch ($l) {
+	case 'desc':
+		$orderDir = 'desc';
+		break;
+	
+	case '-':
+		$orderDir = '-';
+		break;
+
+	default:
+		$orderDir = 'asc';
+		break;
+}
+$order = $orderDir == 'asc' ? $req_order : preg_replace('/(_desc|-)+$/', '', $req_order);
+$order = $orderDir == '-' ? 'req_created_date' : $order;
+
+$layoutHeadings = $this->getModel()->getLayout('list.fabrik-order-heading');
 // Workflow code end
 ?>
 	<tr class="fabrik___heading">
 		<?php foreach ($this->headingsWorkflow as $key => $heading) :
 		// Workflow code
-                        if ($key == 'req_approval') {
-                            $heading = $req_status == 'verify' ? $_REQUEST['workflow']['label_request_aproval'] : $_REQUEST['workflow']['label_request_view'];
-						}
-			if(isset($this->headingClass[$key])) {
-				$h = $this->headingClass[$key];
+			if ($key == 'req_approval') {
+				$heading = $req_status == 'verify' ? $_REQUEST['workflow']['label_request_aproval'] : $_REQUEST['workflow']['label_request_view'];
 			}
-			$style = empty($h['style']) ? '' : 'style="' . $h['style'] . '"'; ?>
-			<th class="heading <?php echo $h['class'] ?>" <?php echo $style ?>>
-				<span><?php echo $heading; 
-		// Workflow code end ?>
+
+			$displayData = new stdClass;
+			$displayData->tmpl = $this->getModel()->getTmpl();
+			$displayData->orderDir = $key == $order ? $orderDir : '';
+			$displayData->class = '';
+			$displayData->workflow = '-wfl';
+			$displayData->orderBys = $key == $order ? $order : '';
+			$displayData->elementParams = $classField->getParams();
+			$displayData->key = $heading;
+			$displayData->label = $heading;
+		?>
+			<th class="heading fabrik_ordercell <?php echo $key ?>_order">
+				<span>
+					<?php
+						if($key != 'view') {
+							echo $layoutHeadings->render($displayData); 
+						} else {
+							echo $heading;
+						}
+					?>
 				</span>
 			</th>
 		<?php endforeach; ?>
