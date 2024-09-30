@@ -28,18 +28,17 @@ foreach ($elsList as $el) {
 
 ?>
 
-<div class="title">Modo de exibição: </div>
+<div class="title">Exibição: </div>
 <div class="radio-group">
     <input type="radio" id="list-view" name="view" onclick="handleRadioClick(this)">
-    <label for="list-view" class="icon-list"></label>
+    <?php echo FabrikHelperHTML::image('list.png', 'list', $this->tmpl);?>
 
     <input type="radio" id="grid-view" name="view" onclick="handleRadioClick(this)">
-    <label for="grid-view" class="icon-grid"></label>
+    <?php echo FabrikHelperHTML::image('grid.png', 'list', $this->tmpl);?>
 
-    <?php
-    if ($tree  == true):?>
-    <input type="radio" id="tree-view" name="view" onclick="handleRadioClick(this)">
-    <label for="tree-view" class="icon-tree"></label>
+    <?php if ($tree == true): ?>
+        <input type="radio" id="tree-view" name="view" onclick="handleRadioClick(this)">
+        <?php echo FabrikHelperHTML::image('hierarchy.png', 'list', $this->tmpl);?>
     <?php endif; ?>
 </div>
 

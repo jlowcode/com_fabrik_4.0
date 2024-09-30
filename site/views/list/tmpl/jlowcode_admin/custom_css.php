@@ -667,24 +667,17 @@ i.fas.fa-exclamation-triangle.fa-sm{
 }
 
 .radio-group {
-        display: flex;
-        border: 2px solid #ccc;
-        border-radius: 20px;
-        overflow: hidden;
-    }
+    display: flex;
+    overflow: hidden;
+}
 
 .radio-group input[type="radio"] {
     display: none;
 }
     
-.radio-group label {
-    padding: 0.5rem 0.5rem;
+.radio-group img {
+    padding: 0.3rem 0.3rem;
     cursor: pointer !important;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 1.2rem;
-    flex: 1;
     transition: background-color 0.3s, color 0.3s;
 }
 
