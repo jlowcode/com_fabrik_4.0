@@ -56,6 +56,23 @@ echo <<<EOT
 
 /* BEGIN - Your CSS styling starts here */
 
+.select2-dropdown {
+	border: 1px solid rgba(0, 0, 0, 0.15) !important;
+    border-radius: 0.25rem !important;
+}
+
+.select2-dropdown .select2-results__options {
+	padding: 15px 0px;
+}
+
+.select2-results__option.select2-results__message {
+    color: #3a87ad !important;
+    background-color: #e2eff5;
+	padding: 15px;
+	border: 1px solid #c7e0ec;
+    border-radius: 4px;
+}
+
 .modal-content {
     border-radius: 20px !important;
     box-shadow: 0px 6px 6px 0px #3c3939;
@@ -327,13 +344,13 @@ main .platform-content {
 	    justify-content: center;
 	    display: flex;
 	}
-	
+
 	.g-content {
 		padding: 1rem !important;
 	}
 }
 
-.dropdown-menu > li > a, .select2-dropdown ul > li {
+.select2-results__option {
     white-space: normal !important;
 	color: #011627 !important;
 }
@@ -345,7 +362,6 @@ main .platform-content {
 
 .select2-dropdown ul > li:hover {
 	font-weight: 700;
-	background-color: inherit !important;
 }
 
 .select2-container--default .select2-results__option--highlighted[aria-selected] {
