@@ -36,7 +36,7 @@ foreach ($elsList as $el) {
     <input type="radio" id="grid-view" name="view" onclick="handleRadioClick(this)">
     <?php echo FabrikHelperHTML::image('grid.png', 'list', $this->tmpl);?>
 
-    <?php if ($tree == false): ?>
+    <?php if ($tree == true): ?>
         <input type="radio" id="tree-view" name="view" onclick="handleRadioClick(this)">
         <?php echo FabrikHelperHTML::image('hierarchy.png', 'list', $this->tmpl);?>
     <?php endif; ?>
