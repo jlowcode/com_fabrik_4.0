@@ -30,15 +30,17 @@ foreach ($elsList as $el) {
 
 <div style="color: #011627" class="title">Exibição: </div>
 <div class="radio-group">
-    <input type="radio" id="list-view" name="view" onclick="handleRadioClick(this)">
-    <?php echo FabrikHelperHTML::image('list.png', 'list', $this->tmpl);?>
-
-    <input type="radio" id="grid-view" name="view" onclick="handleRadioClick(this)">
-    <?php echo FabrikHelperHTML::image('grid.png', 'list', $this->tmpl);?>
+    <span type="radio" id="list-view" name="view" onclick="handleRadioClick(this)">
+        <?php echo FabrikHelperHTML::image('list.png', 'list', $this->tmpl);?>
+    </span>
+    <span type="radio" id="grid-view" name="view" onclick="handleRadioClick(this)">
+        <?php echo FabrikHelperHTML::image('grid.png', 'list', $this->tmpl);?>
+    </span>
 
     <?php if ($tree == true): ?>
-        <input type="radio" id="tree-view" name="view" onclick="handleRadioClick(this)">
-        <?php echo FabrikHelperHTML::image('hierarchy.png', 'list', $this->tmpl);?>
+        <span type="radio" id="tree-view" name="view" onclick="handleRadioClick(this)">
+            <?php echo FabrikHelperHTML::image('hierarchy.png', 'list', $this->tmpl);?>
+        </span>
     <?php endif; ?>
 </div>
 
