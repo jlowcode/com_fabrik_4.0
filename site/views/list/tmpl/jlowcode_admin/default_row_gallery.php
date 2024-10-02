@@ -22,8 +22,8 @@ $regexTitle = $title_element_id. '_order';
 <?php foreach ($this->headings as $heading => $label) :
 	$d = @$this->_row->data->$heading;
 
-	//skip empty elements but don't skip the checkbox (delete, list plugins)
-	if (isset($this->showEmpty) && $this->showEmpty === false && trim(strip_tags($d)) == '' && $heading != 'fabrik_select') :
+	// Skip empty elements, id element and created_by element but don't skip the checkbox (delete, list plugins)
+	if ((isset($this->showEmpty) && $this->showEmpty === false && trim(strip_tags($d)) == '' && $heading != 'fabrik_select') || in_array(explode('____', $heading)[1], ["id", "created_by"])) :
 		continue;
 	endif;
 	$h = $this->headingClass[$heading];
