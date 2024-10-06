@@ -39,6 +39,10 @@ $c = $_REQUEST['c'];
 echo <<<EOT
 /* BEGIN - Your CSS styling starts here */
 
+.fabrik_action .dropdown-menu {
+    transform: translate(0px, 30px) !important;
+}
+
 .btn:hover {
 	color: #C2F6F9 !important;
 }
