@@ -709,7 +709,7 @@ i.fas.fa-exclamation-triangle.fa-sm{
 }
 
 /* Ícone de Carregamento (Spinner) */
-.spinner {
+#loadingModal .spinner {
     border: 4px solid #f3f3f3; /* Cor de fundo do spinner */
     border-top: 4px solid #3498db; /* Cor da borda do spinner */
     border-radius: 50%;
