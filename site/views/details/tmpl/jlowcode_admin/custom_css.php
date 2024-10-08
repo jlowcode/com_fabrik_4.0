@@ -90,6 +90,7 @@ echo <<<EOT
 
 .fabrikLabel {
     font-weight: 900;
+    margin-bottom: 0.5rem;
 }
 
 .fabrikDetails a, .fabrikElement > div {
