@@ -267,7 +267,6 @@ tfoot .fabrik___heading {
 
 .table {
     border-color: snow !important;
-    table-layout: fixed;
 }
 
 
