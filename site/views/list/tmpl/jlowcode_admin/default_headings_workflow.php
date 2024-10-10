@@ -63,6 +63,22 @@ $layoutHeadings = $this->getModel()->getLayout('list.fabrik-order-heading');
 				$heading = $req_status == 'verify' ? $_REQUEST['workflow']['label_request_aproval'] : $_REQUEST['workflow']['label_request_view'];
 			}
 
+			switch ($key) {
+				case 'req_request_type_name':
+				case 'req_created_date':
+					$width = 13;
+					break;
+				
+				case 'req_approval':
+				case 'view':
+					$width = 7;
+					break;
+
+				default:
+					$width = 10;
+					break;
+			}
+
 			$displayData = new stdClass;
 			$displayData->tmpl = $this->getModel()->getTmpl();
 			$displayData->orderDir = $key == $order ? $orderDir : '';
@@ -73,7 +89,7 @@ $layoutHeadings = $this->getModel()->getLayout('list.fabrik-order-heading');
 			$displayData->key = $heading;
 			$displayData->label = $heading;
 		?>
-			<th class="heading fabrik_ordercell <?php echo $key ?>_order">
+			<th title="<?php echo $heading ?>" style="width: <?php echo $width; ?>%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 1px;" class="heading fabrik_ordercell <?php echo $key ?>_order">
 				<span>
 					<?php
 						if($key != 'view') {
