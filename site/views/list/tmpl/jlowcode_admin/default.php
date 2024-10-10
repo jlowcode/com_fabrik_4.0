@@ -58,7 +58,7 @@ echo $this->loadTemplate('modal');
 </div>
 
 <?php
-if ($modoExibicao["template"] == 'list') {
+if ($modoExibicao["template"] == 'list' || $modoExibicao["template"] == '0') {
     $width_list = (int) $this->params->get('width_list');
     if ($width_list) {
         if ($width_list > 100) $cssOverflow = 'overflow-x: scroll;';
@@ -198,7 +198,7 @@ if ($modoExibicao["template"] == 'list') {
     if ($pageClass !== '') :
         echo '</div>';
     endif;
-} else if ($modoExibicao["template"] == 'grid') {
+} else if ($modoExibicao["template"] == 'grid' || $modoExibicao["template"] == '1') {
 
     // The number of columns to split the list rows into
     $columns = 3;
@@ -316,7 +316,7 @@ if ($modoExibicao["template"] == 'list') {
     if ($pageClass !== '') :
         echo '</div>';
     endif;
-} else if ($modoExibicao["template"] == 'tree') {
+} else if ($modoExibicao["template"] == 'tree' || $modoExibicao["template"] == '2') {
 
     // Show the labels next to the data:
     $this->showLabels = true;
