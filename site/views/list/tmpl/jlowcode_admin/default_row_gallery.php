@@ -23,7 +23,7 @@ $regexTitle = $title_element_id. '_order';
 	$d = @$this->_row->data->$heading;
 
 	// Skip empty elements, id element and created_by element but don't skip the checkbox (delete, list plugins)
-	if ((isset($this->showEmpty) && $this->showEmpty === false && trim(strip_tags($d)) == '' && $heading != 'fabrik_select') || in_array(explode('____', $heading)[1], ["id", "created_by"])) :
+	if ((isset($this->showEmpty) && $this->showEmpty === false && trim(strip_tags($d)) == '' && $heading != 'fabrik_select') || in_array(explode('___', $heading)[1], ["id", "created_by"])) :
 		continue;
 	endif;
 	$h = $this->headingClass[$heading];
