@@ -733,6 +733,8 @@ i.fas.fa-exclamation-triangle.fa-sm{
     padding: 0;
     cursor: pointer;
     position: relative;
+    margin-top: -15px;
+    margin-bottom: -15px;
 }
 
 /* Estilo para o símbolo de seta */
@@ -753,6 +755,7 @@ i.fas.fa-exclamation-triangle.fa-sm{
     color: #666;
     font-style: italic;
     margin-left: 20px; /* Ajuste conforme necessário */
+    margin-top: -15px;
 }
 
 .tree-item.open > .tree-arrow {
