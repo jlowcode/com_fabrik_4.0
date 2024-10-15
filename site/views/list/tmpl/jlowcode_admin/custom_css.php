@@ -275,7 +275,6 @@ form a, table a {
 }
 
 .dropdown-menu > li > a {
-    white-space: normal !important;
 	color: #011627 !important;
 }
 
@@ -600,10 +599,6 @@ i.fas.fa-exclamation-triangle.fa-sm{
         max-width: 100%;
         border-collapse: collapse;
     }
-}
-
-.dropdown-menu > li > a {
-    white-space: normal !important;
 }
 
 .autocomplete-trigger {
