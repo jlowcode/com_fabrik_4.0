@@ -47,6 +47,7 @@ window.addEvent('fabrik.loaded', function () {
 	jQuery('.bi-search').on('click', function (event) {
 		Fabrik.fireEvent('fabrik.list.dofilter', [this]);
 	});
+	
 	//  Search icon on general search
 	var searchBox = jQuery('.fabrik_filter.search-query');
 	var searchButton = jQuery('<svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-search" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M10.442 10.442a1 1 0 0 1 1.415 0l3.85 3.85a1 1 0 0 1-1.414 1.415l-3.85-3.85a1 1 0 0 1 0-1.415z"/><path fill-rule="evenodd" d="M6.5 12a5.5 5.5 0 1 0 0-11 5.5 5.5 0 0 0 0 11zM13 6.5a6.5 6.5 0 1 1-13 0 6.5 6.5 0 0 1 13 0z"/></svg>');
@@ -68,6 +69,27 @@ window.addEvent('fabrik.loaded', function () {
 	});
 	// Search icon  END
 
+	// Clean filter
+	var cleanFilterButton = jQuery('<button type="button" class="btn-close"></button>');
+	searchBox.parent().css({
+		'position': 'relative'
+	});
+	searchBox.parent().append(cleanFilterButton);
+	cleanFilterButton.css({
+		'position': 'absolute',
+		'top': '18px',
+		'right': '30px',
+		'cursor': 'pointer',
+		'font-size': '10px',
+		'z-index': '10',
+		'color': '#A6A6A6'
+	});
+	cleanFilterButton.on('click', function () {
+		jQuery(this).parent().find('.fabrik_filter').val('');
+		Fabrik.fireEvent('fabrik.list.dofilter', [this]);
+	});
+	// Clean filter - END
+
 	var dataRow = $('.fabrik_groupdata');
 
 	Array.from(dataRow).each(function (row) {
@@ -81,18 +103,6 @@ window.addEvent('fabrik.loaded', function () {
 			}
 		})
 	})
-
-
-	// var name_list = jQuery('tbody.fabrik_groupdata')[0].classList[1]
-	// jQuery(".fabrik___heading .fabrik_ordercell").each(function (index) {
-	// 	var i = 0;
-	// 	var linhas = jQuery('.' + name_list + ' .fabrik_row');
-
-	// 	while (i < (linhas.length)) {
-	// 		linhas[i].children[index].setAttribute('data-content', this.outerText)
-	// 		i++;
-	// 	}
-	// });
 })
 
 

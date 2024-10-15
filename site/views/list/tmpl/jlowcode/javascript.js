@@ -80,6 +80,27 @@ window.addEvent('fabrik.loaded', function () {
 	});
 	// Search icon  END
 
+	// Clean filter
+	var cleanFilterButton = jQuery('<button type="button" class="btn-close"></button>');
+	searchBox.parent().css({
+		'position': 'relative'
+	});
+	searchBox.parent().append(cleanFilterButton);
+	cleanFilterButton.css({
+		'position': 'absolute',
+		'top': '18px',
+		'right': '30px',
+		'cursor': 'pointer',
+		'font-size': '10px',
+		'z-index': '10',
+		'color': '#A6A6A6'
+	});
+	cleanFilterButton.on('click', function () {
+		jQuery(this).parent().find('.fabrik_filter').val('');
+		Fabrik.fireEvent('fabrik.list.dofilter', [this]);
+	});
+	// Clean filter - END
+
 	var dataRow = $('.fabrik_groupdata');
 
 	Array.from(dataRow).each(function (row) {
