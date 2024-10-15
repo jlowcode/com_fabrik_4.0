@@ -732,7 +732,8 @@ i.fas.fa-exclamation-triangle.fa-sm{
     margin: 0em 1em;
     padding: 0;
     cursor: pointer;
-    position: relative; 
+    position: relative;
+    height: 30px;
 }
 
 /* Estilo para o símbolo de seta */
