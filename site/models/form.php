@@ -5159,6 +5159,7 @@ class FabrikFEModelForm extends FabModelForm
 	public function getRedirectURL($incSession = true, $isMambot = false)
 	{
 		$input = $this->app->getInput();
+		$menu = $this->app->getMenu();
 
 		if ($this->app->isClient('administrator'))
 		{
@@ -5209,10 +5210,14 @@ class FabrikFEModelForm extends FabModelForm
 			} 
 			else if (array_key_exists('Submit',  $this->formData)) 
 			{
-				//$url = 'index.php?option=com_fabrik&view=list&listid=' . $input->getInt('listid');
-				if ($itemId !== 0) $url = $url . '&Itemid=' . $itemId;
+				$url = 'index.php?option=com_fabrik&view=list&listid=' . $input->getInt('listid');
+				$linkedMenu = $menu->getItems('link', $url, true);
+				$alias = $linkedMenu->alias;
 
-				$url = filter_var(ArrayHelper::getValue($_POST, 'fabrik_referrer'), FILTER_SANITIZE_URL);
+				// Changed to always redirect to item menu with friendly url if exists
+				//if ($itemId !== 0) $url = $url . '&Itemid=' . $itemId;
+				//$url = filter_var(ArrayHelper::getValue($_POST, 'fabrik_referrer'), FILTER_SANITIZE_URL);
+				$url = URI::base() . (isset($alias) ? $alias : $url);
 			}
 			else
 			{

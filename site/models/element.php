@@ -1721,9 +1721,11 @@ class PlgFabrik_Element extends FabrikPlugin
 			$menu = $app->getMenu();
 			
 			$idPopupForm = $params->get('databasejoin_popupform');
-			$menuLinked = $menu->getItems('link', "index.php?option=com_fabrik&view=list&listid=$idPopupForm", true);
+			$url = "index.php?option=com_fabrik&view=list&listid=$idPopupForm";
+			$menuLinked = $menu->getItems('link', $url, true);
 			$alias = $menuLinked->alias;
-			$label = "<a href='/$alias' target='_blank'>$label</a>";
+			$link = '/' . (isset($alias) ? $alias : $url);
+			$label = "<a href='/$link' target='_blank'>$label</a>";
 		}
 
 		return Text::_($label);
