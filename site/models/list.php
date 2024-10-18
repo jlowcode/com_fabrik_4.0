@@ -7329,7 +7329,7 @@ class FabrikFEModelList extends FormModel
 					}
 				}
 
-			$headingClass['fabrik_actions'] = array('class' => 'fabrik_ordercell fabrik_actions', 'style' => '');
+			$headingClass['fabrik_actions'] = array('class' => 'fabrik_ordercell fabrik_actions', 'style' => 'width: 5%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;');
 
 			// Needed for ajax filter/nav
 			$cellClass['fabrik_actions'] = array('class' => 'fabrik_actions fabrik_element');
@@ -7350,7 +7350,7 @@ class FabrikFEModelList extends FormModel
 	{
 		$params = $this->getParams();
 		$hidecheckbox = $params->get('hidecheckbox', '0');
-		$hidestyle = ($hidecheckbox == '1' || $hide) ? 'display:none;' : '';
+		$hidestyle = ($hidecheckbox == '1' || $hide) ? 'display:none;' : 'width: 5%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;';
 		$id = 'list_' . $this->getId() . '_checkAll';
 		$select = '<input type="checkbox" name="checkAll" class="' . $id . '" id="' . $id . '" />';
 		$aTableHeadings['fabrik_select'] = $select;
