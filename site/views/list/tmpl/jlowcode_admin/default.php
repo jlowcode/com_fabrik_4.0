@@ -14,6 +14,7 @@
 defined('_JEXEC') or die('Restricted access');
 
 use Joomla\CMS\Language\Text;
+use Joomla\CMS\Factory;
 
 JHtml::_('script', 'https://cdnjs.cloudflare.com/ajax/libs/Sortable/1.14.0/Sortable.min.js', array('version' => 'auto', 'relative' => true));
 
@@ -24,7 +25,7 @@ if ($_SERVER["REQUEST_METHOD"] == 'POST') {
         case 'getFilhos':
             $paiId = isset($_POST['id']) ? intval($_POST['id']) : 0;
             $db_table_name = $this->table->db_table_name;
-            $results = getItensChild($db_table_name);
+            $results = getItensChild($db_table_name, $this);
             foreach ($results as $index => $value) {
                 $this->_row = $this->_models["list"]->getRow($value->id, true);
                 $results[$index]->actions = $this->loadTemplate('row_tree');
@@ -380,15 +381,13 @@ if ($modoExibicao["template"] == 'list' || $modoExibicao["template"] == '0') {
                     </table>
                     <div id="registros-container">
                         <?php
-                        $self = $this;
-                        $itens = getItens($self, null);
+                            $self = $this;
+                            $itens = getItens($self, null);
 
-                        foreach ($itens as $row) {
-                            $this->_row = $this->_models["list"]->getRow($row->id, true);
-                        ?>
-                        <?php
-                            echo $this->loadTemplate('row_tree');
-                        }
+                            foreach ($itens as $row) {
+                                $this->_row = $this->_models["list"]->getRow($row->id, true);
+                                echo $this->loadTemplate('row_tree');
+                            }
                         ?>
                     </div>
                 </div>
@@ -407,28 +406,55 @@ if ($modoExibicao["template"] == 'list' || $modoExibicao["template"] == '0') {
 
 function getItens($self, $parent)
 {
-    $db = JFactory::getDBO();
+    $db = Factory::getContainer()->get('DatabaseDriver');
+    $model = $self->getModel();
+    $elements = $model->getElements('id');
+
     $query = $db->getQuery(true);
-    $query->select(array('*'));
+    $query->select(Array('*'));
+
     if ($parent == null) {
         $query->from($db->quoteName($self->table->db_table_name))->where("parent IS NULL");
     } else {
         $query->from($db->quoteName($self->table->db_table_name))->where("parent = " . $parent);
     }
+
+    $orders = json_decode($model->getTable()->get('order_by'));
+    $orders_dir = json_decode($model->getTable()->get('order_dir'));
+    foreach ($orders as $key => $idEl) {
+        $el = $elements[$idEl];
+        $query->order($el->getElement()->get('name') . ' ' . $orders_dir[$key]);
+    }
+
     $db->setQuery($query);
     $results = $db->loadObjectList();
+
     return $results;
 }
 
-function getItensChild($db_table_name)
+function getItensChild($db_table_name, $self)
 {
+    $db = Factory::getContainer()->get('DatabaseDriver');
+
+    $model = $self->getModel();
+    $elements = $model->getElements('id');
     $parent = isset($_POST['id']) ? intval($_POST['id']) : 0;
-    $db = JFactory::getDBO();
+    
     $query = $db->getQuery(true);
-    $query->select(array('*'));
-    $query->from($db->quoteName($db_table_name))->where("parent = " . $parent);
+    $query->select(array('*'))
+        ->from($db->quoteName($db_table_name))
+        ->where("parent = " . $parent);
+
+    $orders = json_decode($model->getTable()->get('order_by'));
+    $orders_dir = json_decode($model->getTable()->get('order_dir'));
+    foreach ($orders as $key => $idEl) {
+        $el = $elements[$idEl];
+        $query->order($el->getElement()->get('name') . ' ' . $orders_dir[$key]);
+    }
+    
     $db->setQuery($query);
     $results = $db->loadObjectList();
+
     return $results;
 }
 
