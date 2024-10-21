@@ -7329,7 +7329,7 @@ class FabrikFEModelList extends FormModel
 					}
 				}
 
-			$headingClass['fabrik_actions'] = array('class' => 'fabrik_ordercell fabrik_actions', 'style' => 'width: 5%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;');
+			$headingClass['fabrik_actions'] = array('class' => 'fabrik_ordercell fabrik_actions', 'style' => 'width: 5%;');
 
 			// Needed for ajax filter/nav
 			$cellClass['fabrik_actions'] = array('class' => 'fabrik_actions fabrik_element');
