@@ -52,7 +52,33 @@ $headingsHtml = $this->loadTemplate('headings');
 // Workflow code
 echo $this->loadTemplate('modal');
 // End workflow code
-?>
+
+$pageClass = $this->params->get('pageclass_sfx', '');
+if ($pageClass !== '') :
+    echo '<div class="' . $pageClass . '">';
+endif;
+
+if ($this->tablePicker != '') : ?>
+    <div style="text-align:right"><?php echo Text::_('COM_FABRIK_LIST') ?>: <?php echo $this->tablePicker; ?></div>
+<?php
+endif;
+
+if ($this->params->get('show_page_heading')) :
+    echo '<h1>' . $this->params->get('page_heading') . '</h1>';
+endif;
+
+echo $this->loadTemplate('header');
+
+if($this->table->intro) : ?>
+
+<div class="intro-container">
+    <div class="text-intro-content">
+            <?php echo $this->table->intro; ?>
+    </div>
+    <i class="fa fa-angle-down" aria-hidden="true"></i>
+</div>
+
+<?php endif; ?>
 
 <div id="loadingModal" class="modal">
     <div class="spinner"></div>
@@ -65,23 +91,6 @@ if ($modoExibicao["template"] == 'list' || $modoExibicao["template"] == '0') {
         if ($width_list > 100) $cssOverflow = 'overflow-x: scroll;';
         $cssWidth = "width: $width_list%;";
     }
-
-    $pageClass = '';
-    //$this->params->get('pageclass_sfx', '');
-    // The number of columns to split the list rows into
-    $columns = 3;
-
-    if ($pageClass !== '') :
-        echo '<div class="' . $pageClass . '">';
-    endif;
-
-    if ($this->tablePicker != '') : ?>
-        <div style="text-align:right"><?php echo Text::_('COM_FABRIK_LIST') ?>: <?php echo $this->tablePicker; ?></div>
-    <?php
-    endif;
-    echo $this->loadTemplate('header');
-    // Intro outside of form to allow for other lists/forms to be injected.
-    echo $this->table->intro;
 
     ?>
     <form class="fabrikForm form-search" action="<?php echo $this->table->action; ?>" method="post" id="<?php echo $this->formid; ?>" name="fabrikList" style="width: 100%;">
@@ -199,29 +208,17 @@ if ($modoExibicao["template"] == 'list' || $modoExibicao["template"] == '0') {
     if ($pageClass !== '') :
         echo '</div>';
     endif;
-} else if ($modoExibicao["template"] == 'grid' || $modoExibicao["template"] == '1') {
+} 
 
+if ($modoExibicao["template"] == 'grid' || $modoExibicao["template"] == '1') {
     // The number of columns to split the list rows into
     $columns = 3;
     // Show the labels next to the data:
     $this->showLabels = false;
     // Show empty data
     $this->showEmpty = true;
-    $pageClass = $this->params->get('pageclass_sfx', '');
-    if ($pageClass !== '') :
-        echo '<div class="' . $pageClass . '">';
-    endif;
+
     ?>
-    <?php if ($this->tablePicker != '') { ?>
-        <div style="Text-align:right"><?php echo Text::_('COM_FABRIK_LIST') ?>: <?php echo $this->tablePicker; ?></div>
-    <?php }
-
-    if ($this->params->get('show_page_heading')) :
-        echo '<h1>' . $this->params->get('page_heading') . '</h1>';
-    endif;
-
-    echo $this->loadTemplate('header');
-    echo $this->table->intro; ?>
     <form class="fabrikForm" action="<?php echo $this->table->action; ?>" method="post" id="<?php echo $this->formid; ?>" name="fabrikList">
 
         <div class="<?php echo $this->params['show-table-filters'] === '6' ? 'row' : ''; ?>">
@@ -317,27 +314,16 @@ if ($modoExibicao["template"] == 'list' || $modoExibicao["template"] == '0') {
     if ($pageClass !== '') :
         echo '</div>';
     endif;
-} else if ($modoExibicao["template"] == 'tree' || $modoExibicao["template"] == '2') {
+} 
+
+if ($modoExibicao["template"] == 'tree' || $modoExibicao["template"] == '2') {
 
     // Show the labels next to the data:
     $this->showLabels = true;
     // Show empty data
     $this->showEmpty = true;
-    $pageClass = $this->params->get('pageclass_sfx', '');
-    if ($pageClass !== '') :
-        echo '<div class="' . $pageClass . '">';
-    endif;
+
     ?>
-    <?php if ($this->tablePicker != '') { ?>
-        <div style="Text-align:right"><?php echo Text::_('COM_FABRIK_LIST') ?>: <?php echo $this->tablePicker; ?></div>
-    <?php }
-
-    if ($this->params->get('show_page_heading')) :
-        echo '<h1>' . $this->params->get('page_heading') . '</h1>';
-    endif;
-
-    echo $this->loadTemplate('header');
-    echo $this->table->intro; ?>
     <form class="fabrikForm" action="<?php echo $this->table->action; ?>" method="post" id="<?php echo $this->formid; ?>" name="fabrikList">
         <div class="<?php echo $this->params['show-table-filters'] === '6' ? 'row' : ''; ?>">
             <div class="<?php echo $this->params['show-table-filters'] === '6' ? 'col-md-12' : ''; ?>">

@@ -39,6 +39,34 @@ $c = $_REQUEST['c'];
 echo <<<EOT
 /* BEGIN - Your CSS styling starts here */
 
+.intro-container {
+  position: relative;
+  text-align: right;
+}
+
+.text-intro-content {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-height: 8.5em;
+  text-align: left
+}
+
+.intro-container fa {
+  background-color: transparent;
+  border: none;
+  color: blue;
+  cursor: pointer;
+  padding: 0;
+  font-size: 16px;
+  margin-top: 5px;
+}
+
+.intro-container fa:focus {
+  outline: none;
+}
+
 .fabrik_action .dropdown-menu {
     transform: translate(0px, 30px) !important;
 }

@@ -8,13 +8,8 @@
 requirejs(['fab/fabrik', 'fab/bootstrap_tree'], function (Fabrik, BootstrapTree) {
 
 	jQuery(document).ready(function () {
-		// console.log('debug: bootstrap tree init called');
-		//BootstrapTree.init(Fabrik.liveSite);
 
 		Fabrik.addEvent('fabrik.list.update', function (list) {
-			// console.log('debug: event triggered update tree');
-			//BootstrapTree.init(Fabrik.liveSite);
-			// console.log(list);
 			return list;
 		});
 
@@ -35,6 +30,21 @@ requirejs(['fab/fabrik', 'fab/bootstrap_tree'], function (Fabrik, BootstrapTree)
 });
 
 window.addEvent('fabrik.loaded', function () {
+	// Description container
+	var toogleBtn = jQuery('.intro-container .fa');
+
+	toogleBtn.on('click', function() {
+		var textContent = jQuery('.text-intro-content');
+		if (textContent.css('max-height') !== 'none') {
+			textContent.css('max-height', 'none');
+			jQuery(this).removeClass('fa-angle-down');
+			jQuery(this).addClass('fa-angle-up');
+		} else {
+			textContent.css('max-height', '8.5em');
+			jQuery(this).removeClass('fa-angle-up');
+			jQuery(this).addClass('fa-angle-down');
+		}
+	})
 
 	// Search icon start
 	// Search icon on filters
