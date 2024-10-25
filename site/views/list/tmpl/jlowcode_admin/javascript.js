@@ -32,9 +32,15 @@ requirejs(['fab/fabrik', 'fab/bootstrap_tree'], function (Fabrik, BootstrapTree)
 window.addEvent('fabrik.loaded', function () {
 	// Description container
 	var toogleBtn = jQuery('.intro-container .fa');
+	var textContent = jQuery('.text-intro-content');
+
+	height = textContent[0].scrollHeight;
+	maxHeight = parseInt(textContent.css('max-height'));
+	if(height < maxHeight) {
+		toogleBtn.css('display', 'none');
+	}
 
 	toogleBtn.on('click', function() {
-		var textContent = jQuery('.text-intro-content');
 		if (textContent.css('max-height') !== 'none') {
 			textContent.css('max-height', 'none');
 			jQuery(this).removeClass('fa-angle-down');

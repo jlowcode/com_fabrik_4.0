@@ -266,7 +266,6 @@ form .fabrikButtonsContainer .nav {
     display: flex;
     width: 100%;
     justify-content: space-between;
-    border-bottom: 2px solid #eee;
 }
 
 main .platform-content {

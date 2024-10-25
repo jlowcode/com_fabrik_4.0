@@ -17,6 +17,7 @@ use Joomla\CMS\Language\Text;
 use Joomla\CMS\Factory;
 
 JHtml::_('script', 'https://cdnjs.cloudflare.com/ajax/libs/Sortable/1.14.0/Sortable.min.js', array('version' => 'auto', 'relative' => true));
+$db = Factory::getContainer()->get('DatabaseDriver');
 
 // Obtém o valor enviado através do POST
 if ($_SERVER["REQUEST_METHOD"] == 'POST') {
@@ -67,7 +68,22 @@ if ($this->params->get('show_page_heading')) :
     echo '<h1>' . $this->params->get('page_heading') . '</h1>';
 endif;
 
-echo $this->loadTemplate('header');
+$idList = $this->list->id;
+$query = $db->getQuery(true);
+$query->select('miniatura')->from('adm_cloner_listas')->where('id_lista = ' . $idList);
+$db->setQuery($query);
+$miniatura = $db->loadResult();
+
+if($miniatura) { ?>
+    <div style="display: flex; padding-bottom: 10px; border-bottom: 2px solid #eee;">
+        <img style="margin-right: 50px; width: 300px; object-fit=contain" src="<?php echo $miniatura; ?>"/>
+        <?php echo $this->loadTemplate('header'); ?>
+    </div>
+<?php } else { ?>
+    <div style="display: flex; border-bottom: 2px solid #eee;">
+        <?php echo $this->loadTemplate('header'); ?>
+    </div>
+<?php }
 
 if($this->table->intro) : ?>
 
