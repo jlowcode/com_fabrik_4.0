@@ -34,23 +34,25 @@ window.addEvent('fabrik.loaded', function () {
 	var toogleBtn = jQuery('.intro-container .fa');
 	var textContent = jQuery('.text-intro-content');
 
-	height = textContent[0].scrollHeight;
-	maxHeight = parseInt(textContent.css('max-height'));
-	if(height < maxHeight) {
-		toogleBtn.css('display', 'none');
-	}
-
-	toogleBtn.on('click', function() {
-		if (textContent.css('max-height') !== 'none') {
-			textContent.css('max-height', 'none');
-			jQuery(this).removeClass('fa-angle-down');
-			jQuery(this).addClass('fa-angle-up');
-		} else {
-			textContent.css('max-height', '8.5em');
-			jQuery(this).removeClass('fa-angle-up');
-			jQuery(this).addClass('fa-angle-down');
+	if(toogleBtn.length > 0 && textContent.length > 0) {
+		height = textContent[0].scrollHeight;
+		maxHeight = parseInt(textContent.css('max-height'));
+		if(height < maxHeight) {
+			toogleBtn.css('display', 'none');
 		}
-	})
+	
+		toogleBtn.on('click', function() {
+			if (textContent.css('max-height') !== 'none') {
+				textContent.css('max-height', 'none');
+				jQuery(this).removeClass('fa-angle-down');
+				jQuery(this).addClass('fa-angle-up');
+			} else {
+				textContent.css('max-height', '8.5em');
+				jQuery(this).removeClass('fa-angle-up');
+				jQuery(this).addClass('fa-angle-down');
+			}
+		})
+	}
 
 	// Search icon start
 	// Search icon on filters
