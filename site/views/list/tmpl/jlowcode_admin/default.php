@@ -16,8 +16,9 @@ defined('_JEXEC') or die('Restricted access');
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\Factory;
 
-JHtml::_('script', 'https://cdnjs.cloudflare.com/ajax/libs/Sortable/1.14.0/Sortable.min.js', array('version' => 'auto', 'relative' => true));
+JHtml::_('script', 'components/com_fabrik/views/list/tmpl/jlowcode_admin/sortable.min.js', array('version' => 'auto', 'relative' => false));
 $db = Factory::getContainer()->get('DatabaseDriver');
+$input = Factory::getApplication()->input;
 
 // Obtém o valor enviado através do POST
 if ($_SERVER["REQUEST_METHOD"] == 'POST') {
@@ -43,6 +44,8 @@ if ($_SERVER["REQUEST_METHOD"] == 'POST') {
 
 if (isset($_SESSION['modo']) && $_SESSION['modo']['lista'] == $this->table->db_table_name) {
     $modoExibicao = $_SESSION['modo'];
+} else if($input->get('layout_mode')) {
+    $modoExibicao["template"] = $input->get('layout_mode');
 } else if ($this->params->get('layout_mode')) {
     $modoExibicao["template"] = $this->params->get('layout_mode');
 } else {
@@ -224,7 +227,7 @@ if ($modoExibicao["template"] == 'list' || $modoExibicao["template"] == '0') {
     if ($pageClass !== '') :
         echo '</div>';
     endif;
-} 
+}
 
 if ($modoExibicao["template"] == 'grid' || $modoExibicao["template"] == '1') {
     // The number of columns to split the list rows into
@@ -259,7 +262,7 @@ if ($modoExibicao["template"] == 'grid' || $modoExibicao["template"] == '1') {
                 ?>
             </div>
             <div class="<?php echo $this->params['show-table-filters'] === '6' ? ' col-md-2 span2 ' : '';
-                        echo $this->showFilters === true ? 'filterContentNotEmpty' : '' ?>" style="float: left;">
+                        echo $this->showFilters === true ? 'filterContentNotEmpty' : '' ?>" style="margin-bottom: 30px">
 
                 <?php
                 if ($this->showFilters) {
@@ -268,7 +271,7 @@ if ($modoExibicao["template"] == 'grid' || $modoExibicao["template"] == '1') {
                 ?>
             </div>
 
-            <div class="fabrikDataContainer<?php echo $this->params['show-table-filters'] === '6' ? ' col-md-9 span9' : ''; ?>" data-cols="<?php echo $columns; ?>" style="float: right">
+            <div class="fabrikDataContainer<?php echo $this->params['show-table-filters'] === '6' ? ' col-md-9 span9' : ''; ?>" data-cols="<?php echo $columns; ?>" style="">
                 <?php foreach ($this->pluginBeforeList as $c) {
                     echo $c;
                 } ?>

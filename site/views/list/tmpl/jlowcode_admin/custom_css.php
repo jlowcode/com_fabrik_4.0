@@ -408,9 +408,16 @@ i.fas.fa-exclamation-triangle.fa-sm{
     align-items: center;
 }
 
-.filterContentNotEmpty {
+.fabrik_filter_submit {
+    margin-top: 10px !important;
+}
+
+.fabrikFilterContainer {
     background-color: #FBFBFB;
 	padding: 10px;
+}
+
+.filterContentNotEmpty {
 	color: #000;
     font-weight: 500;
     border-radius: 5px;
