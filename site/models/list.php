@@ -2447,15 +2447,14 @@ class FabrikFEModelList extends FormModel
 		{
 			// $$$ rob only test canEdit and canView on standard edit links - if custom we should always use them,
 			// 3.0 get either edit or view link - as viewDetailsLink now always returns the view details link
-			if ($this->canEdit($row))
-			{
-				$this->_aLinkElements[] = $element->name;
-				$link = $this->editLink($row);
-			}
-			elseif ($this->canViewDetails($row))
+			if ($this->canViewDetails($row))
 			{
 				$this->_aLinkElements[] = $element->name;
 				$link = $this->viewDetailsLink($row);
+			} elseif ($this->canEdit($row))
+			{
+				$this->_aLinkElements[] = $element->name;
+				$link = $this->editLink($row);
 			}
 		}
 		else
