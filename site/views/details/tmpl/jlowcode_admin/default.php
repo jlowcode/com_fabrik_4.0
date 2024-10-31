@@ -18,11 +18,19 @@ use Joomla\CMS\Factory;
 
 $form = $this->form;
 $model = $this->getModel();
+$listModel = $model->getlistModel();
 
 $app = Factory::getApplication();
 $menu = $app->getMenu();
 $menuItem = $menu->getActive();
 $alias = $menuItem->alias;
+
+// Sometimes $alias and $aliasList are different
+$idList = $listModel->getId();
+$url = "index.php?option=com_fabrik&view=list&listid=$idList";
+$menuLinked = $menu->getItems('link', $url, true);
+$aliasList = $menuLinked->alias;
+$linkList = '/' . (isset($aliasList) ? $aliasList : $url);
 
 if ($this->params->get('show_page_heading', 1)) : ?>
 	<div class="componentheading<?php echo $this->params->get('pageclass_sfx') ?>">
@@ -38,7 +46,7 @@ if ($this->params->get('show-title', 1)) : ?>
 		</div>
 		<div class="breadcum">
 			<span class="h6">
-				<a onclick="parent.location='/<?php echo $alias ?>'"><i class="fa fa-angle-left" aria-hidden="true"></i> VOLTAR</a>
+				<a onclick="parent.location='<?php echo $linkList ?>'"><i class="fa fa-angle-left" aria-hidden="true"></i> IR PARA LISTA</a>
 			</span>
 		</div>
 	</div>
