@@ -8,14 +8,18 @@
 requirejs(['fab/fabrik', 'fab/bootstrap_tree'], function (Fabrik, BootstrapTree) {
 
 	jQuery(document).ready(function () {
+		hideHeadingsToModeGalleryOrTree();
 
 		Fabrik.addEvent('fabrik.list.update', function (list) {
+			hideHeadingsToModeGalleryOrTree();
+
 			return list;
 		});
-
 	});
 
 	Fabrik.addEvent('fabrik.list.loaded', function (list) {
+		hideHeadingsToModeGalleryOrTree();
+
 		var dataRow = list.list.getElementsByClassName('fabrik_row');
 		Array.from(dataRow).each(function (row) {
 			var btnAction = row.getElementsByClassName('fabrik_action');
@@ -25,7 +29,6 @@ requirejs(['fab/fabrik', 'fab/bootstrap_tree'], function (Fabrik, BootstrapTree)
 				});
 			}
 		})
-
 	});
 });
 
@@ -291,3 +294,12 @@ document.addEventListener("DOMContentLoaded", function () {
 		}
 	}
 });
+
+function hideHeadingsToModeGalleryOrTree() {
+	jQuery('.fabrikList .fabrik___heading th').each(function (i, column) {
+		classes = jQuery(column).attr('class').split(' ');
+		if(classes.indexOf('fabrik_actions') < 0) {
+			jQuery(column).css('visibility', 'hidden');
+		}
+	});
+}
