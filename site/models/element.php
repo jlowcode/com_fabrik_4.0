@@ -1725,7 +1725,7 @@ class PlgFabrik_Element extends FabrikPlugin
 			$menuLinked = $menu->getItems('link', $url, true);
 			$alias = $menuLinked->alias;
 			$link = '/' . (isset($alias) ? $alias : $url);
-			$label = "<a href='/$link' target='_blank'>$label</a>";
+			$label = "<a href='$link' target='_blank'>$label</a>";
 		}
 
 		return Text::_($label);
