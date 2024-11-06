@@ -408,59 +408,62 @@ if ($modoExibicao["template"] == 'tree' || $modoExibicao["template"] == '2') {
     endif;
 }
 
+if (!function_exists('getItens')) {
+    function getItens($self, $parent)
+    {
+        $db = Factory::getContainer()->get('DatabaseDriver');
+        $model = $self->getModel();
+        $elements = $model->getElements('id');
 
-function getItens($self, $parent)
-{
-    $db = Factory::getContainer()->get('DatabaseDriver');
-    $model = $self->getModel();
-    $elements = $model->getElements('id');
+        $query = $db->getQuery(true);
+        $query->select(Array('*'));
 
-    $query = $db->getQuery(true);
-    $query->select(Array('*'));
+        if ($parent == null) {
+            $query->from($db->quoteName($self->table->db_table_name))->where("parent IS NULL");
+        } else {
+            $query->from($db->quoteName($self->table->db_table_name))->where("parent = " . $parent);
+        }
 
-    if ($parent == null) {
-        $query->from($db->quoteName($self->table->db_table_name))->where("parent IS NULL");
-    } else {
-        $query->from($db->quoteName($self->table->db_table_name))->where("parent = " . $parent);
+        $orders = json_decode($model->getTable()->get('order_by'));
+        $orders_dir = json_decode($model->getTable()->get('order_dir'));
+        foreach ($orders as $key => $idEl) {
+            $el = $elements[$idEl];
+            $query->order($el->getElement()->get('name') . ' ' . $orders_dir[$key]);
+        }
+
+        $db->setQuery($query);
+        $results = $db->loadObjectList();
+
+        return $results;
     }
-
-    $orders = json_decode($model->getTable()->get('order_by'));
-    $orders_dir = json_decode($model->getTable()->get('order_dir'));
-    foreach ($orders as $key => $idEl) {
-        $el = $elements[$idEl];
-        $query->order($el->getElement()->get('name') . ' ' . $orders_dir[$key]);
-    }
-
-    $db->setQuery($query);
-    $results = $db->loadObjectList();
-
-    return $results;
 }
 
-function getItensChild($db_table_name, $self)
-{
-    $db = Factory::getContainer()->get('DatabaseDriver');
+if (!function_exists('getItensChild')) {
+    function getItensChild($db_table_name, $self)
+    {
+        $db = Factory::getContainer()->get('DatabaseDriver');
 
-    $model = $self->getModel();
-    $elements = $model->getElements('id');
-    $parent = isset($_POST['id']) ? intval($_POST['id']) : 0;
-    
-    $query = $db->getQuery(true);
-    $query->select(array('*'))
-        ->from($db->quoteName($db_table_name))
-        ->where("parent = " . $parent);
+        $model = $self->getModel();
+        $elements = $model->getElements('id');
+        $parent = isset($_POST['id']) ? intval($_POST['id']) : 0;
+        
+        $query = $db->getQuery(true);
+        $query->select(array('*'))
+            ->from($db->quoteName($db_table_name))
+            ->where("parent = " . $parent);
 
-    $orders = json_decode($model->getTable()->get('order_by'));
-    $orders_dir = json_decode($model->getTable()->get('order_dir'));
-    foreach ($orders as $key => $idEl) {
-        $el = $elements[$idEl];
-        $query->order($el->getElement()->get('name') . ' ' . $orders_dir[$key]);
+        $orders = json_decode($model->getTable()->get('order_by'));
+        $orders_dir = json_decode($model->getTable()->get('order_dir'));
+        foreach ($orders as $key => $idEl) {
+            $el = $elements[$idEl];
+            $query->order($el->getElement()->get('name') . ' ' . $orders_dir[$key]);
+        }
+        
+        $db->setQuery($query);
+        $results = $db->loadObjectList();
+
+        return $results;
     }
-    
-    $db->setQuery($query);
-    $results = $db->loadObjectList();
-
-    return $results;
 }
 
 ?>
