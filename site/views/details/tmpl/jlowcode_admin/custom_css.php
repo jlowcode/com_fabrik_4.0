@@ -38,6 +38,11 @@ $c = $_REQUEST['c'];
 echo <<<EOT
 /* BEGIN - Your CSS styling starts here */
 
+.fabrik_groupdata td, .list-footer {
+    font-weight: 400;
+    line-height: 2;
+}
+
 .fabrikElementReadOnly {
     line-height: 20px;
 }
