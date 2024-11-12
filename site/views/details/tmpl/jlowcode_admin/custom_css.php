@@ -43,8 +43,12 @@ echo <<<EOT
     line-height: 2;
 }
 
+.fabrikElementContainer {
+    padding: 10px;
+}
+
 .fabrikElementReadOnly {
-    line-height: 20px;
+    line-height: 1.6;
 }
 
 .modal-content {
