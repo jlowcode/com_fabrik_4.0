@@ -94,15 +94,15 @@ foreach ($this->groups as $group) :
 		endif;
 		?>
 		<script>
-			/*var fields = jQuery('.fabrikElementReadOnly');
+			var fields = jQuery('.fabrikElementReadOnly');
 			Object.keys(fields).forEach(function(key) {
-				if (fields[key].outerText == '') {
+				if (fields[key].outerText == '' && !jQuery(fields[key]).closest('.plg-display').length) {
 					const alert = document.createElement('div')
 					alert.innerHTML = '<div class="alert alert-warning" role="alert"><a href="index.php?option=com_fabrik&view=form/<?php echo $form->id; ?>/&formid=<?php echo $this->rowid; ?>" class="alert-link">Completar esse dado!</a></div>';
 					console.log(fields[key]);
 					fields[key].appendChild(alert);
 				};
-			});*/
+			});
 		</script>
 	</div>
 <?php
