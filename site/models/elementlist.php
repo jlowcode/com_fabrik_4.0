@@ -580,7 +580,7 @@ class PlgFabrik_ElementList extends PlgFabrik_Element
 			$rows[$i]->text = strip_tags($rows[$i]->text);
 
 			// Check that search strings are not in the HTML we just stripped
-			if (!preg_match($regex, $rows[$i]->text))
+			if (!preg_match($regex, preg_replace('/[^A-Za-z0-9 ]/', '', iconv('UTF-8', 'ASCII//TRANSLIT', $rows[$i]->text))))
 			{
 				unset($rows[$i]);
 			}
