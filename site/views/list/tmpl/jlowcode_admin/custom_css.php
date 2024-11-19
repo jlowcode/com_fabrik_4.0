@@ -817,14 +817,14 @@ i.fas.fa-exclamation-triangle.fa-sm{
 }
 
 .dropdown.fabrik_action{
-display: inline;
+    display: inline;
 }
 
 /* Esconde o dropdown por padrão */
 .tree-item .dropdown.fabrik_action {
-    visibility: hidden;
+    /*visibility: hidden;
     opacity: 0;
-    transition: visibility 0s, opacity 0.3s linear;
+    transition: visibility 0s, opacity 0.3s linear;*/
 }
 
 /* Aplica o hover apenas ao .dropdown que é filho direto do .tree-item que está sendo hoverado */
