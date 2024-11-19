@@ -23,14 +23,14 @@ $listModel = $model->getlistModel();
 $app = Factory::getApplication();
 $menu = $app->getMenu();
 $menuItem = $menu->getActive();
-$alias = $menuItem->alias;
+$route = $menuItem->route;
 
-// Sometimes $alias and $aliasList are different
+// Sometimes $route and $routeList are different
 $idList = $listModel->getId();
 $url = "index.php?option=com_fabrik&view=list&listid=$idList";
 $menuLinked = $menu->getItems('link', $url, true);
-$aliasList = $menuLinked->alias;
-$linkList = '/' . (isset($aliasList) ? $aliasList : $url);
+$routeList = $menuLinked->route;
+$linkList = '/' . (isset($routeList) ? $routeList : $url);
 
 if ($this->params->get('show_page_heading', 1)) : ?>
 	<div class="componentheading<?php echo $this->params->get('pageclass_sfx') ?>">
@@ -116,14 +116,14 @@ if ($this->access == 2) : ?>
 	<div class="footer-btn">
 		<div>
 			<div class="btn-group ">
-			<a onclick="parent.location='/<?php echo $alias ?>/form/<?php echo $form->id; ?>/<?php echo $this->rowid; ?>'" title="Editar"><button  class="btn btn_jlowcode_admin btn_jlowcode_admin_edit" name="edit" id="fabrikSubmit_19">Editar</button></a>
+			<a onclick="parent.location='/<?php echo $route ?>/form/<?php echo $form->id; ?>/<?php echo $this->rowid; ?>'" title="Editar"><button  class="btn btn_jlowcode_admin btn_jlowcode_admin_edit" name="edit" id="fabrikSubmit_19">Editar</button></a>
 			</div>
 		</div>
 	
 								
 		<div>
 			<div class="btn-group">
-			<a onclick="parent.location='/<?php echo $alias ?>'" title="Voltar"><button class="btn btn_jlowcode_admin btn_jlowcode_admin_back">Voltar</button></a>
+			<a onclick="parent.location='/<?php echo $route ?>'" title="Voltar"><button class="btn btn_jlowcode_admin btn_jlowcode_admin_back">Voltar</button></a>
 			</div>
 		</div>
 	</div>

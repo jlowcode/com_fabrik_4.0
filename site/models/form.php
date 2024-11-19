@@ -5212,12 +5212,12 @@ class FabrikFEModelForm extends FabModelForm
 			{
 				$url = 'index.php?option=com_fabrik&view=list&listid=' . $input->getInt('listid');
 				$linkedMenu = $menu->getItems('link', $url, true);
-				$alias = $linkedMenu->alias;
+				$route = $linkedMenu->route;
 
 				// Changed to always redirect to item menu with friendly url if exists
 				//if ($itemId !== 0) $url = $url . '&Itemid=' . $itemId;
-				//$url = filter_var(ArrayHelper::getValue($_POST, 'fabrik_referrer'), FILTER_SANITIZE_URL);
-				$url = URI::base() . (isset($alias) ? $alias : $url);
+				$url = filter_var(ArrayHelper::getValue($_POST, 'fabrik_referrer'), FILTER_SANITIZE_URL);
+				$url = URI::base() . (isset($route) ? $route : $url);
 			}
 			else
 			{

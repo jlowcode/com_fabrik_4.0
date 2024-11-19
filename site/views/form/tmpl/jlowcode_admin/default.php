@@ -24,14 +24,14 @@ $active = ($form->error != '') ? '' : ' fabrikHide';
 $app = Factory::getApplication();
 $menu = $app->getMenu();
 $menuItem = $menu->getActive();
-$alias = $menuItem->alias;
+$route = $menuItem->route;
 
-// Sometimes $alias and $aliasList are different
+// Sometimes $route and $routeList are different
 $idList = $listModel->getId();
 $url = "index.php?option=com_fabrik&view=list&listid=$idList";
 $menuLinked = $menu->getItems('link', $url, true);
-$aliasList = $menuLinked->alias;
-$linkList = '/' . (isset($aliasList) ? $aliasList : $url);
+$routeList = $menuLinked->route;
+$linkList = '/' . (isset($routeList) ? $routeList : $url);
 
 if ($this->params->get('show_page_heading', 1)) : ?>
 	<div class="componentheading<?php echo $this->params->get('pageclass_sfx')?>">
