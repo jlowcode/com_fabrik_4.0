@@ -372,9 +372,10 @@ if ($modoExibicao["template"] == 'grid' || $modoExibicao["template"] == '1') {
                             $items = array();
                             foreach ($group as $this->_row) :
                                 $items[] = $this->loadTemplate('row_gallery');
+                                $ids[] = $this->_row->id;
                             endforeach;
                             $class = 'fabrik_row well col-md-4 galery-div';
-                            echo FabrikHelperHTML::bootstrapGrid($items, $columns, $class, true, $this->_row->id);
+                            echo FabrikHelperHTML::bootstrapGrid($items, $columns, $class, true, $ids);
                             ?>
                         </div>
                     <?php endforeach; ?>

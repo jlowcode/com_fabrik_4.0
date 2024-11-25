@@ -13,13 +13,15 @@ $d = $displayData;
 // a void potential divide by 0 if something went wrong and $d->columns is 0 or empty
 $span = empty($d->columns) ? 12 : floor(12 / $d->columns);
 $i    = 0;
-$id   = is_null($d->spanId) ? '' : ' id="' . $d->spanId . '"';
 $grid = array();
 
 foreach ($d->items as $i => $s)
 {
     $endLine = ($i !== 0 && (($i) % $d->columns == 0));
     $newLine = ($i % $d->columns == 0);
+
+    $id   = is_null($d->spanId) ? '' : (is_array($d->spanId) ? ' id="' . $d->spanId[$i] . '"' : ' id="' . $d->spanId . '"');
+
 	if (is_object($s) ) {
 		$id   = isset($s->spanId) ? '' : ' id="' . $s->spanId . '"';
 		$rowdata = $s->rowdata;
