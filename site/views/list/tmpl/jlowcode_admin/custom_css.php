@@ -320,11 +320,18 @@ form a, table a {
     width: 90rem !important;
 }
 
-h1, 
 .nav {
     margin: 10px 0px !important;
 }
 
+h1 {
+    margin: 0px !important;
+    line-height: 1;
+}
+
+.page-header .owner-name {
+    color: #999;
+}
 
 .fabrikForm {
     font-size: 1rem;

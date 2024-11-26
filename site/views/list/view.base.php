@@ -18,6 +18,7 @@ use Joomla\CMS\Profiler\Profiler;
 use Joomla\CMS\Filesystem\File;
 use Joomla\Registry\Registry;
 use Joomla\CMS\HTML\HTMLHelper;
+use Joomla\CMS\Factory;
 
 jimport('joomla.application.component.view');
 
@@ -505,6 +506,7 @@ class FabrikViewListBase extends FabrikView
 		$this->table->db_table_name = $item->db_table_name;
 
 		// End deprecated
+		$this->owner_user 	  = Factory::getUser($item->get('created_by'));
 		$this->list           = $this->table;
 		$this->list->class    = $model->htmlClass();
 		$this->group_by       = $item->group_by;
