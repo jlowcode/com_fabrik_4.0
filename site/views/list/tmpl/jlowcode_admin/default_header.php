@@ -12,7 +12,17 @@
 
 // No direct access
 defined('_JEXEC') or die('Restricted access');
+
 use Joomla\CMS\Language\Text;
+use Joomla\CMS\Factory;
+
+$app = Factory::getApplication();
+$menu = $app->getMenu();
+
+$url = "index.php?option=com_fabrik&view=list&listid={$this->get('id')}";
+$menuLinked = $menu->getItems('link', $url, true);
+$route = $menuLinked->route;
+$link = '/' . (isset($route) ? $route : $url);
 
 // Workflow code
 if (isset($_REQUEST['workflow'])) {
@@ -44,7 +54,12 @@ if (isset($_REQUEST['action']) && isset($_REQUEST['action']['showButton'])) {
         if ($this->showTitle == 1) : ?>
             <div class="page-header">
                 <span class="owner-name"><?php echo $this->owner_user->get('name'); ?></span>
-                <h1><?php echo $this->table->label; ?></h1>
+
+                <?php if($app->input->get('listid') != $this->get('id')) { ?>
+                    <h1><a href="<?php echo $link ?>"><?php echo $this->table->label; ?></a></h1>
+                <?php } else { ?>
+                    <h1><?php echo $this->table->label; ?></h1>
+                <?php } ?>
             </div>
         <?php endif; ?>
     </div>
