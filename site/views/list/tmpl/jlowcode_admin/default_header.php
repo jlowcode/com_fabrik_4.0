@@ -43,8 +43,8 @@ if (isset($_REQUEST['action']) && isset($_REQUEST['action']['showButton'])) {
 
         if ($this->showTitle == 1) : ?>
             <div class="page-header">
-                <h1><?php echo $this->table->label; ?></h1>
                 <span class="owner-name"><?php echo $this->owner_user->get('name'); ?></span>
+                <h1><?php echo $this->table->label; ?></h1>
             </div>
         <?php endif; ?>
     </div>

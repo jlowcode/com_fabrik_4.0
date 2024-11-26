@@ -331,6 +331,7 @@ h1 {
 
 .page-header .owner-name {
     color: #999;
+    font-size: 12px;
 }
 
 .fabrikForm {
