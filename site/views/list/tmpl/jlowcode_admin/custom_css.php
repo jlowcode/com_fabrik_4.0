@@ -325,7 +325,7 @@ form a, table a {
 }
 
 h1 {
-    margin: 0px !important;
+    margin: 0px 0px 10px 0px !important;
     line-height: 1;
 }
 
