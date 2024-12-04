@@ -44,12 +44,7 @@ ul.fabrikRepeatData {
 	margin: 0;
 	padding-left: 0;
 }
-.fabrikRepeatData > li {
-	white-space: nowrap;
-	max-width:350px;
-	overflow:hidden;
-	text-overflow: ellipsis;
-}
+
 td.repeat-merge div, td.repeat-reduce div,
 td.repeat-merge i, td.repeat-reduce i {
 padding: 5px !important;
