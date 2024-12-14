@@ -4,13 +4,16 @@
  *
  * @package     Joomla
  * @subpackage  Fabrik
- * @copyright   Copyright (C) 2005-2016  Media A-Team, Inc. - All rights reserved.
+ * @copyright   Copyright (C) 2005-2020  Media A-Team, Inc. - All rights reserved.
  * @license     GNU/GPL http://www.gnu.org/copyleft/gpl.html
  */
 
 // No direct access
 defined('_JEXEC') or die('Restricted access');
 
+use Joomla\CMS\Table\Table;
+use Joomla\CMS\Access\Rules;
+use Joomla\CMS\Language\Text;
 use Joomla\Registry\Registry;
 use Joomla\Utilities\ArrayHelper;
 
@@ -47,7 +50,7 @@ class FabrikTableElement extends FabTable
 	 */
 	public function __construct(&$db)
 	{
-		parent::__construct('#__{package}_elements', 'id', $db);
+		parent::__construct('#__fabrik_elements', 'id', $db);
 	}
 
 	/**
@@ -87,7 +90,7 @@ class FabrikTableElement extends FabTable
 		// Bind the rules.
 		if (isset($array['rules']) && is_array($array['rules']))
 		{
-			$rules = new JAccessRules($array['rules']);
+			$rules = new Rules($array['rules']);
 			$this->setRules($rules);
 		}
 
@@ -99,6 +102,25 @@ class FabrikTableElement extends FabTable
 		}
 
 		return parent::bind($array, $ignore);
+	}
+
+	/**
+	 * Method to store a row in the database from the Table instance properties.
+	 * If a primary key value is set the row with that primary key value will be
+	 * updated with the instance property values.  If no primary key value is set
+	 * a new row will be inserted into the database with the properties from the
+	 * Table instance.
+	 *
+	 * @param   boolean  $updateNulls  True to update fields even if they are null.
+	 *
+	 * @return  boolean  True on success.
+	 *
+	 * @link    http://docs.joomla.org/Table/store
+	 * @since   11.1
+	 */
+	public function store($updateNulls = true)
+	{
+		return parent::store($updateNulls);
 	}
 
 	/**
@@ -135,7 +157,7 @@ class FabrikTableElement extends FabTable
 			// Nothing to set publishing state on, return false.
 			else
 			{
-				throw new Exception(FText::_('JLIB_DATABASE_ERROR_NO_ROWS_SELECTED'));
+				throw new Exception(Text::_('JLIB_DATABASE_ERROR_NO_ROWS_SELECTED'));
 			}
 		}
 
@@ -163,7 +185,7 @@ class FabrikTableElement extends FabTable
 		// Check for a database error.
 		if (!$this->_db->execute())
 		{
-			throw new Exception(JText::sprintf('JLIB_DATABASE_ERROR_PUBLISH_FAILED', get_class($this)));
+			throw new Exception(Text::sprintf('JLIB_DATABASE_ERROR_PUBLISH_FAILED', get_class($this)));
 		}
 
 		// If check-in is supported and all rows were adjusted, check them in.
@@ -176,7 +198,7 @@ class FabrikTableElement extends FabTable
 			}
 		}
 
-		// If the JTable instance value is in the list of primary keys that were set, set the instance.
+		// If the Table instance value is in the list of primary keys that were set, set the instance.
 		if (in_array($this->$k, $pks))
 		{
 			$this->published = $state;

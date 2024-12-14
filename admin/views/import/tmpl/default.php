@@ -4,7 +4,7 @@
  *
  * @package     Joomla.Administrator
  * @subpackage  Fabrik
- * @copyright   Copyright (C) 2005-2016  Media A-Team, Inc. - All rights reserved.
+ * @copyright   Copyright (C) 2005-2020  Media A-Team, Inc. - All rights reserved.
  * @license     GNU/GPL http://www.gnu.org/copyleft/gpl.html
  * @since       3.0
  */
@@ -12,16 +12,19 @@
 // No direct access
 defined('_JEXEC') or die('Restricted access');
 
+use Joomla\CMS\Router\Route;
+use Joomla\CMS\Factory;
+use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\Utilities\ArrayHelper;
 
-JHtml::_('behavior.tooltip');
+HTMLHelper::_('bootstrap.tooltip');
 FabrikHelperHTML::formvalidation();
-$app = JFactory::getApplication();
+$app = Factory::getApplication();
 $input = $app->input;
 $input->set('hidemainmenu', true);
 ?>
 
-<form enctype="multipart/form-data" action="<?php JRoute::_('index.php?option=com_fabrik'); ?>" method="post" name="adminForm" id="adminForm" class="form-validate">
+<form enctype="multipart/form-data" action="<?php Route::_('index.php?option=com_fabrik'); ?>" method="post" name="adminForm" id="adminForm" class="form-validate">
 <div class="width-100 fltlft">
 	<?php
 $id = $input->getInt('listid', 0); // from list data view in admin
@@ -36,7 +39,7 @@ if (($id !== 0))
 {
 	$db = FabrikWorker::getDbo(true);
 	$query = $db->getQuery(true);
-	$query->select('label')->from('#__{package}_lists')->where('id = ' . $id);
+	$query->select('label')->from('#__fabrik_lists')->where('id = ' . $id);
 	$db->setQuery($query);
 	$list = $db->loadResult();
 }
@@ -59,8 +62,8 @@ $fieldsets[] = 'format';
 	<?php } ?>
 
 	<input type="hidden" name="task" value="" />
-  	<?php echo JHTML::_('form.token');
-echo JHTML::_('behavior.keepalive');
+  	<?php echo HTMLHelper::_('form.token');
+echo HTMLHelper::_('behavior.keepalive');
 	  ?>
 	</div>
 </form>

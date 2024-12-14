@@ -4,7 +4,7 @@
  *
  * @package     Joomla
  * @subpackage  Fabrik
- * @copyright   Copyright (C) 2005-2016  Media A-Team, Inc. - All rights reserved.
+ * @copyright   Copyright (C) 2005-2020  Media A-Team, Inc. - All rights reserved.
  * @license     GNU/GPL http://www.gnu.org/copyleft/gpl.html
  * @since       3.0
  */
@@ -12,7 +12,9 @@
 // No direct access
 defined('_JEXEC') or die('Restricted access');
 
-$input = JFactory::getApplication()->input;
+use Joomla\CMS\Factory;
+
+$input = Factory::getApplication()->input;
 $group = $this->group;
 $i = 1;
 $w = new FabrikWorker;
@@ -27,7 +29,7 @@ foreach ($group->subgroups as $subgroup) :
 	<?php
 		// Add the add/remove repeat group buttons
 		if ($group->editable && ($group->canAddRepeat || $group->canDeleteRepeat)) : ?>
-			<div class="fabrikGroupRepeater pull-right btn-group">
+			<div class="fabrikGroupRepeater text-end btn-group-sm">
 				<?php if ($group->canAddRepeat) :
 					echo $this->addRepeatGroupButton;
 				endif;

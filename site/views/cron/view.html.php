@@ -4,12 +4,18 @@
  *
  * @package     Joomla
  * @subpackage  Fabrik
- * @copyright   Copyright (C) 2005-2016  Media A-Team, Inc. - All rights reserved.
+ * @copyright   Copyright (C) 2005-2020  Media A-Team, Inc. - All rights reserved.
  * @license     GNU/GPL http://www.gnu.org/copyleft/gpl.html
  */
 
 // No direct access
 defined('_JEXEC') or die('Restricted access');
+
+use Joomla\CMS\Language\Text;
+use Joomla\CMS\Component\ComponentHelper;
+use Joomla\CMS\Factory;
+use Joomla\CMS\Filesystem\File;
+use Joomla\CMS\HTML\HTMLHelper;
 
 jimport('joomla.application.component.view');
 
@@ -33,21 +39,21 @@ class FabrikViewCron extends FabrikView
 	public function display($tmpl = 'default')
 	{
 		$srcs  = FabrikHelperHTML::framework();
-		$input = $this->app->input;
+		$input = $this->app->getInput();
 		FabrikHelperHTML::script($srcs);
 		$model       = $this->getModel();
-		$usersConfig = JComponentHelper::getParams('com_fabrik');
+		$usersConfig = ComponentHelper::getParams('com_fabrik');
 		$model->setId($input->getInt('id', $usersConfig->get('visualizationid', $input->getInt('visualizationid', 0))));
 		$visualization = $model->getVisualization();
 		$pluginParams  = $model->getPluginParams();
 
-		$pluginManager = JModelLegacy::getInstance('Pluginmanager', 'FabrikModel');
+		$pluginManager = Factory::getApplication()->bootComponent('com_fabrik')->getMVCFactory()->createModel('Pluginmanager', 'FabrikModel');
 		$plugin        = $pluginManager->getPlugIn($visualization->plugin, 'visualization');
 		$plugin->_row  = $visualization;
 
 		if ($visualization->published == 0)
 		{
-			$this->app->enqueueMessage(FText::_('COM_FABRIK_SORRY_THIS_VISUALIZATION_IS_UNPUBLISHED'), 'warning');
+			$this->app->enqueueMessage(Text::_('COM_FABRIK_SORRY_THIS_VISUALIZATION_IS_UNPUBLISHED'), 'warning');
 
 			return '';
 		}
@@ -61,13 +67,13 @@ class FabrikViewCron extends FabrikView
 		$plugin->$pluginTask($this);
 		$this->plugin = $plugin;
 		$this->addTemplatePath($this->_basePath . '/plugins/' . $this->_name . '/' . $plugin->_name . '/tmpl/' . $tmpl);
-		$root = $this->app->isAdmin() ? JPATH_ADMINISTRATOR : JPATH_SITE;
+		$root = $this->app->isClient('administrator') ? JPATH_ADMINISTRATOR : JPATH_SITE;
 		$this->addTemplatePath($root . '/templates/' . $this->app->getTemplate() . '/html/com_fabrik/visualization/' . $plugin->_name . '/' . $tmpl);
 		$ab_css_file = JPATH_SITE . '/plugins/fabrik_visualization/' . $plugin->_name . '/tmpl/' . $tmpl . '/template.css';
 
-		if (JFile::exists($ab_css_file))
+		if (File::exists($ab_css_file))
 		{
-			JHTML::stylesheet('template.css', 'plugins/fabrik_visualization/' . $plugin->_name . '/tmpl/' . $tmpl . '/', true);
+			HTMLHelper::stylesheet('template.css', 'plugins/fabrik_visualization/' . $plugin->_name . '/tmpl/' . $tmpl . '/', true);
 		}
 
 		echo parent::display();

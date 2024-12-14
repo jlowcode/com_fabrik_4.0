@@ -4,13 +4,16 @@
  *
  * @package     Joomla.Administrator
  * @subpackage  Fabrik
- * @copyright   Copyright (C) 2005-2016  Media A-Team, Inc. - All rights reserved.
+ * @copyright   Copyright (C) 2005-2020  Media A-Team, Inc. - All rights reserved.
  * @license     GNU/GPL http://www.gnu.org/copyleft/gpl.html
  * @since       1.6
  */
 
 // No direct access
 defined('_JEXEC') or die('Restricted access');
+
+use Joomla\CMS\MVC\Controller\FormController;
+use Joomla\CMS\Factory;
 
 jimport('joomla.application.component.controllerform');
 
@@ -21,7 +24,7 @@ jimport('joomla.application.component.controllerform');
  * @subpackage  Fabrik
  * @since       3.0
  */
-class FabrikAdminControllerElement extends JControllerForm
+class FabrikAdminControllerElement extends FormController
 {
 	/**
 	 * The prefix to use with controller messages.
@@ -44,7 +47,7 @@ class FabrikAdminControllerElement extends JControllerForm
 	 */
 	public function getPluginHTML()
 	{
-		$app = JFactory::getApplication();
+		$app = Factory::getApplication();
 		$input = $app->input;
 		$plugin = $input->get('plugin');
 		$model = $this->getModel();
@@ -63,7 +66,7 @@ class FabrikAdminControllerElement extends JControllerForm
 	 */
 	public function save($key = null, $urlVar = null)
 	{
-		$app = JFactory::getApplication();
+		$app = Factory::getApplication();
 		$input = $app->input;
 		$listModel = $this->getModel('list', 'FabrikFEModel');
 		$listModel->setId($input->getInt('listid'));

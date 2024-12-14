@@ -4,17 +4,23 @@
  *
  * @package     Joomla
  * @subpackage  Form
- * @copyright   Copyright (C) 2005-2016  Media A-Team, Inc. - All rights reserved.
+ * @copyright   Copyright (C) 2005-2020  Media A-Team, Inc. - All rights reserved.
  * @license     GNU/GPL http://www.gnu.org/copyleft/gpl.html
  */
 
 // No direct access
 defined('_JEXEC') or die('Restricted access');
 
+use Joomla\CMS\Language\Text;
+use Joomla\CMS\Form\FormHelper;
+use Joomla\CMS\Factory;
+use Joomla\CMS\HTML\HTMLHelper;
+use Joomla\CMS\Form\Field\ListField;
+
 jimport('joomla.html.html');
 jimport('joomla.form.formfield');
 jimport('joomla.form.helper');
-JFormHelper::loadFieldClass('list');
+FormHelper::loadFieldClass('list');
 
 require_once JPATH_ADMINISTRATOR . '/components/com_fabrik/helpers/element.php';
 
@@ -25,7 +31,7 @@ require_once JPATH_ADMINISTRATOR . '/components/com_fabrik/helpers/element.php';
  * @subpackage  Form
  * @since       1.6
  */
-class JFormFieldTables extends JFormFieldList
+class JFormFieldTables extends ListField
 {
 	/**
 	 * Element name
@@ -62,11 +68,11 @@ class JFormFieldTables extends JFormFieldList
 			$query = "SHOW TABLES";
 			$db->setQuery($query);
 			$items     = $db->loadColumn();
-			$options[] = JHTML::_('select.option', null, null);
+			$options[] = HTMLHelper::_('select.option', null, null);
 
 			foreach ($items as $l)
 			{
-				$options[] = JHTML::_('select.option', $l, $l);
+				$options[] = HTMLHelper::_('select.option', $l, $l);
 			}
 		}
 		else
@@ -85,13 +91,14 @@ class JFormFieldTables extends JFormFieldList
 
 	protected function getInput()
 	{
-		$app          = JFactory::getApplication();
+		$app          = Factory::getApplication();
 		$format       = $app->input->get('format', 'html');
 		$connectionDd = $this->element['observe'];
 
 		if ((int) $this->form->getValue('id') != 0 && $this->element['readonlyonedit'])
 		{
-			return '<input type="text" value="' . $this->value . '" class="readonly" name="' . $this->name . '" readonly="true" />';
+//			return '<input type="text" value="' . $this->value . '" class="readonly" name="' . $this->name . '" readonly="true" />';
+			return '<input type="text" value="' . $this->value . '" class="form-control" name="' . $this->name . '" readonly />';
 		}
 
 		$c              = FabrikAdminElementHelper::getRepeatCounter($this);
@@ -118,7 +125,7 @@ class JFormFieldTables extends JFormFieldList
 
 		$html = parent::getInput();
 		$html .= "<img style='margin-left:10px;display:none' id='" . $this->id . "_loader' src='components/com_fabrik/images/ajax-loader.gif' alt='"
-			. FText::_('LOADING') . "' />";
+			. Text::_('LOADING') . "' />";
 		FabrikHelperHTML::framework();
 		FabrikHelperHTML::iniRequireJS();
 

@@ -4,13 +4,16 @@
  *
  * @package     Joomla
  * @subpackage  Fabrik
- * @copyright   Copyright (C) 2005-2016  Media A-Team, Inc. - All rights reserved.
+ * @copyright   Copyright (C) 2005-2020  Media A-Team, Inc. - All rights reserved.
  * @license     GNU/GPL http://www.gnu.org/copyleft/gpl.html
  * @since       3.1
  */
 
 // No direct access
 defined('_JEXEC') or die('Restricted access');
+
+use Joomla\CMS\Language\Text;
+use Joomla\CMS\Factory;
 
 $form = $this->form;
 $model = $this->getModel();
@@ -19,8 +22,8 @@ $active = ($form->error != '') ? '' : ' fabrikHide';
 
 if ($model->isMultiPage() && FabrikHelperHTML::isDebug())
 {
-	$app = JFactory::getApplication();
-	$app->enqueueMessage(FText::_('COM_FABRIK_ERR_TAB_FORM_TEMPLATE_INCOMPATIBLE_WITH_MULTIPAGE_FORMS'), 'error');
+	$app = Factory::getApplication();
+	$app->enqueueMessage(Text::_('COM_FABRIK_ERR_TAB_FORM_TEMPLATE_INCOMPATIBLE_WITH_MULTIPAGE_FORMS'), 'error');
 }
 
 if ($this->params->get('show_page_heading', 1)) : ?>
@@ -44,18 +47,18 @@ echo $form->intro;
 echo $this->plugintop;
 ?>
 
-<div class="fabrikMainError alert alert-error fabrikError<?php echo $active?>">
-	<button class="close" data-dismiss="alert">×</button>
+<div class="fabrikMainError alert alert-danger alert-dismissible fabrikError<?php echo $active?>">
+	<button class="btn-close" data-bs-dismiss="alert" aria-label="<?php echo Text::_('JCLOSE'); ?>"></button>
 	<?php echo $form->error?>
 </div>
 
 <div class="row-fluid nav">
-	<div class="span6 pull-right">
+	<div class="col-sm-6 pull-right">
 		<?php
 		echo $this->loadTemplate('buttons');
 		?>
 	</div>
-	<div class="span6">
+	<div class="col-sm-6">
 		<?php
 		echo $this->loadTemplate('relateddata');
 		?>
@@ -75,17 +78,17 @@ foreach ($this->groups as $group) :
 			break;
 		}
 	}
-	$err_class = $is_err ? 'fabrikErrorGroup' : '';
+	$err_class = $is_err ? ' fabrikErrorGroup' : '';
 	$tabId = $this->form->id . '_' . (int)$this->rowid . '_' . $i;
 	// If this is multi-page then groups are consolidated until a group with a page break
 	// So we should only show a tab if: it is first tab, or if it is a page break
 	if (!$model->isMultiPage() || $i === 0 || $group->splitPage) :
 		$is_err = false;
 		$tab = new stdClass;
-		$tab->class = $i === 0 ? 'active ' . $err_class : $err_class;
+		$tab->id = 'group' . $group->id . '_tab';
+		$tab->class = $err_class;
 		$tab->css = $group->css;
 		$tab->href = 'group-tab' . $tabId;
-		$tab->id = 'group' . $group->id . '_tab';
 		$tab->label = !empty($group->title) ? $group->title : $group->name;;
 		$tabs[] = $tab;
 		$i ++;
@@ -102,19 +105,21 @@ echo FabrikHelperHTML::getLayout('fabrik-tabs')->render((object) array('tabs' =>
 	foreach ($this->groups as $group) :
 		$this->group = $group;
 		$tabId = $this->form->id . '_' . (int)$this->rowid . '_' . $i;
+		$class = 'group' . $group->id . '_tab_content';
+
 		if ($i == 0 || !$model->isMultiPage() || $group->splitPage) :
 			if ($i != 0) :
 				echo '</div>';
 			endif;
 			?>
-			<div role="tabpanel" class="tab-pane<?php if ($i == 0) echo " active"?>" id="group-tab<?php echo $tabId;?>">
+			<div role="tabpanel" class="<?php echo $class; ?> tab-pane<?php if ($i == 0) echo " active"?>" id="group-tab<?php echo $tabId;?>">
 			<?php
 			$i++;
 		endif; ?>
 			<fieldset class="<?php echo $group->class; ?>" id="group<?php echo $group->id;?>" style="<?php echo $group->css;?>">
 				<?php
 				if ($group->showLegend) : ?>
-					<legend class="legend"><?php echo $group->title;?></legend>
+					<legend class="legend mt-3"><?php echo $group->title;?></legend>
 				<?php
 				endif;
 

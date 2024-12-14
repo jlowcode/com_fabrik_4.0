@@ -4,15 +4,18 @@
  *
  * @package     Joomla
  * @subpackage  Fabrik
- * @copyright   Copyright (C) 2005-2016  Media A-Team, Inc. - All rights reserved.
+ * @copyright   Copyright (C) 2005-2020  Media A-Team, Inc. - All rights reserved.
  * @license     GNU/GPL http://www.gnu.org/copyleft/gpl.html
  */
 
 // No direct access
 defined('_JEXEC') or die('Restricted access');
 
+use Joomla\CMS\Layout\LayoutInterface;
+use Joomla\CMS\Profiler\Profiler;
 use Fabrik\Helpers\LayoutFile;
 use Joomla\Utilities\ArrayHelper;
+use Joomla\String\StringHelper;
 
 jimport('joomla.application.component.model');
 
@@ -209,7 +212,7 @@ class PlgFabrik_Form extends FabrikPlugin
 	 */
 	public function getProcessData()
 	{
-		$profiler = JProfiler::getInstance('Application');
+		$profiler = Profiler::getInstance('Application');
 		JDEBUG ? $profiler->mark("getProcessData: start") : null;
 
 		$model = $this->getModel();
@@ -232,7 +235,7 @@ class PlgFabrik_Form extends FabrikPlugin
 	 */
 	public function getEmailData()
 	{
-		$profiler = JProfiler::getInstance('Application');
+		$profiler = Profiler::getInstance('Application');
 		JDEBUG ? $profiler->mark("getEmailData: start") : null;
 
 		/**
@@ -410,36 +413,14 @@ class PlgFabrik_Form extends FabrikPlugin
 					}
 
 					/**
-					 * $$$ karine 27/08/2020 - this implementation it doesn't work, so I had to comment to prevent a bug that was occurring
 					 * $$$ hugh - no idea why we wouldn't call getEmailValue() for multiselect joins, happened in this commit:
 					 * https://github.com/Fabrik/fabrik/commit/06a03dbb430281951f00b9b3b691ea015a52ac7b
 					 * ... but afaict, it's bogus, as otherwise multiselect joins never get processed in to labels, and stay as raw values.
 					 */
 					//if (!$elementModel->isJoin())
 					//{
-					//$this->emailData[$k] = $elementModel->getEmailValue($emailValue, $model->formDataWithTableName, $c);
+					$this->emailData[$k] = $elementModel->getEmailValue($emailValue, $model->formDataWithTableName, $c);
 					//}
-
-					/**
-					 * $$$ karine 27/08/2020 - it is important to verify if the element is multiselect joins because
-					 * we need to get the label value for this elements otherwise it will be the raw value
-					 * THIS IS A IMPORTANT PART FOR DATABASEJOIN ELEMENTS (CORRECT THE BUG ABOVE)
-					 */
-					if($elementModel->isJoin()){
-						if(is_array($emailValue) && !empty($emailValue)){
-							foreach($emailValue as $kEmail => $val){
-								$this->emailData[$k][$kEmail] = $elementModel->getLabelForValue($val);
-							}
-						} else {
-							$this->emailData[$k] = $elementModel->getLabelForValue($emailValue);
-						}
-					} else {
-						//if the element is single databasejoin we also need to get the label
-						if($elementModel->getParams()->get('database_join_display_type') == 'auto-complete'){
-							$this->emailData[$k] = $elementModel->getLabelForValue($emailValue);
-						}
-					}
-
 				}
 			}
 		}
@@ -494,7 +475,7 @@ class PlgFabrik_Form extends FabrikPlugin
 	{
 		$formModel = $this->getModel();
 		$ext       = FabrikHelperHTML::isDebug() ? '.js' : '-min.js';
-		$name      = $this->get('_name');
+		$name      = $this->_name;
 		static $jsClasses;
 
 		if (!isset($jsClasses))
@@ -554,7 +535,7 @@ class PlgFabrik_Form extends FabrikPlugin
 	}
 
 	/**
-	 * Get the element's JLayout file
+	 * Get the element's LayoutInterface file
 	 * Its actually an instance of LayoutFile which inverses the ordering added include paths.
 	 * In LayoutFile the addedPath takes precedence over the default paths, which makes more sense!
 	 *
@@ -565,7 +546,7 @@ class PlgFabrik_Form extends FabrikPlugin
 	public function getLayout($type)
 	{
 		$name     = get_class($this);
-		$name     = strtolower(JString::str_ireplace('PlgFabrik_Form', '', $name));
+		$name     = strtolower(StringHelper::str_ireplace('PlgFabrik_Form', '', $name));
 		$basePath = COM_FABRIK_BASE . '/plugins/fabrik_form/' . $name . '/layouts';
 		$layout   = new LayoutFile('fabrik-form-' . $name . '-' . $type, $basePath, array('debug' => false, 'component' => 'com_fabrik', 'client' => 'site'));
 		$layout->addIncludePaths(JPATH_THEMES . '/' . $this->app->getTemplate() . '/html/layouts');
@@ -655,7 +636,7 @@ class PlgFabrik_Form extends FabrikPlugin
 		if ($this->log === null)
 		{
 			$this->log                = FabTable::getInstance('log', 'FabrikTable');
-			$this->log->referring_url = $this->app->input->server->getString('REQUEST_URI');
+			$this->log->referring_url = $this->app->getInput()->server->getString('REQUEST_URI');
 		}
 		$this->log->message_type = $msgType;
 		$this->log->message      = $msg;

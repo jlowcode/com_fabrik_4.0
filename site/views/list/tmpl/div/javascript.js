@@ -18,7 +18,7 @@ requirejs(['fab/fabrik'], function () {
 		jQuery('div.spinner').remove();
 	});
 
-	Fabrik.addEvent('fabrik.list.loaded', function (list) {
+	Fabrik.addEvent('fabrik.loaded', function (list) {
 		var dataRow = list.list.getElementsByClassName('fabrik_row');
 
 		Array.from(dataRow).each(function (row) {

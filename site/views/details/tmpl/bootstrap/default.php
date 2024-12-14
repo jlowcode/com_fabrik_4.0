@@ -4,7 +4,7 @@
  *
  * @package     Joomla
  * @subpackage  Fabrik
- * @copyright   Copyright (C) 2005-2016  Media A-Team, Inc. - All rights reserved.
+ * @copyright   Copyright (C) 2005-2020  Media A-Team, Inc. - All rights reserved.
  * @license     GNU/GPL http://www.gnu.org/copyleft/gpl.html
  * @since       3.1
  */
@@ -35,20 +35,32 @@ if ($this->isMambot) :
 else :
 	echo '<div class="fabrikForm fabrikDetails" id="' . $form->formid . '">';
 endif;
+
 echo $this->plugintop;
-echo $this->loadTemplate('buttons');
-echo $this->loadTemplate('relateddata');
+?>
+<div class="row-fluid nav">
+	<div class="<?php echo FabrikHelperHTML::getGridSpan(6); ?> pull-right">
+		<?php
+		echo $this->loadTemplate('buttons');
+		?>
+	</div>
+	<div class="<?php echo FabrikHelperHTML::getGridSpan(6); ?>">
+		<?php
+		echo $this->loadTemplate('relateddata');
+		?>
+	</div>
+</div>
+<?php
+
 foreach ($this->groups as $group) :
 	$this->group = $group;
 	?>
 
-		<div class="<?php echo $group->class; ?>" id="group<?php echo $group->id;?>" style="<?php echo $group->css;?>">
+		<fieldset class="<?php echo $group->class; ?>" id="group<?php echo $group->id;?>" style="<?php echo $group->css;?>">
 
 		<?php
 		if ($group->showLegend) :?>
-			<h3 class="legend">
-				<span><?php echo $group->title;?></span>
-			</h3>
+				<legend class="mt-3 legend"><?php echo $group->title;?></legend>
 		<?php endif;
 
 		if (!empty($group->intro)) : ?>
@@ -69,7 +81,7 @@ foreach ($this->groups as $group) :
 		<?php
 		endif;
 		?>
-	</div>
+	</fieldset>
 <?php
 endforeach;
 
@@ -78,36 +90,3 @@ echo $this->loadTemplate('actions');
 echo '</div>';
 echo $form->outro;
 echo $this->pluginend;
-echo "<script>
-
-jQuery('div#edu_solicitacoes___tipo_solicitacao_ro.fabrikElementReadOnly').on('mouseout', function() {
-    const text = this.innerText;
-    switch(text) {
-    case 'Diárias':
-        jQuery('#group51').hide();
-        jQuery('#group52').hide();
-        jQuery('#group56').hide();    
-        jQuery('#group57').hide();
-        jQuery('#group58').hide();
-        jQuery('#group60').hide();
-        jQuery('#group55').hide();
-        jQuery('#group67').hide();
-        jQuery('#group71').hide();
-        jQuery('#group66').hide();
-        jQuery('#group36').hide();
-        jQuery('#group38').hide();
-        break;
-    case 'Diarias -B-P':
-        jQuery('#group32').hide();
-        jQuery('#group33').hide();
-        jQuery('#group34').hide();
-        break;
-    case 'Diarias -B-P':
-        jQuery('#group32').hide();
-        jQuery('#group33').hide();
-        jQuery('#group34').hide();
-        break;
-    }
-});
-
-</script>";

@@ -4,7 +4,7 @@
  *
  * @package     Joomla.Administrator
  * @subpackage  Fabrik
- * @copyright   Copyright (C) 2005-2016  Media A-Team, Inc. - All rights reserved.
+ * @copyright   Copyright (C) 2005-2020  Media A-Team, Inc. - All rights reserved.
  * @license     GNU/GPL http://www.gnu.org/copyleft/gpl.html
  * @since       3.0
  */
@@ -20,7 +20,7 @@ defined('_JEXEC') or die('Restricted access');
 		<?php echo $this->field->label; ?>
 	</div>
 <?php endif; ?>
-	<div class="controls">
+	<div style="width:75%">
 		<?php echo $this->field->input; ?>
 	</div>
 </div>

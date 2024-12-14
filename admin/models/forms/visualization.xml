@@ -32,6 +32,7 @@
 		       hide="readmore,pagebreak"
 		       description="COM_FABRIK_FIELD_INTRODUCTION_DESC"
 		       label="COM_FABRIK_FIELD_INTRODUCTION_LABEL"
+			   filter="FabrikAdminHelper::filterText"
 		       rows="3"/>
 
 		<field name="plugin"
@@ -70,23 +71,31 @@
 
 		<field name="created"
 		       type="calendar"
-		       class="input-medium"
+		       class="col-sm-6"
 		       label="JGLOBAL_FIELD_CREATED_LABEL"
 		       description="JGLOBAL_FIELD_CREATED_DESC"
 		/>
 
 		<field name="publish_up"
 		       type="calendar"
-		       class="input-medium"
+		       class="col-sm-6"
 		       label="JGLOBAL_FIELD_PUBLISH_UP_LABEL"
 		       description="JGLOBAL_FIELD_PUBLISH_UP_DESC"
+			   translateformat="true"
+			   showtime="true"
+			   size="22"
+			   filter="user_utc"
 		/>
 
 		<field name="publish_down"
 		       type="calendar"
-		       class="input-medium"
+		       class="col-sm-6"
 		       label="JGLOBAL_FIELD_PUBLISH_DOWN_LABEL"
 		       description="JGLOBAL_FIELD_PUBLISH_DOWN_DESC"
+			   translateformat="true"
+			   showtime="true"
+			   size="22"
+			   filter="user_utc"
 		/>
 
 	</fieldset>
@@ -98,6 +107,7 @@
 			       type="radio"
 			       class="btn-group"
 			       default="1"
+				   layout="joomla.form.field.radio.switcher"
 			       description="COM_FABRIK_FIELD_SHOW_TITLE_DESC"
 			       label="COM_FABRIK_FIELD_SHOW_TITLE_LABEL">
 				<option value="0">JNO</option>
@@ -108,6 +118,7 @@
 			       type="radio"
 			       class="btn-group"
 			       default="1"
+				   layout="joomla.form.field.radio.switcher"
 			       description="COM_FABRIK_FIELD_SHOW_FILTERS_DESC"
 			       label="COM_FABRIK_FIELD_SHOW_FILTERS_LABEL">
 				<option value="0">JNO</option>

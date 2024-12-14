@@ -4,7 +4,7 @@
  *
  * @package     Joomla.Administrator
  * @subpackage  Fabrik
- * @copyright   Copyright (C) 2005-2016  Media A-Team, Inc. - All rights reserved.
+ * @copyright   Copyright (C) 2005-2020  Media A-Team, Inc. - All rights reserved.
  * @license     GNU/GPL http://www.gnu.org/copyleft/gpl.html
  * @since       3.0
  */
@@ -12,7 +12,13 @@
 // No direct access
 defined('_JEXEC') or die('Restricted access');
 
+use Joomla\CMS\Language\Text;
+use Joomla\CMS\Table\Table;
+use Joomla\CMS\Filter\InputFilter;
+use Joomla\CMS\Form\Form;
+use Joomla\CMS\Form\FormRule;
 use Joomla\Utilities\ArrayHelper;
+use Joomla\CMS\Factory;
 
 require_once 'fabmodeladmin.php';
 
@@ -39,12 +45,12 @@ class FabrikAdminModelConnection extends FabModelAdmin
 	 * @param   string  $prefix  A prefix for the table class name. Optional.
 	 * @param   array   $config  Configuration array for model. Optional.
 	 *
-	 * @return  JTable  A database object
+	 * @return  Table  A database object
 	 */
 	public function getTable($type = 'Connection', $prefix = 'FabrikTable', $config = array())
 	{
 		/**
-		 * not sure if we should be loading JTable or FabTable here
+		 * not sure if we should be loading Table or FabTable here
 		 * issue with using Fabtable is that it will always load the cached version of the cnn
 		 * which might cause issues when migrating from test to live sites???
 		 */
@@ -59,7 +65,7 @@ class FabrikAdminModelConnection extends FabModelAdmin
 	 * @param   array  $data      Data for the form.
 	 * @param   bool   $loadData  True if the form is to load its own data (default case), false if not.
 	 *
-	 * @return  mixed	A JForm object on success, false on failure
+	 * @return  mixed	A Form object on success, false on failure
 	 */
 	public function getForm($data = array(), $loadData = true)
 	{
@@ -125,7 +131,7 @@ class FabrikAdminModelConnection extends FabModelAdmin
 	{
 		if ($item->id == 1)
 		{
-			$this->app->enqueueMessage(FText::_('COM_FABRIK_ORIGINAL_CONNECTION'));
+			$this->app->enqueueMessage(Text::_('COM_FABRIK_ORIGINAL_CONNECTION'));
 
 			if (!$this->matchesDefault($item))
 			{
@@ -133,7 +139,8 @@ class FabrikAdminModelConnection extends FabModelAdmin
 				$item->user = $this->config->get('user');
 				$item->password = $this->config->get('password');
 				$item->database = $this->config->get('db');
-				JError::raiseWarning(E_WARNING, FText::_('COM_FABRIK_YOU_MUST_SAVE_THIS_CNN'));
+//				JError::raiseWarning(E_WARNING, Text::_('COM_FABRIK_YOU_MUST_SAVE_THIS_CNN'));
+				\Joomla\CMS\Factory::getApplication()->enqueueMessage(Text::_('COM_FABRIK_YOU_MUST_SAVE_THIS_CNN'), 'warning');
 			}
 		}
 	}
@@ -165,7 +172,7 @@ class FabrikAdminModelConnection extends FabModelAdmin
 	 */
 	public function save($data)
 	{
-		$model = JModelLegacy::getInstance('Connection', 'FabrikFEModel');
+		$model = Factory::getApplication()->bootComponent('com_fabrik')->getMVCFactory()->createModel('Connection', 'FabrikFEModel');
 		$model->setId($data['id']);
 		$crypt = FabrikWorker::getCrypt();
 
@@ -198,12 +205,12 @@ class FabrikAdminModelConnection extends FabModelAdmin
 	/**
 	 * Method to validate the form data.
 	 *
-	 * @param   JForm   $form   The form to validate against.
+	 * @param   Form   $form   The form to validate against.
 	 * @param   array   $data   The data to validate.
 	 * @param   string  $group  The name of the field group to validate.
 	 *
-	 * @see     JFormRule
-	 * @see     JFilterInput
+	 * @see     FormRule
+	 * @see     InputFilter
 	 *
 	 * @return  mixed  Array of filtered data if valid, false otherwise.
 	 */
@@ -211,7 +218,7 @@ class FabrikAdminModelConnection extends FabModelAdmin
 	{
 		if ($data['password'] !== $data['passwordConf'])
 		{
-			$this->setError(FText::_('COM_FABRIK_PASSWORD_MISMATCH'));
+			$this->setError(Text::_('COM_FABRIK_PASSWORD_MISMATCH'));
 
 			return false;
 		}

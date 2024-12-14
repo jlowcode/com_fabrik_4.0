@@ -4,12 +4,14 @@
  *
  * @package     Joomla
  * @subpackage  Fabrik
- * @copyright   Copyright (C) 2005-2016  Media A-Team, Inc. - All rights reserved.
+ * @copyright   Copyright (C) 2005-2020  Media A-Team, Inc. - All rights reserved.
  * @license     GNU/GPL http://www.gnu.org/copyleft/gpl.html
  */
 
 // No direct access
 defined('_JEXEC') or die('Restricted access');
+
+use Joomla\CMS\Component\ComponentHelper;
 
 require_once JPATH_SITE . '/components/com_fabrik/views/list/view.base.php';
 
@@ -32,8 +34,8 @@ class FabrikViewList extends FabrikViewListBase
 	public function display($tpl = null)
 	{
 		$model = $this->getModel();
-		$input = $this->app->input;
-		$usersConfig = JComponentHelper::getParams('com_fabrik');
+		$input = $this->app->getInput();
+		$usersConfig = ComponentHelper::getParams('com_fabrik');
 		$model->setId($input->getInt('listid', $usersConfig->get('listid')));
 		$model->render();
 		$table = $model->getTable();

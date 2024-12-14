@@ -4,7 +4,7 @@
  *
  * @package     Joomla
  * @subpackage  Fabrik
- * @copyright   Copyright (C) 2005-2016  Media A-Team, Inc. - All rights reserved.
+ * @copyright   Copyright (C) 2005-2020  Media A-Team, Inc. - All rights reserved.
  * @license     GNU/GPL http://www.gnu.org/copyleft/gpl.html
  */
 
@@ -36,17 +36,21 @@ class FabrikViewForm extends FabrikViewFormBase
 
 		if (parent::display($tpl) !== false)
 		{
-			FabrikhelperHTML::loadBootstrapCSS(true);
-
 			/** @var JDocumentpdf $document */
 			$document = $this->doc;
 
 			/** @var FabrikFEModelList $model */
 			$model       = $this->getModel();
 			$params      = $model->getParams();
-			$size        = $this->app->input->get('pdf_size', $params->get('pdf_size', 'A4'));
-			$orientation = $this->app->input->get('pdf_orientation', $params->get('pdf_orientation', 'portrait'));
+			$size        = $this->app->getInput()->get('pdf_size', $params->get('pdf_size', 'A4'));
+			$orientation = $this->app->getInput()->get('pdf_orientation', $params->get('pdf_orientation', 'portrait'));
 			$document->setPaper($size, $orientation);
+
+			if ($this->app->getInput()->get('pdf_include_bootstrap', $params->get('pdf_include_bootstrap', '0')) === '1')
+			{
+				FabrikhelperHTML::loadBootstrapCSS(true);
+			}
+
 			$this->output();
 		}
 	}

@@ -4,12 +4,17 @@
  *
  * @package     Joomla
  * @subpackage  Fabrik
- * @copyright   Copyright (C) 2005-2016  Media A-Team, Inc. - All rights reserved.
+ * @copyright   Copyright (C) 2005-2020  Media A-Team, Inc. - All rights reserved.
  * @license     GNU/GPL http://www.gnu.org/copyleft/gpl.html
  */
 
 // No direct access
 defined('_JEXEC') or die('Restricted access');
+
+use Joomla\CMS\Language\Text;
+use Joomla\CMS\Session\Session;
+use Joomla\String\StringHelper;
+use Joomla\CMS\HTML\HTMLHelper;
 
 jimport('joomla.application.component.model');
 
@@ -71,10 +76,10 @@ class FabrikFEModelAdvancedSearch extends FabModel
 		$opts->conditionList = FabrikHelperHTML::conditionList($listRef, '');
 		list($fieldNames, $firstFilter) = $this->getAdvancedSearchElementList();
 		$statements = $this->getStatementsOpts();
-		$opts->elementList = JHTML::_('select.genericlist', $fieldNames, 'fabrik___filter[list_' . $listRef . '][key][]',
-			'class="inputbox key" size="1" ', 'value', 'text');
-		$opts->statementList = JHTML::_('select.genericlist', $statements, 'fabrik___filter[list_' . $listRef . '][condition][]',
-			'class="inputbox" size="1" ', 'value', 'text', $defaultStatement);
+		$opts->elementList = HTMLHelper::_('select.genericlist', $fieldNames, 'fabrik___filter[list_' . $listRef . '][key][]',
+			'class="form-select-sm key" size="1" ', 'value', 'text');
+		$opts->statementList = HTMLHelper::_('select.genericlist', $statements, 'fabrik___filter[list_' . $listRef . '][condition][]',
+			'class="form-select-sm" ', 'value', 'text', $defaultStatement);
 		$opts->listid = $list->id;
 		$opts->listref = $listRef;
 		$opts->ajax = $model->isAjax();
@@ -103,7 +108,7 @@ class FabrikFEModelAdvancedSearch extends FabModel
 		$model = $this->model;
 		$first = false;
 		$firstFilter = false;
-		$fieldNames[] = JHTML::_('select.option', '', FText::_('COM_FABRIK_PLEASE_SELECT'));
+		$fieldNames[] = HTMLHelper::_('select.option', '', Text::_('COM_FABRIK_PLEASE_SELECT'));
 		$elementModels = $model->getElements();
 
 		foreach ($elementModels as $elementModel)
@@ -126,7 +131,7 @@ class FabrikFEModelAdvancedSearch extends FabModel
 					$firstFilter = $elementModel->getFilter(0, false);
 				}
 
-				$fieldNames[] = JHTML::_('select.option', $elName, strip_tags(FText::_($element->label)));
+				$fieldNames[] = HTMLHelper::_('select.option', $elName, strip_tags(Text::_($element->label)));
 			}
 		}
 
@@ -147,7 +152,7 @@ class FabrikFEModelAdvancedSearch extends FabModel
 
 		$model = $this->model;
 		$statements = $this->getStatementsOpts();
-		$input = $this->app->input;
+		$input = $this->app->getInput();
 		$rows = array();
 		$elementModels = $model->getElements();
 		list($fieldNames, $firstFilter) = $this->getAdvancedSearchElementList();
@@ -198,8 +203,8 @@ class FabrikFEModelAdvancedSearch extends FabModel
 						$jsSel = '>';
 						break;
 					default:
-						$firstChar = JString::substr($v2, 1, 1);
-						$lastChar = JString::substr($v2, -2, 1);
+						$firstChar = StringHelper::substr($v2, 1, 1);
+						$lastChar = StringHelper::substr($v2, -2, 1);
 
 						switch ($firstChar)
 						{
@@ -223,7 +228,7 @@ class FabrikFEModelAdvancedSearch extends FabModel
 
 				if ($counter == 0)
 				{
-					$join = FText::_('COM_FABRIK_WHERE') . '<input type="hidden" value="WHERE" name="' . $prefix . 'join][]" />';
+					$join = Text::_('COM_FABRIK_WHERE') . '<input type="hidden" value="WHERE" name="' . $prefix . 'join][]" />';
 				}
 				else
 				{
@@ -235,8 +240,8 @@ class FabrikFEModelAdvancedSearch extends FabModel
 				$input->set($lineElName, array('value' => $value));
 				$filter = $elementModel->getFilter($counter, false);
 				$input->set($lineElName, $orig);
-				$key = JHTML::_('select.genericlist', $fieldNames, $prefix . 'key][]', 'class="inputbox key input-small" size="1" ', 'value', 'text', $key);
-				$jsSel = JHTML::_('select.genericlist', $statements, $prefix . 'condition][]', 'class="inputbox input-small" size="1" ', 'value', 'text', $jsSel);
+				$key = HTMLHelper::_('select.genericlist', $fieldNames, $prefix . 'key][]', 'class="form-select-sm key " size="1" ', 'value', 'text', $key);
+				$jsSel = HTMLHelper::_('select.genericlist', $statements, $prefix . 'condition][]', 'class="form-select-sm " size="1" ', 'value', 'text', $jsSel);
 				$rows[] = array('join' => $join, 'element' => $key, 'condition' => $jsSel, 'filter' => $filter, 'type' => $type,
 					'grouped' => $grouped);
 				$counter++;
@@ -246,10 +251,10 @@ class FabrikFEModelAdvancedSearch extends FabModel
 		if ($counter == 0)
 		{
 			$params = $model->getParams();
-			$join = FText::_('COM_FABRIK_WHERE') . '<input type="hidden" name="' . $prefix . 'join][]" value="WHERE" />';
-			$key = JHTML::_('select.genericlist', $fieldNames, $prefix . 'key][]', 'class="inputbox key" size="1" ', 'value', 'text', '');
+			$join = Text::_('COM_FABRIK_WHERE') . '<input type="hidden" name="' . $prefix . 'join][]" value="WHERE" />';
+			$key = HTMLHelper::_('select.genericlist', $fieldNames, $prefix . 'key][]', 'class="form-select-sm key" size="1" ', 'value', 'text', '');
 			$defaultStatement = $params->get('advanced-filter-default-statement', '<>');
-			$jsSel = JHTML::_('select.genericlist', $statements, $prefix . 'condition][]', 'class="inputbox" size="1" ', 'value', 'text', $defaultStatement);
+			$jsSel = HTMLHelper::_('select.genericlist', $statements, $prefix . 'condition][]', 'class="form-select-sm" size="1" ', 'value', 'text', $defaultStatement);
 			$rows[] = array('join' => $join, 'element' => $key, 'condition' => $jsSel, 'filter' => $firstFilter, 'type' => $type,
 				'grouped' => $grouped);
 		}
@@ -335,11 +340,11 @@ class FabrikFEModelAdvancedSearch extends FabModel
 		$table = $model->getTable();
 		$url = COM_FABRIK_LIVESITE . 'index.php?option=com_' . $this->package .
 			'&amp;format=partial&amp;view=list&amp;layout=_advancedsearch&amp;tmpl=component&amp;listid='
-			. $table->id . '&amp;nextview=' . $this->app->input->get('view', 'list');
+			. $table->id . '&amp;nextview=' . $this->app->getInput()->get('view', 'list');
 
 		// Defines if we are in a module or in the component.
 		$url .= '&amp;scope=' . $this->app->scope;
-		$url .= '&amp;tkn=' . JSession::getFormToken();
+		$url .= '&amp;tkn=' . Session::getFormToken();
 
 		return $url;
 	}
@@ -352,7 +357,7 @@ class FabrikFEModelAdvancedSearch extends FabModel
 	public function elementFilter()
 	{
 		$model = $this->model;
-		$input = $this->app->input;
+		$input = $this->app->getInput();
 		$elementId = $input->getId('elid');
 		$pluginManager = FabrikWorker::getPluginManager();
 		$className = $input->get('plugin');
@@ -383,15 +388,15 @@ class FabrikFEModelAdvancedSearch extends FabModel
 	protected function getStatementsOpts()
 	{
 		$statements = array();
-		$statements[] = JHTML::_('select.option', '=', FText::_('COM_FABRIK_EQUALS'));
-		$statements[] = JHTML::_('select.option', '<>', FText::_('COM_FABRIK_NOT_EQUALS'));
-		$statements[] = JHTML::_('select.option', 'BEGINS WITH', FText::_('COM_FABRIK_BEGINS_WITH'));
-		$statements[] = JHTML::_('select.option', 'CONTAINS', FText::_('COM_FABRIK_CONTAINS'));
-		$statements[] = JHTML::_('select.option', 'ENDS WITH', FText::_('COM_FABRIK_ENDS_WITH'));
-		$statements[] = JHTML::_('select.option', '>', FText::_('COM_FABRIK_GREATER_THAN'));
-		$statements[] = JHTML::_('select.option', '<', FText::_('COM_FABRIK_LESS_THAN'));
-		$statements[] = JHTML::_('select.option', 'EMPTY', FText::_('COM_FABRIK_IS_EMPTY'));
-		$statements[] = JHTML::_('select.option', 'NOTEMPTY', FText::_('COM_FABRIK_IS_NOT_EMPTY'));
+		$statements[] = HTMLHelper::_('select.option', '=', Text::_('COM_FABRIK_EQUALS'));
+		$statements[] = HTMLHelper::_('select.option', '<>', Text::_('COM_FABRIK_NOT_EQUALS'));
+		$statements[] = HTMLHelper::_('select.option', 'BEGINS WITH', Text::_('COM_FABRIK_BEGINS_WITH'));
+		$statements[] = HTMLHelper::_('select.option', 'CONTAINS', Text::_('COM_FABRIK_CONTAINS'));
+		$statements[] = HTMLHelper::_('select.option', 'ENDS WITH', Text::_('COM_FABRIK_ENDS_WITH'));
+		$statements[] = HTMLHelper::_('select.option', '>', Text::_('COM_FABRIK_GREATER_THAN'));
+		$statements[] = HTMLHelper::_('select.option', '<', Text::_('COM_FABRIK_LESS_THAN'));
+		$statements[] = HTMLHelper::_('select.option', 'EMPTY', Text::_('COM_FABRIK_IS_EMPTY'));
+		$statements[] = HTMLHelper::_('select.option', 'NOTEMPTY', Text::_('COM_FABRIK_IS_NOT_EMPTY'));
 
 		return $statements;
 	}

@@ -4,12 +4,15 @@
  *
  * @package     Joomla.Administrator
  * @subpackage  Fabrik
- * @copyright   Copyright (C) 2005-2016  Media A-Team, Inc. - All rights reserved.
+ * @copyright   Copyright (C) 2005-2020  Media A-Team, Inc. - All rights reserved.
  * @license     GNU/GPL http://www.gnu.org/copyleft/gpl.html
  */
 
 // No direct access
 defined('_JEXEC') or die('Restricted access');
+
+use Joomla\CMS\Toolbar\ToolbarHelper;
+use Joomla\CMS\MVC\View\HtmlView;
 
 jimport('joomla.application.component.view');
 
@@ -21,7 +24,7 @@ jimport('joomla.application.component.view');
  * @since       3.0
  */
 
-class FabrikAdminViewHome extends JViewLegacy
+class FabrikAdminViewHome extends HtmlView
 {
 	/**
 	 * Recently logged activity
@@ -49,18 +52,18 @@ class FabrikAdminViewHome extends JViewLegacy
 		FabrikHelperHTML::script($srcs);
 		$db = FabrikWorker::getDbo(true);
 		$query = $db->getQuery(true);
-		$query->select('*')->from('#__{package}_log')->where('message_type != ""')->order('timedate_created DESC');
+		$query->select('*')->from('#__fabrik_log')->where('message_type != ""')->order('timedate_created DESC');
 		$db->setQuery($query, 0, 10);
 		$this->logs = $db->loadObjectList();
-		$this->feed = $this->get('RSSFeed');
+//		$this->feed = $this->get('RSSFeed');
 		$this->addToolbar();
 		FabrikAdminHelper::addSubmenu('home');
 		FabrikAdminHelper::setViewLayout($this);
 
-		if (FabrikWorker::j3())
-		{
-			$this->sidebar = JHtmlSidebar::render();
-		}
+//		if (FabrikWorker::j3())
+//		{
+//			$this->sidebar = JHtmlSidebar::render();
+//		}
 
 		FabrikHelperHTML::iniRequireJS();
 		parent::display($tpl);
@@ -79,8 +82,8 @@ class FabrikAdminViewHome extends JViewLegacy
 
 		if ($canDo->get('core.admin'))
 		{
-			JToolBarHelper::divider();
-			JToolBarHelper::preferences('com_fabrik');
+			ToolBarHelper::divider();
+			ToolBarHelper::preferences('com_fabrik');
 		}
 	}
 }

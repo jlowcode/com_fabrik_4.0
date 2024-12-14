@@ -4,12 +4,14 @@
  *
  * @package     Joomla
  * @subpackage  Fabrik
- * @copyright   Copyright (C) 2005-2016  Media A-Team, Inc. - All rights reserved.
+ * @copyright   Copyright (C) 2005-2020  Media A-Team, Inc. - All rights reserved.
  * @license     GNU/GPL http://www.gnu.org/copyleft/gpl.html
  */
 
 // No direct access
 defined('_JEXEC') or die('Restricted access');
+
+use Joomla\CMS\Factory;
 
 /**
  * @TODO - rewrite example JS with jQuery AJAX
@@ -24,8 +26,8 @@ defined('_JEXEC') or die('Restricted access');
  * Fabrik will automatically try and call the function name specified in your 'method='.
  * You are responsible for grabbing any other parameters, using:
  *
- *  $app = JFactory::getApplication();
- *  $input = $app->input;
+ *  $app = Factory::getApplication();
+ *  $input = $app->getInput();
  *  $input->getString('variablename');
  *
  * as per the $myUsername example in userExists() below.
@@ -99,8 +101,8 @@ class UserAjax
 		$db = FabrikWorker::getDbo();
 		$query = $db->getQuery(true);
 		$retStr = '';
-		$app = JFactory::getApplication();
-		$input = $app->input;
+		$app = Factory::getApplication();
+		$input = $app->getInput();
 		$myUsername = $input->get('username', '');
 		$query->select('name')->from('#__users')->where('username = ' . $db->quote($myUsername));
 		$db->setQuery($query, 1, 0);

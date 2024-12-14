@@ -4,12 +4,15 @@
  *
  * @package     Joomla
  * @subpackage  Fabrik
- * @copyright   Copyright (C) 2005-2016  Media A-Team, Inc. - All rights reserved.
+ * @copyright   Copyright (C) 2005-2020  Media A-Team, Inc. - All rights reserved.
  * @license     GNU/GPL http://www.gnu.org/copyleft/gpl.html
  */
 
 // No direct access
 defined('_JEXEC') or die('Restricted access');
+
+use Joomla\CMS\MVC\Controller\BaseController;
+use Joomla\CMS\Factory;
 
 jimport('joomla.application.component.controller');
 
@@ -20,7 +23,7 @@ jimport('joomla.application.component.controller');
  * @subpackage  Fabrik
  * @since       1.5
  */
-class FabrikControllerElement extends JControllerLegacy
+class FabrikControllerElement extends BaseController
 {
 	/**
 	 * Is the view rendered from the J content plugin
@@ -50,9 +53,9 @@ class FabrikControllerElement extends JControllerLegacy
 	 */
 	public function display()
 	{
-		$document = JFactory::getDocument();
-		$app = JFactory::getApplication();
-		$input = $app->input;
+		$document = Factory::getDocument();
+		$app = Factory::getApplication();
+		$input = $app->getInput();
 		$viewName = $input->get('view', 'element', 'cmd');
 		$viewType = $document->getType();
 
@@ -77,8 +80,8 @@ class FabrikControllerElement extends JControllerLegacy
 	 */
 	public function save()
 	{
-		$app = JFactory::getApplication();
-		$input = $app->input;
+		$app = Factory::getApplication();
+		$input = $app->getInput();
 		$listModel = $this->getModel('list', 'FabrikFEModel');
 		$listModel->setId($input->getInt('listid'));
 		$rowId = $input->get('rowid');

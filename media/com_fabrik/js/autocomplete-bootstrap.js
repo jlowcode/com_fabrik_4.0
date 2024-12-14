@@ -14,6 +14,8 @@ define(['jquery', 'fab/encoder', 'fab/fabrik', 'lib/debounce/jquery.ba-throttle-
 
         Implements: [Options, Events],
 
+        Binds: [],
+
         options: {
             menuclass              : 'auto-complete-container dropdown',
             classes                : {
@@ -68,9 +70,14 @@ define(['jquery', 'fab/encoder', 'fab/fabrik', 'lib/debounce/jquery.ba-throttle-
                     self.search(e);
                 }));
 
+                jQuery(this.getInputElement()).bind('input', debounce(this.options.debounceDelay, function (e) {
+                    self.search(e);
+                }));
+
                 this.getInputElement().addEvent('blur', function (e) {
                     if (this.options.storeMatchedResultsOnly) {
-                        if (!this.matchedResult) {
+                        // Id task: 203
+                        if (!this.matchedResult && this.element.id == e.target.id) {
                             if (typeof(this.data) === 'undefined' ||
                                 !(this.data.length === 1 && this.options.autoLoadSingleResult)) {
                                 this.element.value = '';
@@ -94,10 +101,12 @@ define(['jquery', 'fab/encoder', 'fab/fabrik', 'lib/debounce/jquery.ba-throttle-
              * NOTE that because we use a jQuery event to trigger this, e is a jQuery event, so keyCode
              * instead of code, and e.preventDefault() instead of e.stop()
              */
-            if (!this.isMinTriggerlength()) {
+            if (!this.isMinTriggerlength() && !e.target.hasAttribute('suggest')) {
                 return;
             }
-            if (e.keyCode === 'tab' || e.keyCode === 'enter') {
+
+
+            if (e.which === 9 || e.which === 13) {
                 e.preventDefault();
                 this.closeMenu();
                 if (this.ajax) {
@@ -111,7 +120,7 @@ define(['jquery', 'fab/encoder', 'fab/fabrik', 'lib/debounce/jquery.ba-throttle-
             if (v === '') {
                 this.element.value = '';
             }
-            if (v !== this.searchText && v !== '') {
+            if ((v !== this.searchText && v !== '') || (e.target.hasAttribute('suggest') && v === '')) {
                 if (this.options.storeMatchedResultsOnly === false) {
                     this.element.value = v;
                 }
@@ -159,6 +168,9 @@ define(['jquery', 'fab/encoder', 'fab/fabrik', 'lib/debounce/jquery.ba-throttle-
                         }.bind(this)
                     }).send();
                 }
+            }
+            else {
+                //console.log('same same or empty');
             }
             this.searchText = v;
         },
@@ -227,8 +239,11 @@ define(['jquery', 'fab/encoder', 'fab/fabrik', 'lib/debounce/jquery.ba-throttle-
                 return false;
             }
             if (data.length === 0) {
+                var elModel = Fabrik.getBlock(this.options.formRef).formElements.get(this.element.id);
+                var tags = elModel.options.tags;
+                var msgNoRecords = tags ? 'COM_FABRIK_NO_AUTOCOMPLETE_RECORDS_TAGS' : 'COM_FABRIK_NO_AUTOCOMPLETE_RECORDS';
                 li = new Element('li').adopt(new Element('div.alert.alert-info')
-                    .adopt(new Element('i').set('text', Joomla.JText._('COM_FABRIK_NO_RECORDS'))));
+                    .adopt(new Element('i').set('text', Joomla.JText._(msgNoRecords))));
                 li.inject(ul);
             }
             for (var i = 0; i < max; i++) {
@@ -280,7 +295,7 @@ define(['jquery', 'fab/encoder', 'fab/fabrik', 'lib/debounce/jquery.ba-throttle-
 
         openMenu: function () {
             if (!this.shown) {
-                if (this.isMinTriggerlength()) {
+                if (this.isMinTriggerlength() || this.options.labelelement.hasAttribute('suggest')) {
                     this.menu.show();
                     this.shown = true;
                     this.doCloseEvent = this.doTestMenuClose.bind(this);
@@ -323,7 +338,7 @@ define(['jquery', 'fab/encoder', 'fab/fabrik', 'lib/debounce/jquery.ba-throttle-
                     this.openMenu();
                 }
             } else {
-                if (!this.isMinTriggerlength()) {
+                if (!this.isMinTriggerlength() && !e.target.hasAttribute('suggest')) {
                     e.stop();
                     this.closeMenu();
                 }

@@ -4,12 +4,14 @@
  *
  * @package     Joomla
  * @subpackage  Fabrik
- * @copyright   Copyright (C) 2005-2016  Media A-Team, Inc. - All rights reserved.
+ * @copyright   Copyright (C) 2005-2020  Media A-Team, Inc. - All rights reserved.
  * @license     GNU/GPL http://www.gnu.org/copyleft/gpl.html
  */
 
 // No direct access
 defined('_JEXEC') or die('Restricted access');
+
+use Joomla\CMS\Factory;
 
 jimport('joomla.application.component.view');
 
@@ -59,8 +61,8 @@ class FabrikViewElement extends FabrikView
 	 */
 	public function display($tpl = null)
 	{
-		$input = $this->app->input;
-		$pluginManager = JModelLegacy::getInstance('Pluginmanager', 'FabrikFEModel');
+		$input = $this->app->getInput();
+		$pluginManager = Factory::getApplication()->bootComponent('com_fabrik')->getMVCFactory()->createModel('Pluginmanager', 'FabrikFEModel');
 		$ids = $input->get('plugin', array(), 'array');
 
 		foreach ($ids as $id)

@@ -4,7 +4,7 @@
  *
  * @package     Joomla.Administrator
  * @subpackage  Fabrik
- * @copyright   Copyright (C) 2005-2016  Media A-Team, Inc. - All rights reserved.
+ * @copyright   Copyright (C) 2005-2020  Media A-Team, Inc. - All rights reserved.
  * @license     GNU/GPL http://www.gnu.org/copyleft/gpl.html
  * @since       1.6
  */
@@ -12,17 +12,14 @@
 // No direct access
 defined('_JEXEC') or die('Restricted access');
 
+use Joomla\CMS\Language\Text;
+use Joomla\CMS\MVC\Model\BaseDatabaseModel;
+use Joomla\CMS\Router\Route;
+use Joomla\CMS\Factory;
 use Joomla\Utilities\ArrayHelper;
 
 require_once 'fabcontrolleradmin.php';
 
-/**
- * Lists list controller class.
- *
- * @package     Joomla.Administrator
- * @subpackage  Fabrik
- * @since       3.0
- */
 class FabrikAdminControllerLists extends FabControllerAdmin
 {
 	/**
@@ -46,7 +43,7 @@ class FabrikAdminControllerLists extends FabControllerAdmin
 	 * @param   string  $prefix  The class prefix. Optional.
 	 * @param   array   $config  Configuration array for model. Optional.
 	 *
-	 * @return  JModelLegacy  The model.
+	 * @return  BaseDatabaseModel  The model.
 	 *
 	 * @since   12.2
 	 */
@@ -72,7 +69,7 @@ class FabrikAdminControllerLists extends FabControllerAdmin
 
 		if (empty($cid))
 		{
-			$this->setMessage(FText::_($this->text_prefix . '_NO_ITEM_SELECTED'), 'error');
+			$this->setMessage(Text::_($this->text_prefix . '_NO_ITEM_SELECTED'), 'error');
 		}
 		else
 		{
@@ -120,7 +117,7 @@ class FabrikAdminControllerLists extends FabControllerAdmin
 			}
 		}
 
-		$this->setRedirect(JRoute::_('index.php?option=' . $this->option . '&view=' . $this->view_list, false));
+		$this->setRedirect(Route::_('index.php?option=' . $this->option . '&view=' . $this->view_list, false));
 	}
 
 	/**
@@ -131,7 +128,7 @@ class FabrikAdminControllerLists extends FabControllerAdmin
 	public function delete()
 	{
 		$listsModel = $this->getModel('lists');
-		$viewType = JFactory::getDocument()->getType();
+		$viewType = Factory::getDocument()->getType();
 		$view = $this->getView($this->view_item, $viewType);
 		$view->setLayout('confirmdelete');
 

@@ -5,6 +5,8 @@
 
 defined('JPATH_BASE') or die;
 
+use Joomla\CMS\Language\Text;
+
 $d = $displayData;
 $i = 0;
 
@@ -26,11 +28,11 @@ $i = 0;
 	?>
 
 				<a 	role="tab" 
-					data-toggle="pill"
+					data-bs-toggle="pill"
 					<?php echo implode(' ', $style); ?>
 					href="<?php echo $href; ?>"
 					id="<?php echo $tab->id; ?>">
-					<?php echo FText::_($tab->label); ?>
+					<?php echo Text::_($tab->label); ?>
 				</a>
 
 	<?php 
@@ -38,13 +40,13 @@ $i = 0;
 	?>
 
 				<a 	role="tab" 
-					data-toggle="pill" 
+					data-bs-toggle="pill" 
 					class="nav-link"
 					href="#<?php echo $href; ?>"
 					id="<?php echo $tab->id; ?>"
 					aria-controls="<?php echo $tab->id; ?>"
 					aria-selected="<?= isset($tab->class) && $tab->class !== '' ? 'true' : 'false' ?>">
-					<?php echo FText::_($tab->label); ?>
+					<?php echo Text::_($tab->label); ?>
 				</a>
 
 		<?php 

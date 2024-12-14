@@ -4,7 +4,7 @@
  *
  * @package     Joomla.Administrator
  * @subpackage  Fabrik
- * @copyright   Copyright (C) 2005-2016  Media A-Team, Inc. - All rights reserved.
+ * @copyright   Copyright (C) 2005-2020  Media A-Team, Inc. - All rights reserved.
  * @license     GNU/GPL http://www.gnu.org/copyleft/gpl.html
  * @since       1.6
  */
@@ -12,6 +12,11 @@
 // No direct access
 defined('_JEXEC') or die('Restricted access');
 
+use Joomla\CMS\Language\Text;
+use Joomla\CMS\MVC\Model\BaseDatabaseModel;
+use Joomla\CMS\Table\Table;
+use Joomla\CMS\Form\Form;
+use Joomla\CMS\Factory;
 use Joomla\Utilities\ArrayHelper;
 
 require_once 'fabmodeladmin.php';
@@ -39,7 +44,7 @@ class FabrikAdminModelGroup extends FabModelAdmin
 	 * @param   string $prefix A prefix for the table class name. Optional.
 	 * @param   array  $config Configuration array for model. Optional.
 	 *
-	 * @return  JTable    A database object
+	 * @return  Table    A database object
 	 */
 	public function getTable($type = 'Group', $prefix = 'FabrikTable', $config = array())
 	{
@@ -54,7 +59,7 @@ class FabrikAdminModelGroup extends FabModelAdmin
 	 * @param   array $data     Data for the form.
 	 * @param   bool  $loadData True if the form is to load its own data (default case), false if not.
 	 *
-	 * @return  mixed    A JForm object on success, false on failure
+	 * @return  mixed    A Form object on success, false on failure
 	 */
 	public function getForm($data = array(), $loadData = true)
 	{
@@ -105,7 +110,7 @@ class FabrikAdminModelGroup extends FabModelAdmin
 		$ids   = ArrayHelper::toInteger($ids);
 		$db    = FabrikWorker::getDbo(true);
 		$query = $db->getQuery(true);
-		$query->select('group_id')->from('#__{package}_formgroup')->where('form_id IN (' . implode(',', $ids) . ')');
+		$query->select('group_id')->from('#__fabrik_formgroup')->where('form_id IN (' . implode(',', $ids) . ')');
 		$db->setQuery($query);
 		$res = $db->loadColumn();
 
@@ -122,7 +127,7 @@ class FabrikAdminModelGroup extends FabModelAdmin
 	protected function checkRepeatAndPK($data)
 	{
 		/** @var FabrikFEModelGroup $groupModel */
-		$groupModel = JModelLegacy::getInstance('Group', 'FabrikFEModel');
+		$groupModel = Factory::getApplication()->bootComponent('com_fabrik')->getMVCFactory()->createModel('Group', 'FabrikFEModel');
 		$groupModel->setId($data['id']);
 		$listModel     = $groupModel->getListModel();
 		$pk            = FabrikString::safeColName($listModel->getPrimaryKey());
@@ -152,9 +157,10 @@ class FabrikAdminModelGroup extends FabModelAdmin
 		{
 			$data['created_by']       = $this->user->get('id');
 			$data['created_by_alias'] = $this->user->get('username');
-			$data['created']          = JFactory::getDate()->toSql();
+			$data['created']          = Factory::getDate()->toSql();
+		} elseif (FabrikWorker::isNullDate($data['created'])) {
+			$data['created'] = null;
 		}
-
 		$makeJoin   = false;
 		$unMakeJoin = false;
 
@@ -274,7 +280,7 @@ class FabrikAdminModelGroup extends FabModelAdmin
 			// Get max group order
 			$db    = FabrikWorker::getDbo(true);
 			$query = $db->getQuery(true);
-			$query->select('MAX(ordering)')->from('#__{package}_formgroup')->where('form_id = ' . $formId);
+			$query->select('MAX(ordering)')->from('#__fabrik_formgroup')->where('form_id = ' . $formId);
 			$db->setQuery($query);
 			$next           = (int) $db->loadResult() + 1;
 			$item->ordering = $next;
@@ -293,7 +299,7 @@ class FabrikAdminModelGroup extends FabModelAdmin
 	 */
 	private function checkFKIndex($data)
 	{
-		$groupModel = JModelLegacy::getInstance('Group', 'FabrikFEModel');
+		$groupModel = Factory::getApplication()->bootComponent('com_fabrik')->getMVCFactory()->createModel('Group', 'FabrikFEModel');
 		$groupModel->setId($data['id']);
 		$listModel = $groupModel->getListModel();
 		$item      = FabTable::getInstance('Group', 'FabrikTable');
@@ -333,7 +339,7 @@ class FabrikAdminModelGroup extends FabModelAdmin
 	public function makeJoinedGroup(&$data)
 	{
 		/** @var FabrikFEModelGroup $groupModel */
-		$groupModel = JModelLegacy::getInstance('Group', 'FabrikFEModel');
+		$groupModel = Factory::getApplication()->bootComponent('com_fabrik')->getMVCFactory()->createModel('Group', 'FabrikFEModel');
 		$groupModel->setId($data['id']);
 		$listModel          = $groupModel->getListModel();
 		$db                 = $listModel->getDb();
@@ -394,7 +400,7 @@ class FabrikAdminModelGroup extends FabModelAdmin
 			if (trim($list->db_table_name) == '')
 			{
 				// New group not attached to a form
-				throw new Exception(FText::_('COM_FABRIK_GROUP_CANT_MAKE_JOIN_NO_DB_TABLE'));
+				throw new Exception(Text::_('COM_FABRIK_GROUP_CANT_MAKE_JOIN_NO_DB_TABLE'));
 			}
 
 			// Repeat table already created - lets check its structure matches the group elements
@@ -456,16 +462,17 @@ class FabrikAdminModelGroup extends FabModelAdmin
 
 		$db    = FabrikWorker::getDbo(true);
 		$query = $db->getQuery(true);
-		$query->delete('#__{package}_joins')->where('group_id = ' . $data['id']);
+		$query->delete('#__fabrik_joins')->where('group_id = ' . $data['id']);
 		$db->setQuery($query);
 		$return = $db->execute();
 
 		$query = $db->getQuery(true);
-		$query->select('id')->from('#__{package}_elements')
+		$query->select('id')->from('#__fabrik_elements')
 			->where('group_id  = ' . $data['id'] . ' AND name IN ("id", "parent_id")');
 		$db->setQuery($query);
 		$elementIds   = $db->loadColumn();
-		$elementModel = JModelLegacy::getInstance('Element', 'FabrikModel');
+		// FabrikModelElement does not exsist !! Maybe this is never used ?? Does not work in J!4
+		$elementModel = BaseDatabaseModel::getInstance('Element', 'FabrikModel');
 		$return       = $return && $elementModel->delete($elementIds);
 
 		return $return;
@@ -516,10 +523,10 @@ class FabrikAdminModelGroup extends FabModelAdmin
 		$db    = FabrikWorker::getDbo(true);
 		$pks   = ArrayHelper::toInteger($pks);
 		$query = $db->getQuery(true);
-		$query->select('id')->from('#__{package}_elements')->where('group_id IN (' . implode(',', $pks) . ')');
+		$query->select('id')->from('#__fabrik_elements')->where('group_id IN (' . implode(',', $pks) . ')');
 		$db->setQuery($query);
 		$elementIds   = $db->loadColumn();
-		$elementModel = JModelLegacy::getInstance('Element', 'FabrikAdminModel');
+		$elementModel = BaseDatabaseModel::getInstance('Element', 'FabrikAdminModel');
 
 		return $elementModel->delete($elementIds);
 	}
@@ -536,7 +543,7 @@ class FabrikAdminModelGroup extends FabModelAdmin
 		$db    = FabrikWorker::getDbo(true);
 		$pks   = ArrayHelper::toInteger($pks);
 		$query = $db->getQuery(true);
-		$query->delete('#__{package}_formgroup')->where('group_id IN (' . implode(',', $pks) . ')');
+		$query->delete('#__fabrik_formgroup')->where('group_id IN (' . implode(',', $pks) . ')');
 		$db->setQuery($query);
 
 		return $db->execute();

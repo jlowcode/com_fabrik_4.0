@@ -6,7 +6,7 @@
  *
  * @package     Joomla
  * @subpackage  Fabrik
- * @copyright   Copyright (C) 2005-2016  Media A-Team, Inc. - All rights reserved.
+ * @copyright   Copyright (C) 2005-2020  Media A-Team, Inc. - All rights reserved.
  * @license     GNU/GPL http://www.gnu.org/copyleft/gpl.html
  */
 
@@ -18,7 +18,7 @@ $rowClass = isset($this->_row->rowClass) ? $this->_row->rowClass : '';
 $title_element_id = $this->params->get('titulo');
 $regexTitle = $title_element_id. '_order';
 ?>
-<div class="<?php echo $rowClass; ?>">
+<div class="fabrik_divrow <?php echo $rowClass; ?>">
 <?php foreach ($this->headings as $heading => $label) :
 	$d = @$this->_row->data->$heading;
 
@@ -32,8 +32,8 @@ $regexTitle = $title_element_id. '_order';
 	$cStyle = empty($c['style']) ? '' : 'style="'. $c['style'].'"';
 	$cStyle = preg_match("/{$regexTitle}/", $h['class']) ? 'style="font-weight: bold;"' : ''
 	?>
-    <div class="row-fluid fabrikDivElement" style="margin-top: 10px;">
-		<?php if (isset($this->showLabels) && $this->showLabels) :
+    <div class="fabrikDivElement" style="margin-top: 10px;">
+		<?php if (isset($this->showLabels) && $this->showLabels && $heading != 'fabrik_select' && $heading != 'fabrik_actions') :
 			echo '<span class="muted ' . $h['class'] . '" ' . $hStyle . '>' . $label . ': </span>';
 		endif; ?>
 

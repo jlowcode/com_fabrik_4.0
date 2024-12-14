@@ -4,7 +4,7 @@
  *
  * @package     Joomla.Administrator
  * @subpackage  Fabrik
- * @copyright   Copyright (C) 2005-2016  Media A-Team, Inc. - All rights reserved.
+ * @copyright   Copyright (C) 2005-2020  Media A-Team, Inc. - All rights reserved.
  * @license     GNU/GPL http://www.gnu.org/copyleft/gpl.html
  * @since       3.0
  */
@@ -12,21 +12,26 @@
 // No direct access
 defined('_JEXEC') or die('Restricted access');
 
+use Joomla\CMS\Language\Text;
+use Joomla\CMS\Router\Route;
+use Joomla\CMS\HTML\HTMLHelper;
+FabrikHelperHTML::formvalidation();
+
 ?>
-<form action="<?php JRoute::_('index.php?option=com_fabrik'); ?>" method="post" name="adminForm" id="adminForm" class="form-validate">
+<form action="<?php Route::_('index.php?option=com_fabrik'); ?>" method="post" name="adminForm" id="adminForm" class="form-validate">
 
 <?php foreach ($this->lists as $list) {?>
-	<h2><?php echo FText::_('COM_FABRIK_LIST_COPY_RENAME_LIST')?></h2>
+	<h2><?php echo Text::_('COM_FABRIK_LIST_COPY_RENAME_LIST')?></h2>
 	<label>
 		<?php echo $list->label?>:
 		<input type="text" name="names[<?php echo $list->id?>][listLabel]" value="<?php echo $list->label?>" />
 	</label>
-	<h2><?php echo FText::_('COM_FABRIK_LIST_COPY_RENAME_FORM')?></h2>
+	<h2><?php echo Text::_('COM_FABRIK_LIST_COPY_RENAME_FORM')?></h2>
 	<label>
 		<?php echo $list->formlabel?>:
 		<input type="text" name="names[<?php echo $list->id?>][formLabel]" value="<?php echo $list->formlabel?>" />
 	</label>
-	<h2><?php echo FText::_('COM_FABRIK_LIST_COPY_RENAME_GROUPS')?></h2>
+	<h2><?php echo Text::_('COM_FABRIK_LIST_COPY_RENAME_GROUPS')?></h2>
 	<ul>
 	<?php foreach ($list->groups as $group) {?>
 		<li>
@@ -40,5 +45,5 @@ defined('_JEXEC') or die('Restricted access');
 	<?php }?>
 	<input type="hidden" name="option" value="com_fabrik" />
 	<input type="hidden" name="task" value="list.doCopy" />
-	<?php echo JHtml::_('form.token'); ?>
+	<?php echo HTMLHelper::_('form.token'); ?>
 </form>

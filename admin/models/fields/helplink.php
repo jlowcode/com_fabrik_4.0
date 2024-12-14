@@ -4,13 +4,16 @@
  *
  * @package     Joomla
  * @subpackage  Fabrik
- * @copyright   Copyright (C) 2005-2016  Media A-Team, Inc. - All rights reserved.
+ * @copyright   Copyright (C) 2005-2020  Media A-Team, Inc. - All rights reserved.
  * @license     GNU/GPL http://www.gnu.org/copyleft/gpl.html
  * @since       3.0.9
  */
 
 // No direct access
 defined('_JEXEC') or die('Restricted access');
+
+use Joomla\CMS\Language\Text;
+use Joomla\CMS\Form\FormField;
 
 /**
  * Renders a Fabrik Help link
@@ -19,7 +22,7 @@ defined('_JEXEC') or die('Restricted access');
  * @since    3.0.9
  */
 
-class JFormFieldHelpLink extends JFormField
+class JFormFieldHelpLink extends FormField
 {
 	/**
 	 * Return blank label
@@ -29,7 +32,13 @@ class JFormFieldHelpLink extends JFormField
 
 	protected function getLabel()
 	{
-		return '';
+		$url = $this->element['url'] ? (string) $this->element['url'] : '';
+		$js = 'Joomla.popupWindow(\'' . Text::_($url) . '\', \'Help\', 800, 600, 1);return false';
+		$label = '<div style="float:left;">';
+		$label .= '<a class="btn btn-sm btn-info" href="#" rel="help" onclick="' . $js . '">';
+		$label .= '<i class="icon-help icon-32-help icon-question-sign"></i> ' . Text::_('JHELP') . '</a></div>';
+
+		return $label;
 	}
 
 	/**
@@ -40,12 +49,6 @@ class JFormFieldHelpLink extends JFormField
 
 	public function getInput()
 	{
-		$url = $this->element['url'] ? (string) $this->element['url'] : '';
-		$js = 'Joomla.popupWindow(\'' . FText::_($url) . '\', \'Help\', 800, 600, 1);return false';
-		$label = '<div style="float:right;">';
-		$label .= '<a class="btn btn-small btn-info" href="#" rel="help" onclick="' . $js . '">';
-		$label .= '<i class="icon-help icon-32-help icon-question-sign"></i> ' . FText::_('JHELP') . '</a></div>';
-
-		return $label;
+		return '';
 	}
 }

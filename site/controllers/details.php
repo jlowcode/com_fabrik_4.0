@@ -4,13 +4,20 @@
  *
  * @package     Joomla
  * @subpackage  Fabrik
- * @copyright   Copyright (C) 2005-2016  Media A-Team, Inc. - All rights reserved.
+ * @copyright   Copyright (C) 2005-2020  Media A-Team, Inc. - All rights reserved.
  * @license     GNU/GPL http://www.gnu.org/copyleft/gpl.html
  */
 
 // No direct access
 defined('_JEXEC') or die('Restricted access');
 
+use Joomla\CMS\Language\Text;
+use Joomla\CMS\MVC\Controller\BaseController;
+use Joomla\CMS\Component\ComponentHelper;
+use Joomla\CMS\Filter\InputFilter;
+use Joomla\CMS\Router\Route;
+use Joomla\CMS\Session\Session;
+use Joomla\CMS\Factory;
 use \Joomla\Utilities\ArrayHelper;
 use \Fabrik\Helpers\Html;
 use \Fabrik\Helpers\Worker;
@@ -25,7 +32,7 @@ jimport('joomla.application.component.controller');
  * @subpackage  Fabrik
  * @since       1.5
  */
-class FabrikControllerDetails extends JControllerLegacy
+class FabrikControllerDetails extends BaseController
 {
 	/**
 	 * Is the view rendered from the J content plugin
@@ -45,17 +52,17 @@ class FabrikControllerDetails extends JControllerLegacy
 	 * Display the view
 	 *
 	 * @param   boolean          $cachable   If true, the view output will be cached - NOTE not actually used to control caching!!!
-	 * @param   array|boolean    $urlparams  An array of safe url parameters and their variable types, for valid values see {@link JFilterInput::clean()}.
+	 * @param   array|boolean    $urlparams  An array of safe url parameters and their variable types, for valid values see {@link InputFilter::clean()}.
 	 *
 	 * @return  JController  A JController object to support chaining.
 	 */
 	public function display($cachable = false, $urlparams = false)
 	{
-		$session = JFactory::getSession();
-		$document = JFactory::getDocument();
-		$app = JFactory::getApplication();
+		$session = Factory::getSession();
+		$document = Factory::getDocument();
+		$app = Factory::getApplication();
 		$package = $app->getUserState('com_fabrik.package', 'fabrik');
-		$input = $app->input;
+		$input = $app->getInput();
 		$viewName = 'form';
 		$modelName = 'form';
 
@@ -89,14 +96,14 @@ class FabrikControllerDetails extends JControllerLegacy
 		// $model->getData();
 
 		// Display the view
-		$view->error = $this->getError();
+		//$view->error = $this->getError();
 
 		// $$$ hugh - added disable caching option, and no caching if not logged in (unless we can come up with a unique cacheid for guests)
 		// NOTE - can't use IP of client, as could be two users behind same NAT'ing proxy / firewall.
 		$listModel = $model->getListModel();
 		$listParams = $listModel->getParams();
 
-		$user = JFactory::getUser();
+		$user = Factory::getUser();
 
 		// don't cache for certain formats, or if used in social profile (CB, JomSocial)
 		if (!Worker::useCache($listModel)
@@ -107,13 +114,13 @@ class FabrikControllerDetails extends JControllerLegacy
 		}
 		else
 		{
-			$user = JFactory::getUser();
+			$user = Factory::getUser();
 			$uri = JURI::getInstance();
 			$uri = $uri->toString(array('path', 'query'));
 			$cacheId = serialize(array($uri, $input->post, $user->get('id'), get_class($view), 'display', $this->cacheId));
-			$cache = JFactory::getCache('com_' . $package, 'view');
+			$cache = Factory::getCache('com_' . $package, 'view');
 			Html::addToSessionCacheIds($cacheId);
-			echo $cache->get($view, 'display', $cacheId);
+			$cache->get($view, 'display', $cacheId);
 		}
 	}
 
@@ -125,11 +132,11 @@ class FabrikControllerDetails extends JControllerLegacy
 	public function process()
 	{
 		@set_time_limit(300);
-		$app = JFactory::getApplication();
-		$session = JFactory::getSession();
+		$app = Factory::getApplication();
+		$session = Factory::getSession();
 		$package = $app->getUserState('com_fabrik.package', 'fabrik');
-		$input = $app->input;
-		$document = JFactory::getDocument();
+		$input = $app->getInput();
+		$document = Factory::getDocument();
 		$viewName = $input->get('view', 'form');
 		$viewType = $document->getType();
 		$view = $this->getView($viewName, $viewType);
@@ -147,11 +154,11 @@ class FabrikControllerDetails extends JControllerLegacy
 		$model->setRowId($input->get('rowid', '', 'string'));
 
 		// Check for request forgeries
-		$fbConfig = JComponentHelper::getParams('com_fabrik');
+		$fbConfig = ComponentHelper::getParams('com_fabrik');
 
 		if ($model->getParams()->get('spoof_check', $fbConfig->get('spoofcheck_on_formsubmission', true)) == true)
 		{
-			JSession::checkToken() or die('Invalid Token');
+			Session::checkToken() or die('Invalid Token');
 		}
 
 		if ($input->getBool('fabrik_ignorevalidation', false) != true)
@@ -259,8 +266,8 @@ class FabrikControllerDetails extends JControllerLegacy
 	 */
 	public function setRedirect($url, $msg = null, $type = 'message')
 	{
-		$session = JFactory::getSession();
-		$app = JFactory::getApplication();
+		$session = Factory::getSession();
+		$app = Factory::getApplication();
 		$package = $app->getUserState('com_fabrik.package', 'fabrik');
 		$formData = $session->get('com_' . $package . '.form.data');
 		$context = 'com_' . $package . '.form.' . $formData['fabrik'] . '.redirect.';
@@ -293,7 +300,7 @@ class FabrikControllerDetails extends JControllerLegacy
 		$url = array_shift($sUrl);
 		$msg = array_shift($sMsg);
 
-		$app = JFactory::getApplication();
+		$app = Factory::getApplication();
 		$q = $app->getMessageQueue();
 		$found = false;
 
@@ -329,19 +336,19 @@ class FabrikControllerDetails extends JControllerLegacy
 	 */
 	protected function makeRedirect(&$model, $msg = null)
 	{
-		$app = JFactory::getApplication();
+		$app = Factory::getApplication();
 		$package = $app->getUserState('com_fabrik.package', 'fabrik');
-		$input = $app->input;
+		$input = $app->getInput();
 		$formId = $input->getInt('formid');
 		$listId = $input->getInt('listid');
 		$rowId = $input->getString('rowid');
 
 		if (is_null($msg))
 		{
-			$msg = FText::_('COM_FABRIK_RECORD_ADDED_UPDATED');
+			$msg = Text::_('COM_FABRIK_RECORD_ADDED_UPDATED');
 		}
 
-		if ($app->isAdmin())
+		if ($app->isClient('administrator'))
 		{
 			// Admin links use com_fabrik over package option
 			if (array_key_exists('apply', $model->formData))
@@ -382,11 +389,11 @@ class FabrikControllerDetails extends JControllerLegacy
 				}
 			}
 
-			$config = JFactory::getConfig();
+			$config = Factory::getApplication()->getConfig();
 
 			if ($config->get('sef'))
 			{
-				$url = JRoute::_($url);
+				$url = Route::_($url);
 			}
 
 			$this->setRedirect($url, $msg);
@@ -400,8 +407,8 @@ class FabrikControllerDetails extends JControllerLegacy
 	 */
 	public function ajax_validate()
 	{
-		$app = JFactory::getApplication();
-		$input = $app->input;
+		$app = Factory::getApplication();
+		$input = $app->getInput();
 		$model = $this->getModel('form', 'FabrikFEModel');
 		$model->setId($input->getInt('formid', 0));
 		$model->getForm();
@@ -421,8 +428,8 @@ class FabrikControllerDetails extends JControllerLegacy
 	 */
 	public function savepage()
 	{
-		$app = JFactory::getApplication();
-		$input = $app->input;
+		$app = Factory::getApplication();
+		$input = $app->getInput();
 		$model = $this->getModel('Formsession', 'FabrikFEModel');
 		$formModel = $this->getModel('Form', 'FabrikFEModel');
 		$formModel->setId($input->getInt('formid'));
@@ -437,8 +444,8 @@ class FabrikControllerDetails extends JControllerLegacy
 	 */
 	public function removeSession()
 	{
-		$app = JFactory::getApplication();
-		$input = $app->input;
+		$app = Factory::getApplication();
+		$input = $app->getInput();
 		$sessionModel = $this->getModel('Formsession', 'FabrikFEModel');
 		$sessionModel->setFormId($input->getInt('formid', 0));
 		$sessionModel->setRowId($input->get('rowid', '', 'string'));
@@ -453,8 +460,8 @@ class FabrikControllerDetails extends JControllerLegacy
 	 */
 	public function paginate()
 	{
-		$app = JFactory::getApplication();
-		$input = $app->input;
+		$app = Factory::getApplication();
+		$input = $app->getInput();
 		$model = $this->getModel('Form', 'FabrikFEModel');
 		$model->setId($input->getInt('formid'));
 		$model->paginateRowId($input->get('dir'));
@@ -469,10 +476,10 @@ class FabrikControllerDetails extends JControllerLegacy
 	public function delete()
 	{
 		// Check for request forgeries
-		JSession::checkToken() or die('Invalid Token');
-		$app = JFactory::getApplication();
+		Session::checkToken() or die('Invalid Token');
+		$app = Factory::getApplication();
 		$package = $app->getUserState('com_fabrik.package', 'fabrik');
-		$input = $app->input;
+		$input = $app->getInput();
 		$model = $this->getModel('list', 'FabrikFEModel');
 		$ids = array($input->get('rowid', 0, 'string'));
 
@@ -498,7 +505,7 @@ class FabrikControllerDetails extends JControllerLegacy
 			}
 
 			$ref = str_replace("limitstart$listId=$limitStart", "limitstart$listId=$newLimitStart", $ref);
-			$app = JFactory::getApplication();
+			$app = Factory::getApplication();
 			$context = 'com_' . $package . '.list.' . $model->getRenderContext() . '.';
 			$app->setUserState($context . 'limitstart', $newLimitStart);
 		}
@@ -511,7 +518,7 @@ class FabrikControllerDetails extends JControllerLegacy
 		else
 		{
 			// @TODO: test this
-			$app->enqueueMessage(count($ids) . " " . FText::_('COM_FABRIK_RECORDS_DELETED'));
+			$app->enqueueMessage(count($ids) . " " . Text::_('COM_FABRIK_RECORDS_DELETED'));
 			$app->redirect($ref);
 		}
 	}

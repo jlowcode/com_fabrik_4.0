@@ -4,17 +4,23 @@
  *
  * @package     Joomla
  * @subpackage  Form
- * @copyright   Copyright (C) 2005-2016  Media A-Team, Inc. - All rights reserved.
+ * @copyright   Copyright (C) 2005-2020  Media A-Team, Inc. - All rights reserved.
  * @license     GNU/GPL http://www.gnu.org/copyleft/gpl.html
  */
 
 // No direct access
 defined('_JEXEC') or die('Restricted access');
 
+use Joomla\CMS\Component\ComponentHelper;
+use Joomla\CMS\Editor\Editor;
+use Joomla\CMS\Form\FormHelper;
+use Joomla\CMS\Factory;
+use Joomla\CMS\Form\Field\TextField;
+
 require_once JPATH_ADMINISTRATOR . '/components/com_fabrik/helpers/element.php';
 
 jimport('joomla.form.helper');
-JFormHelper::loadFieldClass('text');
+FormHelper::loadFieldClass('text');
 
 /**
  * Renders either a plain <textarea> or WYSIWYG editor
@@ -23,7 +29,7 @@ JFormHelper::loadFieldClass('text');
  * @subpackage  Form
  * @since       1.6
  */
-class JFormFieldTextorwysiwyg extends JFormFieldText
+class JFormFieldTextorwysiwyg extends TextField
 {
 	/**
 	 * Element name
@@ -40,17 +46,22 @@ class JFormFieldTextorwysiwyg extends JFormFieldText
 	 */
 	protected function getInput()
 	{
-		$config = JComponentHelper::getParams('com_fabrik');
+		$config = ComponentHelper::getParams('com_fabrik');
 
 		if ($config->get('fbConf_wysiwyg_label', '0') == '0')
 		{
 			// Initialize some field attributes.
-			$size = $this->element['size'] ? ' size="' . (int) $this->element['size'] . '"' : '';
+//			$size = $this->element['size'] ? ' size="' . (int) $this->element['size'] . '"' : ''; // size is longer used
 			$maxLength = $this->element['maxlength'] ? ' maxlength="' . (int) $this->element['maxlength'] . '"' : '';
-			$class = $this->element['class'] ? ' class="' . (string) $this->element['class'] . '"' : '';
-			$readonly = ((string) $this->element['readonly'] == 'true') ? ' readonly="readonly"' : '';
-			$disabled = ((string) $this->element['disabled'] == 'true') ? ' disabled="disabled"' : '';
-			$required = $this->required ? ' required="required" aria-required="true"' : '';
+//			$class = $this->element['class'] ? ' class="' . (string) $this->element['class'] . '"' : ''; // class must be: form-control, but element['class'] is empty
+			$class = $this->element['class'] ? ' class="' . (string) $this->element['class'] . '"' : 'class="form-control"';
+//			$readonly = ((string) $this->element['readonly'] == 'true') ? ' readonly="readonly"' : '';
+//			$disabled = ((string) $this->element['disabled'] == 'true') ? ' disabled="disabled"' : '';
+//			$required = $this->required ? ' required="required" aria-required="true"' : '';
+
+			$readonly = ((string) $this->element['readonly'] == 'true') ? ' readonly' : ''; // not tested
+			$disabled = ((string) $this->element['disabled'] == 'true') ? ' disabled' : ''; // not tested
+			$required = $this->required ? ' required" aria-required="true"' : ''; // not tested
 
 			// Initialize JavaScript field attributes.
 			$onchange = $this->element['onchange'] ? ' onchange="' . (string) $this->element['onchange'] . '"' : '';
@@ -61,8 +72,10 @@ class JFormFieldTextorwysiwyg extends JFormFieldText
 			// Re-replace "&amp;lt;" with "&gt;" -don't ask
 			$value = htmlspecialchars_decode($value, ENT_NOQUOTES);
 
+//			return '<input type="text" name="' . $this->name . '" id="' . $this->id . '" value="'
+//				. $value . '"' . $class . $size . $disabled . $readonly . $onchange . $maxLength . $required . '/>';
 			return '<input type="text" name="' . $this->name . '" id="' . $this->id . '" value="'
-				. $value . '"' . $class . $size . $disabled . $readonly . $onchange . $maxLength . $required . '/>';
+				. $value . '"' . $class . $disabled . $readonly . $onchange . $maxLength . $required . '/>';
 		}
 
 		// Initialize some field attributes.
@@ -102,9 +115,9 @@ class JFormFieldTextorwysiwyg extends JFormFieldText
 	}
 
 	/**
-	 * Method to get a JEditor object based on the form field.
+	 * Method to get a Editor object based on the form field.
 	 *
-	 * @return  object  The JEditor object.
+	 * @return  object  The Editor object.
 	 */
 	protected function &getEditor()
 	{
@@ -113,42 +126,11 @@ class JFormFieldTextorwysiwyg extends JFormFieldText
 		{
 			// Initialize variables.
 			$editor = null;
+			$config = Factory::getApplication()->getConfig();
+			$editor = $config->get('editor');
 
-			// Get the editor type attribute. Can be in the form of: editor="desired|alternative".
-			$type = trim((string) $this->element['editor']);
-
-			if ($type)
-			{
-				// Get the list of editor types.
-				$types = explode('|', $type);
-
-				// Get the database object.
-				$db = JFactory::getDBO();
-
-				// Iterate over the types looking for an existing editor.
-				foreach ($types as $element)
-				{
-					// Build the query.
-					$query = $db->getQuery(true);
-					$query->select('element');
-					$query->from('#__extensions');
-					$query->where('element = ' . $db->quote($element));
-					$query->where('folder = ' . $db->quote('editors'));
-					$query->where('enabled = 1');
-
-					// Check of the editor exists.
-					$db->setQuery($query, 0, 1);
-					$editor = $db->loadResult();
-
-					// If an editor was found stop looking.
-					if ($editor)
-					{
-						break;
-					}
-				}
-			}
-			// Create the JEditor instance based on the given editor.
-			$this->editor = JFactory::getEditor($editor ? $editor : null);
+			// Create the Editor instance based on the given editor.
+			$this->editor = Editor::getInstance($editor);
 		}
 
 		return $this->editor;

@@ -4,7 +4,7 @@
  *
  * @package     Joomla.Administrator
  * @subpackage  Fabrik
- * @copyright   Copyright (C) 2005-2016  Media A-Team, Inc. - All rights reserved.
+ * @copyright   Copyright (C) 2005-2020  Media A-Team, Inc. - All rights reserved.
  * @license     GNU/GPL http://www.gnu.org/copyleft/gpl.html
  * @since       1.6
  */
@@ -12,7 +12,12 @@
 // No direct access
 defined('_JEXEC') or die('Restricted access');
 
-use \Joomla\Registry\Registry;
+use Joomla\CMS\Language\Text;
+use Joomla\CMS\MVC\Model\BaseDatabaseModel;
+use Joomla\CMS\Session\Session;
+use Joomla\CMS\Factory;
+use Joomla\Registry\Registry;
+use Joomla\CMS\HTML\HTMLHelper;
 
 require_once 'fabcontrollerform.php';
 
@@ -39,10 +44,10 @@ class FabrikAdminControllerList extends FabControllerForm
 	 */
 	public function ajax_loadTableDropDown()
 	{
-		$app = JFactory::getApplication();
+		$app = Factory::getApplication();
 		$input = $app->input;
 		$conn = $input->getInt('conn', 1);
-		$oCnn = JModelLegacy::getInstance('Connection', 'FabrikFEModel');
+		$oCnn = Factory::getApplication()->bootComponent('com_fabrik')->getMVCFactory()->createModel('Connection', 'FabrikFEModel');
 		$oCnn->setId($conn);
 		$oCnn->getConnection();
 		$db = $oCnn->getDb();
@@ -61,12 +66,12 @@ class FabrikAdminControllerList extends FabControllerForm
 			{
 				foreach ($aFields as $oField)
 				{
-					$fieldNames[] = JHTML::_('select.option', $oField->Field);
+					$fieldNames[] = HTMLHelper::_('select.option', $oField->Field);
 				}
 			}
 		}
 
-		$fieldDropDown = JHTML::_('select.genericlist', $fieldNames, $name, "class=\"inputbox\"  size=\"1\" ", 'value', 'text', '');
+		$fieldDropDown = HTMLHelper::_('select.genericlist', $fieldNames, $name, "class=\"inputbox\"  size=\"1\" ", 'value', 'text', '');
 		echo $fieldDropDown;
 	}
 
@@ -78,10 +83,10 @@ class FabrikAdminControllerList extends FabControllerForm
 	public function delete()
 	{
 		// Check for request forgeries
-		JSession::checkToken() or die('Invalid Token');
-		$app = JFactory::getApplication();
+		Session::checkToken() or die('Invalid Token');
+		$app = Factory::getApplication();
 		$input = $app->input;
-		$model = JModelLegacy::getInstance('List', 'FabrikFEModel');
+		$model = Factory::getApplication()->bootComponent('com_fabrik')->getMVCFactory()->createModel('List', 'FabrikFEModel');
 		$listId = $input->getInt('listid');
 		$model->setId($listId);
 		$ids = $input->get('ids', array(), 'array');
@@ -117,7 +122,7 @@ class FabrikAdminControllerList extends FabControllerForm
 	 */
 	public function view($model = null)
 	{
-		$app = JFactory::getApplication();
+		$app = Factory::getApplication();
 		$input = $app->input;
 		$cid = $input->get('cid', array(0), 'array');
 		$cid = $cid[0];
@@ -129,7 +134,7 @@ class FabrikAdminControllerList extends FabControllerForm
 			$cid = $app->input->getInt('listid', $cid);
 
 			// Grab the model and set its id
-			$model = JModelLegacy::getInstance('List', 'FabrikFEModel');
+			$model = Factory::getApplication()->bootComponent('com_fabrik')->getMVCFactory()->createModel('List', 'FabrikFEModel');
 			$model->setState('list.id', $cid);
 		}
 
@@ -140,7 +145,7 @@ class FabrikAdminControllerList extends FabControllerForm
 			$this->bootFromModule($moduleId, $model);
 		}
 
-		$viewType = JFactory::getDocument()->getType();
+		$viewType = Factory::getDocument()->getType();
 
 		// Use the front end renderer to show the table
 		$this->setPath('view', COM_FABRIK_FRONTEND . '/views');
@@ -157,7 +162,7 @@ class FabrikAdminControllerList extends FabControllerForm
 	 * Load up module prefilters etc
 	 *
 	 * @param   int           $moduleId  Module id
-	 * @param   JModelLegacy  $model     List model
+	 * @param   BaseDatabaseModel  $model     List model
 	 *
 	 * @return  void
 	 */
@@ -166,7 +171,7 @@ class FabrikAdminControllerList extends FabControllerForm
 		require_once JPATH_ADMINISTRATOR  . '/modules/mod_fabrik_list/helper.php';
 
 		// Load module parameters
-		$db = JFactory::getDbo();
+		$db = Factory::getDbo();
 		$query = $db->getQuery(true);
 		$query->select('params')->from('#__modules')->where('id = ' . (int) $moduleId);
 		$db->setQuery($query);
@@ -185,10 +190,10 @@ class FabrikAdminControllerList extends FabControllerForm
 	public function order()
 	{
 		// Check for request forgeries
-		JSession::checkToken() or die('Invalid Token');
-		$app = JFactory::getApplication();
+		Session::checkToken() or die('Invalid Token');
+		$app = Factory::getApplication();
 		$input = $app->input;
-		$model = JModelLegacy::getInstance('List', 'FabrikFEModel');
+		$model = Factory::getApplication()->bootComponent('com_fabrik')->getMVCFactory()->createModel('List', 'FabrikFEModel');
 		$id = $input->getInt('listid');
 		$model->setId($id);
 		$input->set('cid', $id);
@@ -207,8 +212,8 @@ class FabrikAdminControllerList extends FabControllerForm
 	 */
 	public function clearfilter()
 	{
-		$app = JFactory::getApplication();
-		$app->enqueueMessage(FText::_('COM_FABRIK_FILTERS_CLEARED'));
+		$app = Factory::getApplication();
+		$app->enqueueMessage(Text::_('COM_FABRIK_FILTERS_CLEARED'));
 		$app->input->set('clearfilters', 1);
 		$this->filter();
 	}
@@ -221,9 +226,9 @@ class FabrikAdminControllerList extends FabControllerForm
 	public function filter()
 	{
 		// Check for request forgeries
-		JSession::checkToken() or die('Invalid Token');
-		$app = JFactory::getApplication();
-		$model = JModelLegacy::getInstance('List', 'FabrikFEModel');
+		Session::checkToken() or die('Invalid Token');
+		$app = Factory::getApplication();
+		$model = Factory::getApplication()->bootComponent('com_fabrik')->getMVCFactory()->createModel('List', 'FabrikFEModel');
 		$id = $app->input->getInt('listid');
 		$model->setId($id);
 		JRequest::setVar('cid', $id);
@@ -243,7 +248,7 @@ class FabrikAdminControllerList extends FabControllerForm
 	 */
 	public function elementFilter()
 	{
-		$app = JFactory::getApplication();
+		$app = Factory::getApplication();
 		$input = $app->input;
 		$id = $input->getInt('id');
 		$model = $this->getModel('list', 'FabrikFEModel');
@@ -258,7 +263,7 @@ class FabrikAdminControllerList extends FabControllerForm
 	 */
 	public function doPlugin()
 	{
-		$app = JFactory::getApplication();
+		$app = Factory::getApplication();
 		$input = $this->input;
 		$cid   = $input->get('cid', array(0), 'array');
 		$cid   = $cid[0];

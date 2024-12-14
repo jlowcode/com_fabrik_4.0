@@ -4,12 +4,14 @@
  *
  * @package     Joomla
  * @subpackage  Fabrik
- * @copyright   Copyright (C) 2005-2016  Media A-Team, Inc. - All rights reserved.
+ * @copyright   Copyright (C) 2005-2020  Media A-Team, Inc. - All rights reserved.
  * @license     GNU/GPL http://www.gnu.org/copyleft/gpl.html
  */
 
 // No direct access
 defined('_JEXEC') or die('Restricted access');
+
+use Joomla\CMS\Table\Table;
 
 /**
  * Notification Fabrik Table
@@ -18,7 +20,7 @@ defined('_JEXEC') or die('Restricted access');
  * @subpackage  Fabrik
  * @since       3.0
  */
-class FabrikTableFormGroup extends JTable
+class FabrikTableFormGroup extends Table
 {
 	/**
 	 * Constructor
@@ -27,6 +29,6 @@ class FabrikTableFormGroup extends JTable
 	 */
 	public function __construct(&$db)
 	{
-		parent::__construct('#__{package}_formgroup', 'id', $db);
+		parent::__construct('#__fabrik_formgroup', 'id', $db);
 	}
 }

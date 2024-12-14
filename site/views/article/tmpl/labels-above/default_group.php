@@ -4,7 +4,7 @@
  *
  * @package     Joomla
  * @subpackage  Fabrik
- * @copyright   Copyright (C) 2005-2016  Media A-Team, Inc. - All rights reserved.
+ * @copyright   Copyright (C) 2005-2020  Media A-Team, Inc. - All rights reserved.
  * @license     GNU/GPL http://www.gnu.org/copyleft/gpl.html
  * @since       3.1
  */
@@ -18,7 +18,7 @@ defined('_JEXEC') or die('Restricted access');
 	?>
 	<li <?php echo @$element->column;?> class="<?php echo $element->containerClass;?>">
 		<?php echo $element->label;?>
-		<div class="fabrikElement">
+		<div class="fabrikElement <?php echo $element->bsClass;?>">
 			<?php echo $element->element;?>
 
 		</div>

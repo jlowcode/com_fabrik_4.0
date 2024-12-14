@@ -4,7 +4,7 @@
  *
  * @package     Joomla
  * @subpackage  Fabrik
- * @copyright   Copyright (C) 2005-2016  Media A-Team, Inc. - All rights reserved.
+ * @copyright   Copyright (C) 2005-2020  Media A-Team, Inc. - All rights reserved.
  * @license     GNU/GPL http://www.gnu.org/copyleft/gpl.html
  * @since       3.0
  */
@@ -15,7 +15,14 @@ defined('_JEXEC') or die('Restricted access');
 $group = $this->group;
 ?>
 <tr class="fabrikSubGroupElements fabrikSubGroup">
-<?php foreach ($this->elements as $element) :
+<?php
+if ($group->canOrder) :
+?>
+    <td><?php echo FabrikHelperHTML::icon('icon-menu-2'); ?></td>
+<?php
+endif;
+
+foreach ($this->elements as $element) :
 	$style = $element->hidden ? 'style="display:none"' : '';
 	?>
 	<td class="<?php echo $element->containerClass; ?>" <?php echo $style?>>
@@ -26,7 +33,7 @@ $group = $this->group;
 	<?php
 	endif;
 	echo $element->errorTag; ?>
-	<div class="fabrikElement">
+	<div class="fabrikElement <?php echo $element->bsClass;?>">
 		<?php echo $element->element; ?>
 	</div>
 
@@ -44,7 +51,7 @@ $group = $this->group;
 	endforeach;
  	if ($group->editable) : ?>
 		<td class="fabrikGroupRepeater">
-			<div class="pull-right">
+			<div class="fabrikGroupRepeater float-end btn-group-sm">
 			<?php
 			if ($group->canAddRepeat) :
 				echo $this->addRepeatGroupButtonRow;

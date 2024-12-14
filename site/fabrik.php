@@ -4,19 +4,28 @@
  *
  * @package     Joomla
  * @subpackage  Fabrik
- * @copyright   Copyright (C) 2005-2016  Media A-Team, Inc. - All rights reserved.
+ * @copyright   Copyright (C) 2005-2020  Media A-Team, Inc. - All rights reserved.
  * @license     GNU/GPL http://www.gnu.org/copyleft/gpl.html
  */
 
 // No direct access
 defined('_JEXEC') or die('Restricted access');
 
+use Joomla\CMS\MVC\Model\BaseDatabaseModel;
+use Joomla\CMS\MVC\Controller\BaseController;
+use Joomla\CMS\Language\Text;
+use Joomla\CMS\Document\Document;
+use Joomla\CMS\Log\Log;
+use Joomla\CMS\Factory;
+use Joomla\CMS\Filesystem\File;
+use Joomla\String\StringHelper;
+
 jimport('joomla.application.component.helper');
 jimport('joomla.filesystem.file');
 
 if (!defined('COM_FABRIK_FRONTEND'))
 {
-	throw new RuntimeException(JText::_('COM_FABRIK_SYSTEM_PLUGIN_NOT_ACTIVE'), 400);
+	throw new RuntimeException(Text::_('COM_FABRIK_SYSTEM_PLUGIN_NOT_ACTIVE'), 400);
 }
 
 jimport('joomla.log.log');
@@ -24,13 +33,22 @@ jimport('joomla.log.log');
 if (JDEBUG)
 {
 	// Add the logger.
-	JLog::addLogger(array('text_file' => 'fabrik.log.php'));
+	Log::addLogger(array('text_file' => 'fabrik.log.php'));
 }
 
 require_once JPATH_COMPONENT . '/controller.php';
-$app = JFactory::getApplication();
+$app = Factory::getApplication();
 $app->set('jquery', true);
-$input = $app->input;
+$input = $app->getInput();
+
+$layout = $app->getInput()->get('layout', '');
+$view = $app->getInput()->get('view');
+if (in_array($view, ["element", "list", "form", "group"]) && !in_array($layout, ["confirmupdate"])) {
+	$file = 'blockuserinput.js';
+	$loc = FabrikHelperHTML::isDebug() ? Juri::root() . 'media/com_fabrik/js/' : Juri::root() .'media/com_fabrik/js/dist/';
+	Factory::getDocument()->addScript($loc.$file);
+	Text::script("COM_FABRIK_STILL_LOADING");
+}
 
 /**
  * Test for YQL & XML document type
@@ -46,17 +64,17 @@ foreach ($docs as $d)
 		require_once JPATH_SITE . '/administrator/components/com_fabrik/classes/' . $d . 'document.php';
 
 		// Replace the document
-		$document = JFactory::getDocument();
-		$docClass = 'JDocument' . JString::strtoupper($d);
+		$document = Factory::getDocument();
+		$docClass = 'Document' . StringHelper::strtoupper($d);
 		$document = new $docClass;
 	}
 }
 
-JModelLegacy::addIncludePath(JPATH_COMPONENT . '/models');
+BaseDatabaseModel::addIncludePath(JPATH_COMPONENT . '/models');
 
 // $$$ rob if you want to you can override any fabrik model by copying it from
 // models/ to models/adaptors the copied file will overwrite (NOT extend) the original
-JModelLegacy::addIncludePath(JPATH_COMPONENT . '/models/adaptors');
+BaseDatabaseModel::addIncludePath(JPATH_COMPONENT . '/models/adaptors');
 
 $controllerName = $input->getCmd('view');
 
@@ -68,7 +86,7 @@ $controllerName = $input->getCmd('view');
 $isPlugin = false;
 $cName = $input->getCmd('controller');
 
-if (JString::strpos($cName, '.') != false)
+if (!empty($cName) && StringHelper::strpos($cName, '.') != false)
 {
 	list($type, $name) = explode('.', $cName);
 
@@ -79,7 +97,7 @@ if (JString::strpos($cName, '.') != false)
 
 	$path = JPATH_SITE . '/plugins/fabrik_' . $type . '/' . $name . '/controllers/' . $name . '.php';
 
-	if (JFile::exists($path))
+	if (File::exists($path))
 	{
 		require_once $path;
 		$isPlugin = true;
@@ -113,7 +131,7 @@ else
 
 	$path = JPATH_COMPONENT . '/controllers/' . $controller . '.php';
 
-	if (JFile::exists($path))
+	if (File::exists($path))
 	{
 		require_once $path;
 	}
@@ -128,14 +146,15 @@ else
  * the specific controller for that class - otherwise use $controller to load
  * required controller class
  */
-if (strpos($input->getCmd('task'), '.') !== false)
+$task = $input->getCmd('task');
+if (!empty($task) && strpos($task, '.') !== false)
 {
 	$controllerTask = explode('.', $input->getCmd('task'));
 	$controller = array_shift($controllerTask);
-	$className = 'FabrikController' . JString::ucfirst($controller);
+	$className = 'FabrikController' . StringHelper::ucfirst($controller);
 	$path = JPATH_COMPONENT . '/controllers/' . $controller . '.php';
 
-	if (JFile::exists($path))
+	if (File::exists($path))
 	{
 		require_once $path;
 
@@ -146,12 +165,12 @@ if (strpos($input->getCmd('task'), '.') !== false)
 	}
 	else
 	{
-		$controller = JControllerLegacy::getInstance('Fabrik');
+		$controller = BaseController::getInstance('Fabrik');
 	}
 }
 else
 {
-	$className = 'FabrikController' . JString::ucfirst($controller);
+	$className = 'FabrikController' . StringHelper::ucfirst($controller);
 	$controller = new $className;
 	$task = $input->getCmd('task');
 }
@@ -162,7 +181,7 @@ if ($isPlugin)
 	$controller->addViewPath(JPATH_SITE . '/plugins/fabrik_' . $type . '/' . $name . '/views');
 
 	// Add the model path
-	$modelpaths = JModelLegacy::addIncludePath(JPATH_SITE . '/plugins/fabrik_' . $type . '/' . $name . '/models');
+	$modelpaths = BaseDatabaseModel::addIncludePath(JPATH_SITE . '/plugins/fabrik_' . $type . '/' . $name . '/models');
 }
 
 $package = $input->get('package', 'fabrik');

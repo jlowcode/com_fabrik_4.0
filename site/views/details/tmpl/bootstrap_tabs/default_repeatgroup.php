@@ -4,13 +4,15 @@
  *
  * @package     Joomla
  * @subpackage  Fabrik
- * @copyright   Copyright (C) 2005-2016  Media A-Team, Inc. - All rights reserved.
+ * @copyright   Copyright (C) 2005-2020  Media A-Team, Inc. - All rights reserved.
  * @license     GNU/GPL http://www.gnu.org/copyleft/gpl.html
  * @since       3.0
  */
 
 // No direct access
 defined('_JEXEC') or die('Restricted access');
+
+use Joomla\CMS\Language\Text;
 
 $group = $this->group;
 if (!$group->newGroup) :
@@ -23,13 +25,13 @@ if (!$group->newGroup) :
 				<div class="fabrikGroupRepeater pull-right btn-group">
 					<?php if ($group->canAddRepeat) :?>
 						<a class="addGroup btn btn-small btn-success" href="#">
-							<i class="icon-plus fabrikTip tip-small" opts="{trigger: 'hover'}" title="<?php echo FText::_('COM_FABRIK_ADD_GROUP'); ?>"></i>
+							<i class="icon-plus fabrikTip tip-small" opts="{trigger: 'hover'}" title="<?php echo Text::_('COM_FABRIK_ADD_GROUP'); ?>"></i>
 						</a>
 					<?php
 					endif;
 					if ($group->canDeleteRepeat) :?>
 						<a class="deleteGroup btn btn-small btn-danger" href="#">
-							<i class="icon-minus fabrikTip tip-small" opts="{trigger: 'hover'}" title="<?php echo FText::_('COM_FABRIK_DELETE_GROUP'); ?>"></i>
+							<i class="icon-minus fabrikTip tip-small" opts="{trigger: 'hover'}" title="<?php echo Text::_('COM_FABRIK_DELETE_GROUP'); ?>"></i>
 						</a>
 					<?php endif;?>
 				</div>

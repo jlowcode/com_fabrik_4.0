@@ -4,13 +4,18 @@
  *
  * @package     Joomla.Administrator
  * @subpackage  Fabrik
- * @copyright   Copyright (C) 2005-2016  Media A-Team, Inc. - All rights reserved.
+ * @copyright   Copyright (C) 2005-2020  Media A-Team, Inc. - All rights reserved.
  * @license     GNU/GPL http://www.gnu.org/copyleft/gpl.html
  * @since       1.6
  */
 
 // No direct access
 defined('_JEXEC') or die('Restricted access');
+
+use Joomla\CMS\Language\Text;
+use Joomla\CMS\MVC\Controller\FormController;
+use Joomla\CMS\Session\Session;
+use Joomla\CMS\Factory;
 
 jimport('joomla.application.component.controllerform');
 
@@ -22,7 +27,7 @@ jimport('joomla.application.component.controllerform');
  * @since       3.0
  */
 
-class FabrikAdminControllerForm extends JControllerForm
+class FabrikAdminControllerForm extends FormController
 {
 	/**
 	 * The prefix to use with controller messages.
@@ -45,7 +50,7 @@ class FabrikAdminControllerForm extends JControllerForm
 	 */
 	public function inlineedit()
 	{
-		$model = JModelLegacy::getInstance('FormInlineEdit', 'FabrikFEModel');
+		$model = Factory::getApplication()->bootComponent('com_fabrik')->getMVCFactory()->createModel('FormInlineEdit', 'FabrikFEModel');
 		$model->render();
 	}
 
@@ -70,14 +75,14 @@ class FabrikAdminControllerForm extends JControllerForm
 	 */
 	public function process()
 	{
-		$app = JFactory::getApplication();
+		$app = Factory::getApplication();
 		$input = $app->input;
 		$viewName = $input->get('view', 'form');
 
 		// For now lets route this to the html view.
 		$view = $this->getView($viewName, 'html');
 
-		if ($model = JModelLegacy::getInstance('Form', 'FabrikFEModel'))
+		if ($model = Factory::getApplication()->bootComponent('com_fabrik')->getMVCFactory()->createModel('Form', 'FabrikFEModel'))
 		{
 			$view->setModel($model, true);
 		}
@@ -90,7 +95,7 @@ class FabrikAdminControllerForm extends JControllerForm
 		// Check for request forgeries
 		if ($model->spoofCheck())
 		{
-			JSession::checkToken() or die('Invalid Token');
+			Session::checkToken() or die('Invalid Token');
 		}
 
 		$validated = $model->validate();
@@ -121,7 +126,7 @@ class FabrikAdminControllerForm extends JControllerForm
 					if (!empty($eMsgs))
 					{
 						$eMsgs = '<ul>' . implode('</li><li>', $eMsgs) . '</ul>';
-						header('HTTP/1.1 500 ' . FText::_('COM_FABRIK_FAILED_VALIDATION') . $eMsgs);
+						header('HTTP/1.1 500 ' . Text::_('COM_FABRIK_FAILED_VALIDATION') . $eMsgs);
 						jexit();
 					}
 					else
@@ -218,7 +223,7 @@ class FabrikAdminControllerForm extends JControllerForm
 
 			if (!$this->baseRedirect && $this->isMambot)
 			{
-				$session = JFactory::getSession();
+				$session = Factory::getSession();
 				$context = $model->getRedirectContext();
 				$redirect_opts['redirect_how'] = $session->get($context . 'redirect_content_how', 'popup');
 				$redirect_opts['width'] = (int) $session->get($context . 'redirect_content_popup_width', '300');
@@ -235,7 +240,7 @@ class FabrikAdminControllerForm extends JControllerForm
 				 * in which case I don't think "popup" is realy a valid option.  Anyway, need to set something,
 				 * so for now just do the same as we do for isMambot, but default redirect_how to 'samepage'
 				 */
-				$session = JFactory::getSession();
+				$session = Factory::getSession();
 				$context = $model->getRedirectContext();
 				$redirect_opts['redirect_how'] = $session->get($context . 'redirect_content_how', 'samepage');
 				$redirect_opts['width'] = (int) $session->get($context . 'redirect_content_popup_width', '300');
@@ -250,7 +255,7 @@ class FabrikAdminControllerForm extends JControllerForm
 			{
 				// $$$ hugh - special case to allow custom code to specify that
 				// the form should not be cleared after a failed AJAX submit
-				$session = JFactory::getSession();
+				$session = Factory::getSession();
 				$context = 'com_fabrik.form.' . $model->get('id') . '.redirect.';
 				$redirect_opts['reset_form'] = $session->get($context . 'redirect_content_reset_form', '1') == '1';
 			}
@@ -283,12 +288,12 @@ class FabrikAdminControllerForm extends JControllerForm
 	 */
 	protected function makeRedirect($model, $msg = null)
 	{
-		$app = JFactory::getApplication();
+		$app = Factory::getApplication();
 		$input = $app->input;
 
 		if (is_null($msg))
 		{
-			$msg = FText::_('COM_FABRIK_RECORD_ADDED_UPDATED');
+			$msg = Text::_('COM_FABRIK_RECORD_ADDED_UPDATED');
 		}
 
 		if (array_key_exists('apply', $model->formData))
@@ -311,7 +316,7 @@ class FabrikAdminControllerForm extends JControllerForm
 	 */
 	public function ajax_validate()
 	{
-		$app = JFactory::getApplication();
+		$app = Factory::getApplication();
 		$input = $app->input;
 		$model = $this->getModel('form', 'FabrikFEModel');
 		$model->setId($input->getInt('formid', 0));

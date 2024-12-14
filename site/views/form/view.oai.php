@@ -4,12 +4,14 @@
  *
  * @package     Joomla
  * @subpackage  Fabrik
- * @copyright   Copyright (C) 2005-2016  Media A-Team, Inc. - All rights reserved.
+ * @copyright   Copyright (C) 2005-2020  Media A-Team, Inc. - All rights reserved.
  * @license     GNU/GPL http://www.gnu.org/copyleft/gpl.html
  */
 
 // No direct access
 defined('_JEXEC') or die('Restricted access');
+
+use Joomla\CMS\Factory;
 
 jimport('joomla.application.component.view');
 require_once JPATH_SITE . '/components/com_fabrik/views/form/view.base.php';
@@ -44,7 +46,7 @@ class FabrikViewForm extends FabrikViewFormBase
 	public function __construct($config = array())
 	{
 		parent::__construct($config);
-		$this->oaiModel = JModelLegacy::getInstance('Oai', 'FabrikFEModel');
+		$this->oaiModel = Factory::getApplication()->bootComponent('com_fabrik')->getMVCFactory()->createModel('Oai', 'FabrikFEModel');
 	}
 
 	/**

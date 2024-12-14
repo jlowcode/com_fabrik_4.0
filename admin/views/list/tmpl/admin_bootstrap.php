@@ -4,7 +4,7 @@
  *
  * @package     Joomla.Administrator
  * @subpackage  Fabrik
- * @copyright   Copyright (C) 2005-2016  Media A-Team, Inc. - All rights reserved.
+ * @copyright   Copyright (C) 2005-2020  Media A-Team, Inc. - All rights reserved.
  * @license     GNU/GPL http://www.gnu.org/copyleft/gpl.html
  * @since       3.0
  */
@@ -12,11 +12,17 @@
 // No direct access
 defined('_JEXEC') or die('Restricted access');
 
-JHtml::addIncludePath(JPATH_COMPONENT . '/helpers/html');
-JHTML::stylesheet('administrator/components/com_fabrik/views/fabrikadmin.css');
-JHtml::_('behavior.tooltip');
+use Joomla\CMS\Language\Text;
+use Joomla\CMS\Router\Route;
+use Joomla\CMS\Factory;
+use Joomla\CMS\HTML\HTMLHelper;
+
+$wa = Factory::getApplication()->getDocument()->getWebAssetManager();
+$wa->useScript('jquery');HTMLHelper::addIncludePath(JPATH_COMPONENT . '/helpers/html');
+HTMLHelper::stylesheet('administrator/components/com_fabrik/views/fabrikadmin.css');
+HTMLHelper::_('bootstrap.tooltip');
 FabrikHelperHTML::formvalidation();
-JHtml::_('behavior.keepalive');
+HTMLHelper::_('behavior.keepalive');
 
 ?>
 <script type="text/javascript">
@@ -28,65 +34,37 @@ JHtml::_('behavior.keepalive');
 				return false;
 			}
 			if (task == 'list.cancel' || document.formvalidator.isValid(document.id('adminForm'))) {
-				<?php echo $this->form->getField('introduction')->save(); ?>
 				window.fireEvent('form.save');
 				Joomla.submitform(task, document.getElementById('adminForm'));
 			} else {
-				window.alert('<?php echo $this->escape(FText::_('JGLOBAL_VALIDATION_FORM_FAILED'));?>');
+				window.alert('<?php echo $this->escape(Text::_('JGLOBAL_VALIDATION_FORM_FAILED'));?>');
 			}
 		});
 	}
-	if (window.opener) {
-		// if is target=_blank window
-		jQuery(document).ready(function () {
-			// Hide navbar-fixed-top
-			jQuery('.navbar-fixed-top').css({'display': 'none'});
-		
-			// remove padding from top
-			jQuery('body').css({'padding-top': '0px'});
-
-			jQuery('.subhead').css({'top': '0px'});
-			
-		});
-	} 
 </script>
 
-<form action="<?php JRoute::_('index.php?option=com_fabrik'); ?>" method="post" name="adminForm" id="adminForm" class="form-validate">
-	<div class="row-fluid" id="elementFormTable">
-
-		<div class="span2">
-
-
-				<ul class="nav nav-list"style="margin-top:40px">
-					<li class="active">
-						<a data-toggle="tab" href="#detailsX">
-							<?php echo FText::_('COM_FABRIK_DETAILS')?>
-						</a>
-					</li>
-					<li>
-						<a data-toggle="tab" href="#data">
-							<?php echo FText::_('COM_FABRIK_DATA')?>
-						</a>
-					</li>
-					<li>
-						<a data-toggle="tab" href="#publishing">
-							<?php echo FText::_('COM_FABRIK_GROUP_LABEL_PUBLISHING_DETAILS')?>
-						</a>
-					</li>
-					<li>
-						<a data-toggle="tab" href="#access">
-							<?php echo FText::_('COM_FABRIK_GROUP_LABEL_RULES_DETAILS')?>
-						</a>
-					</li>
-					<li>
-						<a data-toggle="tab" href="#tabplugins">
-							<?php echo FText::_('COM_FABRIK_GROUP_LABEL_PLUGINS_DETAILS')?>
-						</a>
-					</li>
-				</ul>
+<form action="<?php Route::_('index.php?option=com_fabrik'); ?>" method="post" name="adminForm" id="adminForm" class="form-validate">
+	<div class="row main-card-columns">
+		<div class="col-sm-2" id="sidebar">
+			<div class="nav flex-column nav-pills">
+				<button class="nav-link active" id="btn-details" data-bs-toggle="pill" data-bs-target="#detailsX" type="button" role="tab" aria-controls="" aria-selected="true" style="display:block">
+					<?php echo Text::_('COM_FABRIK_DETAILS')?>
+				</button>
+				<button class="nav-link" id="btn-data" data-bs-toggle="pill" data-bs-target="#data" type="button" role="tab" aria-controls="" aria-selected="false">
+					<?php echo Text::_('COM_FABRIK_DATA')?>
+				</button>
+				<button class="nav-link" id="btn-publishing" data-bs-toggle="pill" data-bs-target="#publishing" type="button" role="tab" aria-controls="" aria-selected="false">
+					<?php echo Text::_('COM_FABRIK_GROUP_LABEL_PUBLISHING_DETAILS')?>
+				</button>
+				<button class="nav-link" id="btn-access" data-bs-toggle="pill" data-bs-target="#access" type="button" role="tab" aria-controls="" aria-selected="false">
+					<?php echo Text::_('COM_FABRIK_GROUP_LABEL_RULES_DETAILS')?>
+				</button>
+				<button class="nav-link" id="btn-plugins" data-bs-toggle="pill" data-bs-target="#tabplugins" type="button" role="tab" aria-controls="" aria-selected="false">
+					<?php echo Text::_('COM_FABRIK_GROUP_LABEL_PLUGINS_DETAILS')?>
+				</button>
+			</div>
 		</div>
-		<div class="span10">
-
+		<div class="col-sm-10" id="config">
 			<div class="tab-content">
 				<?php
 				echo $this->loadTemplate('details');
@@ -98,7 +76,7 @@ JHtml::_('behavior.keepalive');
 			</div>
 
 			<input type="hidden" name="task" value="" />
-			<?php echo JHtml::_('form.token'); ?>
+			<?php echo HTMLHelper::_('form.token'); ?>
 		</div>
 	</div>
 </form>

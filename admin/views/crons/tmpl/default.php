@@ -4,7 +4,7 @@
  *
  * @package     Joomla.Administrator
  * @subpackage  Fabrik
- * @copyright   Copyright (C) 2005-2016  Media A-Team, Inc. - All rights reserved.
+ * @copyright   Copyright (C) 2005-2020  Media A-Team, Inc. - All rights reserved.
  * @license     GNU/GPL http://www.gnu.org/copyleft/gpl.html
  * @since       3.0
  */
@@ -12,11 +12,17 @@
 // No direct access
 defined('_JEXEC') or die('Restricted access');
 
+use Joomla\CMS\Language\Text;
+use Joomla\CMS\Router\Route;
+use Joomla\CMS\Factory;
+use Joomla\CMS\HTML\HTMLHelper;
+
 require_once JPATH_COMPONENT . '/helpers/adminhtml.php';
-JHtml::addIncludePath(JPATH_COMPONENT . '/helpers/html');
-JHtml::_('behavior.tooltip');
-JHTML::_('script', 'system/multiselect.js', false, true);
-$user = JFactory::getUser();
+HTMLHelper::addIncludePath(JPATH_COMPONENT . '/helpers/html');
+HTMLHelper::_('bootstrap.tooltip');
+//HTMLHelper::_('script', 'system/multiselect.js', false, true);
+HTMLHelper::_('script','system/multiselect.js', ['relative' => true]);
+$user = Factory::getUser();
 $userId = $user->get('id');
 $listOrder = $this->state->get('list.ordering');
 $listDirn = $this->state->get('list.direction');
@@ -25,28 +31,28 @@ $imgs = array('publish_x.png', 'tick.png', 'publish_y.png');
 $tasks = array('publish', 'unpublish', 'publish');
 
 ?>
-<form action="<?php echo JRoute::_('index.php?option=com_fabrik&view=crons'); ?>" method="post" name="adminForm" id="adminForm">
+<form action="<?php echo Route::_('index.php?option=com_fabrik&view=crons'); ?>" method="post" name="adminForm" id="adminForm">
 	<fieldset id="filter-bar">
 		<div class="filter-search fltlft">
-			<label class="filter-search-lbl" for="filter_search"><?php echo FText::_('JSEARCH_FILTER_LABEL'); ?>:</label>
-			<input type="text" name="filter_search" id="filter_search" value="<?php echo $this->state->get('filter.search'); ?>" title="<?php echo FText::_(
+			<label class="filter-search-lbl" for="filter_search"><?php echo Text::_('JSEARCH_FILTER_LABEL'); ?>:</label>
+			<input type="text" name="filter_search" id="filter_search" value="<?php echo $this->state->get('filter.search'); ?>" title="<?php echo Text::_(
 	'COM_FABRIK_SEARCH_IN_TITLE'); ?>" />
-			<button type="submit"><?php echo FText::_('JSEARCH_FILTER_SUBMIT'); ?></button>
-			<button type="button" onclick="document.id('filter_search').value='';this.form.submit();"><?php echo FText::_('JSEARCH_FILTER_CLEAR'); ?></button>
+			<button type="submit"><?php echo Text::_('JSEARCH_FILTER_SUBMIT'); ?></button>
+			<button type="button" onclick="document.id('filter_search').value='';this.form.submit();"><?php echo Text::_('JSEARCH_FILTER_CLEAR'); ?></button>
 		</div>
 		<div class="filter-select fltrt">
 
 			<?php if (!empty($this->packageOptions))
 { ?>
 			<select name="package" class="inputbox" onchange="this.form.submit()">
-				<option value="fabrik"><?php echo FText::_('COM_FABRIK_SELECT_PACKAGE'); ?></option>
-				<?php echo JHtml::_('select.options', $this->packageOptions, 'value', 'text', $this->state->get('com_fabrik.package'), true); ?>
+				<option value="fabrik"><?php echo Text::_('COM_FABRIK_SELECT_PACKAGE'); ?></option>
+				<?php echo HTMLHelper::_('select.options', $this->packageOptions, 'value', 'text', $this->state->get('com_fabrik.package'), true); ?>
 			</select>
 			<?php } ?>
 
 			<select name="filter_published" class="inputbox" onchange="this.form.submit()">
-				<option value=""><?php echo FText::_('JOPTION_SELECT_PUBLISHED'); ?></option>
-				<?php echo JHtml::_('select.options', JHtml::_('jgrid.publishedOptions', array('archived' => true)), 'value', 'text',
+				<option value=""><?php echo Text::_('JOPTION_SELECT_PUBLISHED'); ?></option>
+				<?php echo HTMLHelper::_('select.options', HTMLHelper::_('jgrid.publishedOptions', array('archived' => true)), 'value', 'text',
 	$this->state->get('filter.published'), true); ?>
 			</select>
 		</div>
@@ -56,19 +62,19 @@ $tasks = array('publish', 'unpublish', 'publish');
 		<thead>
 			<tr>
 				<th width="2%">
-					<?php echo JHTML::_('grid.sort', 'JGRID_HEADING_ID', 'c.id', $listDirn, $listOrder); ?>
+					<?php echo HTMLHelper::_('grid.sort', 'JGRID_HEADING_ID', 'c.id', $listDirn, $listOrder); ?>
 				</th>
 				<th width="1%">
 					<input type="checkbox" name="toggle" value="" onclick="checkAll(this);" />
 				</th>
 				<th width="80%">
-					<?php echo JHTML::_('grid.sort', 'COM_FABRIK_LABEL', 'c.label', $listDirn, $listOrder); ?>
+					<?php echo HTMLHelper::_('grid.sort', 'COM_FABRIK_LABEL', 'c.label', $listDirn, $listOrder); ?>
 				</th>
 				<th width="12%">
-					<?php echo JHTML::_('grid.sort', 'COM_FABRIK_CRON_FIELD_LAST_RUN_LABEL', 'c.lastrun', $listDirn, $listOrder); ?>
+					<?php echo HTMLHelper::_('grid.sort', 'COM_FABRIK_CRON_FIELD_LAST_RUN_LABEL', 'c.lastrun', $listDirn, $listOrder); ?>
 				</th>
 				<th width="5%">
-					<?php echo JHTML::_('grid.sort', 'JPUBLISHED', 'c.published', $listDirn, $listOrder); ?>
+					<?php echo HTMLHelper::_('grid.sort', 'JPUBLISHED', 'c.published', $listDirn, $listOrder); ?>
 				</th>
 			</tr>
 		</thead>
@@ -82,7 +88,7 @@ $tasks = array('publish', 'unpublish', 'publish');
 		<tbody>
 		<?php foreach ($this->items as $i => $item) :
 	$ordering = ($listOrder == 'ordering');
-	$link = JRoute::_('index.php?option=com_fabrik&task=cron.edit&id=' . (int) $item->id);
+	$link = Route::_('index.php?option=com_fabrik&task=cron.edit&id=' . (int) $item->id);
 	$canChange = true;
 			   ?>
 
@@ -91,7 +97,7 @@ $tasks = array('publish', 'unpublish', 'publish');
 						<?php echo $item->id; ?>
 					</td>
 					<td>
-						<?php echo JHtml::_('grid.id', $i, $item->id); ?>
+						<?php echo HTMLHelper::_('grid.id', $i, $item->id); ?>
 					</td>
 					<td>
 						<?php
@@ -111,7 +117,7 @@ $tasks = array('publish', 'unpublish', 'publish');
 						<?php echo $item->lastrun; ?>
 					</td>
 					<td>
-						<?php echo JHtml::_('jgrid.published', $item->published, $i, 'crons.', $canChange);?>
+						<?php echo HTMLHelper::_('jgrid.published', $item->published, $i, 'crons.', $canChange);?>
 					</td>
 				</tr>
 
@@ -123,5 +129,5 @@ $tasks = array('publish', 'unpublish', 'publish');
 	<input type="hidden" name="boxchecked" value="0" />
 	<input type="hidden" name="filter_order" value="<?php echo $listOrder; ?>" />
 	<input type="hidden" name="filter_order_Dir" value="<?php echo $listDirn; ?>" />
-	<?php echo JHtml::_('form.token'); ?>
+	<?php echo HTMLHelper::_('form.token'); ?>
 </form>

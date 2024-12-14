@@ -4,12 +4,18 @@
  *
  * @package     Joomla
  * @subpackage  Form
- * @copyright   Copyright (C) 2005-2016  Media A-Team, Inc. - All rights reserved.
+ * @copyright   Copyright (C) 2005-2020  Media A-Team, Inc. - All rights reserved.
  * @license     GNU/GPL http://www.gnu.org/copyleft/gpl.html
  */
 
 // No direct access
 defined('_JEXEC') or die('Restricted access');
+
+use Joomla\CMS\Language\Text;
+use Joomla\CMS\Form\Form;
+use Joomla\CMS\Form\Field\FolderlistField;
+use Joomla\CMS\Factory;
+use Joomla\CMS\HTML\HTMLHelper;
 
 require_once JPATH_ADMINISTRATOR . '/components/com_fabrik/helpers/element.php';
 
@@ -21,10 +27,10 @@ require_once JPATH_ADMINISTRATOR . '/components/com_fabrik/helpers/element.php';
  * @since       3.0.7
  */
 
-class JFormFieldCollation extends JFormFieldList
+class JFormFieldCollation extends FolderlistField
 {
 	/**
-	 * Method to attach a JForm object to the field.
+	 * Method to attach a Form object to the field.
 	 *
 	 * @param   object  $element  The SimpleXMLElement object representing the <field /> tag for the form field object.
 	 * @param   mixed   $value    The form field value to validate.
@@ -41,10 +47,10 @@ class JFormFieldCollation extends JFormFieldList
 		$return = parent::setup($element, $value, $group);
 
 		$defaultToTableValue = $this->element->attributes()->default_to_table;
-
+		//Trying to access array offset on value of type null on line 47
 		if ($defaultToTableValue)
 		{
-			$defaultToTableValue = (bool) $this->element->attributes()->$defaultToTableValue[0];
+			$defaultToTableValue = (bool) $this->element->attributes()->{$defaultToTableValue[0]};
 		}
 		else
 		{
@@ -53,7 +59,7 @@ class JFormFieldCollation extends JFormFieldList
 
 		if ($this->value == '' && $return && $defaultToTableValue)
 		{
-			$db = JFactory::getDbo();
+			$db = Factory::getDbo();
 
 			/*
 			 * Attempt to get the real Db collation (tmp fix before this makes it into J itself
@@ -86,7 +92,7 @@ class JFormFieldCollation extends JFormFieldList
 	 */
 	protected function getOptions()
 	{
-		$db = JFactory::getDbo();
+		$db = Factory::getDbo();
 		$db->setQuery('SHOW COLLATION WHERE ' . $db->quoteName('Compiled') . ' = ' . $db->quote('Yes'));
 		$rows = $db->loadObjectList();
 		sort($rows);
@@ -94,12 +100,12 @@ class JFormFieldCollation extends JFormFieldList
 
 		if ($this->element->attributes()->show_none && (bool) $this->element->attributes()->show_none[0])
 		{
-			$opts[] = JHTML::_('select.option', '', JText::_('COM_FABRIK_NONE'));
+			$opts[] = HTMLHelper::_('select.option', '', Text::_('COM_FABRIK_NONE'));
 		}
 
 		foreach ($rows as $row)
 		{
-			$opts[] = JHTML::_('select.option', $row->Collation);
+			$opts[] = HTMLHelper::_('select.option', $row->Collation);
 		}
 
 		return $opts;

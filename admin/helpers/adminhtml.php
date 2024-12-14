@@ -4,13 +4,15 @@
  *
  * @package     Joomla
  * @subpackage  Fabrik.helpers
- * @copyright   Copyright (C) 2005-2016  Media A-Team, Inc. - All rights reserved.
+ * @copyright   Copyright (C) 2005-2020  Media A-Team, Inc. - All rights reserved.
  * @license     GNU/GPL http://www.gnu.org/copyleft/gpl.html
  * @since       1.6
  */
 
 // No direct access
 defined('_JEXEC') or die('Restricted access');
+
+use Joomla\CMS\Filesystem\Path;
 
 /**
  * Content Component HTML Helper
@@ -44,7 +46,7 @@ class FabrikHelperAdminHTML
 
 		while ($file = readdir($handle))
 		{
-			$dir = JPath::clean($path . '/' . $file);
+			$dir = Path::clean($path . '/' . $file);
 			$isDir = is_dir($dir);
 
 			if (($file != ".") && ($file != "..") && ($file != ".svn"))
@@ -53,7 +55,7 @@ class FabrikHelperAdminHTML
 				{
 					if ($fullpath)
 					{
-						$arr[] = trim(JPath::clean($path . '/' . $file));
+						$arr[] = trim(Path::clean($path . '/' . $file));
 					}
 					else
 					{

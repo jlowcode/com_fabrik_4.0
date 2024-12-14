@@ -4,12 +4,19 @@
  *
  * @package     Joomla.Administrator
  * @subpackage  Fabrik
- * @copyright   Copyright (C) 2005-2016  Media A-Team, Inc. - All rights reserved.
+ * @copyright   Copyright (C) 2005-2020  Media A-Team, Inc. - All rights reserved.
  * @license     GNU/GPL http://www.gnu.org/copyleft/gpl.html
  */
 
 // No direct access
 defined('_JEXEC') or die('Restricted access');
+
+use Joomla\CMS\Toolbar\ToolbarHelper;
+use Joomla\CMS\Language\Text;
+use Joomla\CMS\MVC\View\HtmlView;
+use Joomla\CMS\Table\Table;
+use Joomla\CMS\Form\Form;
+use Joomla\CMS\Factory;
 
 jimport('joomla.application.component.view');
 
@@ -20,19 +27,19 @@ jimport('joomla.application.component.view');
  * @subpackage  Fabrik
  * @since       3.0
  */
-class FabrikAdminViewVisualization extends JViewLegacy
+class FabrikAdminViewVisualization extends HtmlView
 {
 	/**
 	 * Form
 	 *
-	 * @var JForm
+	 * @var Form
 	 */
 	protected $form;
 
 	/**
 	 * Visualization item
 	 *
-	 * @var JTable
+	 * @var Table
 	 */
 	protected $item;
 
@@ -108,29 +115,29 @@ class FabrikAdminViewVisualization extends JViewLegacy
 	 */
 	protected function addToolbar()
 	{
-		$app = JFactory::getApplication();
+		$app = Factory::getApplication();
 		$app->input->set('hidemainmenu', true);
-		$user         = JFactory::getUser();
+		$user         = Factory::getUser();
 		$isNew        = ($this->item->get('id') == 0);
 		$userId       = $user->get('id');
 		$checkedOutBy = $this->item->get('checked_out');
 		$checkedOut   = !($checkedOutBy == 0 || $checkedOutBy == $user->get('id'));
 		$canDo        = FabrikAdminHelper::getActions($this->state->get('filter.category_id'));
-		$title        = $isNew ? FText::_('COM_FABRIK_MANAGER_VISUALIZATION_NEW') : FText::_('COM_FABRIK_MANAGER_VISUALIZATION_EDIT');
+		$title        = $isNew ? Text::_('COM_FABRIK_MANAGER_VISUALIZATION_NEW') : Text::_('COM_FABRIK_MANAGER_VISUALIZATION_EDIT');
 		$title .= $isNew ? '' : ' "' . $this->item->get('label') . '"';
-		JToolBarHelper::title($title, 'chart');
+		ToolBarHelper::title($title, 'chart');
 
 		if ($isNew)
 		{
 			// For new records, check the create permission.
 			if ($canDo->get('core.create'))
 			{
-				JToolBarHelper::apply('visualization.apply', 'JTOOLBAR_APPLY');
-				JToolBarHelper::save('visualization.save', 'JTOOLBAR_SAVE');
-				JToolBarHelper::addNew('visualization.save2new', 'JTOOLBAR_SAVE_AND_NEW');
+				ToolBarHelper::apply('visualization.apply', 'JTOOLBAR_APPLY');
+				ToolBarHelper::save('visualization.save', 'JTOOLBAR_SAVE');
+				ToolBarHelper::addNew('visualization.save2new', 'JTOOLBAR_SAVE_AND_NEW');
 			}
 
-			JToolBarHelper::cancel('visualization.cancel', 'JTOOLBAR_CANCEL');
+			ToolBarHelper::cancel('visualization.cancel', 'JTOOLBAR_CANCEL');
 		}
 		else
 		{
@@ -140,26 +147,26 @@ class FabrikAdminViewVisualization extends JViewLegacy
 				// Since it's an existing record, check the edit permission, or fall back to edit own if the owner.
 				if ($canDo->get('core.edit') || ($canDo->get('core.edit.own') && $this->item->get('created_by') == $userId))
 				{
-					JToolBarHelper::apply('visualization.apply', 'JTOOLBAR_APPLY');
-					JToolBarHelper::save('visualization.save', 'JTOOLBAR_SAVE');
+					ToolBarHelper::apply('visualization.apply', 'JTOOLBAR_APPLY');
+					ToolBarHelper::save('visualization.save', 'JTOOLBAR_SAVE');
 
 					// We can save this record, but check the create permission to see if we can return to make a new one.
 					if ($canDo->get('core.create'))
 					{
-						JToolBarHelper::addNew('visualization.save2new', 'JTOOLBAR_SAVE_AND_NEW');
+						ToolBarHelper::addNew('visualization.save2new', 'JTOOLBAR_SAVE_AND_NEW');
 					}
 				}
 			}
 
 			if ($canDo->get('core.create'))
 			{
-				JToolBarHelper::custom('visualization.save2copy', 'save-copy.png', 'save-copy_f2.png', 'JTOOLBAR_SAVE_AS_COPY', false);
+				ToolBarHelper::custom('visualization.save2copy', 'save-copy.png', 'save-copy_f2.png', 'JTOOLBAR_SAVE_AS_COPY', false);
 			}
 
-			JToolBarHelper::cancel('visualization.cancel', 'JTOOLBAR_CLOSE');
+			ToolBarHelper::cancel('visualization.cancel', 'JTOOLBAR_CLOSE');
 		}
 
-		JToolBarHelper::divider();
-		JToolBarHelper::help('JHELP_COMPONENTS_FABRIK_VISUALIZATIONS_EDIT', false, FText::_('JHELP_COMPONENTS_FABRIK_VISUALIZATIONS_EDIT'));
+		ToolBarHelper::divider();
+		ToolBarHelper::help('JHELP_COMPONENTS_FABRIK_VISUALIZATIONS_EDIT', false, Text::_('JHELP_COMPONENTS_FABRIK_VISUALIZATIONS_EDIT'));
 	}
 }

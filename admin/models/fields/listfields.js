@@ -15,6 +15,7 @@ var ListFieldsElement = new Class({
 		conn: null,
 		highlightpk: false,
 		showAll: 1,
+		showRaw: 0,
 		mode: 'dropdown',
 		defaultOpts: [],
 		addBrackets: false
@@ -47,7 +48,7 @@ var ListFieldsElement = new Class({
 
 			opts.each(function (opt) {
 				var o = {'value': opt.value};
-				if (opt.value === this.options.value) {
+				if (opt.value == this.options.value) {
 					o.selected = 'selected';
 				}
 				Array.each(els, function (el) {
@@ -159,6 +160,7 @@ var ListFieldsElement = new Class({
 			method: 'get',
 			data: {
 				'highlightpk': this.options.highlightpk,
+				'showRaw': this.options.showRaw,
 				'k': 2
 			},
 			onComplete: function (r) {
@@ -191,7 +193,7 @@ var ListFieldsElement = new Class({
 					});
 				}.bind(this));
 				if (document.id(this.el.id + '_loader')) {
-					document.id(this.el.id + '_loader').hide();
+					document.id(this.el.id + '_loader').hide(true);
 				}
 			}.bind(this)
 		});

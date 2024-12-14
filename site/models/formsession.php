@@ -4,12 +4,19 @@
  *
  * @package     Joomla
  * @subpackage  Fabrik
- * @copyright   Copyright (C) 2005-2016  Media A-Team, Inc. - All rights reserved.
+ * @copyright   Copyright (C) 2005-2020  Media A-Team, Inc. - All rights reserved.
  * @license     GNU/GPL http://www.gnu.org/copyleft/gpl.html
  */
 
 // No direct access
 defined('_JEXEC') or die('Restricted access');
+
+use Joomla\CMS\Language\Text;
+use Joomla\CMS\Table\Table;
+use Joomla\CMS\Crypt\Crypt;
+use Joomla\Crypt\Key;
+use Joomla\CMS\Crypt\Cipher\CryptoCipher;
+use Joomla\CMS\Application\ApplicationHelper;
 
 jimport('joomla.application.component.model');
 
@@ -67,7 +74,7 @@ class FabrikFEModelFormsession extends FabModel
 	/**
 	 * Formsession row
 	 *
-	 * @var JTable
+	 * @var Table
 	 */
 	public $row = null;
 
@@ -101,7 +108,7 @@ class FabrikFEModelFormsession extends FabModel
 	}
 
 	/**
-	 * Save the form data to #__{package}_form_session
+	 * Save the form data to #__fabrik_form_session
 	 *
 	 * @param   object  &$formModel  form model
 	 *
@@ -111,7 +118,7 @@ class FabrikFEModelFormsession extends FabModel
 	{
 		// Need to check for encrypted vars, unencrypt them and place them back in the array
 		$post = $formModel->setFormData();
-		$input = $this->app->input;
+		$input = $this->app->getInput();
 		$formModel->copyToRaw($post);
 		$formModel->addEncrytedVarsToArray($post);
 
@@ -191,17 +198,21 @@ class FabrikFEModelFormsession extends FabModel
 		/**
 		 * $$$ hugh - might want to alter this to use FabrikWorker::getCrypt()
 		 * as we now use that everywhere else.
+		 * $$$ trob - did it
 		 */
+
 		if (!isset($this->crypt))
 		{
-			jimport('joomla.utilities.simplecrypt');
+/*			jimport('joomla.utilities.simplecrypt');
 			jimport('joomla.utilities.utility');
 
 			// Create the encryption key, apply extra hardening using the user agent string
 
-			$key = JApplication::getHash($this->app->input->server->get('HTTP_USER_AGENT'));
-			$key = new JCryptKey('simple', $key, $key);
-			$this->crypt = new JCrypt(new JCryptCipherSimple, $key);
+			$key = ApplicationHelper::getHash($this->app->getInput()->server->get('HTTP_USER_AGENT'));
+			$key = new Key('simple', $key, $key);
+			$this->crypt = new Crypt(new CryptoCipher, $key);
+*/
+			$this->crypt = FabrikWorker::getCrypt();
 		}
 
 		return $this->crypt;
@@ -233,7 +244,7 @@ class FabrikFEModelFormsession extends FabModel
 		if ((int) $this->user->get('id') !== 0)
 		{
 			$hash = $this->getHash();
-			$this->status = FText::_('LOADING FROM DATABASE');
+			$this->status = Text::_('LOADING FROM DATABASE');
 			$this->statusId = _FABRIKFORMSESSION_LOADED_FROM_TABLE;
 		}
 		else
@@ -246,7 +257,7 @@ class FabrikFEModelFormsession extends FabModel
 
 				if ($cookieVal !== '')
 				{
-					$this->status = FText::_('COM_FABRIK_LOADING_FROM_COOKIE');
+					$this->status = Text::_('COM_FABRIK_LOADING_FROM_COOKIE');
 					$this->statusId = _FABRIKFORMSESSION_LOADED_FROM_COOKIE;
 					$hash = $crypt->decrypt($cookieVal);
 				}
@@ -424,7 +435,7 @@ class FabrikFEModelFormsession extends FabModel
 	{
 		if (is_null($this->rowId))
 		{
-			$this->rowId = $this->app->input->getString('rowid', '', 'string');
+			$this->rowId = $this->app->getInput()->getString('rowid', '', 'string');
 		}
 
 		return (int) $this->rowId;
@@ -439,7 +450,7 @@ class FabrikFEModelFormsession extends FabModel
 	{
 		if (is_null($this->formId))
 		{
-			$this->formId = $this->app->input->getInt('formid');
+			$this->formId = $this->app->getInput()->getInt('formid');
 		}
 
 		return $this->formId;

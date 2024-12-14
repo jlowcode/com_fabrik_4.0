@@ -4,18 +4,25 @@
  *
  * @package     Joomla
  * @subpackage  Fabrik
- * @copyright   Copyright (C) 2005-2016  Media A-Team, Inc. - All rights reserved.
+ * @copyright   Copyright (C) 2005-2020  Media A-Team, Inc. - All rights reserved.
  * @license     GNU/GPL http://www.gnu.org/copyleft/gpl.html
  * @since       3.1
  */
 
 // No direct access
 defined('_JEXEC') or die('Restricted access');
+use Joomla\CMS\Language\Text;
 
 $form = $this->form;
 $model = $this->getModel();
 $groupTmpl = $model->editable ? 'group' : 'group_details';
 $active = ($form->error != '') ? '' : ' fabrikHide';
+
+$pageClass = $this->params->get('pageclass_sfx', '');
+
+if ($pageClass !== '') :
+	echo '<div class="' . $pageClass . '">';
+endif;
 
 if ($this->params->get('show_page_heading', 1)) : ?>
 	<div class="componentheading<?php echo $this->params->get('pageclass_sfx')?>">
@@ -38,8 +45,8 @@ echo $form->intro;
 echo $this->plugintop;
 ?>
 
-<div class="fabrikMainError alert alert-error fabrikError<?php echo $active?>">
-	<button class="close" data-dismiss="alert">×</button>
+<div class="fabrikMainError alert alert-danger alert-dismissible fabrikError<?php echo $active?>">
+	<button class="btn-close" data-bs-dismiss="alert" aria-label="<?php echo Text::_('JCLOSE'); ?>"></button>
 	<?php echo $form->error; ?>
 </div>
 
@@ -64,7 +71,7 @@ foreach ($this->groups as $group) :
 	<fieldset class="<?php echo $group->class; ?>" id="group<?php echo $group->id;?>" style="<?php echo $group->css;?>">
 		<?php
 		if ($group->showLegend) :?>
-			<legend class="legend"><?php echo $group->title;?></legend>
+			<legend class="mt-3 legend"><?php echo $group->title;?></legend>
 		<?php
 		endif;
 
@@ -104,10 +111,7 @@ echo $this->loadTemplate('actions');
 echo $form->outro;
 echo $this->pluginend;
 echo FabrikHelperHTML::keepalive();
-echo '<script>
-	jQuery(".icon-eye-open.small").each(function() {
-		jQuery(this).parent().append("<span style=\\"color:red\\">*</span>");
-		jQuery(this).remove()
-	});
-	
-</script>';
+
+if ($pageClass !== '') :
+	echo '</div>';
+endif;

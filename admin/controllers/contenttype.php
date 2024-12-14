@@ -4,13 +4,15 @@
  *
  * @package     Joomla.Administrator
  * @subpackage  Fabrik
- * @copyright   Copyright (C) 2005-2016  Media A-Team, Inc. - All rights reserved.
+ * @copyright   Copyright (C) 2005-2020  Media A-Team, Inc. - All rights reserved.
  * @license     GNU/GPL http://www.gnu.org/copyleft/gpl.html
  * @since       3.4.5
  */
 
 // No direct access
 defined('_JEXEC') or die('Restricted access');
+
+use Joomla\CMS\Factory;
 
 jimport('joomla.application.component.controllerform');
 
@@ -34,7 +36,7 @@ class FabrikAdminControllerContentType extends FabControllerForm
 		$contentType = $this->input->getString('contentType');
 		$listModel = $this->getModel('list');
 		$model = $this->getModel('contenttypeImport', '', array('listModel' => $listModel));
-		$viewType = JFactory::getDocument()->getType();
+		$viewType = Factory::getDocument()->getType();
 		$this->name = 'Fabrik';
 		$this->setPath('view', COM_FABRIK_FRONTEND . '/views');
 		$viewLayout = $this->input->get('layout', 'default');
@@ -43,7 +45,7 @@ class FabrikAdminControllerContentType extends FabControllerForm
 		$view->setLayout($viewLayout);
 
 		/** @var FabrikFEModelForm  $formModel */
-		$formModel = JModelLegacy::getInstance('Form', 'FabrikFEModel');
+		$formModel = Factory::getApplication()->bootComponent('com_fabrik')->getMVCFactory()->createModel('Form', 'FabrikFEModel');
 		$formModel->groups = $model->loadContentType($contentType)->preview();
 		$view->setModel($formModel, true);
 

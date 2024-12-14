@@ -4,19 +4,22 @@
  *
  * @package     Joomla
  * @subpackage  Form
- * @copyright   Copyright (C) 2005-2016  Media A-Team, Inc. - All rights reserved.
+ * @copyright   Copyright (C) 2005-2020  Media A-Team, Inc. - All rights reserved.
  * @license     GNU/GPL http://www.gnu.org/copyleft/gpl.html
  */
 
 // No direct access
 defined('_JEXEC') or die('Restricted access');
 
+use Joomla\CMS\Form\FormHelper;
+use Joomla\CMS\Form\Field\ListField;
+
 require_once JPATH_ADMINISTRATOR . '/components/com_fabrik/helpers/element.php';
 
 jimport('joomla.html.html');
 jimport('joomla.form.formfield');
 jimport('joomla.form.helper');
-JFormHelper::loadFieldClass('list');
+FormHelper::loadFieldClass('list');
 
 /**
  * Renders a list which will toggle visibility of a specified group
@@ -26,7 +29,7 @@ JFormHelper::loadFieldClass('list');
  * @since       1.6
  */
 
-class JFormFieldToggleoptionslist extends JFormFieldList
+class JFormFieldToggleoptionslist extends ListField
 {
 	/**
 	 * Element name

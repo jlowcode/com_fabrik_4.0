@@ -32,6 +32,12 @@ define(['jquery'], function (jQuery) {
          */
 
         initialize: function (element, options) {
+
+			var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
+			var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+			  return new bootstrap.Tooltip(tooltipTriggerEl)
+			});
+
             var self = this;
             this.setPlugin('');
             options.element = element;
@@ -137,12 +143,12 @@ define(['jquery'], function (jQuery) {
         fireEvents: function (evnts) {
             if (this.hasSubElements()) {
                 this._getSubElements().each(function (el) {
-                    Array.from(evnts).each(function (e) {
+                    Array.mfrom(evnts).each(function (e) {
                         el.fireEvent(e);
                     }.bind(this));
                 }.bind(this));
             } else {
-                Array.from(evnts).each(function (e) {
+                Array.mfrom(evnts).each(function (e) {
                     if (this.element) {
                         this.element.fireEvent(e);
                     }
@@ -429,6 +435,14 @@ define(['jquery'], function (jQuery) {
         },
 
         /**
+         * Called before an AJAX validation is triggered, in case an element wants to abort it,
+         * for example date element with time picker
+         */
+        shouldAjaxValidate: function () {
+            return true;
+        },
+
+        /**
          * Run when the element is cloned in a repeat group
          */
         cloned: function (c) {
@@ -436,12 +450,12 @@ define(['jquery'], function (jQuery) {
             this.resetEvents();
             this.addAjaxValidationAux();
             var changeEvent = this.getChangeEvent();
-            if (this.element.hasClass('chzn-done')) {
-                this.element.removeClass('chzn-done');
-                this.element.addClass('chzn-select');
-                this.element.getParent().getElement('.chzn-container').destroy();
+            if (this.element.hasClass('chosen-done')) {
+                this.element.removeClass('chosen-done');
+                this.element.addClass('chosen-select');
+                this.element.getParent().getElement('.chosen-container').destroy();
                 jQuery('#' + this.element.id).chosen();
-                jQuery(this.element).addClass('chzn-done');
+                jQuery(this.element).addClass('chosen-done');
 
                 jQuery('#' + this.options.element).on('change', {changeEvent: changeEvent}, function (event) {
                     document.id(this.id).fireEvent(event.data.changeEvent, new Event.Mock(event.data.changeEvent,
@@ -454,6 +468,7 @@ define(['jquery'], function (jQuery) {
          * Run when the element is de-cloned from the form as part of a deleted repeat group
          */
         decloned: function (groupid) {
+            this.form.removeMustValidate(this);
         },
 
         /**
@@ -562,7 +577,7 @@ define(['jquery'], function (jQuery) {
             } catch (e) {
                 // Try Bootstrap 3
                 //t.popover('destroy');
-                t.attr('data-content', html);
+                t.attr('data-bs-content', html);
                 t.popover('show');
             }
         },
@@ -668,14 +683,15 @@ define(['jquery'], function (jQuery) {
                     if (Fabrik.bootstrapped && t.length !== 0) {
                         this.addTipMsg(msg);
                     } else {
+						var raw_msg = jQuery(msg).text();
                         a = new Element('a', {
-                            'href': '#', 'title': msg, 'events': {
+                            'href': '#', 'class':'text-danger', 'text': raw_msg, 'events': {
                                 'click': function (e) {
                                     e.stop();
                                 }
                             }
-                        }).adopt(this.alertImage);
-
+                        });
+						a.prepend(this.alertImage);
                         Fabrik.tips.attach(a);
                     }
                     errorElements[0].adopt(a);
@@ -683,6 +699,8 @@ define(['jquery'], function (jQuery) {
                     container.removeClass('success').removeClass('info').addClass('error');
                     // bs3
                     container.addClass('has-error').removeClass('has-success');
+					//bs5
+					this.element.addClass('is-invalid').removeClass('is-valid')
 
                     // If tmpl has additional error message divs (e.g labels above) then set html msg there
                     if (errorElements.length > 1) {
@@ -703,6 +721,8 @@ define(['jquery'], function (jQuery) {
                 case 'fabrikSuccess':
                     container.addClass('success').removeClass('info').removeClass('error');
                     container.addClass('has-success').removeClass('has-error');
+					//bs5
+					this.element.addClass('is-valid').removeClass('is-invalid');
                     if (Fabrik.bootstrapped) {
                         Fabrik.loader.stop(this.element);
                         this.removeTipMsg();
@@ -809,7 +829,7 @@ define(['jquery'], function (jQuery) {
                     suffixFound = true;
                 }
             }
-            var bits = Array.from(n.split('_'));
+            var bits = Array.mfrom(n.split('_'));
             var i = bits.getLast();
             if (typeOf(i.toInt()) === 'null') {
                 return bits.join('_');
@@ -857,6 +877,109 @@ define(['jquery'], function (jQuery) {
             return r;
         },
 
+        setContainerRepeatNum: function(oldRepeatCount, newRepeatCount)
+        {
+            var container = this.getContainer();
+            jQuery(container).removeClass('fb_el_' + this.origId + '_' + oldRepeatCount);
+            jQuery(container).addClass('fb_el_' + this.origId + '_' + newRepeatCount);
+        },
+
+        setName: function (repeatCount) {
+            var element = this.getElement();
+            if (typeOf(element) === 'null') {
+                return false;
+            }
+            if (this.hasSubElements()) {
+                this._getSubElements().each(function (e) {
+                    e.name = this._setName(e.name, repeatCount);
+                    e.id = this._setId(e.id, repeatCount);
+                }.bind(this));
+            } else {
+                if (typeOf(this.element.name) !== 'null') {
+                    this.element.name = this._setName(this.element.name, repeatCount);
+                }
+            }
+            if (typeOf(this.element.id) !== 'null') {
+                this.element.id = this._setId(this.element.id, repeatCount);
+            }
+            this.setContainerRepeatNum(this.options.repeatCounter, repeatCount);
+            this.options.repeatCounter = repeatCount;
+            return this.element.id;
+        },
+
+        /**
+         * @param    string    name to decrease
+         * @param    int        delete index
+         * @param    string    name suffix to keep (used for db join autocomplete element)
+         */
+
+        _setId: function (n, repeatCount, suffix) {
+            var suffixFound = false;
+            suffix = suffix ? suffix : false;
+            var match = '';
+            if (suffix !== false) {
+                var re = new RegExp(suffix);
+                if (n.test(re)) {
+                    match = n.match(re)[0];
+                    n = n.replace(re, '');
+                    suffixFound = true;
+                }
+            }
+            var bits = Array.mfrom(n.split('_'));
+            var i = bits.getLast();
+            if (typeOf(i.toInt()) === 'null') {
+                return n + match;
+            }
+            if (i.toInt() === repeatCount) {
+                return n + match;
+            }
+            i = repeatCount;
+            bits.splice(bits.length - 1, 1, i);
+            var r = bits.join('_');
+            if (suffixFound) {
+                r += match;
+            }
+            this.options.element = r;
+            return r;
+        },
+
+        /**
+         * @param    string    name to decrease
+         * @param    int        delete index
+         * @param    string    name suffix to keep (used for db join autocomplete element)
+         */
+
+        _setName: function (n, repeatCount, suffix) {
+
+            var suffixFound = false;
+            suffix = suffix ? suffix : false;
+            var match = '';
+            if (suffix !== false) {
+                var re = new RegExp(suffix);
+                if (n.test(re)) {
+                    match = n.match(re)[0];
+                    n = n.replace(re, '');
+                    suffixFound = true;
+                }
+            }
+            var namebits = n.split('[');
+            var i = namebits[1].replace(']', '').toInt();
+
+            if (i.toInt() === repeatCount) {
+                return n + match;
+            }
+
+            i = repeatCount;
+            i = i + ']';
+
+            namebits[1] = i;
+            var r = namebits.join('[');
+            if (suffixFound) {
+                r += match;
+            }
+            return r;
+        },
+
         /**
          * determine which duplicated instance of the repeat group the
          * element belongs to, returns false if not in a repeat group
@@ -895,6 +1018,8 @@ define(['jquery'], function (jQuery) {
             var c = this.getContainer();
             if (c) {
                 jQuery(c).hide();
+                jQuery(c).addClass('fabrikHide');
+
             }
         },
 
@@ -902,6 +1027,7 @@ define(['jquery'], function (jQuery) {
             var c = this.getContainer();
             if (c) {
                 jQuery(c).show();
+                jQuery(c).removeClass('fabrikHide');
             }
         },
 
@@ -942,8 +1068,8 @@ define(['jquery'], function (jQuery) {
         getTab: function(tab_div) {
             var tab_dl;
 	        if (Fabrik.bootstrapped) {
-		        var a = jQuery('a[href$=#' + tab_div.id + ']');
-		        tab_dl = a.closest('[data-role=fabrik_tab]');
+		        var a = jQuery("[data-bs-target='#" + tab_div.id + "']");
+		        tab_dl = a.closest('.nav-item');
 	        } else {
 		        tab_dl = tab_div.getPrevious('.tabs');
 	        }
@@ -972,7 +1098,7 @@ define(['jquery'], function (jQuery) {
             var tab_div = this.element.getParent(c);
             if (tab_div) {
                 if (Fabrik.bootstrapped) {
-                    a = document.getElement('a[href$=#' + tab_div.id + ']');
+                    a = document.getElement("[data-bs-target='#" + tab_div.id + "']");
                     tab_dl = a.getParent('ul.nav');
                     tab_dl.addEvent('click:relay(a)', function (event, target) {
                         this.doTab(event);

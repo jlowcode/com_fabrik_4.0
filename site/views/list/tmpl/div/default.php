@@ -4,12 +4,14 @@
  *
  * @package     Joomla
  * @subpackage  Fabrik
- * @copyright   Copyright (C) 2005-2016  Media A-Team, Inc. - All rights reserved.
+ * @copyright   Copyright (C) 2005-2020  Media A-Team, Inc. - All rights reserved.
  * @license     GNU/GPL http://www.gnu.org/copyleft/gpl.html
  */
 
 // No direct access
 defined('_JEXEC') or die('Restricted access');
+
+use Joomla\CMS\Language\Text;
 
 // The number of columns to split the list rows into
 $columns = 3;
@@ -29,7 +31,7 @@ endif;
 
 ?>
 <?php if ($this->tablePicker != '') { ?>
-	<div style="text-align:right"><?php echo FText::_('COM_FABRIK_LIST') ?>: <?php echo $this->tablePicker; ?></div>
+	<div style="text-align:right"><?php echo Text::_('COM_FABRIK_LIST') ?>: <?php echo $this->tablePicker; ?></div>
 <?php }
 
 if ($this->params->get('show_page_heading')) :
@@ -63,7 +65,7 @@ if ($this->showTitle == 1) { ?>
 		<?php foreach ($this->pluginBeforeList as $c) {
 			echo $c;
 		}?>
-		<div class="fabrikList" id="list_<?php echo $this->table->renderid;?>" >
+		<div class="fabrikList <?php echo $this->list->class;?>" id="list_<?php echo $this->table->renderid;?>" >
 		
 			<?php
 			$gCounter = 0;
@@ -87,12 +89,14 @@ if ($this->showTitle == 1) { ?>
 
 			<?php
 
-			$items = array();
 			foreach ($group as $this->_row) :
-				$items[] = $this->loadTemplate('row');
+				$item = new stdClass;
+				$item->rowdata = $this->loadTemplate('row');
+				$item->spanId = $this->_row->id;
+				$items[] = $item;
 			endforeach;
-			$class = 'fabrik_row well col-md-4 galery-div';
-			echo FabrikHelperHTML::bootstrapGrid($items, $columns, $class, true, $this->_row->id);
+			$class = 'fabrik_row ';
+			echo FabrikHelperHTML::bootstrapGrid($items, $columns, $class, true, '');
 			?>
 			</div>
 			<?php

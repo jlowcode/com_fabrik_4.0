@@ -5,12 +5,14 @@
  *
  * @package     Joomla
  * @subpackage  Fabrik
- * @copyright   Copyright (C) 2005-2016  Media A-Team, Inc. - All rights reserved.
+ * @copyright   Copyright (C) 2005-2020  Media A-Team, Inc. - All rights reserved.
  * @license     GNU/GPL http://www.gnu.org/copyleft/gpl.html
  */
 
 // No direct access
 defined('_JEXEC') or die('Restricted access');
+
+use Joomla\String\Normalise;
 
 jimport('joomla.application.component.view');
 require_once JPATH_SITE . '/components/com_fabrik/views/form/view.base.php';
@@ -38,7 +40,7 @@ class FabrikViewForm extends FabrikViewFormBase
 		{
 			$this->output();
 
-			if (!$this->app->isAdmin())
+			if (!$this->app->isClient('administrator'))
 			{
 				$this->state  = $this->get('State');
 				$model        = $this->getModel();
@@ -66,7 +68,7 @@ class FabrikViewForm extends FabrikViewFormBase
 				// Set the response to indicate a file download
 				$this->app->setHeader('Content-Type', 'application/vnd.ms-word');
 				$name = $this->getModel()->getTable()->label;
-				$name = JStringNormalise::toDashSeparated($name);
+				$name = Normalise::toDashSeparated($name);
 				$this->app->setHeader('Content-Disposition', "attachment;filename=\"" . $name . ".doc\"");
 				$this->doc->setMimeEncoding('text/html; charset=Windows-1252', false);
 			}

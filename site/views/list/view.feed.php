@@ -4,16 +4,18 @@
  *
  * @package     Joomla
  * @subpackage  Fabrik
- * @copyright   Copyright (C) 2005-2016  Media A-Team, Inc. - All rights reserved.
+ * @copyright   Copyright (C) 2005-2020  Media A-Team, Inc. - All rights reserved.
  * @license     GNU/GPL http://www.gnu.org/copyleft/gpl.html
  */
 
 // No direct access
 defined('_JEXEC') or die('Restricted access');
 
+use Joomla\CMS\Router\Route;
 use \Joomla\Registry\Registry;
 use Joomla\CMS\Document\Feed\FeedItem;
 use Joomla\CMS\Document\Feed\FeedEnclosure;
+use Joomla\String\StringHelper;
 
 require_once JPATH_SITE . '/components/com_fabrik/views/list/view.base.php';
 
@@ -36,7 +38,7 @@ class FabrikViewList extends FabrikViewListBase
      */
     public function display($tpl = null)
     {
-        $input = $this->app->input;
+        $input = $this->app->getInput();
         $itemId = FabrikWorker::itemId();
         $model = $this->getModel();
         $model->setOutPutFormat('feed');
@@ -155,7 +157,7 @@ class FabrikViewList extends FabrikViewListBase
 
         $this->doc->title = htmlspecialchars($w->parseMessageForPlaceHolder($table->label, $_REQUEST), ENT_COMPAT, 'UTF-8');
         $this->doc->description = htmlspecialchars(trim(strip_tags($w->parseMessageForPlaceHolder($table->introduction, $_REQUEST))));
-        $this->doc->link = JRoute::_('index.php?option=com_' . $this->package . '&view=list&listid=' . $table->id . '&Itemid=' . $itemId);
+        $this->doc->link = Route::_('index.php?option=com_' . $this->package . '&view=list&listid=' . $table->id . '&Itemid=' . $itemId);
 
         $this->addImage($params);
 
@@ -260,7 +262,7 @@ class FabrikViewList extends FabrikViewListBase
                         if (strstr($rssContent, $rssTag))
                         {
                             $found = true;
-                            $rssTag = JString::substr($rssTag, 1, JString::strlen($rssTag) - 2);
+                            $rssTag = StringHelper::substr($rssTag, 1, StringHelper::strlen($rssTag) - 2);
 
                             if (!strstr($this->doc->_namespace, $namespace))
                             {
@@ -305,7 +307,7 @@ class FabrikViewList extends FabrikViewListBase
                 }
 
                 // Url link to article
-                $link = JRoute::_('index.php?option=com_' . $this->package . '&view=' . $view . '&listid=' . $table->id . '&formid=' . $form->id
+                $link = Route::_('index.php?option=com_' . $this->package . '&view=' . $view . '&listid=' . $table->id . '&formid=' . $form->id
                     . '&rowid=' . $row->slug
                 );
                 $guid = COM_FABRIK_LIVESITE . 'index.php?option=com_' . $this->package . '&view=' . $view . '&listid=' . $table->id . '&formid='

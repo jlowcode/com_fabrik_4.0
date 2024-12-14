@@ -4,19 +4,24 @@
  *
  * @package     Joomla
  * @subpackage  Form
- * @copyright   Copyright (C) 2005-2016  Media A-Team, Inc. - All rights reserved.
+ * @copyright   Copyright (C) 2005-2020  Media A-Team, Inc. - All rights reserved.
  * @license     GNU/GPL http://www.gnu.org/copyleft/gpl.html
  */
 
 // No direct access
 defined('_JEXEC') or die('Restricted access');
 
+use Joomla\CMS\Language\Text;
+use Joomla\CMS\Form\FormHelper;
+use Joomla\CMS\HTML\HTMLHelper;
+use Joomla\CMS\Form\Field\ListField;
+
 require_once JPATH_ADMINISTRATOR . '/components/com_fabrik/helpers/element.php';
 
 jimport('joomla.html.html');
 jimport('joomla.form.formfield');
 jimport('joomla.form.helper');
-JFormHelper::loadFieldClass('list');
+FormHelper::loadFieldClass('list');
 
 /**
  * Renders a list of connections
@@ -25,7 +30,7 @@ JFormHelper::loadFieldClass('list');
  * @subpackage  Form
  * @since       3.0
  */
-class JFormFieldConnections extends JFormFieldList
+class JFormFieldConnections extends ListField
 {
 	/**
 	 * Element name
@@ -53,7 +58,7 @@ class JFormFieldConnections extends JFormFieldList
 		// Get the options.
 		$db->setQuery($query);
 		$options      = $db->loadObjectList();
-		$sel          = JHtml::_('select.option', '', FText::_('COM_FABRIK_PLEASE_SELECT'));
+		$sel          = HTMLHelper::_('select.option', '', Text::_('COM_FABRIK_PLEASE_SELECT'));
 		$sel->default = false;
 		array_unshift($options, $sel);
 
@@ -100,7 +105,9 @@ class JFormFieldConnections extends JFormFieldList
 			}
 		}
 
+//		return '<input type="hidden" value="' . $this->value . '" name="' . $this->name . '" />' . '<input type="text" value="' . $v
+//		. '" name="connection_justalabel" class="readonly" readonly="true" />';
 		return '<input type="hidden" value="' . $this->value . '" name="' . $this->name . '" />' . '<input type="text" value="' . $v
-		. '" name="connection_justalabel" class="readonly" readonly="true" />';
+		. '" name="connection_justalabel" class="form-control required" readonly />';
 	}
 }

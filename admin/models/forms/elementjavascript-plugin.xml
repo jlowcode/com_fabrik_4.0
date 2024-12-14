@@ -10,6 +10,7 @@
 				class="btn-group"
 				repeat="true"
 				default="1"
+				layout="joomla.form.field.radio.switcher"
 				label="COM_FABRIK_PUBLISHED">
 					<option value="0">JNO</option>
 					<option value="1">JYES</option>
@@ -17,7 +18,7 @@
 
 			<field name="action"
 				type="list"
-				class="input-medium"
+				class="col-sm-6"
 				repeat="true"
 				label="COM_FABRIK_JS_EVENT"
 				description="COM_FABRIK_JS_EVENT_DESC"
@@ -52,6 +53,8 @@
 				mode="javascript"
 				encoded="true"
 				repeat="true"
+				cols="60"
+				rows="6"
 				label="COM_FABRIK_JS_CODE"
 				description="COM_FABRIK_JS_CODE_DESC" />
 

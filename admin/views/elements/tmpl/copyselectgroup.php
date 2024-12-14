@@ -4,7 +4,7 @@
  *
  * @package     Joomla.Administrator
  * @subpackage  Fabrik
- * @copyright   Copyright (C) 2005-2016  Media A-Team, Inc. - All rights reserved.
+ * @copyright   Copyright (C) 2005-2020  Media A-Team, Inc. - All rights reserved.
  * @license     GNU/GPL http://www.gnu.org/copyleft/gpl.html
  * @since       3.0
  */
@@ -12,11 +12,19 @@
 // No direct access
 defined('_JEXEC') or die('Restricted access');
 
-JHtml::_('behavior.framework', true);
+use Joomla\CMS\Language\Text;
+use Joomla\CMS\Router\Route;
+use Joomla\CMS\HTML\HTMLHelper;
+
+// JHtmlBehavior::framework is deprecated. Update to jquery scripts. HOW??
+//HTMLHelper::_('behavior.framework', true);
+//$debug = JDEBUG;// maybe use later
+//HTMLHelper::_('script', 'media/com_fabrik/js/mootools-core.js');
+//HTMLHelper::_('script', 'media/com_fabrik/js/mootools-more.js');
 
 ?>
 
-<form action="<?php JRoute::_('index.php?option=com_fabrik'); ?>" method="post" name="adminForm" id="adminForm" class="form-validate">
+<form action="<?php Route::_('index.php?option=com_fabrik'); ?>" method="post" name="adminForm" id="adminForm" class="form-validate">
 	<table class="adminlist">
 	<tbody>
 		<?php for ($i = 0; $i < count($this->items); $i++) :
@@ -40,12 +48,12 @@ JHtml::_('behavior.framework', true);
 	</tbody>
 	<thead>
 	<tr>
-		<th><?php echo FText::_('COM_FABRIK_NAME')?></th>
-		<th><?php echo FText::_('COM_FABRIK_COPY_TO_GROUP')?></th>
+		<th><?php echo Text::_('COM_FABRIK_NAME')?></th>
+		<th><?php echo Text::_('COM_FABRIK_COPY_TO_GROUP')?></th>
 	</tr>
 	</thead>
 	</table>
 	<input type="hidden" name="task" value="" />
-  	<?php echo JHTML::_('form.token');
-	echo JHTML::_('behavior.keepalive'); ?>
+  	<?php echo HTMLHelper::_('form.token');
+	echo HTMLHelper::_('behavior.keepalive'); ?>
 </form>

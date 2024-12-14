@@ -4,13 +4,19 @@
  *
  * @package     Joomla.Administrator
  * @subpackage  Fabrik
- * @copyright   Copyright (C) 2005-2016  Media A-Team, Inc. - All rights reserved.
+ * @copyright   Copyright (C) 2005-2020  Media A-Team, Inc. - All rights reserved.
  * @license     GNU/GPL http://www.gnu.org/copyleft/gpl.html
  * @since       1.6
  */
 
 // No direct access
 defined('_JEXEC') or die('Restricted access');
+
+use Joomla\CMS\Language\Text;
+use Joomla\CMS\MVC\Model\BaseDatabaseModel;
+use Joomla\CMS\Version;
+use Joomla\CMS\Form\Form;
+use Joomla\CMS\Factory;
 
 /**
  * Fabrik Admin Plugin Model
@@ -20,7 +26,7 @@ defined('_JEXEC') or die('Restricted access');
  * @subpackage  Fabrik
  * @since       3.0.6
  */
-class FabrikAdminModelPlugin extends JModelLegacy
+class FabrikAdminModelPlugin extends BaseDatabaseModel
 {
 	/**
 	 * Render the plugins fields
@@ -29,11 +35,11 @@ class FabrikAdminModelPlugin extends JModelLegacy
 	 */
 	public function render()
 	{
-		$app   = JFactory::getApplication();
+		$app   = Factory::getApplication();
 		$input = $app->input;
 
 		/** @var FabrikFEModelPluginmanager $pluginManager */
-		$pluginManager             = JModelLegacy::getInstance('Pluginmanager', 'FabrikFEModel');
+		$pluginManager             = Factory::getApplication()->bootComponent('com_fabrik')->getMVCFactory()->createModel('Pluginmanager', 'FabrikFEModel');
 		$plugin                    = $pluginManager->getPlugIn($this->getState('plugin'), $this->getState('type'));
 		$feModel                   = $this->getPluginModel();
 		$plugin->getJForm()->model = $feModel;
@@ -41,7 +47,8 @@ class FabrikAdminModelPlugin extends JModelLegacy
 		$data = $this->getData();
 		$input->set('view', $this->getState('type'));
 
-		$mode = FabrikWorker::j3() ? 'nav-tabs' : '';
+//		$mode = FabrikWorker::j3() ? 'nav-tabs' : '';
+		$mode = 'nav-tabs';
 		$str  = $plugin->onRenderAdminSettings($data, $this->getState('c'), $mode);
 		$input->set('view', 'plugin');
 
@@ -87,7 +94,6 @@ class FabrikAdminModelPlugin extends JModelLegacy
 		$data['validationrule']['validate_hidden']  = $this->getState('validate_hidden');
 		$data['validationrule']['validate_in']      = $this->getState('validate_in');
 		$data['validationrule']['validation_on']    = $this->getState('validation_on');
-		$data['validationrule']['new_repetible_line'] = $this->getState('new_repetible_line');	//Id task: 170
 
 		$c = $this->getState('c') + 1;
 
@@ -96,13 +102,11 @@ class FabrikAdminModelPlugin extends JModelLegacy
 		$locations    = (array) FArrayHelper::getValue($data, 'plugin_locations');
 		$events       = (array) FArrayHelper::getValue($data, 'plugin_events');
 		$descriptions = (array) FArrayHelper::getValue($data, 'plugin_description');
-		$conditions   = (array) FArrayHelper::getValue($data, 'plugin_condition');
 
 		$data['params']['plugin_state'] = FArrayHelper::getValue($state, $c, 1);
 		$data['plugin_locations']       = FArrayHelper::getValue($locations, $c);
 		$data['plugin_events']          = FArrayHelper::getValue($events, $c);
 		$data['plugin_description']     = FArrayHelper::getValue($descriptions, $c);
-        $data['plugin_condition']     = FArrayHelper::getValue($conditions, $c);
 
 		// For list plugins view
 		$data['params']['plugin_description'] = FArrayHelper::getValue($descriptions, $c);
@@ -128,7 +132,7 @@ class FabrikAdminModelPlugin extends JModelLegacy
 		if ($type !== 'validationrule')
 		{
 			// Set the parent model e.g. form/list
-			$feModel = JModelLegacy::getInstance($type, 'FabrikFEModel');
+			$feModel = Factory::getApplication()->bootComponent('com_fabrik')->getMVCFactory()->createModel($type, 'FabrikFEModel');
 			$feModel->setId($this->getState('id'));
 		}
 
@@ -145,14 +149,12 @@ class FabrikAdminModelPlugin extends JModelLegacy
 	{
 		$data                   = $this->getData();
 		$c                      = $this->getState('c') + 1;
-		$version                = new JVersion;
-		$j3                     = version_compare($version->RELEASE, '3.0') >= 0 ? true : false;
-		$class                  = $j3 ? 'form-horizontal ' : 'adminform ';
+		$class                  = '';
 		$str                    = array();
 		$str[]                  = '<div class="pane-slider content pane-down accordion-inner">';
 		$str[]                  = '<fieldset class="' . $class . 'pluginContainer" id="formAction_' . $c . '"><ul>';
 		$formName               = 'com_fabrik.' . $this->getState('type') . '-plugin';
-		$topForm                = new JForm($formName, array('control' => 'jform'));
+		$topForm                = new Form($formName, array('control' => 'jform'));
 		$topForm->repeatCounter = $c;
 		$xmlFile                = JPATH_SITE . '/administrator/components/com_fabrik/models/forms/' . $this->getState('type') . '-plugin.xml';
 		
@@ -170,31 +172,16 @@ class FabrikAdminModelPlugin extends JModelLegacy
 
 			foreach ($topForm->getFieldset($fieldset->name) as $field)
 			{
-				if (!$j3)
-				{
-					$str[] = '<li>' . $field->label . $field->input . '</li>';
-				}
-				else
-				{
-					$str[] = '<div class="control-group"><div class="control-label">' . $field->label;
-					$str[] = '</div><div class="controls">' . $field->input . '</div></div>';
-				}
+				$str[] = '<div class="control-group"><div class="control-label">' . $field->label;
+//				$str[] = '</div><div class="controls">' . $field->input . '</div></div>';
+				$str[] = '</div><div>' . $field->input . '</div></div>';
 			}
 		}
 
 		$str[] = '</ul>';
 		$str[] = '<div class="pluginOpts" style="clear:left"></div>';
-
-		if ($j3)
-		{
-			$str[] = '<div class="form-actions"><a href="#" class="btn btn-danger" data-button="removeButton">';
-			$str[] = '<i class="icon-delete"></i> ' . FText::_('COM_FABRIK_DELETE') . '</a></div>';
-		}
-		else
-		{
-			$str[] = '<a href="#" class="delete removeButton">' . FText::_('COM_FABRIK_DELETE') . '</a>';
-		}
-
+		$str[] = '<div class="form-actions"><a href="#" class="btn btn-danger" data-button="removeButton">';
+		$str[] = '<i class="icon-delete"></i> ' . Text::_('COM_FABRIK_DELETE') . '</a></div>';
 		$str[] = '</fieldset>';
 		$str[] = '</div>';
 

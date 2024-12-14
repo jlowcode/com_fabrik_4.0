@@ -4,13 +4,16 @@
  *
  * @package     Joomla.Administrator
  * @subpackage  Fabrik
- * @copyright   Copyright (C) 2005-2016  Media A-Team, Inc. - All rights reserved.
+ * @copyright   Copyright (C) 2005-2020  Media A-Team, Inc. - All rights reserved.
  * @license     GNU/GPL http://www.gnu.org/copyleft/gpl.html
  * @since       1.6
  */
 
 // No direct access
 defined('_JEXEC') or die('Restricted access');
+
+use Joomla\CMS\MVC\Controller\FormController;
+use Joomla\CMS\Factory;
 
 jimport('joomla.application.component.controllerform');
 
@@ -21,7 +24,7 @@ jimport('joomla.application.component.controllerform');
  * @subpackage  Fabrik
  * @since       1.6
  */
-class FabrikAdminControllerCron extends JControllerForm
+class FabrikAdminControllerCron extends FormController
 {
 	/**
 	 * The prefix to use with controller messages.
@@ -37,7 +40,7 @@ class FabrikAdminControllerCron extends JControllerForm
 	 */
 	public function getPluginHTML()
 	{
-		$app = JFactory::getApplication();
+		$app = Factory::getApplication();
 		$input = $app->input;
 		$plugin = $input->getCmd('plugin');
 		$model = $this->getModel();

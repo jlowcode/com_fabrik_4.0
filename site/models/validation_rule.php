@@ -4,15 +4,21 @@
  *
  * @package     Joomla
  * @subpackage  Fabrik
- * @copyright   Copyright (C) 2005-2016  Media A-Team, Inc. - All rights reserved.
+ * @copyright   Copyright (C) 2005-2020  Media A-Team, Inc. - All rights reserved.
  * @license     GNU/GPL http://www.gnu.org/copyleft/gpl.html
  */
 
 // No direct access
 defined('_JEXEC') or die('Restricted access');
 
+use Joomla\CMS\Language\Text;
+use Joomla\CMS\Plugin\PluginHelper;
+use Joomla\CMS\Filter\InputFilter;
+use Joomla\CMS\Form\Form;
 use Joomla\Registry\Registry;
 use Joomla\Utilities\ArrayHelper;
+use Joomla\String\StringHelper;
+use Fabrik\Helpers\Php;
 
 jimport('joomla.application.component.model');
 
@@ -116,7 +122,7 @@ class PlgFabrik_Validationrule extends FabrikPlugin
 		{
 			// Replace repeat data array with current repeatCounter value to ensure placeholders work.
 			// E.g. return {'table___field}' == '1';
-			$f = JFilterInput::getInstance();
+			$f = InputFilter::getInstance();
 			$post = $f->clean($_REQUEST, 'array');
 			$groupElements = $groupModel->getMyElements();
 
@@ -146,7 +152,7 @@ class PlgFabrik_Validationrule extends FabrikPlugin
 		$formModel = $this->elementModel->getFormModel();
 		$condition = trim($w->parseMessageForPlaceHolder($condition, $post));
 		FabrikWorker::clearEval();
-		$res = @eval($condition);
+		$res = Php::Eval(['code' => $condition, 'vars'=>['formModel'=>$formModel, 'data'=>$data]]);
 		FabrikWorker::logEval($res, 'Caught exception on eval in validation condition : %s');
 
 		if (is_null($res))
@@ -187,7 +193,7 @@ class PlgFabrik_Validationrule extends FabrikPlugin
 		$params = $this->getParams();
 		$in = $params->get('validate_in', 'both');
 
-		$admin = $this->app->isAdmin();
+		$admin = $this->app->isClient('administrator');
 
 		if ($in === 'both')
 		{
@@ -280,7 +286,7 @@ class PlgFabrik_Validationrule extends FabrikPlugin
 			$v = 'COM_FABRIK_FAILED_VALIDATION';
 		}
 
-		$this->errorMsg = FText::_($v);
+		$this->errorMsg = Text::_($v);
 
 		return $this->errorMsg;
 	}
@@ -325,7 +331,7 @@ class PlgFabrik_Validationrule extends FabrikPlugin
 	 */
 	public function iconImage()
 	{
-		$plugin = JPluginHelper::getPlugin('fabrik_validationrule', $this->pluginName);
+		$plugin = PluginHelper::getPlugin('fabrik_validationrule', $this->pluginName);
 		$elIcon = $this->params->get('icon', '');
 
 		/**
@@ -338,8 +344,8 @@ class PlgFabrik_Validationrule extends FabrikPlugin
 		/*
 		if ($plugin->params === '{}')
 		{
-			$plugin_form = $this->getJForm();
-			JForm::addFormPath(JPATH_SITE . '/plugins/fabrik_validationrule/' . $this->get('pluginName'));
+			$plugin_form = $this->getForm();
+			Form::addFormPath(JPATH_SITE . '/plugins/fabrik_validationrule/' . $this->get('pluginName'));
 			$xmlFile = JPATH_SITE . '/plugins/fabrik_validationrule/' . $this->get('pluginName') . '/' . $this->get('pluginName') . '.xml';
 			$xml = $this->jform->loadFile($xmlFile, false);
 			$params_fieldset = $plugin_form->getFieldset('params');
@@ -387,16 +393,16 @@ class PlgFabrik_Validationrule extends FabrikPlugin
 
 		if ($tipText !== '')
 		{
-			return FText::_($tipText);
+			return Text::_($tipText);
 		}
 
 		if ($this->allowEmpty())
 		{
-			return FText::_('PLG_VALIDATIONRULE_' . JString::strtoupper($this->pluginName) . '_ALLOWEMPTY_LABEL');
+			return Text::_('PLG_VALIDATIONRULE_' . StringHelper::strtoupper($this->pluginName) . '_ALLOWEMPTY_LABEL');
 		}
 		else
 		{
-			return FText::_('PLG_VALIDATIONRULE_' . JString::strtoupper($this->pluginName) . '_LABEL');
+			return Text::_('PLG_VALIDATIONRULE_' . StringHelper::strtoupper($this->pluginName) . '_LABEL');
 		}
 	}
 

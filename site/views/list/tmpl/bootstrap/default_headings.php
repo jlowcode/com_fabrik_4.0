@@ -4,7 +4,7 @@
  *
  * @package     Joomla
  * @subpackage  Fabrik
- * @copyright   Copyright (C) 2005-2016  Media A-Team, Inc. - All rights reserved.
+ * @copyright   Copyright (C) 2005-2020  Media A-Team, Inc. - All rights reserved.
  * @license     GNU/GPL http://www.gnu.org/copyleft/gpl.html
  * @since       3.0
  */
@@ -13,7 +13,7 @@
 defined('_JEXEC') or die('Restricted access');
 $btnLayout  = $this->getModel()->getLayout('fabrik-button');
 $layoutData = (object) array(
-	'class' => 'btn-info fabrik_filter_submit button',
+	'class' => 'btn-info btn-sm fabrik_filter_submit button',
 	'name' => 'filter',
 	'label' => FabrikHelperHTML::icon('icon-filter', FText::_('COM_FABRIK_GO'))
 );

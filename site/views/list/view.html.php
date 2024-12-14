@@ -4,12 +4,15 @@
  *
  * @package     Joomla
  * @subpackage  Fabrik
- * @copyright   Copyright (C) 2005-2016  Media A-Team, Inc. - All rights reserved.
+ * @copyright   Copyright (C) 2005-2020  Media A-Team, Inc. - All rights reserved.
  * @license     GNU/GPL http://www.gnu.org/copyleft/gpl.html
  */
 
 // No direct access
 defined('_JEXEC') or die('Restricted access');
+
+use Joomla\CMS\Layout\LayoutInterface;
+use Joomla\CMS\Object\CMSObject;
 
 require_once JPATH_SITE . '/components/com_fabrik/views/list/view.base.php';
 
@@ -45,9 +48,9 @@ class FabrikViewList extends FabrikViewListBase
 			$this->setCanonicalLink();
 			$this->tabs = $model->loadTabs();
 
-			if (!$this->app->isAdmin() && isset($this->params))
+			if (!$this->app->isClient('administrator') && isset($this->params))
 			{
-				/** @var JObject $state */
+				/** @var CMSObject $state */
 				$state = $model->getState();
 				$stateParams = $state->get('params');
 
@@ -72,7 +75,7 @@ class FabrikViewList extends FabrikViewListBase
 	}
 
 	/**
-	 * Render the group by heading as a JLayout list.fabrik-group-by-heading
+	 * Render the group by heading as a LayoutInterface list.fabrik-group-by-heading
 	 *
 	 * @param   string  $groupedBy  Group by key for $this->grouptemplates
 	 * @param   array   $group      Group data
@@ -85,6 +88,7 @@ class FabrikViewList extends FabrikViewListBase
 		$displayData->emptyDataMessage = $this->emptyDataMessage;
 		$displayData->tmpl = $this->tmpl;
 		$displayData->title = $this->grouptemplates[$groupedBy];
+		$displayData->extra = $this->grouptemplatesExtra[$groupedBy];
 		$displayData->count = count($group);
 		$displayData->group_by_show_count = $this->params->get('group_by_show_count','1');
 		$layout = $this->getModel()->getLayout('list.fabrik-group-by-heading');
@@ -107,7 +111,8 @@ class FabrikViewList extends FabrikViewListBase
 		$displayData->gotOptionalFilters = $this->gotOptionalFilters;
 		$displayData->filters = $this->filters;
 		$displayData->filter_action = $this->filter_action;
-		$displayData->filter_type = $this->filter_type;
+        $displayData->buttons = $this->buttons;
+
 		if ($this->filterMode === 5)
 		{
 			$layoutFile = 'fabrik-filters-modal';
@@ -130,7 +135,7 @@ class FabrikViewList extends FabrikViewListBase
 	 */
 	public function setCanonicalLink()
 	{
-		if (!$this->app->isAdmin() && !$this->isMambot)
+		if (!$this->app->isClient('administrator') && !$this->isMambot)
 		{
 			$url = $this->getCanonicalLink();
 

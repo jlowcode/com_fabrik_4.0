@@ -4,7 +4,7 @@
  *
  * @package     Joomla.Administrator
  * @subpackage  Fabrik
- * @copyright   Copyright (C) 2005-2016  Media A-Team, Inc. - All rights reserved.
+ * @copyright   Copyright (C) 2005-2020  Media A-Team, Inc. - All rights reserved.
  * @license     GNU/GPL http://www.gnu.org/copyleft/gpl.html
  * @since       3.0
  */
@@ -12,6 +12,7 @@
 // No direct access
 defined('_JEXEC') or die('Restricted access');
 
+use Joomla\CMS\Factory;
 use Joomla\Utilities\ArrayHelper;
 
 require_once 'fabcontrolleradmin.php';
@@ -80,21 +81,21 @@ class FabrikAdminControllerCrons extends FabControllerAdmin
 	 */
 	public function run()
 	{
-		$mailer = JFactory::getMailer();
-		$config = JFactory::getConfig();
+		$mailer = Factory::getMailer();
+		$config = Factory::getApplication()->getConfig();
 		$db = FabrikWorker::getDbo(true);
-		$app = JFactory::getApplication();
+		$app = Factory::getApplication();
 		$input = $app->input;
 		$cid = $input->get('cid', array(), 'array');
 		$cid = ArrayHelper::toInteger($cid);
 		$cid = implode(',', $cid);
 		$query = $db->getQuery(true);
-		$query->select('*')->from('#__{package}_cron')->where('id IN (' . $cid . ')');
+		$query->select('*')->from('#__fabrik_cron')->where('id IN (' . $cid . ')');
 		$db->setQuery($query);
 		$rows = $db->loadObjectList();
-		$adminListModel = JModelLegacy::getInstance('List', 'FabrikAdminModel');
-		$pluginManager = JModelLegacy::getInstance('Pluginmanager', 'FabrikFEModel');
-		$listModel = JModelLegacy::getInstance('list', 'FabrikFEModel');
+		$adminListModel = Factory::getApplication()->bootComponent('com_fabrik')->getMVCFactory()->createModel('List', 'FabrikAdminModel');
+		$pluginManager = Factory::getApplication()->bootComponent('com_fabrik')->getMVCFactory()->createModel('Pluginmanager', 'FabrikFEModel');
+		$listModel = Factory::getApplication()->bootComponent('com_fabrik')->getMVCFactory()->createModel('List', 'FabrikFEModel');
 		$c = 0;
 		$this->log = FabTable::getInstance('Log', 'FabrikTable');
 
@@ -158,7 +159,7 @@ class FabrikAdminControllerCrons extends FabControllerAdmin
 
 			if ($pluginParams->get('cron_reschedule_manual', '0') === '1')
 			{
-				$table->lastrun = JFactory::getDate()->toSql();
+				$table->lastrun = Factory::getDate()->toSql();
 				$table->store();
 			}
 		}

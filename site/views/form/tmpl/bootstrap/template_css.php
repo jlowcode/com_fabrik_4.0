@@ -4,7 +4,7 @@
  *
  * @package     Joomla
  * @subpackage  Fabrik
- * @copyright   Copyright (C) 2005-2016  Media A-Team, Inc. - All rights reserved.
+ * @copyright   Copyright (C) 2005-2020  Media A-Team, Inc. - All rights reserved.
  * @license     GNU/GPL http://www.gnu.org/copyleft/gpl.html
  */
 
@@ -13,12 +13,16 @@ $c = (int) $_REQUEST['c'];
 $view = isset($_REQUEST['view']) ? $_REQUEST['view'] : 'form';
 echo "
 
-.fabrikHide {
-display: none;
-}
-
 .fabrikGroup {
 clear: left;
+}
+/*Repeat group order icon*/
+.icon-menu-2 {cursor:move;}
+
+/*BS5 ajax validation: icons overriding dropdown caret*/
+.fabrikinput.form-select.is-invalid,.fabrikinput.form-select.is-valid {
+    background-position: right 1rem center, center right 0.1rem !important;
+	 padding-right:0 !important;
 }
 ";
 ?>

@@ -4,14 +4,16 @@
  *
  * @package     Joomla
  * @subpackage  Fabrik
- * @copyright   Copyright (C) 2005-2016  Media A-Team, Inc. - All rights reserved.
+ * @copyright   Copyright (C) 2005-2020  Media A-Team, Inc. - All rights reserved.
  * @license     GNU/GPL http://www.gnu.org/copyleft/gpl.html
  */
 
 // No direct access
 defined('_JEXEC') or die('Restricted access');
 
+use Joomla\CMS\Router\Route;
 use Joomla\Utilities\ArrayHelper;
+use Fabrik\Helpers\StringHelper;
 
 jimport('joomla.application.component.view');
 require_once JPATH_SITE . '/components/com_fabrik/views/form/view.base.php';
@@ -39,7 +41,7 @@ class FabrikViewForm extends FabrikViewFormBase
 			$this->setCanonicalLink();
 			$this->output();
 
-			if (!$this->app->isAdmin())
+			if (!$this->app->isClient('administrator'))
 			{
 				$this->state  = $this->get('State');
 				$model        = $this->getModel();
@@ -63,6 +65,23 @@ class FabrikViewForm extends FabrikViewFormBase
 				{
 					$this->doc->setMetadata('robots', $this->params->get('robots'));
 				}
+
+				$formModel = $this->getModel();
+				$listModel = $formModel->getListModel();
+				$listParams = $listModel->getParams();
+				$sefSlug = $listParams->get('sef-slug', '');
+
+				if (!empty($sefSlug))
+				{
+					$elementName = StringHelper::safeColNameToArrayKey($sefSlug);
+					$slug = ArrayHelper::getValue($formModel->data, $elementName, '');
+
+					if (!empty($slug))
+					{
+						$pathway = $this->app->getPathway();
+						$pathway->addItem($slug);
+					}
+				}
 			}
 		}
 	}
@@ -77,7 +96,7 @@ class FabrikViewForm extends FabrikViewFormBase
 	{
 		$url = '';
 
-		if (!$this->app->isAdmin() && !$this->isMambot)
+		if (!$this->app->isClient('administrator') && !$this->isMambot)
 		{
 			/** @var FabrikFEModelForm $model */
 			$model  = $this->getModel();
@@ -86,7 +105,7 @@ class FabrikViewForm extends FabrikViewFormBase
 			$slug   = $model->getListModel()->getSlug(ArrayHelper::toObject($data));
 			$rowId  = $slug === '' ? $model->getRowId() : $slug;
 			$view   = $model->isEditable() ? 'form' : 'details';
-			$url    = JRoute::_('index.php?option=com_' . $this->package . '&view=' . $view . '&formid=' . $formId . '&rowid=' . $rowId);
+			$url    = Route::_('index.php?option=com_' . $this->package . '&view=' . $view . '&formid=' . $formId . '&rowid=' . $rowId);
 		}
 
 		return $url;
@@ -100,7 +119,7 @@ class FabrikViewForm extends FabrikViewFormBase
 	 */
 	public function setCanonicalLink()
 	{
-		if (!$this->app->isAdmin() && !$this->isMambot)
+		if (!$this->app->isClient('administrator') && !$this->isMambot)
 		{
 			$url = $this->getCanonicalLink();
 

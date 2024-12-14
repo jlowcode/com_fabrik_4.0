@@ -4,13 +4,15 @@
  *
  * @package     Joomla
  * @subpackage  Fabrik
- * @copyright   Copyright (C) 2005-2016  Media A-Team, Inc. - All rights reserved.
+ * @copyright   Copyright (C) 2005-2020  Media A-Team, Inc. - All rights reserved.
  * @license     GNU/GPL http://www.gnu.org/copyleft/gpl.html
  * @since       3.0
  */
 
 // No direct access
 defined('_JEXEC') or die('Restricted access');
+
+use Joomla\CMS\Language\Text;
 
 $group = $this->group;
 ?>
@@ -25,7 +27,7 @@ $group = $this->group;
 	<?php
 	endif;
 	echo $element->errorTag; ?>
-	<div class="fabrikElement">
+	<div class="fabrikElement <?php echo $element->bsClass;?>">
 		<?php echo $element->element; ?>
 	</div>
 
@@ -45,14 +47,14 @@ $group = $this->group;
 		<td class="fabrikGroupRepeater">
 			<div class="pull-right">
 			<?php if ($group->canAddRepeat) :
-				$add = FabrikHelperHTML::image('plus', 'form', $this->tmpl, array('class' => 'fabrikTip tip-small', 'title' => FText::_('COM_FABRIK_ADD_GROUP')));
+				$add = FabrikHelperHTML::image('plus', 'form', $this->tmpl, array('class' => 'fabrikTip tip-small', 'title' => Text::_('COM_FABRIK_ADD_GROUP')));
 				?>
 				<a class="addGroup" href="#"><?php echo $add?></a>
 			<?php
 			endif;
 			if ($group->canDeleteRepeat) :?>
 			<a class="deleteGroup" href="#">
-				<?php echo FabrikHelperHTML::image('minus', 'form', $this->tmpl, array('class' => 'fabrikTip tip-small', 'title' => FText::_('COM_FABRIK_DELETE_GROUP')));?>
+				<?php echo FabrikHelperHTML::image('minus', 'form', $this->tmpl, array('class' => 'fabrikTip tip-small', 'title' => Text::_('COM_FABRIK_DELETE_GROUP')));?>
 			</a>
 			<?php endif;?>
 			</div>

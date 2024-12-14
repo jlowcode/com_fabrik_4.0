@@ -8,7 +8,7 @@
  *
  * @package     Joomla
  * @subpackage  Fabrik
- * @copyright   Copyright (C) 2005-2016  Media A-Team, Inc. - All rights reserved.
+ * @copyright   Copyright (C) 2005-2020  Media A-Team, Inc. - All rights reserved.
  * @license     GNU/GPL http://www.gnu.org/copyleft/gpl.html
  */
 
@@ -22,8 +22,8 @@ $items = array();
 
 $items[] = $this->loadTemplate('row');
 
-$class = 'fabrik_row well';
-$grid = FabrikHelperHTML::bootstrapGrid($items, $columns, $class, false, $this->_row->id);
+$class = 'fabrik_row';
+$grid = FabrikHelperHTML::bootstrapGrid($items, $columns, $class, false, '');
 array_pop($grid);
 array_shift($grid);
 

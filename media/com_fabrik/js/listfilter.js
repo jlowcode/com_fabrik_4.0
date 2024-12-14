@@ -10,6 +10,8 @@ define(['jquery', 'fab/fabrik', 'fab/advanced-search'], function (jQuery, Fabrik
 
         Implements: [Events],
 
+        Binds: [],
+
         options: {
             'container'     : '',
             'filters'       : [],
@@ -134,12 +136,22 @@ define(['jquery', 'fab/fabrik', 'fab/advanced-search'], function (jQuery, Fabrik
                     f.onSubmit();
                 });
             }
+            if (this.filters.jdate) {
+                jQuery.each(this.filters.jdate, function (key, f) {
+                    f.onSubmit();
+                });
+            }
             this.showFilterState();
         },
 
         onUpdateData: function () {
             if (this.filters.date) {
                 jQuery.each(this.filters.date, function (key, f) {
+                    f.onUpdateData();
+                });
+            }
+            if (this.filters.jdate) {
+                jQuery.each(this.filters.jdate, function (key, f) {
                     f.onUpdateData();
                 });
             }
@@ -185,7 +197,7 @@ define(['jquery', 'fab/fabrik', 'fab/advanced-search'], function (jQuery, Fabrik
         clearAFilter: function (f) {
             var sel;
             if (((f.prop('name').contains('[value]') || f.prop('name').contains('fabrik_list_filter_all'))) ||
-                f.hasClass('autocomplete-trigger')) {
+                f.hasClass('autocomplete-trigger') || f.parent().find('.tag-container').length > 0) {
                 if (f.prop('tagName') === 'SELECT') {
                     sel = f.prop('multiple') ? -1 : 0;
                     f.prop('selectedIndex', sel);
@@ -193,8 +205,20 @@ define(['jquery', 'fab/fabrik', 'fab/advanced-search'], function (jQuery, Fabrik
                     if (f.prop('type') === 'checkbox') {
                         f.prop('checked', false);
                     } else {
-                        f.val('');
+                        if(f.parent().find('.tag-container').length == 0) {
+                            f.val('');
+                        }
                     }
+                }
+                if (f.hasClass('advancedSelect'))
+                {
+                    f.trigger('chosen:updated');
+                }
+                if(f.parent().find('.tag-container').length > 0)
+                {
+                    f.parent().find('.tag-container').each(function(i, t) {
+                        jQuery(t).remove();
+                    });
                 }
             }
         },

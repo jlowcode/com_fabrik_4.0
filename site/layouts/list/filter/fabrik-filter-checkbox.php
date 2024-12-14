@@ -191,8 +191,11 @@ if( isset($checkboxesLimit) &&
 	</script>
 	";
 } else {
-	echo implode("\n", FabrikHelperHTML::grid($d->values, $d->labels, $d->default, $d->name,
-	'checkbox', false, 1, array('input' => array('fabrik_filter')), false, array(), $inputDataAttribs));
+	echo implode("\n",
+				FabrikHelperHTML::grid($d->values, $d->labels, $d->default, $d->name, 'checkbox', false, 1, 
+					['input' => ['fabrik_filter', 'form-check-input']], /* Classes */
+					false, array(), $inputDataAttribs)
+						);
 }
 ?>
 </div>

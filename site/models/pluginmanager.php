@@ -4,12 +4,24 @@
  *
  * @package     Joomla
  * @subpackage  Fabrik
- * @copyright   Copyright (C) 2005-2016  Media A-Team, Inc. - All rights reserved.
+ * @copyright   Copyright (C) 2005-2020  Media A-Team, Inc. - All rights reserved.
  * @license     GNU/GPL http://www.gnu.org/copyleft/gpl.html
  */
 
 // No direct access
 defined('_JEXEC') or die('Restricted access');
+
+use Joomla\CMS\Language\Text;
+use Joomla\CMS\Application\ApplicationHelper;
+use Joomla\CMS\Plugin\PluginHelper;
+use Joomla\CMS\Profiler\Profiler;
+use Joomla\CMS\Factory;
+use Joomla\CMS\Filesystem\File;
+use Joomla\CMS\Filesystem\Folder;
+use Joomla\String\StringHelper;
+//use Joomla\CMS\Dispatcher\Dispatcher;
+use Joomla\Event\Dispatcher as EventDispatcher;
+use Joomla\CMS\HTML\HTMLHelper;
 
 jimport('joomla.application.component.model');
 jimport('joomla.filesystem.file');
@@ -59,6 +71,13 @@ class FabrikFEModelPluginmanager extends FabModel
 	public $data = array();
 
 	/**
+	 * Contains plugin model
+	 *
+	 * @var array
+	 */
+	public $dataModels = array();
+
+	/**
 	 * Array of array of form plugins - keyed on group id
 	 *
 	 * @var  array
@@ -88,13 +107,13 @@ class FabrikFEModelPluginmanager extends FabModel
 		{
 			if ($defaultLabel == '')
 			{
-				$defaultLabel = FText::_('COM_FABRIK_PLEASE_SELECT');
+				$defaultLabel = Text::_('COM_FABRIK_PLEASE_SELECT');
 			}
 
-			$a = array(JHTML::_('select.option', '', $defaultLabel));
+			$a = array(HTMLHelper::_('select.option', '', $defaultLabel));
 			$elementsTypes = $this->_getList();
 			$elementsTypes = array_merge($a, $elementsTypes);
-			$this->elementLists[$hash] = JHTML::_('select.genericlist', $elementsTypes, $name, $extra, 'value', 'text', $default);
+			$this->elementLists[$hash] = HTMLHelper::_('select.genericlist', $elementsTypes, $name, $extra, 'value', 'text', $default);
 		}
 
 		return $this->elementLists[$hash];
@@ -190,7 +209,7 @@ class FabrikFEModelPluginmanager extends FabModel
 	 */
 	public function loadJS()
 	{
-		$plugins = JFolder::folders(JPATH_SITE . '/plugins/fabrik_element', '.', false, false);
+		$plugins = Folder::folders(JPATH_SITE . '/plugins/fabrik_element', '.', false, false);
 		$files = array();
 
 		foreach ($plugins as $plugin)
@@ -221,7 +240,7 @@ class FabrikFEModelPluginmanager extends FabModel
 		// and the first list had plugins, then the second list would remove that plugin when this method was run
 		$folder = 'fabrik_' . $group;
 		$this->_AbstractplugIns[$group] = array();
-		$plugins = JPluginHelper::getPlugin($folder);
+		$plugins = PluginHelper::getPlugin($folder);
 
 		foreach ($plugins as $plugin)
 		{
@@ -292,21 +311,21 @@ class FabrikFEModelPluginmanager extends FabModel
 			$group = 'list';
 		}
 
-		$group = JString::strtolower($group);
+		$group = StringHelper::strtolower($group);
 
-		if (!JPluginHelper::isEnabled('fabrik_' . $group, $className))
+		if (!PluginHelper::isEnabled('fabrik_' . $group, $className))
         {
             throw new RuntimeException('plugin manager: plugin is disabled or ACL protected: ' . $className);
         }
 
-		JPluginHelper::importPlugin('fabrik_' . $group, $className);
-		$dispatcher = JEventDispatcher::getInstance();
-
+		PluginHelper::importPlugin('fabrik_' . $group, $className);
+//H		$dispatcher = JEventDispatcher::getInstance();
+		$dispatcher = Factory::getApplication()->getDispatcher();
 		if ($className != '')
 		{
 			$file = JPATH_PLUGINS . '/fabrik_' . $group . '/' . $className . '/' . $className . '.php';
 
-			if (JFile::exists($file))
+			if (File::exists($file))
 			{
 				require_once $file;
 			}
@@ -314,7 +333,7 @@ class FabrikFEModelPluginmanager extends FabModel
 			{
 				$file = JPATH_PLUGINS . '/fabrik_' . $group . '/' . $className . '/models/' . $className . '.php';
 
-				if (JFile::exists($file))
+				if (File::exists($file))
 				{
 					require_once $file;
 				}
@@ -325,24 +344,24 @@ class FabrikFEModelPluginmanager extends FabModel
 			}
 		}
 
-		$class = 'plgFabrik_' . JString::ucfirst($group) . JString::ucfirst($className);
+		$class = 'plgFabrik_' . (!empty($group) ? StringHelper::ucfirst($group) : '') . (!empty($className) ? StringHelper::ucfirst($className) : '');
 		$conf = array();
-		$conf['name'] = JString::strtolower($className);
-		$conf['type'] = JString::strtolower('fabrik_' . $group);
+		$conf['name'] = !empty($className) ? StringHelper::strtolower($className) : '';
+		$conf['type'] = StringHelper::strtolower('fabrik_' . $group);
+            $plugIn = null;
 
 		if (class_exists($class))
 		{
-			$plugIn = new $class($dispatcher, $conf);
+			$plugIn = new $class($dispatcher, $conf);//H don't know if this is correct
 		}
 		else
 		{
 			// Allow for namespaced plugins
-			$class = 'Fabrik\\Plugins\\' . JString::ucfirst($group) . '\\' . JString::ucfirst($className);
+			$class = 'Fabrik\\Plugins\\' . StringHelper::ucfirst($group) . '\\' . StringHelper::ucfirst($className);
 			$plugIn = new $class($dispatcher, $conf);
 		}
-
 		// Needed for viz
-		$client = JApplicationHelper::getClientInfo(0);
+		$client = ApplicationHelper::getClientInfo(0);
 		$lang = $this->lang;
 		$folder = 'fabrik_' . $group;
 		$langFile = 'plg_' . $folder . '_' . $className;
@@ -389,7 +408,7 @@ class FabrikFEModelPluginmanager extends FabModel
 	 */
 	public function getFormPlugins(&$form)
 	{
-		$profiler = JProfiler::getInstance('Application');
+		$profiler = Profiler::getInstance('Application');
 
 		if (!isset($this->formPlugins))
 		{
@@ -405,7 +424,7 @@ class FabrikFEModelPluginmanager extends FabModel
 			$this->formPlugins[$sig] = array();
 			$lang = $this->lang;
 			$folder = 'fabrik_element';
-			$client = JApplicationHelper::getClientInfo(0);
+			$client = ApplicationHelper::getClientInfo(0);
 			$groupIds = $form->getGroupIds();
 
 			if (empty($groupIds))
@@ -426,7 +445,7 @@ class FabrikFEModelPluginmanager extends FabModel
 			$select = '*, e.name AS name, e.id AS id, e.published AS published, e.label AS label,'
 				. 'e.plugin, e.params AS params, e.access AS access, e.ordering AS ordering';
 			$query->select($select);
-			$query->from('#__{package}_elements AS e');
+			$query->from('#__fabrik_elements AS e');
 			$query->where('group_id IN (' . implode(',', $groupIds) . ')');
 
 			// Ignore trashed elements
@@ -445,9 +464,9 @@ class FabrikFEModelPluginmanager extends FabModel
 				->where('enabled = "1"', 'AND');
 			$db->setQuery($query);
 			$extensions = $db->loadObjectList('element');
-
 			// Don't assign the elements into Joomla's main dispatcher as this causes out of memory errors in J1.6rc1
-			$dispatcher = new JDispatcher;
+//H			$dispatcher = new JDispatcher;
+			$dispatcher    = Factory::getApplication()->getDispatcher();
 			$groupModels = $form->getGroups();
 			$group = 'element';
 
@@ -466,12 +485,15 @@ class FabrikFEModelPluginmanager extends FabModel
 				if (class_exists($class))
 				{
 					$pluginModel = new $class($dispatcher, array());
+					//bootPlugin($plugin, $type)  where $type = fabrik_element and $plugin = field
+//H					$pluginModel = Factory::getApplication()->bootPlugin($element->plugin, 'PlgFabrik_Element');
 				}
 				else
 				{
 					// Allow for namespaced plugins
-					$class = 'Fabrik\\Plugins\\' . JString::ucfirst($group) . '\\' . JString::ucfirst($element->plugin);
+					$class = 'Fabrik\\Plugins\\' . StringHelper::ucfirst($group) . '\\' . StringHelper::ucfirst($element->plugin);
 					$pluginModel = new $class($dispatcher, array());
+//H					$pluginModel = Factory::getApplication()->bootPlugin($element->plugin, 'PlgFabrik_Element');
 				}
 
 				if (!is_object($pluginModel))
@@ -571,7 +593,7 @@ class FabrikFEModelPluginmanager extends FabModel
 	 */
 	public function runPlugins($method, &$parentModel, $type = 'form')
 	{
-		$profiler = JProfiler::getInstance('Application');
+		$profiler = Profiler::getInstance('Application');
 		JDEBUG ? $profiler->mark("runPlugins: start: $method") : null;
 
 		if ($type == 'form')
@@ -647,7 +669,7 @@ class FabrikFEModelPluginmanager extends FabModel
 				// Testing this if statement as onLoad was being called on form email plugin when no method available
 				if (method_exists($plugin, $method))
 				{
-					JDEBUG ? $profiler->mark("runPlugins: method_exists: $plugin, $method") : null;
+					JDEBUG ? $profiler->mark("runPlugins: method_exists: $usedPlugin, $method") : null;
 
 					$plugin->renderOrder = $c;
 					$modelTable = $parentModel->getTable();
@@ -672,7 +694,7 @@ class FabrikFEModelPluginmanager extends FabModel
 
 						if ($preflightCheck)
 						{
-							JDEBUG ? $profiler->mark("runPlugins: preflight OK, starting: $plugin, $method") : null;
+							JDEBUG ? $profiler->mark("runPlugins: preflight OK, starting: $usedPlugin, $method") : null;
 							$ok = $plugin->$method($pluginArgs);
 
 							if ($ok === false)

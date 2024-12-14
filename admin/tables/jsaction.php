@@ -4,7 +4,7 @@
  *
  * @package     Joomla
  * @subpackage  Fabrik
- * @copyright   Copyright (C) 2005-2016  Media A-Team, Inc. - All rights reserved.
+ * @copyright   Copyright (C) 2005-2020  Media A-Team, Inc. - All rights reserved.
  * @license     GNU/GPL http://www.gnu.org/copyleft/gpl.html
  */
 
@@ -29,6 +29,6 @@ class FabrikTableJsaction extends FabTable
 	 */
 	public function __construct(&$db)
 	{
-		parent::__construct('#__{package}_jsactions', 'id', $db);
+		parent::__construct('#__fabrik_jsactions', 'id', $db);
 	}
 }

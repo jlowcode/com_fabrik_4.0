@@ -4,7 +4,7 @@
  *
  * @package     Joomla.Administrator
  * @subpackage  Fabrik
- * @copyright   Copyright (C) 2005-2016  Media A-Team, Inc. - All rights reserved.
+ * @copyright   Copyright (C) 2005-2020  Media A-Team, Inc. - All rights reserved.
  * @license     GNU/GPL http://www.gnu.org/copyleft/gpl.html
  * @since       3.0
  */
@@ -12,14 +12,22 @@
 // No direct access
 defined('_JEXEC') or die('Restricted access');
 
-JHtml::addIncludePath(JPATH_COMPONENT . '/helpers/html');
-JHTML::stylesheet('administrator/components/com_fabrik/views/fabrikadmin.css');
-JHtml::_('behavior.tooltip');
-JHtml::_('behavior.framework', true);
-FabrikHelperHTML::formvalidation();
-JHtml::_('behavior.keepalive');
+use Joomla\CMS\Language\Text;
+use Joomla\CMS\Router\Route;
+use Joomla\CMS\HTML\HTMLHelper;
 
-JText::script('COM_FABRIK_SUBOPTS_VALUES_ERROR');
+HTMLHelper::addIncludePath(JPATH_COMPONENT . '/helpers/html');
+HTMLHelper::stylesheet('administrator/components/com_fabrik/views/fabrikadmin.css');
+HTMLHelper::_('bootstrap.tooltip');
+// JHtmlBehavior::framework is deprecated. Update to jquery scripts. HOW??
+//HTMLHelper::_('behavior.framework', true);
+//$debug = JDEBUG;// maybe use later
+//HTMLHelper::_('script', 'media/com_fabrik/js/mootools-core.js');
+//HTMLHelper::_('script', 'media/com_fabrik/js/mootools-more.js');
+FabrikHelperHTML::formvalidation();
+HTMLHelper::_('behavior.keepalive');
+
+Text::script('COM_FABRIK_SUBOPTS_VALUES_ERROR');
 ?>
 
 <script type="text/javascript">
@@ -33,18 +41,18 @@ JText::script('COM_FABRIK_SUBOPTS_VALUES_ERROR');
 			var msg = '';
 			var jsEvents = document.getElements('select[name*=action]').get('value');
 			if (jsEvents.length > 0 && jsEvents.contains('')) {
-				msg += '\n ' + Joomla.JText._('COM_FABRIK_ERR_ELEMENT_JS_ACTION_NOT_DEFINED');
+				msg += '\n ' + Joomla.Text._('COM_FABRIK_ERR_ELEMENT_JS_ACTION_NOT_DEFINED');
 			}
 			if (task == 'element.cancel' || (msg === '' && document.formvalidator.isValid(document.id('adminForm')))) {
 				window.fireEvent('form.save');
 				Joomla.submitform(task, document.getElementById('adminForm'));
 			} else {
-				window.alert('<?php echo $this->escape(FText::_('JGLOBAL_VALIDATION_FORM_FAILED'));?>' + msg);
+				window.alert('<?php echo $this->escape(Text::_('JGLOBAL_VALIDATION_FORM_FAILED'));?>' + msg);
 			}
 		});
 	}
 </script>
-<form action="<?php JRoute::_('index.php?option=com_fabrik'); ?>" method="post" name="adminForm" id="adminForm" class="form-validate">
+<form action="<?php Route::_('index.php?option=com_fabrik'); ?>" method="post" name="adminForm" id="adminForm" class="form-validate">
 
 <?php if ($this->item->parent_id != 0)
 {
@@ -54,13 +62,13 @@ JText::script('COM_FABRIK_SUBOPTS_VALUES_ERROR');
 		<dd class="notice">
 		<ul>
 			<li>
-				<?php echo FText::_('COM_FABRIK_ELEMENT_PROPERTIES_LINKED_TO') ?>:
+				<?php echo Text::_('COM_FABRIK_ELEMENT_PROPERTIES_LINKED_TO') ?>:
 			</li>
 			<li>
 				<a href="#" id="swapToParent" class="element_<?php echo $this->parent->id ?>"><?php echo $this->parent->label ?></a>
 			</li>
 			<li>
-				<label><input id="unlink" name="unlink" id="unlinkFromParent" type="checkbox"> <?php echo FText::_('COM_FABRIK_UNLINK') ?></label>
+				<label><input id="unlink" name="unlink" id="unlinkFromParent" type="checkbox"> <?php echo Text::_('COM_FABRIK_UNLINK') ?></label>
 			</li>
 		</ul>
 		</dd>
@@ -71,7 +79,7 @@ JText::script('COM_FABRIK_SUBOPTS_VALUES_ERROR');
 <div id="elementFormTable">
 	<div class="width-50 fltlft">
 		<fieldset class="adminform">
-			<legend><?php echo FText::_('COM_FABRIK_DETAILS');?></legend>
+			<legend><?php echo Text::_('COM_FABRIK_DETAILS');?></legend>
 			<input type="hidden" id="name_orig" name="name_orig" value="<?php echo $this->item->name; ?>" />
 			<input type="hidden" id="plugin_orig" name="plugin_orig" value="<?php echo $this->item->plugin; ?>" />
 			<ul class="adminformlist">
@@ -101,25 +109,25 @@ JText::script('COM_FABRIK_SUBOPTS_VALUES_ERROR');
 		</fieldset>
 
 		<div style="margin:10px">
-			<?php echo JHtml::_('sliders.start', 'element-sliders-options', array('useCookie' => 1));
-			echo JHtml::_('sliders.panel', FText::_('COM_FABRIK_OPTIONS'), 'options-details');
+			<?php echo HTMLHelper::_('sliders.start', 'element-sliders-options', array('useCookie' => 1));
+			echo HTMLHelper::_('sliders.panel', Text::_('COM_FABRIK_OPTIONS'), 'options-details');
 			echo "<div id=\"plugin-container\">$this->pluginFields</div>";
-			echo JHtml::_('sliders.end'); ?>
+			echo HTMLHelper::_('sliders.end'); ?>
 		</div>
 	</div>
 
 	<div class="width-50 fltrt">
-		<?php echo JHtml::_('tabs.start', 'element', array('useCookie' => 1));
+		<?php echo HTMLHelper::_('tabs.start', 'element', array('useCookie' => 1));
 			echo $this->loadTemplate('publishing');
 			echo $this->loadTemplate('access');
 			echo $this->loadTemplate('settings');
 			echo $this->loadTemplate('validations');
 			echo $this->loadTemplate('javascript');
-		echo JHtml::_('tabs.end'); ?>
+		echo HTMLHelper::_('tabs.end'); ?>
 	</div>
 
 	<input type="hidden" name="task" value="" />
 	<input type="hidden" name="redirectto" value="" />
-	<?php echo JHtml::_('form.token'); ?>
+	<?php echo HTMLHelper::_('form.token'); ?>
 	</div>
 </form>

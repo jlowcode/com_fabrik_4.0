@@ -4,12 +4,14 @@
  *
  * @package     Joomla
  * @subpackage  Form
- * @copyright   Copyright (C) 2005-2016  Media A-Team, Inc. - All rights reserved.
+ * @copyright   Copyright (C) 2005-2020  Media A-Team, Inc. - All rights reserved.
  * @license     GNU/GPL http://www.gnu.org/copyleft/gpl.html
  */
 
 // No direct access
 defined('_JEXEC') or die('Restricted access');
+
+use Joomla\CMS\Form\Field\TextField;
 
 require_once JPATH_ADMINISTRATOR . '/components/com_fabrik/helpers/element.php';
 
@@ -21,7 +23,7 @@ require_once JPATH_ADMINISTRATOR . '/components/com_fabrik/helpers/element.php';
  * @since       1.6
  */
 
-class JFormFieldFormDatabaseName extends JFormFieldText
+class JFormFieldFormDatabaseName extends TextField
 {
 	/**
 	 * Element name
@@ -48,7 +50,7 @@ class JFormFieldFormDatabaseName extends JFormFieldText
 			$db = FabrikWorker::getDbo(true);
 			$query = $db->getQuery(true);
 			$id = (int) $this->form->getValue('id');
-			$query->select('db_table_name')->from('#__{package}_lists')->where('form_id = ' . $id);
+			$query->select('db_table_name')->from('#__fabrik_lists')->where('form_id = ' . $id);
 			$db->setQuery($query);
 			$this->element['readonly'] == true;
 			$this->element['class'] = 'readonly';

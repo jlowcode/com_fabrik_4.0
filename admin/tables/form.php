@@ -4,13 +4,15 @@
  *
  * @package     Joomla
  * @subpackage  Fabrik
- * @copyright   Copyright (C) 2005-2016  Media A-Team, Inc. - All rights reserved.
+ * @copyright   Copyright (C) 2005-2020  Media A-Team, Inc. - All rights reserved.
  * @license     GNU/GPL http://www.gnu.org/copyleft/gpl.html
  */
 
 // No direct access
 defined('_JEXEC') or die('Restricted access');
 
+use Joomla\CMS\Table\Table;
+use Joomla\CMS\Language\Text;
 use \Joomla\Registry\Registry;
 
 require_once JPATH_ADMINISTRATOR . '/components/com_fabrik/tables/fabtable.php';
@@ -41,15 +43,15 @@ class FabrikTableForm extends FabTable
 	 */
 	public function __construct(&$db)
 	{
-		parent::__construct('#__{package}_forms', 'id', $db);
+		parent::__construct('#__fabrik_forms', 'id', $db);
 	}
 
 	/**
-	 * Method to bind an associative array or object to the JTable instance.This
+	 * Method to bind an associative array or object to the Table instance.This
 	 * method only binds properties that are publicly accessible and optionally
 	 * takes an array of properties to ignore when binding.
 	 *
-	 * @param   mixed  $src     An associative array or object to bind to the JTable instance.
+	 * @param   mixed  $src     An associative array or object to bind to the Table instance.
 	 * @param   mixed  $ignore  An optional array or space separated list of properties to ignore while binding.
 	 *
 	 * @return  boolean  True on success.
@@ -78,28 +80,33 @@ class FabrikTableForm extends FabTable
 	}
 
 	/**
-	 * Method to store a row in the database from the JTable instance properties.
+	 * Method to store a row in the database from the Table instance properties.
 	 * If a primary key value is set the row with that primary key value will be
 	 * updated with the instance property values.  If no primary key value is set
 	 * a new row will be inserted into the database with the properties from the
-	 * JTable instance.
+	 * Table instance.
 	 *
 	 * @param   boolean  $updateNulls  True to update fields even if they are null.
 	 *
 	 * @return  boolean  True on success.
 	 */
-	public function store($updateNulls = false)
+	public function store($updateNulls = true)
 	{
 		// We don't want these to be stored - generates an sql error
 		unset($this->db_table_name);
 		unset($this->connection_id);
 
-		return parent::store($updateNulls);
+		//return parent::store($updateNulls);
+		if (!parent::store($updateNulls)) 
+		{
+			throw new RuntimeException('Fabrik error storing form data: ' . $this->getError());
+		}
+		return true;
 	}
 
 	/**
 	 * Method to load a row from the database by primary key and bind the fields
-	 * to the JTable instance properties.
+	 * to the Table instance properties.
 	 *
 	 * @param   mixed    $keys   An optional primary key value to load the row by, or an array of fields to match.  If not
 	 * set the instance property value is used.
@@ -144,7 +151,8 @@ class FabrikTableForm extends FabTable
 			// Check that $field is in the table.
 			if (!in_array($field, $fields))
 			{
-				$e = new JException(JText::sprintf('JLIB_DATABASE_ERROR_CLASS_IS_MISSING_FIELD', get_class($this), $field));
+//H				$e = new JException(Text::sprintf('JLIB_DATABASE_ERROR_CLASS_IS_MISSING_FIELD', get_class($this), $field));
+				$e = new \Exception(Text::sprintf('JLIB_DATABASE_ERROR_CLASS_IS_MISSING_FIELD', get_class($this), $field));
 				$this->setError($e);
 
 				return false;
@@ -153,14 +161,15 @@ class FabrikTableForm extends FabTable
 			$query->where($this->_db->qn($this->_tbl) . '.' . $this->_db->qn($field) . ' = ' . $this->_db->q($value));
 		}
 
-		$query->join('LEFT', '#__{package}_lists AS l ON l.form_id = ' . $this->_tbl . '.id');
+		$query->join('LEFT', '#__fabrik_lists AS l ON l.form_id = ' . $this->_tbl . '.id');
 		$this->_db->setQuery($query);
 		$row = $this->_db->loadAssoc();
 
 		// Check that we have a result.
 		if (empty($row))
 		{
-			$e = new JException(FText::_('JLIB_DATABASE_ERROR_EMPTY_ROW_RETURNED'));
+//H			$e = new JException(Text::_('JLIB_DATABASE_ERROR_EMPTY_ROW_RETURNED'));
+			$e = new \Exception(Text::_('JLIB_DATABASE_ERROR_EMPTY_ROW_RETURNED'));
 			$this->setError($e);
 
 			return false;

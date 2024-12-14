@@ -4,12 +4,17 @@
  *
  * @package     Joomla
  * @subpackage  Fabrik
- * @copyright   Copyright (C) 2005-2016  Media A-Team, Inc. - All rights reserved.
+ * @copyright   Copyright (C) 2005-2020  Media A-Team, Inc. - All rights reserved.
  * @license     GNU/GPL http://www.gnu.org/copyleft/gpl.html
  */
 
 // No direct access
 defined('_JEXEC') or die('Restricted access');
+
+use Joomla\CMS\Language\Text;
+use Joomla\CMS\Factory;
+use Joomla\String\StringHelper;
+use Fabrik\Helpers\Php;
 
 jimport('joomla.application.component.model');
 
@@ -55,7 +60,7 @@ abstract class FabrikWebService
 		if (empty(self::$instances[$signature]))
 		{
 			// Derive the class name from the driver.
-			$class = 'FabrikWebService' . JString::ucfirst($options['driver']);
+			$class = 'FabrikWebService' . StringHelper::ucfirst($options['driver']);
 
 			// If the class doesn't exist, let's look for it and register it.
 			if (!class_exists($class))
@@ -71,13 +76,13 @@ abstract class FabrikWebService
 				// If it doesn't exist we are at an impasse so throw an exception.
 				else
 				{
-					throw new Exception(JText::sprintf('JLIB_DATABASE_ERROR_LOAD_DATABASE_DRIVER', $options['driver']));
+					throw new Exception(Text::sprintf('JLIB_DATABASE_ERROR_LOAD_DATABASE_DRIVER', $options['driver']));
 				}
 			}
 			// If the class still doesn't exist we have nothing left to do but throw an exception.  We did our best.
 			if (!class_exists($class))
 			{
-				throw new Exception(JText::sprintf('JLIB_DATABASE_ERROR_LOAD_DATABASE_DRIVER', $options['driver']));
+				throw new Exception(Text::sprintf('JLIB_DATABASE_ERROR_LOAD_DATABASE_DRIVER', $options['driver']));
 			}
 			// Create our new FabrikWebService connector based on the options given.
 			try
@@ -86,7 +91,7 @@ abstract class FabrikWebService
 			}
 			catch (Exception $e)
 			{
-				throw new Exception(JText::sprintf('JLIB_DATABASE_ERROR_CONNECT_DATABASE', $e->getMessage()));
+				throw new Exception(Text::sprintf('JLIB_DATABASE_ERROR_CONNECT_DATABASE', $e->getMessage()));
 			}
 
 			// Set the new connector to the global instances based on signature.
@@ -154,7 +159,7 @@ abstract class FabrikWebService
 				{
 					if (FArrayHelper::getValue($map, 'eval') == 1)
 					{
-						$res = eval($map['match']);
+						$res = Php::Eval(['code' => $map['match']]);
 
 						if ($res !== false)
 						{
@@ -278,7 +283,7 @@ abstract class FabrikWebService
 				$val = (bool) $val;
 				break;
 			case 'date':
-				$d = JFactory::getDate($val);
+				$d = Factory::getDate($val);
 				$val = $d->toISO8601();
 				break;
 			case 'text':

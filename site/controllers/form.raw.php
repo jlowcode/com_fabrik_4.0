@@ -4,12 +4,18 @@
  *
  * @package     Joomla
  * @subpackage  Fabrik
- * @copyright   Copyright (C) 2005-2016  Media A-Team, Inc. - All rights reserved.
+ * @copyright   Copyright (C) 2005-2020  Media A-Team, Inc. - All rights reserved.
  * @license     GNU/GPL http://www.gnu.org/copyleft/gpl.html
  */
 
 // No direct access
 defined('_JEXEC') or die('Restricted access');
+
+use Joomla\CMS\Language\Text;
+use Joomla\CMS\MVC\Controller\BaseController;
+use Joomla\CMS\Router\Route;
+use Joomla\CMS\Session\Session;
+use Joomla\CMS\Factory;
 
 jimport('joomla.application.component.controller');
 
@@ -23,7 +29,7 @@ jimport('joomla.application.component.controller');
  * @deprecated? Don't think this is used, code seems out of date, certainly for process anyway - redirect urls are
  * for Fabrik 2 !
  */
-class FabrikControllerForm extends JControllerLegacy
+class FabrikControllerForm extends BaseController
 {
 	/**
 	 * Is the view rendered from the J content plugin
@@ -39,11 +45,11 @@ class FabrikControllerForm extends JControllerLegacy
 	 */
 	public function display()
 	{
-		$app = JFactory::getApplication();
-		$session = JFactory::getSession();
+		$app = Factory::getApplication();
+		$session = Factory::getSession();
 		$package = $app->getUserState('com_fabrik.package', 'fabrik');
-		$document = JFactory::getDocument();
-		$input = $app->input;
+		$document = Factory::getDocument();
+		$input = $app->getInput();
 		$viewName = $input->get('view', 'form');
 		$modelName = $viewName;
 
@@ -90,11 +96,11 @@ class FabrikControllerForm extends JControllerLegacy
 	 */
 	public function process()
 	{
-		$app = JFactory::getApplication();
-		$session = JFactory::getSession();
+		$app = Factory::getApplication();
+		$session = Factory::getSession();
 		$package = $app->getUserState('com_fabrik.package', 'fabrik');
-		$document = JFactory::getDocument();
-		$input = $app->input;
+		$document = Factory::getDocument();
+		$input = $app->getInput();
 		$viewName = $input->get('view', 'form');
 		$viewType = $document->getType();
 		$view = $this->getView($viewName, $viewType);
@@ -112,7 +118,7 @@ class FabrikControllerForm extends JControllerLegacy
 		// Check for request forgeries
 		if ($model->spoofCheck())
 		{
-			JSession::checkToken() or die('Invalid Token');
+			Session::checkToken() or die('Invalid Token');
 		}
 
 		if ($input->getBool('fabrik_ignorevalidation', false) != true)
@@ -209,19 +215,19 @@ class FabrikControllerForm extends JControllerLegacy
 
 	protected function makeRedirect(&$model, $msg = null)
 	{
-		$app = JFactory::getApplication();
+		$app = Factory::getApplication();
 		$package = $app->getUserState('com_fabrik.package', 'fabrik');
-		$input = $app->input;
+		$input = $app->getInput();
 		$formId = $input->getInt('formid');
 		$listId = $input->getInt('listid');
 		$rowId = $input->getString('rowid', '', 'string');
 
 		if (is_null($msg))
 		{
-			$msg = FText::_('COM_FABRIK_RECORD_ADDED_UPDATED');
+			$msg = Text::_('COM_FABRIK_RECORD_ADDED_UPDATED');
 		}
 
-		if ($app->isAdmin())
+		if ($app->isClient('administrator'))
 		{
 			// Admin option is always com_fabrik
 			if (array_key_exists('apply', $model->formData))
@@ -262,11 +268,11 @@ class FabrikControllerForm extends JControllerLegacy
 				}
 			}
 
-			$config = JFactory::getConfig();
+			$config = Factory::getApplication()->getConfig();
 
 			if ($config->get('sef'))
 			{
-				$url = JRoute::_($url);
+				$url = Route::_($url);
 			}
 
 			$this->setRedirect($url, $msg);

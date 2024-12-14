@@ -4,13 +4,15 @@
  *
  * @package     Joomla.Administrator
  * @subpackage  Fabrik
- * @copyright   Copyright (C) 2005-2016  Media A-Team, Inc. - All rights reserved.
+ * @copyright   Copyright (C) 2005-2020  Media A-Team, Inc. - All rights reserved.
  * @license     GNU/GPL http://www.gnu.org/copyleft/gpl.html
  * @since       1.6
  */
 
 // No direct access
 defined('_JEXEC') or die('Restricted access');
+
+use Joomla\CMS\MVC\Controller\AdminController;
 
 jimport('joomla.application.component.controlleradmin');
 
@@ -23,7 +25,7 @@ require_once 'fabcontrollerform.php';
  * @subpackage  Fabrik
  * @since       3.0
  */
-class FabrikAdminControllerUpgrade extends JControllerAdmin
+class FabrikAdminControllerUpgrade extends AdminController
 {
 	/**
 	 * Delete all data from fabrik

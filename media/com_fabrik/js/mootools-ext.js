@@ -20,6 +20,18 @@ function CloneObject(what, recursive, asreference) {
 	return this;
 }
 
+/**
+ * Array.mfrom is needed to work round an issue with FusionCharts Pro, that overrides Array.from, in a way that
+ * breaks Mootools.  So we need to deploy a hacked version of Mootools for sites that need FC Pro, and use Array.mfrom()
+ * instead of Array.from()
+ */
+var slice = Array.prototype.slice;
+
+Array.mfrom = function(item){
+	if (item == null) return [];
+	return (Type.isEnumerable(item) && typeof item != 'string') ? (typeOf(item) == 'array') ? item : slice.call(item) : [item];
+};
+
 String.implement({
 
 	toObject: function ()
@@ -122,12 +134,16 @@ Element.implement({
 	 * <div class="carousel slide mootools-noconflict'>
 	 */
 
-	hide: function () {
-		if (Fabrik.bootstrapVersion('modal') >= 3) {
-			return;
-		}
-		if (this.hasClass('mootools-noconflict')) {
-			return this;
+	hide: function (ha) {
+		if (ha === undefined) {
+			if (this.parentNode.dataset.modalContent === undefined 
+				&& this.dataset.modalContent === undefined
+				&& Fabrik.bootstrapVersion('modal') >= 3) {
+				return;
+			}
+			if (this.hasClass('mootools-noconflict')) {
+				return this;
+			}
 		}
 		mHide.apply(this, arguments);
 	},

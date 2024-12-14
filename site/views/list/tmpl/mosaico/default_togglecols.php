@@ -8,10 +8,14 @@
  * @license     GNU/GPL http://www.gnu.org/copyleft/gpl.html
  * @since       3.1
  */
+
+use Joomla\CMS\Language\Text;
+
 ?>
+
 <li class="dropdown togglecols">
-	<a href="#" class="dropdown-toggle" data-toggle="dropdown">
-		<?php echo FabrikHelperHTML::icon('icon-eye-open', FText::_('COM_FABRIK_TOGGLE')); ?>
+	<a href="#" class="dropdown-toggle" data-bs-toggle="dropdown">
+		<?php echo FabrikHelperHTML::icon('icon-eye-open', Text::_('COM_FABRIK_TOGGLE')); ?>
 		<b class="caret"></b>
 	</a>
 	<ul class="dropdown-menu">

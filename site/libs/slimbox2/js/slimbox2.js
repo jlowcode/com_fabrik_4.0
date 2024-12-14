@@ -23,8 +23,6 @@ window.addEvent("domready", jQuery.slimbox.scanPage);
 
 
 require(['fab/fabrik'], function (Fabrik) {
-	if(jQuery.slimbox){
 		Fabrik.addEvent('fabrik.list.update', jQuery.slimbox.scanPage);
 		Fabrik.addEvent('fabrik.cdd.update', jQuery.slimbox.scanPage);
-	}
 });

@@ -25,7 +25,7 @@ define(['jquery', 'fab/encoder', 'fab/fabrik', 'lib/debounce/jquery.ba-throttle-
             'ajaxValidation': false,
             'showLoader'    : false,
             'customJsAction': '',
-            'plugins'       : [],
+            'plugins'       : {},
             'ajaxmethod'    : 'post',
             'inlineMessage' : true,
             'print'         : false,
@@ -47,9 +47,9 @@ define(['jquery', 'fab/encoder', 'fab/fabrik', 'lib/debounce/jquery.ba-throttle-
                 options.rowid = '';
             }
             this.id = id;
-            this.result = true; //set this to false in window.fireEvents to stop current action (e.g. stop form submission)
+            //set this to false in window.fireEvents to stop current action (e.g. stop form submission)
+            this.result = true;
             this.setOptions(options);
-            this.plugins = this.options.plugins;
             this.options.pages = $H(this.options.pages);
             this.subGroups = $H({});
             this.currentPage = this.options.start_page;
@@ -68,9 +68,12 @@ define(['jquery', 'fab/encoder', 'fab/fabrik', 'lib/debounce/jquery.ba-throttle-
             this.fx.validations = {};
             this.setUpAll();
             this._setMozBoxWidths();
-            (function () {
-                this.duplicateGroupsToMin();
-            }.bind(this)).delay(1000);
+
+            if (this.options.editable) {
+                (function () {
+                    this.duplicateGroupsToMin();
+                }.bind(this)).delay(1000);
+            }
 
             // Delegated element events
             this.events = {};
@@ -111,7 +114,8 @@ define(['jquery', 'fab/encoder', 'fab/fabrik', 'lib/debounce/jquery.ba-throttle-
 	        if (this.options.ajaxValidation && this.options.toggleSubmit && this.options.toggleSubmitTip !== '') {
 		        var submit = this._getButton('Submit');
 		        if (typeOf(submit) !== 'null') {
-			        jQuery(submit).wrap('<div data-toggle="tooltip" title="you must validate" class="fabrikSubmitWrapper" style="display: inline-block"></div>div>');
+			        jQuery(submit).wrap('<div data-bs-toggle="tooltip" title="' + Joomla.JText._('COM_FABRIK_MUST_VALIDATE') +
+                        '" class="fabrikSubmitWrapper" style="display: inline-block"></div>div>');
 		        }
 	        }
 
@@ -123,13 +127,17 @@ define(['jquery', 'fab/encoder', 'fab/fabrik', 'lib/debounce/jquery.ba-throttle-
                 this.watchAddOptions();
             }
 
-            $H(this.options.hiddenGroup).each(function (v, k) {
-                if (v === true && typeOf(document.id('group' + k)) !== 'null') {
-                    var subGroup = document.id('group' + k).getElement('.fabrikSubGroup');
-                    this.subGroups.set(k, subGroup.cloneWithIds());
-                    this.hideLastGroup(k, subGroup);
-                }
-            }.bind(this));
+            if (this.options.editable) {
+                $H(this.options.hiddenGroup).each(function (v, k) {
+                    if (v === true && typeOf(document.id('group' + k)) !== 'null') {
+                        var subGroup = document.id('group' + k).getElement('.fabrikSubGroup');
+                        this.subGroups.set(k, subGroup.cloneWithIds());
+                        this.hideLastGroup(k, subGroup);
+                    }
+                }.bind(this));
+
+                this.setupSortable();
+            }
 
             // get an int from which to start incrementing for each repeated group id
             // don't ever decrease this value when deleting a group as it will cause all sorts of
@@ -182,7 +190,8 @@ define(['jquery', 'fab/encoder', 'fab/fabrik', 'lib/debounce/jquery.ba-throttle-
          * Print button action - either open up the print preview window - or print if already opened
          */
         watchPrintButton: function () {
-            this.form.getElements('a[data-fabrik-print]').addEvent('click', function (e) {
+            if (this.form) {
+				this.form.getElements('a[data-fabrik-print]').addEvent('click', function (e) {
                 e.stop();
                 if (this.options.print) {
                     window.print();
@@ -205,13 +214,15 @@ define(['jquery', 'fab/encoder', 'fab/fabrik', 'lib/debounce/jquery.ba-throttle-
                     );
                 }
             }.bind(this));
+			}
         },
 
         /**
          * PDF button action.
          */
         watchPdfButton: function () {
-            this.form.getElements('*[data-role="open-form-pdf"]').addEvent('click', function (e) {
+            if (this.form) {
+			this.form.getElements('*[data-role="open-form-pdf"]').addEvent('click', function (e) {
                 e.stop();
                 // Build URL as we could have changed the rowid via ajax pagination.
                 // @FIXME for SEF
@@ -225,6 +236,7 @@ define(['jquery', 'fab/encoder', 'fab/fabrik', 'lib/debounce/jquery.ba-throttle-
 	                }                }
                 window.location = url;
             }.bind(this));
+			}
         },
 
         /**
@@ -537,12 +549,8 @@ define(['jquery', 'fab/encoder', 'fab/fabrik', 'lib/debounce/jquery.ba-throttle-
             if (!groupId.test(/^group/)) {
                 groupId = 'group' + groupId;
             }
-            if (document.id(groupId).getParent().hasClass('tab-pane')) {
-                var tabid = document.id(groupId).getParent().id;
-                var tab_anchor = this.form.getElement('a[href=#' + tabid + ']');
-                return tab_anchor.getParent();
-            }
-            return false;
+            var tab_button = document.getElementById(groupId+'_tab');
+            return tab_button == null ? false : tab_button;
         },
 
         /**
@@ -885,11 +893,21 @@ define(['jquery', 'fab/encoder', 'fab/fabrik', 'lib/debounce/jquery.ba-throttle-
                 elements.each(function (el) {
                     if (typeOf(el) === 'array') {
                         if (typeOf(document.id(el[1])) === 'null') {
-                            fconsole('Fabrik form::addElements: Cannot add element "' + el[1] +
-                                '" because it does not exist in HTML.');
+                            /* Some elements may not exist if this is a new record, specifically the lockrow element */
+                            if (document.getElements('input[name=rowid]')[0].value != "" && el[0] != 'FbLockrow') {
+                                fconsole('Fabrik form::addElements: Cannot add element "' + el[1] +
+                                    '" because it does not exist in HTML.');
+                            }
                             return;
                         }
-                        var oEl = new window[el[0]](el[1], el[2]);
+                        try {
+                            var oEl = new window[el[0]](el[1], el[2]);
+                        }
+                        catch (err) {
+                            fconsole('Fabrik form::addElements: Cannot add element "' + el[1] +
+                                '" of type "' + el[0] + '" because: ' + err.message);
+                            return;
+                        }
                         added.push(this.addElement(oEl, el[1], gid));
                     }
                     else if (typeOf(el) === 'object') {
@@ -1047,6 +1065,12 @@ define(['jquery', 'fab/encoder', 'fab/fabrik', 'lib/debounce/jquery.ba-throttle-
                     return;
                 }
             }
+
+            if (!el.shouldAjaxValidate())
+            {
+                return;
+            }
+
             Fabrik.fireEvent('fabrik.form.element.validation.start', [this, el, e]);
             if (this.result === false) {
                 this.result = true;
@@ -1156,7 +1180,7 @@ define(['jquery', 'fab/encoder', 'fab/fabrik', 'lib/debounce/jquery.ba-throttle-
 
         _showGroupError: function (r, d) {
             var tmperr;
-            var gids = Array.from(this.options.pages.get(this.currentPage.toInt()));
+            var gids = Array.mfrom(this.options.pages.get(this.currentPage.toInt()));
             var err = false;
             $H(d).each(function (v, k) {
                 k = k.replace(/\[(.*)\]/, '').replace(/%5B(.*)%5D/, '');// for dropdown validations
@@ -1311,7 +1335,14 @@ define(['jquery', 'fab/encoder', 'fab/fabrik', 'lib/debounce/jquery.ba-throttle-
             var apply = this._getButton('apply');
 
             if (!submit && !apply) {
-                return;
+                // look for a button element set to submit
+                if (this.form && this.form.getElement('button[type=submit]'))
+                {
+                    submit = this.form.getElement('button[type=submit]');
+                }
+                else {
+                    return;
+                }
             }
             var del = this._getButton('delete'),
                 copy = this._getButton('Copy');
@@ -1667,6 +1698,8 @@ define(['jquery', 'fab/encoder', 'fab/fabrik', 'lib/debounce/jquery.ba-throttle-
                                                 Fabrik.Windows[this.options.fabrik_window_id].close();
                                             }
                                         }
+
+                                        Fabrik.fireEvent('fabrik.form.submitted.end', [this, json]);
                                     } else {
                                         Fabrik.fireEvent('fabrik.form.submit.failed', [this, json]);
                                         // Stop spinner
@@ -1810,7 +1843,8 @@ define(['jquery', 'fab/encoder', 'fab/fabrik', 'lib/debounce/jquery.ba-throttle-
                 }
             }));
 
-            this.form.addEvent('click:relay(.fabrikSubGroup)', function (e, subGroup) {
+            if (this.form) {
+				this.form.addEvent('click:relay(.fabrikSubGroup)', function (e, subGroup) {
                 var r = subGroup.getElement('.fabrikGroupRepeater');
                 if (r) {
                     subGroup.addEvent('mouseenter', function (e) {
@@ -1821,6 +1855,7 @@ define(['jquery', 'fab/encoder', 'fab/fabrik', 'lib/debounce/jquery.ba-throttle-
                     });
                 }
             }.bind(this));
+			}
         },
 
         /**
@@ -1839,6 +1874,227 @@ define(['jquery', 'fab/encoder', 'fab/fabrik', 'lib/debounce/jquery.ba-throttle-
             }
 
             return false;
+        },
+
+        renumberRepeatGroup: function(el, groupId, newRepeatNum, doDelete) {
+            var input = jQuery(el).find('.fabrikinput');
+            if (input) {
+                var nameMap = {};
+                var newMap = {};
+                var elId = input[0].id;
+                var element = this.formElements.get(elId);
+                if (element) {
+                    var repeatNum = elId.split('_').getLast();
+                    console.log('renumbering: ' + repeatNum + ' => ' + newRepeatNum);
+                    element.update(newRepeatNum + 1);
+                    this.formElements.each(function (e, k) {
+                        if (e.groupid === groupId && k.split('_').getLast() === repeatNum) {
+                            nameMap[k] = e.setName(newRepeatNum);
+                        }
+                    }.bind(this));
+
+                    $H(nameMap).each(function (newKey, oldKey) {
+                        if (oldKey !== newKey) {
+                            newMap[newKey] = this.formElements[oldKey];
+
+                            if (doDelete === true) {
+                                delete this.formElements[oldKey];
+                            }
+                        }
+                    }.bind(this));
+
+                    $H(newMap).each(function (data, newKey) {
+                        this.formElements[newKey] = data;
+                    }.bind(this));
+                }
+            }
+        },
+
+        renumberSortable: function (groupId) {
+            if (typeOf(this.options.group_repeat_sortable[groupId]) === 'null' || !this.options.group_repeat_sortable[groupId]) {
+                return;
+            }
+
+            var orderElName = this.options.group_repeat_order_element[groupId];
+            var group = this.form.getElement('#group' + groupId);
+            var tbody = jQuery(group).find('tbody');
+            var tdEls = jQuery(tbody).find('.fabrikRepeatGroup___' + orderElName);
+            var i = 1;
+
+            tdEls.each(function (k, el) {
+                var input = jQuery(el).find('.fabrikinput');
+
+                if (input) {
+                    var elId = input[0].id;
+                    var element = this.formElements.get(elId);
+
+                    if (element) {
+                        element.update(i);
+                    }
+                }
+
+                i++;
+            }.bind(this));
+        },
+
+        reorderSortable: function (groupId) {
+            if (typeOf(this.options.group_repeat_sortable[groupId]) === 'null' || !this.options.group_repeat_sortable[groupId]) {
+                return;
+            }
+
+            var orderElName = this.options.group_repeat_order_element[groupId];
+
+            var nameMap = {};
+            var newMap = {};
+            var group = this.form.getElement('#group' + groupId);
+            var tbody = jQuery(group).find('tbody');
+            var tdEls = jQuery(tbody).find('.fabrikRepeatGroup___' + orderElName);
+
+            var to = 0;
+            var save = false;
+            var dir = false;
+            var started = false;
+            var ended = false;
+            var start = false;
+            var end = false;
+            var lastFrom = -1;
+
+            tdEls.each(function (k, el) {
+                if (!ended) {
+                    var input = jQuery(el).find('.fabrikinput');
+                    if (input) {
+                        var elId = input[0].id;
+                        var element = this.formElements.get(elId);
+                        if (element) {
+                            var from = elId.split('_').getLast().toInt();
+
+                            if (!started) {
+                                var gap = (from - lastFrom);
+
+                                if (gap === 2) {
+                                    started = true;
+                                    dir = 'down';
+                                    start = to;
+                                } else if (gap > 2) {
+                                    started = true;
+                                    dir = 'up';
+                                    start = to;
+                                    end = from;
+                                    save = from;
+                                    ended = true;
+                                }
+                            } else {
+                                if (dir === 'down') {
+                                    if (from === start) {
+                                        end = to;
+                                        save = to;
+                                        ended = true;
+                                    }
+                                }
+                            }
+
+                            lastFrom = from;
+                            to++;
+                        }
+                    }
+                }
+            }.bind(this))
+
+            if (dir === 'up') {
+                var el;
+
+                el = tdEls[end];
+                this.renumberRepeatGroup(el, groupId, 9999, false);
+
+                for (var i = end - 1; i >= start; i--) {
+                    el = tdEls[i];
+                    this.renumberRepeatGroup(el, groupId, i, false);
+                }
+
+                el = tdEls[end];
+                this.renumberRepeatGroup(el, groupId, end, true);
+            }
+            else {
+                var el;
+
+                el = tdEls[end];
+                this.renumberRepeatGroup(el, groupId, 9999, false);
+
+                for (var i = start; i < end; i++) {
+                    el = tdEls[i];
+                    this.renumberRepeatGroup(el, groupId, i, false);
+                }
+
+                el = tdEls[end];
+                this.renumberRepeatGroup(el, groupId, end, true);
+            }
+
+            $H(nameMap).each(function (newKey, oldKey) {
+                if (oldKey !== newKey) {
+                    newMap[newKey] = this.formElements[oldKey];
+                }
+            }.bind(this));
+
+            $H(newMap).each(function (newKey, data) {
+                this.formElements[newKey] = data;
+            }.bind(this));
+        },
+
+        setupSortable: function () {
+            if (!this.form) {
+                return;
+            }
+
+            Object.each(this.options.group_repeats, function (canRepeat, groupId) {
+                if (canRepeat.toInt() !== 1) {
+                    return;
+                }
+
+                if (typeOf(this.options.group_repeat_sortable[groupId]) !== 'null' && this.options.group_repeat_tablesort[groupId]) {
+                    var group = this.form.getElement('#group' + groupId);
+
+                    if (group) {
+                        var cellFilters = [];
+                        group.getElements('th.fabrikElementContainer').each(function (e, x) {
+                            if (e.hasClass('fabrikHide')) {
+                                cellFilters.push('fabrikHide');
+                            } else {
+                                cellFilters.push('');
+                            }
+                        });
+                        jQuery('#group' + groupId + ' table').tablesorter({
+                            theme: 'blue',
+                            widthFixed: true,
+                            widgets: ["filter"],
+                            cssInfoBlock: "tablesorter-no-sort",
+                            ignoreCase: true,
+                            widgetOptions: {
+                                filter_ignoreCase: true,
+                                filter_matchType: {'input': 'match', 'select': 'match'},
+                                filter_saveFilters: true,
+                                filter_liveSearch: true,
+                                filter_cellFilter: cellFilters
+                            }
+                        });
+                    }
+                }
+
+                if (typeOf(this.options.group_repeat_sortable[groupId]) !== 'null' && this.options.group_repeat_sortable[groupId]) {
+                    Fabrik.addEvent('fabrik.form.elements.added', function (form) {
+                        this.renumberSortable(groupId);
+                    }.bind(this));
+
+                    jQuery('#group' + groupId + ' table tbody').sortable({
+                        scroll: true,
+                        scrollSensitivity: 100,
+                        stop: function (event, ui) {
+                            var group = ui.item[0].closest('.fabrikGroup');
+                            var groupId = group.id.replace('group', '');
+                            this.reorderSortable(groupId);
+                        }.bind(this)
+                    });
+                }
+            }.bind(this));
         },
 
         /**
@@ -1983,6 +2239,11 @@ define(['jquery', 'fab/encoder', 'fab/fabrik', 'lib/debounce/jquery.ba-throttle-
             this.subGroups.set(i, subGroup.clone());
             if (subgroups.length <= 1) {
                 this.hideLastGroup(i, subGroup);
+                this.formElements.each(function (e, k) {
+                    if (e.groupid === i && typeOf(e.element) !== 'null') {
+                        this.removeMustValidate(e);
+                    }
+                }.bind(this));
                 document.id('fabrik_repeat_group_' + i + '_added').value = '0';
                 Fabrik.fireEvent('fabrik.form.group.delete.end', [this, e, i, delIndex]);
             } else {
@@ -2046,6 +2307,7 @@ define(['jquery', 'fab/encoder', 'fab/fabrik', 'lib/debounce/jquery.ba-throttle-
                 document.id('fabrik_repeat_group_' + i + '_counter').get('value').toInt() - 1;
             // $$$ hugh - no, mustn't decrement this!  See comment in setupAll
             this.repeatGroupMarkers.set(i, this.repeatGroupMarkers.get(i) - 1);
+            this.renumberSortable(i);
             this.setRepeatGroupIntro(group, i);
         },
 
@@ -2162,7 +2424,7 @@ define(['jquery', 'fab/encoder', 'fab/fabrik', 'lib/debounce/jquery.ba-throttle-
 
                     // Table group
                     var add = group.getElement('.addGroup');
-                    add.inject(sub.getElement('td.fabrikGroupRepeater'));
+                    add.inject(sub.getElement('div.fabrikGroupRepeater'),'top');
                     sub.setStyle('display', '');
                 } else {
                     subgroups[0].getElement('.fabrikNotice').dispose();
@@ -2171,6 +2433,15 @@ define(['jquery', 'fab/encoder', 'fab/fabrik', 'lib/debounce/jquery.ba-throttle-
 
                 this.repeatGroupMarkers.set(i, this.repeatGroupMarkers.get(i) + 1);
                 document.id('fabrik_repeat_group_' + i + '_added').value = '1';
+
+                this.formElements.each(function (e, k) {
+                    if (e.groupid === i && typeOf(e.element) !== 'null') {
+                        this.addMustValidate(e);
+                    }
+                }.bind(this));
+
+                Fabrik.fireEvent('fabrik.form.group.duplicate.end', [this, e, i, c]);
+
                 return;
             }
 
@@ -2231,7 +2502,7 @@ define(['jquery', 'fab/encoder', 'fab/fabrik', 'lib/debounce/jquery.ba-throttle-
 
                             // Update the element id use el.element.id rather than input.id as
                             // that may contain _1 at end of id
-                            var bits = Array.from(el.element.id.split('_'));
+                            var bits = Array.mfrom(el.element.id.split('_'));
                             bits.splice(bits.length - 1, 1, c);
                             input.id = bits.join('_');
 
@@ -2255,7 +2526,7 @@ define(['jquery', 'fab/encoder', 'fab/fabrik', 'lib/debounce/jquery.ba-throttle-
                         // events are cloned
 
                         // $$$ rob fix for date element
-                        var bits = Array.from(el.options.element.split('_'));
+                        var bits = Array.mfrom(el.options.element.split('_'));
                         bits.splice(bits.length - 1, 1, c);
                         subElementContainer.id = bits.join('_');
                     }
@@ -2339,6 +2610,7 @@ define(['jquery', 'fab/encoder', 'fab/fabrik', 'lib/debounce/jquery.ba-throttle-
             clone.fade(1);
             Fabrik.fireEvent('fabrik.form.group.duplicate.end', [this, e, i, c]);
             this.setRepeatGroupIntro(group, i);
+            this.renumberSortable(i);
             this.repeatGroupMarkers.set(i, this.repeatGroupMarkers.get(i) + 1);
             this.addedGroups.push('group' + i);
         },
@@ -2563,31 +2835,53 @@ define(['jquery', 'fab/encoder', 'fab/fabrik', 'lib/debounce/jquery.ba-throttle-
             }
         },
 
-        toggleSubmit: function (on) {
-            var submit = this._getButton('Submit');
-            if (typeOf(submit) !== 'null') {
-                if (on === true) {
-                    submit.disabled = '';
-                    submit.setStyle('opacity', 1);
-	                if (this.options.toggleSubmitTip !== '') {
-		                jQuery(this.form).find('.fabrikSubmitWrapper').tooltip('destroy');
-		                this.toggleSubmitTipAdded = false;
-	                }
+        removeMustValidate: function (el) {
+            if (this.options.ajaxValidation && this.options.toggleSubmit) {
+                delete this.mustValidateEls[el.element.id];
+                if (el.options.mustValidate) {
+                    if (!this.mustValidateEls.hasValue(true)) {
+                        this.toggleSubmit(true);
+                    }
                 }
-                else {
-                    submit.disabled = 'disabled';
-                    submit.setStyle('opacity', 0.5);
-	                if (this.options.toggleSubmitTip !== '') {
-	                    if (!this.toggleSubmitTipAdded) {
-		                    //jQuery(this.form).find('.fabrikSubmitWrapper').data('toggle', 'tooltip');
-		                    //jQuery(this.form).find('.fabrikSubmitWrapper').attr('title', 'Your form cannot be saved until all inputs have been validated');
-		                    jQuery(this.form).find('.fabrikSubmitWrapper').tooltip();
-		                    this.toggleSubmitTipAdded = true;
-	                    }
-	                }
-                }
-                Fabrik.fireEvent('fabrik.form.togglesubmit', [this, on]);
             }
+        },
+
+        toggleSubmit: function (on) {
+            var nameButtons = ['Submit', 'SubmitAndNew', 'SubmitAndDetails', 'apply'];
+            for (var name of nameButtons) {
+                var submit = this._getButton(name);
+                if (typeOf(submit) !== 'null') {
+                    if (on === true) {
+                        submit.disabled = '';
+                        submit.setStyle('opacity', 1);
+                        if (this.options.toggleSubmitTip !== '') {
+                            jQuery(this.form).find('.fabrikSubmitWrapper').tooltip('destroy');
+                            this.toggleSubmitTipAdded = false;
+                        }
+                    }
+                    else {
+                        submit.disabled = 'disabled';
+                        submit.setStyle('opacity', 0.5);
+                        if (this.options.toggleSubmitTip !== '') {
+                            if (!this.toggleSubmitTipAdded) {
+                                //jQuery(this.form).find('.fabrikSubmitWrapper').data('toggle', 'tooltip');
+                                //jQuery(this.form).find('.fabrikSubmitWrapper').attr('title', 'Your form cannot be saved until all inputs have been validated');
+                                jQuery(this.form).find('.fabrikSubmitWrapper').tooltip();
+                                this.toggleSubmitTipAdded = true;
+                            }
+                        }
+                    }
+                    Fabrik.fireEvent('fabrik.form.togglesubmit', [this, on]);
+                }
+            }
+        },
+
+        addPlugins: function (a) {
+            var self = this;
+            jQuery.each(a, function (k, p) {
+                p.form = self;
+            });
+            this.plugins = a;
         }
     });
 

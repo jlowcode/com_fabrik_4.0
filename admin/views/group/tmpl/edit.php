@@ -4,7 +4,7 @@
  *
  * @package     Joomla.Administrator
  * @subpackage  Fabrik
- * @copyright   Copyright (C) 2005-2016  Media A-Team, Inc. - All rights reserved.
+ * @copyright   Copyright (C) 2005-2020  Media A-Team, Inc. - All rights reserved.
  * @license     GNU/GPL http://www.gnu.org/copyleft/gpl.html
  * @since       3.0
  */
@@ -12,17 +12,21 @@
 // No direct access
 defined('_JEXEC') or die('Restricted access');
 
-JHtml::addIncludePath(JPATH_COMPONENT . '/helpers/html');
-JHtml::_('behavior.tooltip');
+use Joomla\CMS\Language\Text;
+use Joomla\CMS\Router\Route;
+use Joomla\CMS\HTML\HTMLHelper;
+
+HTMLHelper::addIncludePath(JPATH_COMPONENT . '/helpers/html');
+HTMLHelper::_('bootstrap.tooltip');
 FabrikHelperHTML::formvalidation();
-JHtml::_('behavior.keepalive');
+HTMLHelper::_('behavior.keepalive');
 
 ?>
 
-<form action="<?php JRoute::_('index.php?option=com_fabrik'); ?>" method="post" name="adminForm" id="adminForm" class="form-validate">
+<form action="<?php Route::_('index.php?option=com_fabrik'); ?>" method="post" name="adminForm" id="adminForm" class="form-validate">
 	<div class="width-60 fltlft">
 		<fieldset class="adminform">
-			<legend><?php echo FText::_('COM_FABRIK_DETAILS');?></legend>
+			<legend><?php echo Text::_('COM_FABRIK_DETAILS');?></legend>
 			<ul class="adminformlist">
 
 				<?php foreach ($this->form->getFieldset('details') as $field) :?>
@@ -46,7 +50,7 @@ JHtml::_('behavior.keepalive');
 	<div class="width-40 fltlft">
 
 		<fieldset class="adminform">
-			<legend><?php echo FText::_('COM_FABRIK_REPEAT');?></legend>
+			<legend><?php echo Text::_('COM_FABRIK_REPEAT');?></legend>
 			<ul class="adminformlist">
 				<?php foreach ($this->form->getFieldset('repeat') as $field) :?>
 				<li>
@@ -57,7 +61,7 @@ JHtml::_('behavior.keepalive');
 		</fieldset>
 
 		<fieldset class="adminform">
-			<legend><?php echo FText::_('COM_FABRIK_LAYOUT');?></legend>
+			<legend><?php echo Text::_('COM_FABRIK_LAYOUT');?></legend>
 			<ul class="adminformlist">
 				<?php foreach ($this->form->getFieldset('layout') as $field) :?>
 				<li>
@@ -68,7 +72,7 @@ JHtml::_('behavior.keepalive');
 		</fieldset>
 
 		<fieldset class="adminform">
-			<legend><?php echo FText::_('COM_FABRIK_GROUP_MULTIPAGE');?></legend>
+			<legend><?php echo Text::_('COM_FABRIK_GROUP_MULTIPAGE');?></legend>
 			<ul class="adminformlist">
 				<?php foreach ($this->form->getFieldset('pagination') as $field) :?>
 				<li>
@@ -83,5 +87,5 @@ JHtml::_('behavior.keepalive');
 	<div class="clr"></div>
 
 	<input type="hidden" name="task" value="" />
-	<?php echo JHtml::_('form.token'); ?>
+	<?php echo HTMLHelper::_('form.token'); ?>
 </form>

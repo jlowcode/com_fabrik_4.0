@@ -4,12 +4,14 @@
  *
  * @package     Joomla
  * @subpackage  Fabrik
- * @copyright   Copyright (C) 2005-2016  Media A-Team, Inc. - All rights reserved.
+ * @copyright   Copyright (C) 2005-2020  Media A-Team, Inc. - All rights reserved.
  * @license     GNU/GPL http://www.gnu.org/copyleft/gpl.html
  */
 
 // No direct access
 defined('_JEXEC') or die('Restricted access');
+
+use Joomla\CMS\MVC\View\HtmlView;
 
 jimport('joomla.application.component.view');
 
@@ -21,7 +23,7 @@ jimport('joomla.application.component.view');
  * @since       1.6
  */
 
-class FabrikViewHome extends JViewLegacy
+class FabrikViewHome extends HtmlView
 {
 	/**
 	 * Display the view

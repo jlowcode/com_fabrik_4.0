@@ -4,12 +4,15 @@
  *
  * @package     Joomla
  * @subpackage  Fabrik
- * @copyright   Copyright (C) 2005-2016  Media A-Team, Inc. - All rights reserved.
+ * @copyright   Copyright (C) 2005-2020  Media A-Team, Inc. - All rights reserved.
  * @license     GNU/GPL http://www.gnu.org/copyleft/gpl.html
  */
 
 // No direct access
 defined('_JEXEC') or die('Restricted access');
+
+use Joomla\CMS\Language\Text;
+use Joomla\CMS\Factory;
 
 require_once JPATH_SITE . '/components/com_fabrik/views/list/view.base.php';
 
@@ -31,13 +34,14 @@ class FabrikViewList extends FabrikViewListBase
 	 */
 	public function display($tpl = null)
 	{
-		$input = $this->app->input;
+		$input = $this->app->getInput();
+		$input->set('fabrik_storesessionfilters', false);
 
 		/** @var FabrikFEModelCSVExport $exporter */
-		$exporter = JModelLegacy::getInstance('Csvexport', 'FabrikFEModel');
+		$exporter = Factory::getApplication()->bootComponent('com_fabrik')->getMVCFactory()->createModel('Csvexport', 'FabrikFEModel');
 
 		/** @var FabrikFEModelList $model */
-		$model = JModelLegacy::getInstance('list', 'FabrikFEModel');
+		$model = Factory::getApplication()->bootComponent('com_fabrik')->getMVCFactory()->createModel('List', 'FabrikFEModel');
 		$model->setId($input->getInt('listid'));
 
 		if (!parent::access($model))
@@ -87,7 +91,7 @@ class FabrikViewList extends FabrikViewListBase
 		if ((int) $total === 0)
 		{
 			$notice = new stdClass;
-			$notice->err = FText::_('COM_FABRIK_CSV_EXPORT_NO_RECORDS');
+			$notice->err = Text::_('COM_FABRIK_CSV_EXPORT_NO_RECORDS');
 			echo json_encode($notice);
 
 			return;
@@ -123,7 +127,7 @@ class FabrikViewList extends FabrikViewListBase
 	 */
 	protected function download($model, $exporter, $key)
 	{
-		$input = $this->app->input;
+		$input = $this->app->getInput();
 		$input->set('limitstart' . $model->getId(), 0);
 
 		// Remove the total from the session

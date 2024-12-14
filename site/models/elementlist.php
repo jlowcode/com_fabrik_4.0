@@ -4,14 +4,20 @@
  *
  * @package     Joomla
  * @subpackage  Fabrik
- * @copyright   Copyright (C) 2005-2016  Media A-Team, Inc. - All rights reserved.
+ * @copyright   Copyright (C) 2005-2020  Media A-Team, Inc. - All rights reserved.
  * @license     GNU/GPL http://www.gnu.org/copyleft/gpl.html
  */
 
 // No direct access
 defined('_JEXEC') or die('Restricted access');
 
+use Joomla\CMS\Language\Text;
+use Joomla\CMS\Profiler\Profiler;
+use Joomla\CMS\Factory;
 use Joomla\Utilities\ArrayHelper;
+use Joomla\String\StringHelper;
+use Joomla\CMS\HTML\HTMLHelper;
+use Fabrik\Helpers\Php;
 
 jimport('joomla.application.component.model');
 jimport('joomla.filesystem.file');
@@ -200,7 +206,7 @@ class PlgFabrik_ElementList extends PlgFabrik_Element
 	public function getFilterQuery($key, $condition, $value, $originalValue, $type = 'normal', $evalFilter = '0')
 	{
 		$element = $this->getElement();
-		$condition = JString::strtoupper($condition);
+		$condition = StringHelper::strtoupper($condition);
 		$this->encryptFieldName($key);
 		$glue = 'OR';
 
@@ -264,7 +270,8 @@ class PlgFabrik_ElementList extends PlgFabrik_Element
 		if ($evalFilter && ($type === 'prefilter' || $type === 'menuprefilter'))
 		{
 			$originalValue = stripslashes(htmlspecialchars_decode($originalValue, ENT_QUOTES));
-			$originalValue = @eval($originalValue);
+			FabrikWorker::clearEval();
+			$originalValue = Php::Eval(['code' => $originalValue]);
 			FabrikWorker::logEval($originalValue, 'Caught exception on eval of elementList::filterQueryMultiValues() ' . $key . ': %s');
 		}
 
@@ -374,10 +381,27 @@ class PlgFabrik_ElementList extends PlgFabrik_Element
 
 			$this->getFilterDisplayValues($default, $rows);
 
-			if (!in_array('', $values) && !in_array($element->filter_type, array('range', 'checkbox', 'multiselect', 'tagcloud')))
+			if (!in_array('', $values) && !in_array($element->filter_type, array('checkbox', 'multiselect')))
 			{
-				array_unshift($rows, JHTML::_('select.option', '', $this->filterSelectLabel()));
+				array_unshift($rows, HTMLHelper::_('select.option', '', $this->filterSelectLabel()));
 			}
+
+			foreach ($rows as &$r)
+			{
+				// translate
+				$r->text = Text::_($r->text);
+
+				// decode first, to decode all hex entities (like &#39;)
+				$r->text = html_entity_decode($r->text, ENT_QUOTES | ENT_XML1, 'UTF-8');
+
+				// Encode if necessary
+				if (!in_array($element->get('filter_type'), array('checkbox')))
+				{
+					$r->text = strip_tags($r->text);
+					$r->text = htmlspecialchars($r->text, ENT_NOQUOTES, 'UTF-8', false);
+				}
+			}
+
 		}
 
 		$return = array();
@@ -542,39 +566,28 @@ class PlgFabrik_ElementList extends PlgFabrik_Element
 	 */
 	public static function cacheAutoCompleteOptions($elementModel, $search, $opts = array())
 	{
-		$app = JFactory::getApplication();
+		$app = Factory::getApplication();
 		$label = FArrayHelper::getValue($opts, 'label', '');
 		$rows = $elementModel->filterValueList(true, '', $label);
-		$v = $app->input->get('value', '', 'string');
+		$v = $app->getInput()->get('value', '', 'string');
 
-		/*
-		* Adding array of characters accentuated for auto-complete
-		* recognize words with and without accent
-		*/
-		$withAccents = array('à', 'á', 'â', 'ã', 'ä', 'å', 'ç', 'è', 'é', 'ê', 'ë', 'ì', 
-		'í', 'î', 'ï', 'ñ', 'ò', 'ó', 'ô', 'õ', 'ö', 'ù', 'ü', 'ú', 'ÿ', 'À', 'Á', 'Â', 
-		'Ã', 'Ä', 'Å', 'Ç', 'È', 'É', 'Ê', 'Ë', 'Ì', 'Í', 'Î', 'Ï', 'Ñ', 'Ò', 'Ó', 'Ô', 
-		'Õ', 'Ö', 'O', 'Ù', 'Ü', 'Ú');
-		$withoutAccents = array('a', 'a', 'a', 'a', 'a', 'a', 'c', 'e', 'e', 'e', 'e', 'i', 
-		'i', 'i', 'i', 'n', 'o', 'o', 'o', 'o', 'o', 'u', 'u', 'u', 'y', 'A', 'A', 'A', 'A', 'A', 
-		'A', 'C', 'E', 'E', 'E', 'E', 'I', 'I', 'I', 'I', 'N', 'O', 'O', 'O', 'O', 'O', '0', 'U', 'U', 'U');
-
-		// Search for every word separately in the result rather than the single string (of multiple words)
+		/**
+		 * Search for every word separately in the result rather than the single string (of multiple words)
+		 *
+		 * Added u switch, for UTF8
+		 */
 		$regex  = "/(?=.*" .
 			implode(")(?=.*",
 				array_filter(explode(" ", preg_quote($v, '/')))
-			) . ").*/i";
+			) . ").*/ui";
 		$start = count($rows) - 1;
 
 		for ($i = $start; $i >= 0; $i--)
 		{
 			$rows[$i]->text = strip_tags($rows[$i]->text);
 
-			/**
-			 * Check that search strings are not in the HTML we just stripped
-			 * 01/06/2020 Check if the string is part of the array with and without accent
-			 */
-			if (!preg_match(str_replace($withAccents, $withoutAccents, $regex), str_replace($withAccents, $withoutAccents, $rows[$i]->text)))
+			// Check that search strings are not in the HTML we just stripped
+			if (!preg_match($regex, preg_replace('/[^A-Za-z0-9 ]/', '', iconv('UTF-8', 'ASCII//TRANSLIT', $rows[$i]->text))))
 			{
 				unset($rows[$i]);
 			}
@@ -621,14 +634,14 @@ class PlgFabrik_ElementList extends PlgFabrik_Element
 	 */
 	public function renderListData($data, stdClass &$thisRow, $opts = array())
 	{
-        $profiler = JProfiler::getInstance('Application');
+        $profiler = Profiler::getInstance('Application');
         JDEBUG ? $profiler->mark("renderListData: parent: start: {$this->element->name}") : null;
 
         $params = $this->getParams();
 		$listModel = $this->getListModel();
 		$multiple = $this->isMultiple();
 		$mergeGroupRepeat = ($this->getGroup()->canRepeat() && $this->getListModel()->mergeJoinedData());
-		$useIcon = $params->get('icon_folder', 0) && ArrayHelper::getValue($opts, 'icon', 1);
+		$useIcon = (int)$params->get('icon_folder', 0) > 0 && ArrayHelper::getValue($opts, 'icon', 1);
 
 		// Give priority to raw value icons (podion)
 		$raw = $this->isJoin() ? $this->getFullName(true, false) . '_raw' : $this->getFullName(true, false) . '_id';
@@ -727,8 +740,7 @@ class PlgFabrik_ElementList extends PlgFabrik_Element
 			'uls' => $uls,
 			'condense' => $condense,
 			'addHtml' => $addHtml,
-			'sepChar' => ArrayHelper::getValue($opts, 'sepChar', ' '),
-			'classCSS' => $params->get('tablecss_cell_li')
+			'sepChar' => ArrayHelper::getValue($opts, 'sepChar', ' ')
 		);
 
         JDEBUG ? $profiler->mark("renderListData: parent: end: {$this->element->name}") : null;
@@ -747,7 +759,13 @@ class PlgFabrik_ElementList extends PlgFabrik_Element
 	public function renderListData_csv($data, &$thisRow)
 	{
 		$this->renderWithHTML = false;
-		$d = $this->renderListData($data, $thisRow, array('sepChar' => "\n"));
+		$d = $this->renderListData(
+			$data,
+			$thisRow,
+			array(
+				'sepChar' => $this->getlistModel()->getParams()->get('csv_multi_join_split', ',')
+			)
+		);
 
 		if ($this->isJoin())
 		{
@@ -776,7 +794,7 @@ class PlgFabrik_ElementList extends PlgFabrik_Element
 	public function render($data, $repeatCounter = 0)
 	{
 		$name = $this->getHTMLName($repeatCounter);
-		$input = $this->app->input;
+		$input = $this->app->getInput();
 		$id = $this->getHTMLId($repeatCounter);
 		$params = $this->getParams();
 		$values = $this->getSubOptionValues();
@@ -894,7 +912,8 @@ class PlgFabrik_ElementList extends PlgFabrik_Element
 	{
 		$params = $this->getParams();
 
-		return FabrikWorker::j3() && $params->get('btnGroup', false);
+//		return FabrikWorker::j3() && $params->get('btnGroup', false);
+		return $params->get('btnGroup', false);
 	}
 
 	/**
@@ -1082,7 +1101,7 @@ class PlgFabrik_ElementList extends PlgFabrik_Element
 			{
 				if ($multiple && $this->renderWithHTML)
 				{
-					$lis[] = '<li class="badge">' . $l . '</li>';
+					$lis[] = '<li>' . $l . '</li>';
 				}
 				else
 				{
