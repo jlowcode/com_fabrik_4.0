@@ -141,6 +141,12 @@ class FabrikViewList extends FabrikViewListBase
             $this->session->clear($context . '.showmsg');
 		}
 
+		if($input->get('render') != '') {
+			parent::getRender();
+
+			return;
+		}
+
 		echo json_encode($d);
 	}
 

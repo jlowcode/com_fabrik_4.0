@@ -638,6 +638,9 @@ class FabrikViewListBase extends FabrikView
 		$this->loadTemplateBottom();
 		$this->getManagementJS($this->rows);
 
+		$this->canShowTutorialTemplate = $model->canShowTutorialTemplate();
+		$this->dataTemplateTutorial = $this->canShowTutorialTemplate ? $model->dataTemplateTutorial() : false;
+
 		// Get dropdown list of other tables for quick nav in admin
 		$this->tablePicker = $params->get('show-table-picker', $input->get('list-picker', true)) && $this->app->isClient('administrator') && $this->app->getInput()->get('format') !== 'pdf' ? FabrikHelperHTML::tableList($this->table->id) : '';
 
@@ -743,6 +746,34 @@ class FabrikViewListBase extends FabrikView
 
 		// $$$ rob 09/06/2011 no need for isMambot test? should use ob_start() in module / plugin to capture the output
 		echo $text;
+	}
+
+	/**
+	 * Gets the template rendering and returns it to finish the ajax request
+	 * 
+	 * @return 	null
+	 */
+	public function getRender()
+	{
+		$input = $this->app->getInput();
+		$model = $this->getModel();
+		$ids = json_decode($input->getString('listRowIds'));
+
+		$this->canShowTutorialTemplate = $model->canShowTutorialTemplate();
+		$this->dataTemplateTutorial = $this->canShowTutorialTemplate ? $model->dataTemplateTutorial($ids) : false;
+
+		$tmpl = $model->getTmpl();
+		$render = $input->get('render');
+		$this->_setPath('template', JPATH_COMPONENT.'/views/'.$input->get('view').'/tmpl/'.$tmpl);
+		$this->setLayout('default');
+		$text['html'] = $this->loadTemplate($render);
+
+		if($input->get('format') == 'pdf') {
+			echo $text['html'];
+		} else {
+			echo json_encode($text);
+			exit;
+		}
 	}
 
 	/**

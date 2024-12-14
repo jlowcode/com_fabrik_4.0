@@ -6604,6 +6604,109 @@ class FabrikFEModelList extends FormModel
 	}
 
 	/**
+	 * This list can be showed with tutorial template?
+	 *  
+	 * @return  bool
+	 */
+	public function canShowTutorialTemplate()
+	{
+		$els = $this->getElements('id');
+		$fields = new stdClass();
+
+		foreach ($els as $el) {
+			$params = $el->getParams();
+			if (
+				str_contains($el->getName(), 'Databasejoin') && $params->get('database_join_display_type') == 'auto-complete'
+				&& $params->get('join_db_name') == $this->getTable()->get('db_table_name') &&
+				($params->get('database_join_display_style') == 'both-treeview-autocomplete' || $params->get('database_join_display_style') == 'only-treeview')
+			) {
+				$tree = true;
+				!isset($fields->tree) ? $fields->tree = $el->getId() : null;
+			}
+
+			if(str_contains($el->getName(), 'Field')) {
+				$field = true;
+				!isset($fields->field) ? $fields->field = $el->getId() : null;
+			}
+
+			if(str_contains($el->getName(), 'Textarea') && $params->get('use_wysiwyg') == '1') {
+				$textarea = true;
+				!isset($fields->textarea) ? $fields->textarea = $el->getId() : null;
+			}
+		}
+
+		$this->fieldsTemplateTutorial = $fields;
+
+		return $tree && $field && $textarea;
+	}
+
+	/**
+	 * Data list to template tutorial
+	 * 
+	 * @param	Array		$ids		Ids array to filter
+	 * 
+	 * @return	Array
+	 */
+	public function dataTemplateTutorial($ids=[])
+	{
+		$db = $this->getDb();
+		$els = $this->getElements('id');
+
+		$ids = (Array) $ids;
+		$origIds = (Array) $ids;
+
+		$elField = $els[$this->fieldsTemplateTutorial->field];
+		$nameField = $elField->getElement()->get('name');
+		
+		$elDesc = $els[$this->fieldsTemplateTutorial->textarea];
+		$nameDesc = $elDesc->getElement()->get('name');
+
+		$elJoin = $els[$this->fieldsTemplateTutorial->tree];
+		$nameJoin = $elJoin->getElement()->get('name');
+
+		$tableName = $this->getTable()->db_table_name;
+
+		$query = $db->getQuery(true);
+		$query->select([$db->qn('c1.id', 'id'), $db->qn('c1.'.$nameField, 'parent_name'), $db->qn('c2.id', 'child_id'), $db->qn('c1.'.$nameDesc, 'desc'), $db->qn('c1.'.$nameJoin, 'parent_id')])
+			->from($db->qn($tableName, 'c1'))
+			->join('LEFT', $db->qn($tableName, 'c2') . ' ON c2.'.$nameJoin.'= c1.id')
+			->order($db->qn('parent_name'));
+		$db->setQuery($query);
+		$result = $db->loadObjectList();
+
+		$itensOrder = Array();
+		foreach ($result as $item) {
+			$item = (Array) $item;
+			$item['children'] = Array();
+			$itensOrder[$item['id']] = $item;
+		}
+
+		$dataFilter = Array();
+		$itens = $itensOrder;
+		ksort($itensOrder);
+		foreach ($itensOrder as &$itemOrder) {
+			if(in_array($itemOrder['id'], $ids) || in_array($itemOrder['parent_id'], $ids) || empty($ids)) {
+				!empty($ids) ? $ids[] = $itemOrder['id'] : null;
+				$itemOrder['del'] = false;
+			}
+		}
+
+		$data = Array();
+		foreach ($itens as &$item) {
+			if($itensOrder[$item['id']]['del'] === false) {
+				if ($item['parent_id']) {
+					$itens[$item['parent_id']]['children'][] = &$item;
+				} else {
+					$data[] = &$item;
+				}
+			}
+		}
+
+		!empty($ids) ? $data = array_values(array_intersect_key($itens, array_flip($origIds))) : null;
+		return $data;
+	}
+
+	/**
 	 * Have all the required filters been met?
 	 *
 	 * @return  bool  true if they have if false we shouldn't show the table data
