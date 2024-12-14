@@ -238,7 +238,7 @@ function onReportAbuse(listRowIds) {
 	options.user = {};
 	options.user.approve_for_own_records = window.workflowInstance.options.user.approve_for_own_records;
 	options.workflow_owner_element = window.workflowInstance.options.workflow_owner_element;
-
+	options.allow_review_request = window.workflowInstance.options.allow_review_request;
 
 	jQuery.ajax({
 		'url': '',

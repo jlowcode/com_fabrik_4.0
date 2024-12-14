@@ -39,6 +39,9 @@ $c = $_REQUEST['c'];
 echo <<<EOT
 /* BEGIN - Your CSS styling starts here */
 
+.icon-fa, .icon-sort {
+    padding: 0px 2px;
+}
 .intro-container {
   position: relative;
   text-align: right;
