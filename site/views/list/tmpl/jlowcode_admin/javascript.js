@@ -8,17 +8,19 @@
 requirejs(['fab/fabrik', 'fab/bootstrap_tree'], function (Fabrik, BootstrapTree) {
 
 	jQuery(document).ready(function () {
-		hideHeadingsToModeGalleryOrTree();
+		hideHeadings();
+		setFiltersTutorialTemplate();
 
 		Fabrik.addEvent('fabrik.list.update', function (list) {
-			hideHeadingsToModeGalleryOrTree();
+			hideHeadings();
 
 			return list;
 		});
+
 	});
 
 	Fabrik.addEvent('fabrik.list.loaded', function (list) {
-		hideHeadingsToModeGalleryOrTree();
+		hideHeadings();
 
 		var dataRow = list.list.getElementsByClassName('fabrik_row');
 		Array.from(dataRow).each(function (row) {
@@ -129,26 +131,47 @@ window.addEvent('fabrik.loaded', function () {
 
 function handleRadioClick(element) {
 	showSpinner();
-	if (element.id === "list-view") {
-		sessionStorage.setItem("modo", "list");
-		enviarDadosParaServidor();
-	} else if (element.id === "grid-view") {
-		sessionStorage.setItem("modo", "grid");
-		enviarDadosParaServidor();
-	} else if (element.id === "tree-view") {
-		sessionStorage.setItem("modo", "tree");
-		enviarDadosParaServidor();
+
+	switch (element.id) {
+		case 'list-view':
+			sessionStorage.setItem("modo", "list");			
+			break;
+
+		case 'grid-view':
+			sessionStorage.setItem("modo", "grid");		
+			break;
+
+		case 'tree-view':
+			sessionStorage.setItem("modo", "tree");			
+			break;
+
+		case 'tutorial-view':
+			sessionStorage.setItem("modo", "tutorial");			
+			break;
 	}
+
+	enviarDadosParaServidor();
 };
 
 function carregarModoEscolhido() {
 	var modoExibicao = sessionStorage.getItem("modo");
-	if (modoExibicao == "list") {
-		document.getElementById("list-view").checked = true;
-	} else if (modoExibicao == "grid") {
-		document.getElementById("grid-view").checked = true;
-	} else if (modoExibicao == "tree") {
-		document.getElementById("tree-view").checked = true;
+
+	switch (modoExibicao) {
+		case 'list':
+			document.getElementById("list-view").checked = true;		
+			break;
+
+		case 'grid':
+			document.getElementById("grid-view").checked = true;	
+			break;
+
+		case 'tree':
+			document.getElementById("tree-view").checked = true;		
+			break;
+
+		case 'tutorial':
+			document.getElementById("tutorial-view").checked = true;		
+			break;
 	}
 }
 
@@ -216,6 +239,7 @@ function carregarFilhos(paiId, elementoPai) {
 				itemFilho.appendChild(action);
 				elementoPai.appendChild(itemFilho);
 			});
+			setFiltersTutorialTemplate();
 			hideSpinner();
 		})
 		.catch(error => {
@@ -238,7 +262,7 @@ function onReportAbuse(listRowIds) {
 	options.user = {};
 	options.user.approve_for_own_records = window.workflowInstance.options.user.approve_for_own_records;
 	options.workflow_owner_element = window.workflowInstance.options.workflow_owner_element;
-	options.allow_review_request = window.workflowInstance.options.allow_review_request;
+
 
 	jQuery.ajax({
 		'url': '',
@@ -295,11 +319,52 @@ document.addEventListener("DOMContentLoaded", function () {
 	}
 });
 
-function hideHeadingsToModeGalleryOrTree() {
+function hideHeadings() {
 	jQuery('.fabrikList .fabrik___heading th').each(function (i, column) {
 		classes = jQuery(column).attr('class').split(' ');
 		if(classes.indexOf('fabrik_actions') < 0) {
 			jQuery(column).css('visibility', 'hidden');
 		}
+	});
+}
+
+function setFiltersTutorialTemplate() {
+	var nodesTree = jQuery('.tree-text');
+
+	nodesTree.each(function() {
+		var nodeTree = jQuery(this);
+
+		nodeTree.on('click', function() {
+			var nodeTree = jQuery(this);
+			var treeItem = nodeTree.closest('.tree-item');
+			var id = treeItem.data('id');
+			var listRef = jQuery('input[name="listref"]').val();
+			var itemId = jQuery('input[name="Itemid"]').val();
+			var incFilters = jQuery('input[name="incfilters"]').val();
+			var listId = jQuery('input[name="listid"]').val();
+			var url = jQuery('form').prop('action');
+
+			jQuery.ajax({
+				url: url,
+				method: 'post',
+				data: {
+					'listRowIds': id,
+					'option': 'com_fabrik',
+					'task': 'list.filter',
+					'tmpl': 'jlowcode_admin',
+					'render': 'page_tutorial',
+					'format': 'raw',
+					'view': 'list',
+					'listref': listRef,
+					'itemid': itemId,
+					'incfilters': incFilters,
+					'listid': listId
+				},
+			}).done(function (r) {
+				r = JSON.parse(r);
+
+				jQuery('.ajax-filters').replaceWith(r['html']);
+			});
+		});
 	});
 }
