@@ -6652,7 +6652,7 @@ class FabrikFEModelList extends FormModel
 		$db = $this->getDb();
 		$els = $this->getElements('id');
 
-		$ids = (Array) $ids;
+		$ids = $ids == 0 ? [] : (Array) $ids;
 		$origIds = (Array) $ids;
 
 		$elField = $els[$this->fieldsTemplateTutorial->field];
