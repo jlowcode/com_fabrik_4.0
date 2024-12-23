@@ -283,6 +283,10 @@ thead .fabrik___heading {
     border-bottom: 2px solid #eee !important;
 }
 
+.heading {
+    background-color: #FBFBFB !important; 
+}
+
 tfoot .fabrik___heading {
     background-color: #fff !important;
 }
