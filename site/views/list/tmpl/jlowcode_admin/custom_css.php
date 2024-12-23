@@ -42,6 +42,7 @@ echo <<<EOT
 .icon-fa, .icon-sort {
     padding: 0px 2px;
 }
+
 .intro-container {
   position: relative;
   text-align: right;
@@ -282,6 +283,10 @@ thead .fabrik___heading {
     border-bottom: 2px solid #eee !important;
 }
 
+.heading {
+    background-color: #FBFBFB !important; 
+}
+
 tfoot .fabrik___heading {
     background-color: #fff !important;
 }
@@ -328,7 +333,7 @@ form a, table a {
 }
 
 h1 {
-    margin: 0px 0px 10px 0px !important;
+    margin: 0px !important;
     line-height: 1;
 }
 
@@ -432,6 +437,7 @@ i.fas.fa-exclamation-triangle.fa-sm{
 	color: #000;
     font-weight: 500;
     border-radius: 5px;
+    margin-right: 0px;
 }
 
 .btn.fabrik_view{
@@ -764,6 +770,55 @@ i.fas.fa-exclamation-triangle.fa-sm{
     100% { transform: rotate(360deg); }
 }
 
+/* Style to tutorial view */
+.section {
+    display: flex;
+}
+
+.summary {
+    width: 20%;
+    padding-top: 25px;
+    border-right: 2px solid #eee;
+}
+
+.tutorial {
+    width: 80%;
+    padding: 0px 5%;
+}
+
+.tutorial-section {
+    margin-bottom: 30px;
+}
+
+.tutorial-section:last-child {
+    margin-bottom: 0px
+}
+
+.tutorial h2, .tutorial h3, .tutorial h4, .tutorial h5, .tutorial h6 {
+    font-weight: 700;
+}
+
+.tutorial h2 {
+    margin: 0px;
+}
+
+.header-tutorial {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 2px solid #eee;
+}
+
+.pdf-header {
+    display: flex;
+    align-items: center;
+    padding-right: 5%;
+}
+
+.pdf-header img {
+    margin-right: 5px;
+}
 
 /* Estilo básico para o contêiner de registros */
 /* Estilo básico para o contêiner de registros */
@@ -774,7 +829,7 @@ i.fas.fa-exclamation-triangle.fa-sm{
 
 /* Estilo para os itens da árvore */
 .tree-item {
-    margin: 0em 1em;
+    margin: 0em 0px 0em 0.5em;
     padding: 0;
     cursor: pointer;
     position: relative;
@@ -782,20 +837,19 @@ i.fas.fa-exclamation-triangle.fa-sm{
     margin-bottom: -15px;
 }
 
+.tree-text {
+    cursor: pointer;
+}
+
+
 /* Estilo para o símbolo de seta */
 .tree-arrow {
     cursor: pointer; /* Muda o cursor ao passar sobre a seta */
-    margin-right: 5px;
     display: inline-block;
     transition: transform 0.2s; /* Animação de rotação */
 }
 
 /* Estilo para o texto do item */
-.tree-text {
-    margin-left: 5px;
-}
-
-
 .no-children {
     color: #666;
     font-style: italic;

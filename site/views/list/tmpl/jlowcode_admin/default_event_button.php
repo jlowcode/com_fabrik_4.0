@@ -42,6 +42,12 @@ foreach ($elsList as $el) {
             <?php echo FabrikHelperHTML::image('hierarchy.png', 'list', $this->tmpl);?>
         </span>
     <?php endif; ?>
+
+    <?php if ($this->canShowTutorialTemplate == true): ?>
+        <span type="radio" id="tutorial-view" name="view" onclick="handleRadioClick(this)">
+            <?php echo FabrikHelperHTML::image('notification.png', 'list', $this->tmpl);?>
+        </span>
+    <?php endif; ?>
 </div>
 
 <?php

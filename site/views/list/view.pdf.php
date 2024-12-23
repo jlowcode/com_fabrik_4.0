@@ -56,6 +56,12 @@ class FabrikViewList extends FabrikViewListBase
 				FabrikhelperHTML::loadBootstrapCSS(true);
 			}
 
+			if($this->app->getInput()->get('render') != '') {
+				parent::getRender();
+	
+				return;
+			}
+
 			$this->output();
 		}
 	}
