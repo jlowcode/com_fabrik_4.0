@@ -39,76 +39,74 @@ if ($this->params->get('show_page_heading')) :
 endif;
 
 if ($this->showTitle == 1) { ?>
-	<h1><?php echo $this->table->label; ?></h1>
-<?php } ?>
+	<h1><?php echo $this->table->label;?></h1>
+<?php }?>
 
-<?php echo $this->table->intro; ?>
+<?php echo $this->table->intro;?>
 <form class="fabrikForm" action="<?php echo $this->table->action;?>" method="post" id="<?php echo $this->formid;?>" name="fabrikList">
-	<div class="<?php echo $this->params['show-table-filters'] === '6' ? 'row' : ''; ?>">
-		<div class="<?php echo $this->params['show-table-filters'] === '6' ? 'col-md-12' : ''; ?>">
-			<?php
-			if ($this->hasButtons) :
-				echo $this->loadTemplate('buttons');
-			endif;
-			?>
-		</div>
-		<div class="<?php echo $this->params['show-table-filters'] === '6' ? ' col-md-2 span2' : ''; ?>" style="float: left;">
-			<?php
-			if ($this->showFilters) {
-				echo $this->layoutFilters();
-			}
-			?>
-		</div>
 
-		<div class="fabrikDataContainer<?php echo $this->params['show-table-filters'] === '6' ? ' col-md-10 span9' : ''; ?>" data-cols="<?php echo $columns; ?>" style="float: right">
+<?php
+if ($this->hasButtons):
+	echo $this->loadTemplate('buttons');
+endif;
 
-		<?php foreach ($this->pluginBeforeList as $c) {
-			echo $c;
-		}?>
-		<div class="fabrikList <?php echo $this->list->class;?>" id="list_<?php echo $this->table->renderid;?>" >
-		
-			<?php
-			$gCounter = 0;
-			foreach ($this->rows as $groupedBy => $group) :?>
-			<?php
-			if ($this->isGrouped) :
-				$imgProps = array('alt' => FText::_('COM_FABRIK_TOGGLE'), 'data-role' => 'toggle', 'data-expand-icon' => 'fa fa-arrow-down', 'data-collapse-icon' => 'fa fa-arrow-right');
-			?>
-			<div class="fabrik_groupheading">
-				<?php echo $this->layoutGroupHeading($groupedBy, $group); ?>
-			</div>
-			<?php
-			endif;
-			?>
-			<div class="fabrik_groupdata">
-				<div class="groupDataMsg">
-					<div class="emptyDataMessage" style="<?php echo $this->emptyStyle?>">
-						<?php echo $this->emptyDataMessage; ?>
-					</div>
-				</div>
+if ($this->showFilters) {
+	echo $this->layoutFilters();
+}
+?>
 
-			<?php
+<div class="fabrikDataContainer" data-cols="<?php echo $columns;?>">
 
-			foreach ($group as $this->_row) :
-				$item = new stdClass;
-				$item->rowdata = $this->loadTemplate('row');
-				$item->spanId = $this->_row->id;
-				$items[] = $item;
-			endforeach;
-			$class = 'fabrik_row ';
-			echo FabrikHelperHTML::bootstrapGrid($items, $columns, $class, true, '');
-			?>
-			</div>
-			<?php
-			endforeach;
-		?>
+<?php foreach ($this->pluginBeforeList as $c) {
+	echo $c;
+}?>
+<div class="fabrikList <?php echo $this->list->class;?>" id="list_<?php echo $this->table->renderid;?>" >
 
-		</div>
-		<?php
-		echo $this->nav;
-		print_r($this->hiddenFields);?>
-		</div>
+	<?php
+	$gCounter = 0;
+	foreach ($this->rows as $groupedBy => $group) :?>
+	<?php
+	if ($this->isGrouped) :
+		$imgProps = array('alt' => Text::_('COM_FABRIK_TOGGLE'), 'data-role' => 'toggle', 'data-expand-icon' => 'fa fa-arrow-down', 'data-collapse-icon' => 'fa fa-arrow-right');
+	?>
+	<div class="fabrik_groupheading">
+		<?php echo $this->layoutGroupHeading($groupedBy, $group); ?>
 	</div>
+	<?php
+	endif;
+	?>
+	<div class="fabrik_groupdata">
+		<div class="groupDataMsg">
+			<div class="emptyDataMessage" style="<?php echo $this->emptyStyle?>">
+				<?php echo $this->emptyDataMessage; ?>
+			</div>
+		</div>
+
+	<?php
+
+	$items = array();
+	
+	foreach ($group as $this->_row) :
+		$item = new stdClass;
+		$item->rowdata = $this->loadTemplate('row');
+		$item->spanId = $this->_row->id;
+		$items[] = $item;
+	endforeach;
+	$class = 'fabrik_row ';
+	echo FabrikHelperHTML::bootstrapGrid($items, $columns, $class, true, '');
+
+	?>
+	</div>
+	<?php
+	endforeach;
+?>
+
+</div>
+<?php
+echo $this->nav;
+print_r($this->hiddenFields);?>
+</div>
+
 </form>
 <?php
 echo $this->table->outro;

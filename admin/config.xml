@@ -4,11 +4,6 @@
 	<inlinehelp button="show"/>
 	<fieldset label="COM_FABRIK_GLOBAL" name="global">
 
-		<field name="fabrik_product_key"
-		       type="text"
-		       description="COM_FABRIK_FIELD_PRODUCT_KEY_DESC"
-		       label="COM_FABRIK_FIELD_PRODUCT_KEY_LABEL" />
-
 		<field name="enable_big_selects"
 			class="radio btn-group"
 			type="radio"
@@ -155,7 +150,7 @@
 			default="0"
 			class="radio btn-group"
 			description="COM_FABRIK_ENABLE_SINGLE_ORDERING_DESC"
-			layout="joomla.form.field.radio.switcher"
+				layout="joomla.form.field.radio.switcher"
 			label="COM_FABRIK_ENABLE_SINGLE_ORDERING_LABEL"
 			type="radio">
 				<option value="0">JNO</option>
@@ -166,7 +161,7 @@
 			default="0"
 			class="radio btn-group"
 			description="COM_FABRIK_USER_ELEMENTS_AS_RELATED_DATA_DESC"
-			layout="joomla.form.field.radio.switcher"
+				layout="joomla.form.field.radio.switcher"
 			label="COM_FABRIK_USER_ELEMENTS_AS_RELATED_DATA_LABEL"
 			type="radio">
 				<option value="0">JNO</option>
@@ -178,7 +173,7 @@
 			default="0"
 			class="radio btn-group"
 			description="COM_FABRIK_FIELD_LIST_PDF_ICON_DESC"
-			layout="joomla.form.field.radio.switcher"
+				layout="joomla.form.field.radio.switcher"
 			label="COM_FABRIK_FIELD_LIST_PDF_ICON_LABEL"
 			menu="hide" >
 				<option value="0">JNO</option>
@@ -190,7 +185,7 @@
 		       default="0"
 		       class="radio btn-group"
 		       description="COM_FABRIK_FIELD_LIST_ALLOW_PDF_LOCALHOST_VIEW_DESC"
-			   layout="joomla.form.field.radio.switcher"
+				layout="joomla.form.field.radio.switcher"
 		       label="COM_FABRIK_FIELD_LIST_ALLOW_PDF_LOCALHOST_VIEW_LABEL"
 		       menu="hide" >
 			<option value="0">JNO</option>
@@ -354,7 +349,7 @@
             		type="radio"
             		default="0"
             		description="COM_FABRIK_LABELS_DESC"
-           			label="COM_FABRIK_LABELS_LABEL">
+           		label="COM_FABRIK_LABELS_LABEL">
                 		<option value="0">COM_FABRIK_LABELS_DEFAULT</option>
                 		<option value="1">COM_FABRIK_LABELS_LOWERCASE</option>
                 		<option value="2">COM_FABRIK_LABELS_UCWORDS</option>
@@ -727,119 +722,6 @@
 		       label="COM_FABRIK_FIELD_OAI_REPOSITORY_IDENTIFIER_LABEL"
 		       description="COM_FABRIK_FIELD_OAI_REPOSITORY_IDENTIFIER_DESC" />
 	</fieldset>
-
-	<fieldset
-			name="component"
-			label="COM_MEDIA_FIELDSET_OPTIONS_LABEL">
-		<field
-				name="upload_extensions"
-				type="text"
-				label="COM_MEDIA_FIELD_LEGAL_EXTENSIONS_LABEL"
-				description="COM_MEDIA_FIELD_LEGAL_EXTENSIONS_DESC"
-				size="50"
-				default="bmp,csv,doc,gif,ico,jpg,jpeg,odg,odp,ods,odt,pdf,png,ppt,txt,xcf,xls,BMP,CSV,DOC,GIF,ICO,JPG,JPEG,ODG,ODP,ODS,ODT,PDF,PNG,PPT,TXT,XCF,XLS"
-		/>
-
-		<field
-				name="upload_maxsize"
-				type="number"
-				label="COM_MEDIA_FIELD_MAXIMUM_SIZE_LABEL"
-				description="COM_MEDIA_FIELD_MAXIMUM_SIZE_DESC"
-				validate="number"
-				min="0"
-				size="50"
-				default="10"
-		/>
-
-		<field
-				name="spacer1"
-				type="spacer"
-				label="COM_MEDIA_FOLDERS_PATH_LABEL"
-				class="text"
-		/>
-
-		<field
-				name="file_path"
-				type="text"
-				label="COM_MEDIA_FIELD_PATH_FILE_FOLDER_LABEL"
-				description="COM_MEDIA_FIELD_PATH_FILE_FOLDER_DESC"
-				size="50"
-				default="images"
-		/>
-
-		<field
-				name="image_path"
-				type="text"
-				label="COM_MEDIA_FIELD_PATH_IMAGE_FOLDER_LABEL"
-				description="COM_MEDIA_FIELD_PATH_IMAGE_FOLDER_DESC"
-				size="50"
-				default="images"
-		/>
-
-		<field
-				name="restrict_uploads"
-				type="radio"
-				label="COM_MEDIA_FIELD_RESTRICT_UPLOADS_LABEL"
-				description="COM_MEDIA_FIELD_RESTRICT_UPLOADS_DESC"
-				class="btn-group btn-group-yesno"
-				default="1"
-		>
-			<option value="1">JYES</option>
-			<option value="0">JNO</option>
-		</field>
-
-		<field
-				name="check_mime"
-				type="radio"
-				label="COM_MEDIA_FIELD_CHECK_MIME_LABEL"
-				description="COM_MEDIA_FIELD_CHECK_MIME_DESC"
-				class="btn-group btn-group-yesno"
-				default="1"
-				showon="restrict_uploads:1"
-		>
-			<option value="1">JYES</option>
-			<option value="0">JNO</option>
-		</field>
-
-		<field
-				name="image_extensions"
-				type="text"
-				label="COM_MEDIA_FIELD_LEGAL_IMAGE_EXTENSIONS_LABEL"
-				description="COM_MEDIA_FIELD_LEGAL_IMAGE_EXTENSIONS_DESC"
-				size="50"
-				default="bmp,gif,jpg,png"
-				showon="restrict_uploads:1"
-		/>
-
-		<field
-				name="ignore_extensions"
-				type="text"
-				label="COM_MEDIA_FIELD_IGNORED_EXTENSIONS_LABEL"
-				description="COM_MEDIA_FIELD_IGNORED_EXTENSIONS_DESC"
-				size="50"
-		/>
-
-		<field
-				name="upload_mime"
-				type="text"
-				label="COM_MEDIA_FIELD_LEGAL_MIME_TYPES_LABEL"
-				description="COM_MEDIA_FIELD_LEGAL_MIME_TYPES_DESC"
-				size="50"
-				default="image/jpeg,image/gif,image/png,image/bmp,application/msword,application/excel,application/pdf,application/powerpoint,text/plain,application/x-zip"
-				showon="restrict_uploads:1"
-		/>
-
-		<field
-				name="upload_mime_illegal"
-				type="text"
-				label="COM_MEDIA_FIELD_ILLEGAL_MIME_TYPES_LABEL"
-				description="COM_MEDIA_FIELD_ILLEGAL_MIME_TYPES_DESC"
-				size="50"
-				default="text/html"
-				showon="restrict_uploads:1"
-		/>
-	</fieldset>
-
 	<fieldset description="JCONFIG_PERMISSIONS_DESC" label="JCONFIG_PERMISSIONS_LABEL" name="permissions">
 
 		<field name="rules"

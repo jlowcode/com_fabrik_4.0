@@ -40,6 +40,7 @@ require_once 'fabrikmodelform.php';
  * @subpackage  Fabrik
  * @since       3.0
  */
+#[\AllowDynamicProperties]
 class FabrikFEModelForm extends FabModelForm
 {
 	/**
@@ -971,7 +972,7 @@ class FabrikFEModelForm extends FabModelForm
 
 				// $$ rob 25/02/2011 this was doing a query per group - pointless as we bind $groupD to $row afterwards
 				// $row = $thisGroup->getGroup();
-				$row = FabTable::getInstance('Group', 'FabrikTable');
+				$row = \FabTable::getInstance('Group', 'FabrikTable');
 				$row->bind($groupD);
 				$thisGroup->setGroup($row);
 
@@ -4590,7 +4591,7 @@ class FabrikFEModelForm extends FabModelForm
 			$page = 'index.php?';
 
 			// Get array of all querystring vars
-			$uri = JURI::getInstance();
+			$uri = Uri::getInstance();
 
 			/**
 			 * Was $router->parse($uri);
@@ -5174,21 +5175,8 @@ class FabrikFEModelForm extends FabModelForm
 			if (array_key_exists('apply', $this->formData))
 			{
 				$url = 'index.php?option=com_fabrik&task=form.view&formid=' . $input->getInt('formid') . '&rowid=' . $input->getString('rowid', '', 'string');
-				
-			} 
-			else if (array_key_exists('SubmitAndDetails', $this->formData)) 
-			{
-				$url = 'index.php?option=com_fabrik&view=details/' . $input->getInt('formid') . '/' . $input->getInt('rowid');
-			} 
-			else if (array_key_exists('SubmitAndNew',  $this->formData)) 
-			{
-				$url = 'index.php?option=com_fabrik&view=form/' . $input->getInt('formid');
-			} 
-			else if (array_key_exists('Submit',  $this->formData)) 
-			{
-				$url = 'index.php?option=com_fabrik&view=list&listid=' . $input->getInt('listid');
-			} 
-			else 
+			}
+			else
 			{
 				$url = 'index.php?option=com_fabrik&task=list.view&listid=' . $this->getListModel()->getId();
 			}

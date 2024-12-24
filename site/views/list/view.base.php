@@ -614,7 +614,7 @@ class FabrikViewListBase extends FabrikView
 		$this->filterMode       = (int) $params->get('show-table-filters');
 		$fKeys                 = array_keys($this->filters);
 
-		$this->bootShowFilters = (count($fKeys) === 1 && $fKeys[0] === 'all') ? false : true;
+		$this->bootShowFilters = (count($fKeys) === 1 && $fKeys[0] === 'all') || $this->filterMode === 0 ? false : true;
 
 		$this->clearFliterLink = $model->getClearButton();
 		JDEBUG ? $profiler->mark('fabrik getfilters end') : null;
@@ -1092,9 +1092,14 @@ class FabrikViewListBase extends FabrikView
 		{
 			$model = $this->getModel();
 			$id    = $model->getId();
-			$url   = Route::_('index.php?option=com_' . $this->package . '&view=list&listid=' . $id);
-		}
-
-		return $url;
+			$itemId = FabrikWorker::itemId();
+            $url    = 'index.php?option=com_fabrik' . '&view=list&listid=' . $id;
+            if (!empty($itemId))
+            {
+                $url .= '&Itemid=' . $itemId;
+            }
+       }
+        return Route::_($url,true,Route::TLS_IGNORE,true);
 	}
+
 }
