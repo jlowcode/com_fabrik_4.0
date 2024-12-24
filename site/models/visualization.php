@@ -135,7 +135,7 @@ class FabrikFEModelVisualization extends FabModel
 	{
 		if (!isset($this->row))
 		{
-			$this->row = FabTable::getInstance('Visualization', 'FabrikTable');
+			$this->row = \FabTable::getInstance('Visualization', 'FabrikTable');
 			$this->row->load($this->getState('id'));
 			$this->setListIds();
 
@@ -220,7 +220,6 @@ class FabrikFEModelVisualization extends FabModel
 	public function getFilters()
 	{
 		$params = $this->getParams();
-		tParams();
 		$name = StringHelper::strtolower(str_replace('fabrikModel', '', get_class($this)));
 		$filters = array();
 		$showFilters = $params->get($name . '_show_filters', array());

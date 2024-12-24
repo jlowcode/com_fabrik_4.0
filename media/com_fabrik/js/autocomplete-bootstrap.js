@@ -68,10 +68,12 @@ define(['jquery', 'fab/encoder', 'fab/fabrik', 'lib/debounce/jquery.ba-throttle-
                 var self = this;
                 jQuery(this.getInputElement()).bind('keyup', debounce(this.options.debounceDelay, function (e) {
                     self.search(e);
+                    //console.log('heyup');
                 }));
 
                 jQuery(this.getInputElement()).bind('input', debounce(this.options.debounceDelay, function (e) {
                     self.search(e);
+                    //console.log('input');
                 }));
 
                 this.getInputElement().addEvent('blur', function (e) {

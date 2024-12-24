@@ -49,7 +49,7 @@
 				   class="btn-group"
 				   default="1"
 				   repeat="true"
-				   layout="joomla.form.field.radio.switcher"
+				layout="joomla.form.field.radio.switcher"
 				   label="COM_FABRIK_VALIDATION_VALIDATE_HIDDEN_LABEL"
 				   description="COM_FABRIK_VALIDATION_VALIDATE_HIDDEN_DESC">
 				<option value="0">JNO</option>

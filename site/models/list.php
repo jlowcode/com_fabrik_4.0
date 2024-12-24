@@ -37,6 +37,7 @@ use Joomla\Utilities\ArrayHelper;
 use Joomla\String\StringHelper;
 use Joomla\CMS\Factory;
 use Fabrik\Helpers\Php;
+use Joomla\CMS\Uri\Uri;
 
 require_once COM_FABRIK_FRONTEND . '/models/list-advanced-search.php';
 
@@ -1683,7 +1684,7 @@ class FabrikFEModelList extends FormModel
 					if ($buttonAction == 'dropdown')
 					{
 //						$row->fabrik_actions['delete_divider'] = $j3 ? '' : '<li class="divider"></li>';
-						//$row->fabrik_actions['delete_divider'] = '';
+						$row->fabrik_actions['delete_divider'] = '';
 					}
 
 					$row->fabrik_actions['fabrik_delete'] = $this->deleteButton();
@@ -2446,14 +2447,15 @@ class FabrikFEModelList extends FormModel
 		{
 			// $$$ rob only test canEdit and canView on standard edit links - if custom we should always use them,
 			// 3.0 get either edit or view link - as viewDetailsLink now always returns the view details link
-			if ($this->canViewDetails($row))
-			{
-				$this->_aLinkElements[] = $element->name;
-				$link = $this->viewDetailsLink($row);
-			} elseif ($this->canEdit($row))
+			if ($this->canEdit($row))
 			{
 				$this->_aLinkElements[] = $element->name;
 				$link = $this->editLink($row);
+			}
+			elseif ($this->canViewDetails($row))
+			{
+				$this->_aLinkElements[] = $element->name;
+				$link = $this->viewDetailsLink($row);
 			}
 		}
 		else
@@ -2723,10 +2725,10 @@ class FabrikFEModelList extends FormModel
 			*/
 			if (!empty($ids))
 			{
-				$params = $this->getParams();
-				if ($lookUpNames[$lookupC] !== $table->db_primary_key && !$params->get('reduce_query'))
+
+				if ($lookUpNames[$lookupC] !== $table->db_primary_key)
 				{
-					$query->where($lookUpNames[$lookupC] . ' IN (' . implode(array_unique($ids), ',') . ')');
+					$query->where($lookUpNames[$lookupC] . ' IN (' . implode(',', array_unique($ids)) . ')');
 				}
 
 				/*
@@ -4055,7 +4057,7 @@ class FabrikFEModelList extends FormModel
 		if (!isset($this->table) || !is_object($this->table))
 		{
 			Table::addIncludePath(JPATH_ADMINISTRATOR . '/components/com_fabrik/tables');
-			$this->table = FabTable::getInstance('List', 'FabrikTable');
+			$this->table = \FabTable::getInstance('List', 'FabrikTable');
 			$id = $this->getId();
 
 			if ($id !== 0)
@@ -4655,7 +4657,7 @@ class FabrikFEModelList extends FormModel
 	public function loadFromFormId($formId)
 	{
 		Table::addIncludePath(JPATH_ADMINISTRATOR . '/components/com_fabrik/table');
-		$row = FabTable::getInstance('List', 'FabrikTable');
+		$row = \FabTable::getInstance('List', 'FabrikTable');
 		$row->load(array('form_id' => $formId));
 		$this->table = $row;
 		$this->setId($row->id);
@@ -6866,7 +6868,7 @@ class FabrikFEModelList extends FormModel
 			$o->displayValue = '';
 			$displayData = new stdClass;
 			$displayData->id = $o->id;
-			$displayData->searchLabel = Text::_($params->get('search-all-label', 'COM_FABRIK_SEARCH'));
+			$displayData->searchLabel = Text::_($params->get('search-all-label', 'COM_FABRIK_SEARCH'));;
 //			$displayData->class = FabrikWorker::j3() ? 'fabrik_filter search-query col-sm-6' : 'fabrik_filter';
 			$displayData->class = 'form-control search-query';
 			$displayData->v = $this->getFilterModel()->getSearchAllValue('html');
@@ -7964,11 +7966,12 @@ class FabrikFEModelList extends FormModel
 		/*
 		 * $$$ rob - correct rowid is now inserted into the form's rowid hidden field
 		* even when useing usekey and -1, we just need to check if we are adding a new record and if so set rowid to 0
+		* PHP8: now 0!='', so rowid has to be '' to get insertID below
 		*/
 		if (!$isJoin && $input->get('usekey_newrecord', false))
 		{
-			$rowId = 0;
-			$origRowId = 0;
+			$rowId = '';
+			$origRowId = '';
 		}
 
 		$primaryKey = str_replace("`", "", $primaryKey);
@@ -9502,7 +9505,7 @@ class FabrikFEModelList extends FormModel
 
 		if ($this->getParams()->get('rss') == '1')
 		{
-			$base = JURI::getInstance()->toString(array('scheme', 'user', 'pass', 'host', 'port', 'path'));
+			$base = Uri::getInstance()->toString(array('scheme', 'user', 'pass', 'host', 'port', 'path'));
 
 			// $$$ rob test fabrik's own feed renderer
 			$link = $base . '?option=com_' . $package . '&view=list&listid=' . $this->getId();
@@ -11866,7 +11869,7 @@ class FabrikFEModelList extends FormModel
 	{
 		$formModel = $this->getFormModel();
 		$input = $this->app->getInput();
-		$base = JURI::getInstance();
+		$base = Uri::getInstance();
 		$base = $base->toString(array('scheme', 'user', 'pass', 'host', 'port', 'path'));
 		$qs = $input->server->get('QUERY_STRING', '', 'string');
 
@@ -12369,7 +12372,7 @@ class FabrikFEModelList extends FormModel
 		/**
 		 * Filters include any existing tab filters - so we cannot calculate tabs based on any user set filters
 		 * or pre-filters, until we can exclude them from being used here.
-		 *$this->buildQueryWhere($this->app->getInput()->getInt('incfilters', 1), $query, false);
+		 $this->buildQueryWhere($this->app->getInput()->getInt('incfilters', 1), $query, false);
 		 **/
 		$db->setQuery($query);
 		FabrikHelperHTML::debug($query->dump(), 'list getTabCategories query:' . $table->label);
@@ -12508,7 +12511,7 @@ class FabrikFEModelList extends FormModel
 		}
 
 		/* get the various current uri parts */
-		$uri = JURI::getInstance();
+		$uri = Uri::getInstance();
 		$uriActiveTab = $uri->getVar($tabsField, null);
 		/* If the tabsField is an array then we are showing merged tabs, we need the merged tabs names for the activeTabName */
 		if (is_array($uriActiveTab)) {

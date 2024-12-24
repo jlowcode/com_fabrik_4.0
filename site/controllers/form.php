@@ -23,6 +23,7 @@ use Joomla\CMS\Session\Session;
 use Joomla\CMS\Factory;
 use Fabrik\Helpers\Html;
 use Fabrik\Helpers\Worker;
+use Joomla\CMS\Uri\Uri;
 
 /**
  * Fabrik From Controller
@@ -32,6 +33,7 @@ use Fabrik\Helpers\Worker;
  * @subpackage  Fabrik
  * @since       1.5
  */
+#[\AllowDynamicProperties]
 class FabrikControllerForm extends BaseController
 {
 	/**
@@ -190,7 +192,7 @@ class FabrikControllerForm extends BaseController
 		}
 		else
 		{
-			$uri = JURI::getInstance();
+			$uri = Uri::getInstance();
 			$uri = $uri->toString(array('path', 'query'));
 			$cacheId = serialize(array($uri, $input->post, $user->get('id'), get_class($view), 'display', $this->cacheId));
 			$cache = Factory::getCache('com_' . $package, 'view');

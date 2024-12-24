@@ -73,7 +73,7 @@
 			type="radio"
 			class="btn-group"
 			default="0"
-			layout="joomla.form.field.radio.switcher"
+				layout="joomla.form.field.radio.switcher"
 			description="COM_FABRIK_FIELD_ADD_TO_PAGE_TITLE_DESC"
 			label="COM_FABRIK_FIELD_ADD_TO_PAGE_TITLE_LABEL" >
 				<option value="0">JNO</option>
@@ -114,7 +114,7 @@
 			type="radio"
 			class="btn-group"
 			default="1"
-			layout="joomla.form.field.radio.switcher"
+				layout="joomla.form.field.radio.switcher"
 			description="COM_FABRIK_FIELD_EXACT_MATCH_DESC"
 			label="COM_FABRIK_FIELD_EXACT_MATCH_LABEL" >
 				<option value="0">JNO</option>
@@ -128,7 +128,7 @@
 			type="radio"
 			class="btn-group"
 			default="0"
-			layout="joomla.form.field.radio.switcher"
+				layout="joomla.form.field.radio.switcher"
 			description="COM_FABRIK_FIELD_SHOW_IN_LIST_DESC"
 			label="COM_FABRIK_FIELD_SHOW_IN_LIST_LABEL" >
 				<option value="0">JNO</option>
@@ -139,7 +139,7 @@
 			type="radio"
 			class="btn-group"
 			default="0"
-			layout="joomla.form.field.radio.switcher"
+				layout="joomla.form.field.radio.switcher"
 			description="COM_FABRIK_FIELD_LINK_TO_DETAILS_DESC"
 			label="COM_FABRIK_FIELD_LINK_TO_DETAILS_LABEL" >
 				<option value="0">JNO</option>
@@ -196,13 +196,6 @@
 					<option value="1">COM_FABRIK_SHOW_DATA_RECORDED_IN_VIEW</option>
 					<option value="2">COM_FABRIK_SHOW_ALL_OPTIONS</option>
 			</field>
-
-			<field name="filter_checkbox_limit"
-				type="text"
-				size="20"
-				default="5"
-				description="COM_FABRIK_FIELD_CHECKBOX_LIMIT_DESCRIPTION"
-				label="COM_FABRIK_FIELD_CHECKBOX_LIMIT_LABEL" />
 
 			<field name="filter_groupby"
 				type="list"
@@ -463,12 +456,6 @@
 					label="COM_FABRIK_FIELD_VIEW_CSS_CELL_LABEL"
 					size="40" />
 
-				<field name="tablecss_cell_li"
-					type="text"
-					description="COM_FABRIK_FIELD_VIEW_CSS_CELL_LI_DESC"
-					label="COM_FABRIK_FIELD_VIEW_CSS_CELL_LI_LABEL"
-					size="100" />
-
 			</fieldset>
 
 			<fieldset name="calculations-sum" label="COM_FABRIK_SUM">
@@ -477,7 +464,7 @@
 					type="radio"
 					class="btn-group"
 					default="0"
-					layout="joomla.form.field.radio.switcher"
+				layout="joomla.form.field.radio.switcher"
 					description="COM_FABRIK_FIELD_SUM_TOTAL_DESC"
 					label="COM_FABRIK_FIELD_SUM_TOTAL_LABEL">
 						<option value="0">JNO</option>
@@ -508,7 +495,7 @@
 					type="radio"
 					class="btn-group"
 					default="0"
-					layout="joomla.form.field.radio.switcher"
+				layout="joomla.form.field.radio.switcher"
 					description="COM_FABRIK_FIELD_AVERAGE_TOTAL_DESC"
 					label="COM_FABRIK_FIELD_AVERAGE_TOTAL_LABEL" >
 						<option value="0">JNO</option>
@@ -546,7 +533,7 @@
 					type="radio"
 					class="btn-group"
 					default="0"
-					layout="joomla.form.field.radio.switcher"
+				layout="joomla.form.field.radio.switcher"
 					description="COM_FABRIK_FIELD_MEDIAN_TOTAL_DESC"
 					label="COM_FABRIK_FIELD_MEDIAN_TOTAL_LABEL" >
 						<option value="0">JNO</option>
@@ -577,7 +564,7 @@
 					type="radio"
 					class="btn-group"
 					default="0"
-					layout="joomla.form.field.radio.switcher"
+				layout="joomla.form.field.radio.switcher"
 					description="COM_FABRIK_FIELD_COUNT_RECORDS_DESC"
 					label="COM_FABRIK_FIELD_COUNT_RECORDS_LABEL" >
 						<option value="0">JNO</option>
@@ -614,7 +601,7 @@
 					type="radio"
 					class="btn-group"
 					default="0"
-					layout="joomla.form.field.radio.switcher"
+				layout="joomla.form.field.radio.switcher"
 					description="COM_FABRIK_FIELD_CUSTOM_CALC_DESC"
 					label="COM_FABRIK_FIELD_CUSTOM_CALC_LABEL" >
 						<option value="0">JNO</option>
@@ -666,7 +653,7 @@
 					type="radio"
 					class="btn-group"
 					default="0"
-					layout="joomla.form.field.radio.switcher"
+				layout="joomla.form.field.radio.switcher"
 					description="COM_FABRIK_FIELD_TIPS_EVAL_DESC"
 					label="COM_FABRIK_FIELD_TIPS_EVAL_LABEL">
 						<option value="0">JNO</option>
@@ -692,7 +679,7 @@
 					type="radio"
 					class="btn-group"
 					default="0"
-					layout="joomla.form.field.radio.switcher"
+				layout="joomla.form.field.radio.switcher"
 					description="COM_FABRIK_FIELD_TIPS_IN_DETAILED_VIEW_DESC"
 					label="COM_FABRIK_FIELD_TIPS_IN_DETAILED_VIEW_LABEL">
 						<option value="0">JNO</option>
@@ -703,7 +690,7 @@
 					type="radio"
 					class="btn-group"
 					default="0"
-					layout="joomla.form.field.radio.switcher"
+				layout="joomla.form.field.radio.switcher"
 					description="COM_FABRIK_FIELD_TIPS_IN_LIST_VIEW_DESC"
 					label="COM_FABRIK_FIELD_TIPS_IN_LIST_VIEW_LABEL">
 						<option value="0">JNO</option>
@@ -752,7 +739,7 @@
 					<field name="encrypt" type="radio"
 						class="btn-group"
 						default="0"
-						layout="joomla.form.field.radio.switcher"
+				layout="joomla.form.field.radio.switcher"
 						description="COM_FABRIK_ENCRYPT_DESC"
 						label="COM_FABRIK_ENCRYPT_LABEL">
 							<option value="0">JNO</option>
@@ -762,7 +749,7 @@
 					<field name="store_in_db" type="radio"
 					       class="btn-group"
 					       default="1"
-						   layout="joomla.form.field.radio.switcher"
+				layout="joomla.form.field.radio.switcher"
 					       description="COM_FABRIK_STORE_IN_DB_DESC"
 					       label="COM_FABRIK_STORE_IN_DB_LABEL">
 						<option value="0">JNO</option>
@@ -773,7 +760,7 @@
 						   type="radio"
 						   class="btn-group"
 						   default="0"
-						   layout="joomla.form.field.radio.switcher"
+				layout="joomla.form.field.radio.switcher"
 						   description="COM_FABRIK_FIELD_DEFAULT_ON_COPY_DESC"
 						   label="COM_FABRIK_FIELD_DEFAULT_ON_COPY_LABEL" >
 						<option value="0">JNO</option>

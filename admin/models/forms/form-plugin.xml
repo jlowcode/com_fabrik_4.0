@@ -54,13 +54,6 @@
 		       repeat="true"
 		       label="COM_FABRIK_PLUGIN_DESCRIPTION_LABEL"
 		       description="COM_FABRIK_PLUGIN_DESCRIPTION_DESC" />
-
-		<field name="plugin_condition"
-			   type="fabrikeditor"
-			   mode="php"
-			   repeat="true"
-			   label="COM_FABRIK_PLUGIN_CONDITION_LABEL"
-			   description="COM_FABRIK_PLUGIN_CONDITION_DESC" />
 	</fieldset>
 	
 </form>

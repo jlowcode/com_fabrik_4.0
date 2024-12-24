@@ -1,4 +1,3 @@
-tParams();
 <?php
 /**
  * CSV View

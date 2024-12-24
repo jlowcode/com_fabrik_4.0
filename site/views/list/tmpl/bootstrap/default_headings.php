@@ -11,6 +11,8 @@
 
 // No direct access
 defined('_JEXEC') or die('Restricted access');
+
+use Joomla\CMS\Language\Text;
 $btnLayout  = $this->getModel()->getLayout('fabrik-button');
 $layoutData = (object) array(
 	'class' => 'btn-info btn-sm fabrik_filter_submit button',
