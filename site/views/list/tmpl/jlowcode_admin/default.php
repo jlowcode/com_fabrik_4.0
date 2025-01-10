@@ -33,7 +33,7 @@ if (!function_exists('getItens')) {
         }
 
         if($self->canShowTutorialTemplate) {
-            $idElOrder = $self->getModel()->fieldsTemplateTutorial->ordering;
+            $idElOrder = isset($self->getModel()->fieldsTemplateTutorial->ordering) ? $self->getModel()->fieldsTemplateTutorial->ordering : $self->getModel()->fieldsTemplateTutorial->field;
             $elOrder = $elements[$idElOrder];
             $query->order($elOrder->getElement()->get('name'));
         } else {
@@ -67,7 +67,7 @@ if (!function_exists('getItensChild')) {
             ->where("parent = " . $parent);
 
         if($self->canShowTutorialTemplate) {
-            $idElOrder = $self->getModel()->fieldsTemplateTutorial->ordering;
+            $idElOrder = isset($self->getModel()->fieldsTemplateTutorial->ordering) ? $self->getModel()->fieldsTemplateTutorial->ordering : $self->getModel()->fieldsTemplateTutorial->field;
             $elOrder = $elements[$idElOrder];
             $query->order($elOrder->getElement()->get('name'));
         } else {
