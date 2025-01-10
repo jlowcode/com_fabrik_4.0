@@ -6669,7 +6669,7 @@ class FabrikFEModelList extends FormModel
 		$nameJoin = $elJoin->getElement()->get('name');
 
 		$elOrdering = $els[$this->fieldsTemplateTutorial->ordering];
-		$order = isset($elOrdering) ? $elOrdering->getElement()->name : 'parent_name';
+		$order = isset($elOrdering) ? 'c1.'.$elOrdering->getElement()->name : 'parent_name';
 
 		$tableName = $this->getTable()->db_table_name;
 
@@ -6677,7 +6677,7 @@ class FabrikFEModelList extends FormModel
 		$query->select([$db->qn('c1.id', 'id'), $db->qn('c1.'.$nameField, 'parent_name'), $db->qn('c2.id', 'child_id'), $db->qn('c1.'.$nameDesc, 'desc'), $db->qn('c1.'.$nameJoin, 'parent_id')])
 			->from($db->qn($tableName, 'c1'))
 			->join('LEFT', $db->qn($tableName, 'c2') . ' ON c2.'.$nameJoin.'= c1.id')
-			->order($db->qn('c1.'.$order));
+			->order($db->qn($order));
 		$db->setQuery($query);
 		$result = $db->loadObjectList();
 
