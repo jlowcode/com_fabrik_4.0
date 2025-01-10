@@ -6633,6 +6633,10 @@ class FabrikFEModelList extends FormModel
 				$textarea = true;
 				!isset($fields->textarea) ? $fields->textarea = $el->getId() : null;
 			}
+
+			if(str_contains($el->getName(), 'Ordering')) {
+				!isset($fields->ordering) ? $fields->ordering = $el->getId() : null;
+			}
 		}
 
 		$this->fieldsTemplateTutorial = $fields;
@@ -6664,13 +6668,16 @@ class FabrikFEModelList extends FormModel
 		$elJoin = $els[$this->fieldsTemplateTutorial->tree];
 		$nameJoin = $elJoin->getElement()->get('name');
 
+		$elOrdering = $els[$this->fieldsTemplateTutorial->ordering];
+		$order = isset($elOrdering) ? $elOrdering->getElement()->name : 'parent_name';
+
 		$tableName = $this->getTable()->db_table_name;
 
 		$query = $db->getQuery(true);
 		$query->select([$db->qn('c1.id', 'id'), $db->qn('c1.'.$nameField, 'parent_name'), $db->qn('c2.id', 'child_id'), $db->qn('c1.'.$nameDesc, 'desc'), $db->qn('c1.'.$nameJoin, 'parent_id')])
 			->from($db->qn($tableName, 'c1'))
 			->join('LEFT', $db->qn($tableName, 'c2') . ' ON c2.'.$nameJoin.'= c1.id')
-			->order($db->qn('parent_name'));
+			->order($db->qn('c1.'.$order));
 		$db->setQuery($query);
 		$result = $db->loadObjectList();
 
