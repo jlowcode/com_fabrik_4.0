@@ -66,8 +66,8 @@ $data = $this->dataTemplateTutorial;
                 </table>
                 
                 <div class="section">
-                    <div class="summary">
-                        <div class="tree-item" data-id="0">
+                    <div class="summary" id="summary-tutorial">
+                        <div class="tree-item not-draggable" data-id="0">
                             <span class="tree-arrow">
                                 <?php echo FabrikHelperHTML::image('arrow-round-right.png', 'list', $this->tmpl);?>
                             </span>
