@@ -249,7 +249,7 @@ function carregarFilhos(paiId, elementoPai) {
 			elementoPai.appendChild(childrenNode);
 
 			setFiltersTutorialTemplate();
-			if(elementoPai.parentNode.id == 'summary-tutorial') {
+			if(jQuery(elementoPai).closest('#summary-tutorial').length > 0) {
 				orderingTreeTutorial(childrenNode);
 			}
 			hideSpinner();
