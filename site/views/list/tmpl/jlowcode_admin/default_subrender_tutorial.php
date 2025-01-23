@@ -66,7 +66,16 @@ $data = $this->dataTemplateTutorial;
                 </table>
                 
                 <div class="section">
-                    <div class="summary">
+                    <div class="summary" id="summary-tutorial">
+                        <div class="tree-item not-draggable" data-id="0">
+                            <span class="tree-arrow">
+                                <?php echo FabrikHelperHTML::image('arrow-round-right.png', 'list', $this->tmpl);?>
+                            </span>
+
+                            <span class="tree-text">
+                                <?php echo Text::_("COM_FABRIK_SHOW_ALL_SUBRENDER_TUTORIAL"); ?>
+                            </span>
+                        </div>
                         <?php
                             $self = $this;
                             $itens = getItens($self, null);

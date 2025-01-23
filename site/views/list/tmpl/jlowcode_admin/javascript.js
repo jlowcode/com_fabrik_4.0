@@ -8,8 +8,11 @@
 requirejs(['fab/fabrik', 'fab/bootstrap_tree'], function (Fabrik, BootstrapTree) {
 
 	jQuery(document).ready(function () {
+		var tree = jQuery('.summary')[0];
+
 		hideHeadings();
 		setFiltersTutorialTemplate();
+		orderingTreeTutorial(tree);
 
 		Fabrik.addEvent('fabrik.list.update', function (list) {
 			hideHeadings();
@@ -226,20 +229,29 @@ function carregarFilhos(paiId, elementoPai) {
 			}
 
 			elementoPai.classList.add('open');
+			var childrenNode = document.createElement('div');
+			childrenNode.classList.add('children-node');
+			childrenNode.setAttribute('data-parent', elementoPai.getAttribute('data-id'));
 
 			// Itera sobre os filhos e os adiciona ao DOM
 			data.forEach(filho => {
 				const itemFilho = document.createElement('div');
 				itemFilho.classList.add('tree-item');
+				itemFilho.setAttribute('data-id', filho.id);
 
 				// Adiciona os elementos ao item filho			
 				const action = document.createElement('span');
 				action.innerHTML = filho.actions;
 
 				itemFilho.appendChild(action);
-				elementoPai.appendChild(itemFilho);
+				childrenNode.appendChild(itemFilho);
 			});
+			elementoPai.appendChild(childrenNode);
+
 			setFiltersTutorialTemplate();
+			if(jQuery(elementoPai).closest('#summary-tutorial').length > 0) {
+				orderingTreeTutorial(childrenNode);
+			}
 			hideSpinner();
 		})
 		.catch(error => {
@@ -287,7 +299,6 @@ function onReportAbuse(listRowIds) {
 		}
 	});
 }
-
 
 document.addEventListener("DOMContentLoaded", function () {
 	// Certifique-se de que o Sortable está disponível
@@ -338,33 +349,91 @@ function setFiltersTutorialTemplate() {
 			var nodeTree = jQuery(this);
 			var treeItem = nodeTree.closest('.tree-item');
 			var id = treeItem.data('id');
-			var listRef = jQuery('input[name="listref"]').val();
-			var itemId = jQuery('input[name="Itemid"]').val();
-			var incFilters = jQuery('input[name="incfilters"]').val();
-			var listId = jQuery('input[name="listid"]').val();
 			var url = jQuery('form').prop('action');
 
-			jQuery.ajax({
-				url: url,
-				method: 'post',
-				data: {
-					'listRowIds': id,
-					'option': 'com_fabrik',
-					'task': 'list.filter',
-					'tmpl': 'jlowcode_admin',
-					'render': 'page_tutorial',
-					'format': 'raw',
-					'view': 'list',
-					'listref': listRef,
-					'itemid': itemId,
-					'incfilters': incFilters,
-					'listid': listId
-				},
-			}).done(function (r) {
-				r = JSON.parse(r);
-
-				jQuery('.ajax-filters').replaceWith(r['html']);
-			});
+			renderTutorial(url, id);
 		});
 	});
+}
+
+/**
+ * Render html to tutorial
+ */
+function renderTutorial(url, id) {
+	var listRef = jQuery('input[name="listref"]').val();
+	var itemId = jQuery('input[name="Itemid"]').val();
+	var incFilters = jQuery('input[name="incfilters"]').val();
+	var listId = jQuery('input[name="listid"]').val();
+
+	jQuery.ajax({
+		url: url,
+		method: 'post',
+		data: {
+			'listRowIds': id,
+			'option': 'com_fabrik',
+			'task': 'list.filter',
+			'tmpl': 'jlowcode_admin',
+			'render': 'page_tutorial',
+			'format': 'raw',
+			'view': 'list',
+			'listref': listRef,
+			'itemid': itemId,
+			'incfilters': incFilters,
+			'listid': listId
+		},
+	}).done(function (r) {
+		r = JSON.parse(r);
+
+		jQuery('.ajax-filters').replaceWith(r['html']);
+	});
+}
+
+/**
+ * Make tree sortable to order
+ */
+function orderingTreeTutorial(tree) {
+	//Make sortable
+	if (typeof Sortable !== 'undefined') {
+		Sortable.create(tree, {
+			animation: 150,
+			filter: '.not-draggable',
+			onEnd: function(e) {
+				var oldIndex = e.oldIndex;
+				var newIndex = e.newIndex;
+				var row = jQuery(e.from).children('.tree-item')[e.newIndex-1];
+				var id = jQuery(row).data('id');
+				var value = (newIndex == 1 && !jQuery(this.el).hasClass('children-node')) || newIndex == 0 ? -1 : id;
+				var refParentId = jQuery(e.item).closest('.children-node').data('parent');
+				var rowId = jQuery(e.item).data('id');
+
+				var itemId = jQuery('input[name="Itemid"]').val();
+				var incFilters = jQuery('input[name="incfilters"]').val();
+				var listId = jQuery('input[name="listid"]').val();
+
+				refParentId = refParentId == rowId ? null : refParentId;
+				if(oldIndex == newIndex) return;
+
+				jQuery.ajax({
+					url: '',
+					method: 'post',
+					data: {
+						option: 'com_fabrik',
+						format: 'raw',
+						task: 'plugin.pluginAjax',
+						g: 'element',
+						plugin: 'ordering',
+						method: 'makeOrdering',
+						value: value,
+						listId: listId,
+						refParentId: refParentId,
+						rowId: rowId,
+						incfilters: incFilters,
+						itemId: itemId
+					}
+				}).done(function(response) {
+					renderTutorial(0, jQuery('form').prop('action'));
+				});
+			}
+		})
+	}
 }

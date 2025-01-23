@@ -776,13 +776,13 @@ i.fas.fa-exclamation-triangle.fa-sm{
 }
 
 .summary {
-    width: 20%;
+    width: 15%;
     padding-top: 25px;
     border-right: 2px solid #eee;
 }
 
 .tutorial {
-    width: 80%;
+    width: 85%;
     padding: 0px 5%;
 }
 

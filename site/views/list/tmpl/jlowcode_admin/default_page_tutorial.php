@@ -15,13 +15,20 @@ defined('_JEXEC') or die('Restricted access');
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\Factory;
 
+$app = Factory::getApplication();
 $data = $this->dataTemplateTutorial;
 $input = $this->app->getInput();
+$menu = $app->getMenu();
+
+$url = "index.php?option=com_fabrik&view=list&listid={$this->get('id')}";
+$menuLinked = $menu->getItems('link', $url, true);
+$route = $menuLinked->route;
+$link = '/' . (isset($route) ? $route."?" : $url."&");
 
 $ids = json_encode(array_map(function($valor) {
     return $valor['id'];
 }, $data));
-$urlPdf = "?format=pdf&layout=jlowcode_admin&render=page_tutorial&tmpl=jlowcode_admin&listid=".$this->getModel()->getId()."&listRowIds=$ids";
+$urlPdf = $link . "format=pdf&layout=jlowcode_admin&render=page_tutorial&tmpl=jlowcode_admin&listid=".$this->get('id')."&listRowIds=$ids";
 
 ?>
 
