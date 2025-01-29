@@ -6820,8 +6820,12 @@ class FabrikFEModelList extends FormModel
 					$f->label = $filter->label;
 					$f->id = isset($filter->id) ? $filter->id : '';
 					$f->element = $filter->filter;
-					$f->required = array_key_exists('required', $filter) ? $filter->required : '';
+					$f->required = isset($filter->required) ? $filter->required : '';
 					$f->filter_type = $filter->filter_type;
+					$f->displayValue = is_array($filter->displayValue) ? implode(', ', $filter->displayValue) :
+							$filter->displayValue;
+					$this->viewfilters[$filter->name] = $f;
+
 					if(isset($filter->popupform)){
 						$f->popupform = $filter->popupform;
 					}
@@ -6829,7 +6833,6 @@ class FabrikFEModelList extends FormModel
 					$f->related_linked_list = $filter->related_linked_list;
 					$f->displayValue = is_array($filter->displayValue) ? implode(', ', $filter->displayValue) :
 							$filter->displayValue;
-					$this->viewfilters[$filter->name] = $f;
 				}
 			}
 
@@ -11940,20 +11943,20 @@ class FabrikFEModelList extends FormModel
 		$base = $base->toString(array('scheme', 'user', 'pass', 'host', 'port', 'path'));
 		$qs = $input->server->get('QUERY_STRING', '', 'string');
 
-		if (JString::stristr($qs, 'layout')) {
-			$qs = FabrikString::removeQSVar($qs, 'layout');
-			$qs = FabrikString::ltrimword($qs, '?');
+		if (StringHelper::stristr($qs, 'layout')) {
+			$qs = StringHelper::removeQSVar($qs, 'layout');
+			$qs = StringHelper::ltrimword($qs, '?');
 			$qs = str_replace('&', '&amp;', $qs);
 		}
 
 		$url = $base;
 
 		if (!empty($qs)) {
-			$url .= JString::strpos($url, '?') !== false ? '&amp;' : '?';
+			$url .= StringHelper::strpos($url, '?') !== false ? '&amp;' : '?';
 			$url .= $qs;
 		}
 
-		$url .= JString::strpos($url, '?') !== false ? '&amp;' : '?';
+		$url .= StringHelper::strpos($url, '?') !== false ? '&amp;' : '?';
 
 		$a = array();
 
