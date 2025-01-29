@@ -141,11 +141,17 @@ if ($this->params->get('show_page_heading')) :
     echo '<h1>' . $this->params->get('page_heading') . '</h1>';
 endif;
 
-$idList = $this->list->id;
-$query = $db->getQuery(true);
-$query->select('miniatura')->from('adm_cloner_listas')->where('id_lista = ' . $idList);
+$query = "SHOW TABLES LIKE '%{adm_cloner_listas}%';";
 $db->setQuery($query);
-$miniatura = $db->loadResult();
+$exist = $db->loadObject();
+
+if($exist) {
+    $idList = $this->list->id;
+    $query = $db->getQuery(true);
+    $query->select('miniatura')->from('adm_cloner_listas')->where('id_lista = ' . $idList);
+    $db->setQuery($query);
+    $miniatura = $db->loadResult();
+}
 
 if($miniatura) { ?>
     <div style="display: flex; padding-bottom: 10px; border-bottom: 2px solid #eee;">
