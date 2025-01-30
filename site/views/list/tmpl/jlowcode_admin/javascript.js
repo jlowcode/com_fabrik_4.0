@@ -393,7 +393,7 @@ function renderTutorial(url, id) {
  */
 function orderingTreeTutorial(tree) {
 	//Make sortable
-	if (typeof Sortable !== 'undefined') {
+	if (typeof Sortable !== 'undefined' && tree != null) {
 		Sortable.create(tree, {
 			animation: 150,
 			filter: '.not-draggable',
