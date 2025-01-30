@@ -22,7 +22,12 @@ foreach ($elsList as $el) {
         && $params->get('join_db_name') == $listModel->getTable()->get('db_table_name') &&
         ($params->get('database_join_display_style') == 'both-treeview-autocomplete' || $params->get('database_join_display_style') == 'only-treeview')
     ) {
+        $this->elTree = $el->getParams()->get('tree_parent_id');
         $tree = true;
+    }
+
+    if (str_contains($el->getName(), 'Field') && is_null($this->elFieldTree)) {
+        $this->elFieldTree = $el->element->name;
     }
 }
 

@@ -27,9 +27,9 @@ if (!function_exists('getItens')) {
         $query->select(Array('*'));
 
         if ($parent == null) {
-            $query->from($db->quoteName($self->table->db_table_name))->where("parent IS NULL");
+            $query->from($db->quoteName($self->table->db_table_name))->where($self->elTree . " IS NULL");
         } else {
-            $query->from($db->quoteName($self->table->db_table_name))->where("parent = " . $parent);
+            $query->from($db->quoteName($self->table->db_table_name))->where($self->elTree . " = " . $parent);
         }
 
         if($self->canShowTutorialTemplate) {
@@ -154,10 +154,8 @@ if($exist) {
 }
 
 if($miniatura) { ?>
-    <div style="display: flex; align-items: center; padding-bottom: 10px; border-bottom: 2px solid #eee;">
-        <div style="margin-right: 32px; width: 254px; aspect-ratio: 16/9; overflow: hidden;">
-            <img style="width: 100%; height: 100%; object-fit:cover; object-position:center" src="<?php echo $miniatura; ?>"/>
-        </div>
+    <div style="display: flex; padding-bottom: 10px; border-bottom: 2px solid #eee;">
+        <img style="margin-right: 50px; width: 300px; object-fit=contain" src="<?php echo $miniatura; ?>"/>
         <?php echo $this->loadTemplate('header'); ?>
     </div>
 <?php } else { ?>

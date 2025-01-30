@@ -20,7 +20,7 @@ defined('_JEXEC') or die('Restricted access');
 	</span>
 
 	<span class="tree-text">
-		<?php echo @$this->_row->{$this->list->db_table_name.'___name_raw'}; ?>
+		<?php echo @$this->_row->{$this->list->db_table_name.'___' . $this->elFieldTree . '_raw'}; ?>
 	</span>
 
 	<?php 
