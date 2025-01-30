@@ -11944,8 +11944,8 @@ class FabrikFEModelList extends FormModel
 		$qs = $input->server->get('QUERY_STRING', '', 'string');
 
 		if (StringHelper::stristr($qs, 'layout')) {
-			$qs = StringHelper::removeQSVar($qs, 'layout');
-			$qs = StringHelper::ltrimword($qs, '?');
+			$qs = FabrikString::removeQSVar($qs, 'layout');
+			$qs = FabrikString::ltrimword($qs, '?');
 			$qs = str_replace('&', '&amp;', $qs);
 		}
 
