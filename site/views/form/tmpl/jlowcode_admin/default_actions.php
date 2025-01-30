@@ -21,10 +21,19 @@ $params = json_decode($form->params);
 $multiButtonsSave = (bool) $params->copy_button || (bool) $params->apply_button || (bool) $params->submit_button || explode('_', $form->formid)[2] ? true : false;
 $multiButtonsOthers = (bool) $params->reset_button || (bool) $params->delete_button ? true : false;
 
+$model = $this->getModel();
+$listModel = $model->getlistModel();
 $app = Factory::getApplication();
 $menu = $app->getMenu();
 $menuItem = $menu->getActive();
-$alias = $menuItem->alias;
+$route = $menuItem->route;
+
+// Sometimes $route and $routeList are different
+$idList = $listModel->getId();
+$url = "index.php?option=com_fabrik&view=list&listid=$idList";
+$menuLinked = $menu->getItems('link', $url, true);
+$routeList = $menuLinked->route;
+$linkList = '/' . (isset($routeList) ? $routeList : $url);
 ?>
 
 <div class="fabrikActions form-actions">
@@ -81,7 +90,7 @@ $alias = $menuItem->alias;
 				<ul class="ul-btn-actions" style="width: 170px;">
 					<?php if ((bool) $params->goback_button) : ?>
 						<li>
-							<button type="button" class="btn button btn-cancel-back btn-group-actions" <?php echo $this->getModel()->isAjax() ? '' : 'onclick="parent.location=\'/' . $alias . '\'"' ?> name="Goback">
+							<button type="button" class="btn button btn-cancel-back btn-group-actions" <?php echo $this->getModel()->isAjax() ? '' : 'onclick="parent.location=\'' . $linkList . '\'"' ?> name="Goback">
 								<?php echo $params->goback_button_label ?>
 								<?php if ($multiButtonsOthers) : ?>	
 									<i class="fa-icon-down fa fa-angle-down fa-lg" aria-hidden="true"></i>
