@@ -2726,7 +2726,7 @@ class FabrikFEModelList extends FormModel
 			if (!empty($ids))
 			{
 
-				if ($lookUpNames[$lookupC] !== $table->db_primary_key)
+				if ($lookUpNames[$lookupC] !== $table->db_primary_key && !$this->params->get('reduce_query'))
 				{
 					$query->where($lookUpNames[$lookupC] . ' IN (' . implode(',', array_unique($ids)) . ')');
 				}
