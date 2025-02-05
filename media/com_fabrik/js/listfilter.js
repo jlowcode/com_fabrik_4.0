@@ -37,6 +37,16 @@ define(['jquery', 'fab/fabrik', 'fab/advanced-search'], function (jQuery, Fabrik
                 e.preventDefault();
                 self.filterContainer.toggle();
                 self.filtersInHeadings.toggle();
+
+                // Left side filter toggle
+                if(this.dataset.filterMode == '7') {
+                    classContainer = self.filterContainer[0].parentNode.getElementsByClassName('listContent')[0].classList;
+                    if(classContainer.value.indexOf('col-lg-9') !== -1) {
+                        classContainer.remove('col-lg-9');
+                    } else {
+                        classContainer.add('col-lg-9');
+                    }
+                }
             });
 
             if (b.length > 0) {
