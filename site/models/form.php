@@ -5577,6 +5577,6 @@ class FabrikFEModelForm extends FabModelForm
 	{
 		$form = $this->getForm();
 
-		return $form->record_in_database === '1';
+		return $form->record_in_database == '1';
 	}
 }
