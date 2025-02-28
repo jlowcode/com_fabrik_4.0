@@ -167,19 +167,20 @@ if($exist) {
     $db->setQuery($query);
     $miniatura = $db->loadResult();
 }
+?>
 
-if($miniatura) { ?>
-    <div style="display: flex; padding-bottom: 10px; border-bottom: 2px solid #eee;">
+<?php if($miniatura) : ?>
+    <div class="header-list" style="padding-bottom: 10px;">
         <img style="margin-right: 50px; width: 300px; object-fit=contain" src="<?php echo $miniatura; ?>"/>
         <?php echo $this->loadTemplate('header'); ?>
     </div>
-<?php } else { ?>
-    <div style="display: flex; border-bottom: 2px solid #eee;">
+<?php else : ?>
+    <div class="header-list">
         <?php echo $this->loadTemplate('header'); ?>
     </div>
-<?php }
+<?php endif; ?>
 
-if($this->table->intro) : ?>
+<?php if($this->table->intro) : ?>
 
 <div class="intro-container">
     <div class="text-intro-content">

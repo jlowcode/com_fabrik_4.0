@@ -90,7 +90,7 @@ echo <<<EOT
     display: flex;
     flex-direction: row;
     border-top: 1px solid #eee;
-    padding: 15px 0px 15px 10px;
+    padding: 15px 10px;
 }
 
 .detailsContent > div:hover {
@@ -208,7 +208,6 @@ main .platform-content {
     display: block !important;
 	font-weight: 300 !important;
 	margin: 0px !important;
-    color: #fff !important;
     float: right;
 }
 

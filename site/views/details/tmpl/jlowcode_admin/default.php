@@ -93,6 +93,8 @@ foreach ($this->groups as $group) :
 		<?php
 		endif;
 		?>
+
+		<?php if($this->params->get('show-complete-data', '1') == '1') : ?>
 		<script>
 			var fields = jQuery('.fabrikElementReadOnly');
 			Object.keys(fields).forEach(function(key) {
@@ -105,6 +107,7 @@ foreach ($this->groups as $group) :
 				};
 			});
 		</script>
+		<?php endif; ?>
 	</div>
 <?php
 endforeach;

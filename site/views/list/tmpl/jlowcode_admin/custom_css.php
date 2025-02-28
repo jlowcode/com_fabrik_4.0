@@ -54,7 +54,8 @@ echo <<<EOT
   overflow: hidden;
   text-overflow: ellipsis;
   max-height: 8.5em;
-  text-align: left
+  text-align: left;
+  margin-left: 20px;
 }
 
 .intro-container fa {
@@ -226,6 +227,19 @@ input.fabrik_filter {
     background-color: #fff !important;
 }
 
+.plg-display .fabrikinput {
+    height: inherit !important;
+}
+
+.header-list {
+    display: flex;
+    border-bottom: 2px solid #eee;
+}
+
+.plg-display .header-list {
+    border-bottom: none !important;
+}
+
 form .fabrikButtonsContainer .nav {
     display: flex;
     flex-direction: row;
@@ -385,7 +399,6 @@ i.fas.fa-exclamation-triangle.fa-sm{
 
 
 [class*="span"] {
-    margin-right: 1.7%;
     margin-left: 0px !important ;
 }
 
