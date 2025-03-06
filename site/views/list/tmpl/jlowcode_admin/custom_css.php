@@ -275,6 +275,11 @@ form .fabrikButtonsContainer .nav {
     margin-right: 5px !important;
 }
 
+.header_titles {
+    display: flex;
+    align-items: center;
+}
+
 .header_buttons {
     display: flex;
     align-items: center;
@@ -284,6 +289,7 @@ form .fabrikButtonsContainer .nav {
     display: flex;
     width: 100%;
     justify-content: space-between;
+    padding-bottom: 10px;
 }
 
 main .platform-content {
