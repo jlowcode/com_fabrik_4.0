@@ -207,7 +207,6 @@ main .platform-content {
 	border: none !important;
     display: block !important;
 	font-weight: 300 !important;
-	margin: 0px !important;
     float: right;
 }
 
