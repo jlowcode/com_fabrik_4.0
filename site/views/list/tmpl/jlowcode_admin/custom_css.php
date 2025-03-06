@@ -180,6 +180,8 @@ thead .fabrik___heading a,
 
 .fabrikgrid_checkbox label {
     margin-bottom: 0px !important;
+    display: flex;
+    align-items: center;
 }
 
 input.fabrik_filter {
