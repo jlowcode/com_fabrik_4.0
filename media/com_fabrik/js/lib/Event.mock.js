@@ -62,7 +62,7 @@ define([], function () {
             }
             // No longer works in 1.4.5
             //e = new Event(e);
-            e = new DOMEvent(e, self.getWindow());
+            e = new DOMEvent(e, window);
             e.target = target;
             return e;
         };
