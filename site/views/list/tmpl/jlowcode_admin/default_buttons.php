@@ -34,6 +34,11 @@ if(isset($_REQUEST['action']) && isset($_REQUEST['action']['showButton'])) {
 }
 // End action code 
 
+if($this->toggleFilters) {
+	Text::script('JGLOBAL_TYPE_OR_SELECT_SOME_OPTIONS');
+	Text::script('JGLOBAL_SELECT_AN_OPTION');
+	Text::script('JGLOBAL_SELECT_NO_RESULTS_MATCH');
+}
 
 ?>
 <div class="fabrikButtonsContainer row-fluid">
