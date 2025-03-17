@@ -249,7 +249,7 @@
 
 			<field name="related_linked_list"
 				type="text"
-				size="200"
+				size="20"
 				label="Related Linked List" />
 
 			<field name="add_popup_form_button"

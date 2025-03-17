@@ -13,7 +13,8 @@ requirejs(['fab/fabrik', 'fab/bootstrap_tree'], function (Fabrik, BootstrapTree)
 		hideHeadings();
 		setFiltersTutorialTemplate();
 		orderingTreeTutorial(tree);
-
+		setToogleFilters();
+		
 		Fabrik.addEvent('fabrik.list.update', function (list) {
 			hideHeadings();
 
@@ -33,7 +34,7 @@ requirejs(['fab/fabrik', 'fab/bootstrap_tree'], function (Fabrik, BootstrapTree)
 					btnAction[0].addClass('open');
 				});
 			}
-		})
+		});
 	});
 });
 
@@ -436,4 +437,18 @@ function orderingTreeTutorial(tree) {
 			}
 		})
 	}
+}
+
+function setToogleFilters() {
+	jQuery(".toggleFilters").on('click', function() {
+		jQuery(".chosen-done").each(function(index, element) {
+			jQuery(element).chosen("destroy");
+		});
+
+		Fabrik.buildChosen('select.advancedSelect', {
+			"placeholder_text_multiple": Joomla.JText._('JGLOBAL_TYPE_OR_SELECT_SOME_OPTIONS'),
+			"placeholder_text_single": Joomla.JText._('JGLOBAL_SELECT_AN_OPTION'),
+			"no_results_text": Joomla.JText._('JGLOBAL_SELECT_NO_RESULTS_MATCH')
+		});
+	});
 }
