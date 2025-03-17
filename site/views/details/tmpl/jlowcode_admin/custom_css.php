@@ -234,5 +234,17 @@ main .platform-content {
     padding: 30px 0px;
 }
 
+// BEGIN - Added by PITT
+.btn-primary {
+    color: #fff !important;
+}
+
+.btn-pitt {
+    background: #207dcd !important; 
+    color: #fff !important;
+}
+
+// END - Added by PITT
+
 /* END - Your CSS styling ends here */
 EOT;
