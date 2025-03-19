@@ -221,11 +221,11 @@ body {
 }
 
 
-.fabrik_filter {
-    max-width : 100% !important;
-    border-radius: 4px 4px 4px 4px !important;
-	-webkit-border-radius: 4px 4px 4px 4px !important;
-    -moz-border-radius: 4px 4px 4px 4px !important;
+.input-append .fabrik_filter.form-control {
+    max-width : 100%;
+    border-radius: 4px 4px 4px 4px;
+	-webkit-border-radius: 4px 4px 4px 4px;
+    -moz-border-radius: 4px 4px 4px 4px;
 }
 
 ";?>

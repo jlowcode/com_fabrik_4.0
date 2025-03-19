@@ -91,10 +91,10 @@ echo <<<EOT
     white-space: nowrap;
 }
 
-textarea, input, select {
-    background-color: #fff !important;
-	border-radius: 12px !important;
-    border: 2px solid #eee !important;
+textarea, input, select, .list-footer .form-select {
+    background-color: #fff;
+	border-radius: 12px;
+    border: 2px solid #eee;
 }
 
 .modal-content {
@@ -157,11 +157,6 @@ textarea, input, select {
 thead .fabrik___heading a,
 .fabrik___heading select {
     color: #011627 !important;
-}
-
-.g-menu-item span {
-	color: #032B43 !important;
-    font-weight: 400 !important;
 }
 
 .g-menu-item span:hover {
