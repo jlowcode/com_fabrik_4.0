@@ -62,6 +62,9 @@ HTMLHelper::_('behavior.keepalive');
 				<button class="nav-link" id="btn-plugins" data-bs-toggle="pill" data-bs-target="#tabplugins" type="button" role="tab" aria-controls="" aria-selected="false">
 					<?php echo Text::_('COM_FABRIK_GROUP_LABEL_PLUGINS_DETAILS')?>
 				</button>
+				<button class="nav-link" id="btn-jlowcode" data-bs-toggle="pill" data-bs-target="#jlowcode" type="button" role="tab" aria-controls="" aria-selected="false">
+					<?php echo Text::_('COM_FABRIK_GROUP_LABEL_JLOWCODE_DETAILS')?>
+				</button>
 			</div>
 		</div>
 		<div class="col-sm-10" id="config">
@@ -72,6 +75,7 @@ HTMLHelper::_('behavior.keepalive');
 				echo $this->loadTemplate('publishing');
 				echo $this->loadTemplate('plugins');
 				echo $this->loadTemplate('access');
+				echo $this->loadTemplate('jlowcode');
 				?>
 			</div>
 
