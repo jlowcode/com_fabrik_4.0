@@ -7128,12 +7128,12 @@ class FabrikFEModelList extends FormModel
 		{
 			if ($params->get('checkboxLocation', 'end') !== 'end')
 			{
-				$this->addCheckBox($aTableHeadings, $headingClass, $cellClass, !$this->canSelectRows());
+				$this->actionHeading($aTableHeadings, $headingClass, $cellClass);
 			}
 
 			if ($params->get('checkboxLocation', 'end') !== 'end')
 			{
-				$this->actionHeading($aTableHeadings, $headingClass, $cellClass);
+				$this->addCheckBox($aTableHeadings, $headingClass, $cellClass, !$this->canSelectRows());
 			}
 		}
 
@@ -7254,15 +7254,15 @@ class FabrikFEModelList extends FormModel
 
 		if (!in_array($this->outputFormat, array('pdf', 'csv')))
 		{
-			if ($params->get('checkboxLocation', 'end') === 'end')
-			{
-				$this->addCheckBox($aTableHeadings, $headingClass, $cellClass, !$this->canSelectRows());
-			}
-
 			// If no elements linking to the edit form add in a edit column (only if we have the right to edit/view of course!)
 			if ($params->get('checkboxLocation', 'end') === 'end')
 			{
 				$this->actionHeading($aTableHeadings, $headingClass, $cellClass);
+			}
+
+			if ($params->get('checkboxLocation', 'end') === 'end')
+			{
+				$this->addCheckBox($aTableHeadings, $headingClass, $cellClass, !$this->canSelectRows());
 			}
 
 			// Create columns containing links which point to lists associated with this list
