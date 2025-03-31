@@ -935,20 +935,6 @@ i.fas.fa-exclamation-triangle.fa-sm{
     }
 }
 
-@media (max-width: 500px) {
-    .listContent.fabrikDataContainer {
-        width: 100%;
-        max-width: 100%;
-        overflow-x: auto;
-    }
-    
-    table {
-        width: 100%;
-        max-width: 100%;
-        border-collapse: collapse;
-    }
-}
-
 .autocomplete-trigger {
     border: 1px solid rgba(0, 0, 0, 0.1) !important; 
     height: 28px;
