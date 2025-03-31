@@ -27,28 +27,10 @@ use Joomla\CMS\Language\Text;
 
 	<div class="tab-content">
 
-		<div class="tab-pane" id="jlowcode-filters">
-			<legend></legend>
-		    <fieldset>
-				<?php
-				foreach ($this->form->getFieldset('main_filter') as $this->field) :
-					echo $this->loadTemplate('control_group');
-				endforeach;
-				foreach ($this->form->getFieldset('filters') as $this->field) :
-					echo $this->loadTemplate('control_group');
-				endforeach;
-				?>
-			</fieldset>
-		</div>
-
 		<div class="tab-pane active" id="jlowcode-layout">
 			<legend></legend>
 			<fieldset>
-				<?php foreach ($this->form->getFieldset('main') as $this->field) :
-					echo $this->loadTemplate('control_group');
-				endforeach;
-				?>
-				<?php foreach ($this->form->getFieldset('jlowcode2') as $this->field) :
+				<?php foreach ($this->form->getFieldset('jlowcode-layout') as $this->field) :
 					echo $this->loadTemplate('control_group');
 				endforeach;
 				?>
