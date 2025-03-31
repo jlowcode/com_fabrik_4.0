@@ -19,7 +19,6 @@ requirejs(['fab/fabrik', 'fab/bootstrap_tree'], function (Fabrik, BootstrapTree)
 
 			return list;
 		});
-
 	});
 
 	Fabrik.addEvent('fabrik.list.loaded', function (list) {
@@ -38,6 +37,8 @@ requirejs(['fab/fabrik', 'fab/bootstrap_tree'], function (Fabrik, BootstrapTree)
 });
 
 window.addEvent('fabrik.loaded', function () {
+	setEventsNavigation();
+
 	// Description container
 	var toogleBtn = jQuery('.intro-container .fa');
 	var textContent = jQuery('.text-intro-content');
@@ -64,57 +65,35 @@ window.addEvent('fabrik.loaded', function () {
 
 	// Search icon start
 	// Search icon on filters
-	const searchIcon = ' <svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-search" fill="currentColor" xmlns="http://www.w3.org/2000/svg"> <path fill-rule="evenodd" d="M10.442 10.442a1 1 0 0 1 1.415 0l3.85 3.85a1 1 0 0 1-1.414 1.415l-3.85-3.85a1 1 0 0 1 0-1.415z"/><path fill-rule="evenodd" d="M6.5 12a5.5 5.5 0 1 0 0-11 5.5 5.5 0 0 0 0 11zM13 6.5a6.5 6.5 0 1 1-13 0 6.5 6.5 0 0 1 13 0z"/></svg>';
+	const searchIcon = '<i class="fa-solid fa-magnifying-glass"></i>';
 	let inputs = jQuery("input.fabrik_filter[type='text']");
 	for (let value of inputs) {
 		jQuery(value).parent().css({ "position": "relative" });
-		jQuery(value).after('<div style="position: absolute; left: 17px; top: 11px;" class="bi-search">' + searchIcon + '</div>');
+		jQuery(value).after('<div style="position: absolute; left: 17px; top: 10px;" class="bi-search">' + searchIcon + '</div>');
 	}
 	jQuery('.bi-search').on('click', function (event) {
 		Fabrik.fireEvent('fabrik.list.dofilter', [this]);
 	});
 	
-	//  Search icon on general search
+	// Begin - Search icon on general search
 	var searchBox = jQuery('.fabrik_filter.search-query');
-	var searchButton = jQuery('<svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-search" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M10.442 10.442a1 1 0 0 1 1.415 0l3.85 3.85a1 1 0 0 1-1.414 1.415l-3.85-3.85a1 1 0 0 1 0-1.415z"/><path fill-rule="evenodd" d="M6.5 12a5.5 5.5 0 1 0 0-11 5.5 5.5 0 0 0 0 11zM13 6.5a6.5 6.5 0 1 1-13 0 6.5 6.5 0 0 1 13 0z"/></svg>');
+	var searchButton = jQuery('<i class="fa-solid fa-magnifying-glass"></i>');
 	searchBox.parent().css({
 		'position': 'relative'
 	});
 	searchBox.parent().append(searchButton);
 	searchButton.css({
 		'position': 'absolute',
-		'top': '15px',
-		'left': '30px',
+		'top': '35%',
+		'right': '42px',
 		'cursor': 'pointer',
-		'font-size': '18px',
 		'z-index': '10',
-		'color': '#A6A6A6'
+		'color': 'rgba(68, 70, 79, 1)'
 	});
 	searchButton.on('click', function () {
 		Fabrik.fireEvent('fabrik.list.dofilter', [this]);
 	});
-	// Search icon  END
-
-	// Clean filter
-	var cleanFilterButton = jQuery('<button type="button" class="btn-close"></button>');
-	searchBox.parent().css({
-		'position': 'relative'
-	});
-	searchBox.parent().append(cleanFilterButton);
-	cleanFilterButton.css({
-		'position': 'absolute',
-		'top': '18px',
-		'right': '30px',
-		'cursor': 'pointer',
-		'font-size': '10px',
-		'z-index': '10',
-		'color': '#A6A6A6'
-	});
-	cleanFilterButton.on('click', function () {
-		jQuery(this).parent().find('.fabrik_filter').val('');
-		Fabrik.fireEvent('fabrik.list.dofilter', [this]);
-	});
-	// Clean filter - END
+	// End - Search icon on general search
 
 	var dataRow = $('.fabrik_groupdata');
 
@@ -435,5 +414,50 @@ function orderingTreeTutorial(tree) {
 				});
 			}
 		})
+	}
+}
+
+/**
+ * Functions to new pagination
+ * 
+ */
+function setEventsNavigation() {
+	jQuery("#go-page").on("click", function (e) {
+		e.preventDefault();
+		e.stopPropagation();
+		navigation();
+	});
+
+	jQuery("#nav-pagination").on("blur", function (e) {
+		e.preventDefault();
+		e.stopPropagation();
+		navigation();
+	});
+
+	jQuery("#nav-pagination").keypress(function(e) {
+		if (e.which === 13) {
+			e.preventDefault();
+			e.stopPropagation();
+			navigation();
+		}
+	});
+}
+
+function navigation() {
+	let urlInput = jQuery('input[name="nav-pagination-url"]');
+	let paginationInput = jQuery('input[name="nav-pagination"]');
+	let limitInput = jQuery('input[name="nav-pagination-limit"]');
+	let resultsPerPage = jQuery('input[name="nav-pagination-results-per-page"]');
+
+	if (urlInput.length && paginationInput.length && limitInput.length && resultsPerPage) {
+		let limit = limitInput.val();
+
+		if (paginationInput.val() > limit) {
+			paginationInput.val(limit);
+		}
+
+		let finalUrl = urlInput.val().slice(0, -2) + (paginationInput.val() - 1) * resultsPerPage.val();
+		history.pushState(null, '', window.location.pathname + '?' + finalUrl);
+		location.reload();
 	}
 }

@@ -51,7 +51,7 @@ if ($width_list) {
             endif;
             echo $this->loadTemplate('tabs'); ?>
         </div>
-        <div style="<?php echo $cssOverflow; ?>" class="listContent fabrikDataContainer<?php echo in_array($this->params['show-table-filters'], [6]) && $this->showFilters ? ' col-md-12 col-lg-9' : ''; ?>">
+        <div style="<?php echo $cssOverflow; ?>" class="subrender-list listContent fabrikDataContainer<?php echo in_array($this->params['show-table-filters'], [6]) && $this->showFilters ? ' col-md-12 col-lg-9' : ''; ?>">
 
             <?php foreach ($this->pluginBeforeList as $c) :
                 echo $c;

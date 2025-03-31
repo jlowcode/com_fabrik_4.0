@@ -1,0 +1,1181 @@
+/* 
+    All style for list template 
+    All styles validated have the prefix .fabrik-list
+*/
+
+
+
+/* Begin - Global style */
+#g-main, .com_fabrik #g-page-surround  {
+    background-color: #fff;
+    background: #fff;
+}
+
+.g-content {
+    padding: 28px 44px 48px 64px;
+}
+
+div.modal.fade {
+    top: 0px !important;
+}
+
+.fabrik-list .btn:hover {
+    font-weight: 600;
+}
+/* End - Global style */
+
+
+
+/* Begin - Style to header */
+.fabrik-list .header {
+    margin-bottom: 40px;
+}
+
+.fabrik-list .header-thumb {
+    margin-right: 16px;
+    width: 192px;
+    aspect-ratio: 16/9;
+    overflow: hidden;
+    text-align: center;
+}
+
+.fabrik-list .img-card {
+    object-fit: cover;
+    object-position: center;
+    width: 100%;
+}
+
+.fabrik-list .img-card-default {
+    aspect-ratio: 16/9;
+    overflow: hidden;
+    align-items: center;
+    color: rgba(111, 115, 144, 1);
+    font-weight: 700;
+    line-height: 42px;
+    font-size: 40px;
+}
+
+.fabrik-list .header-info {
+    padding: 8px 0px;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: center;
+}
+
+.fabrik-list .header-title {
+    align-items: center;
+}
+
+.fabrik-list .header-desc {
+    display: flex;
+    flex-direction: column;
+    line-height: 1.3;
+    margin-top: 8px;
+    width: 100%;
+}
+
+.fabrik-list .header-desc .owner-name {
+    color: rgba(117, 117, 117, 1);
+    font-size: 16px;
+    font-weight: 600;
+}
+
+.fabrik-list .header-desc .learn-more {
+    text-decoration: underline;
+    font-weight: 600;
+    width: 30%;
+    padding-left: 8px;
+}
+
+.fabrik-list .header-desc .text-intro-content {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    width: 100%;
+    line-height: 21px;
+}
+
+.fabrik-list .header-desc .text-intro-content > p {
+    display: -webkit-box;
+    -webkit-line-clamp: 1;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    margin: 0;
+    font-size: 14px;
+    color: rgba(31, 14, 61, 1);
+    width: 70%;
+}
+
+@media (max-width: 800px) {
+    .fabrik-list .header {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .fabrik-list .header-desc .text-intro-content {
+        flex-direction: column;
+        align-items: flex-start;
+        padding: 0px;
+    }
+
+    .fabrik-list .header-desc .text-intro-content > p {
+        width: 100%;
+    }
+
+    .fabrik-list .header-desc .learn-more {
+        padding-left: 0px;
+    }
+}
+/* End - Style to header */
+
+
+
+/* Begin - Style to container buttons */
+.fabrik-list .fabrikButtonsContainer {
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    margin-bottom: 24px;
+    gap: 8px;
+}
+
+.fabrik-list .fabrikButtonsContainer .fabrik_filter {
+    padding-left: 16px;
+    border-radius: 16px;
+    width: 360px;
+    height: 56px;
+    border: none;
+    background-color: rgba(234, 236, 240, 1);
+}
+
+.fabrik-list .fabrikButtonsContainer .addbutton, 
+.fabrik-list .fabrikButtonsContainer .middle-buttons > li, 
+.tagSearched, 
+.process_mapper-modal-footer button {
+    height: 40px;
+    display: flex !important;
+    justify-content: center;
+    align-items: center;
+    background-color: rgba(23, 92, 211, 1);
+    border-radius: 100px;
+    padding: 10px 24px;
+    color: #fff;
+}
+
+.fabrik-list .fabrikButtonsContainer .addbutton .fa,
+.fabrik-list .fabrikButtonsContainer .middle-buttons li .fabrikImg, 
+.tagSearched .fa, 
+.addRecord .fa { 
+    margin-right: 8px;
+}
+
+.fabrik-list .fabrikButtonsContainer .middle-buttons li #grid-view .fabrikImg {
+    margin-right: 4px;
+}
+
+.fabrik-list .fabrikButtonsContainer .header_buttons li {
+    margin-right: 16px;
+}
+
+.fabrik-list .fabrikButtonsContainer .header_buttons li:last-child {
+    margin-right: 0px;
+}
+
+.fabrik-list .fabrikButtonsContainer .middle-buttons {
+    flex: 1;
+    flex-direction: row;
+    justify-content: flex-start;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.fabrik-list .fabrikButtonsContainer .middle-buttons > li {
+    background-color: rgba(220, 226, 249, 1);
+}
+
+.fabrik-list .fabrikButtonsContainer .middle-buttons li {
+    display: flex;
+    align-items: center;
+    white-space: nowrap;
+}
+
+.fabrik-list .fabrikButtonsContainer .middle-buttons li a {
+    display: flex;
+    align-items: center;
+    text-decoration: none;
+    padding: 5px 10px;
+    border-radius: 5px;
+}
+
+.fabrik-list .fabrikButtonsContainer .middle-buttons li img {
+    max-height: 20px;
+    width: auto;
+}
+
+.fabrik-list .fabrikButtonsContainer .num-button {
+    background-color: rgba(49, 34, 95, 1);
+    border-radius: 50%;
+    color: #fff;
+    font-size: 11px;
+    font-weight: 500;
+    width: 18px;
+    height: 18px;
+    margin-left: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+@media (max-width: 900px) {
+    .fabrik-list .fabrikButtonsContainer .middle-buttons {
+        flex-wrap: wrap;
+        justify-content: center;
+    }
+
+    .fabrik-list .fabrikButtonsContainer {
+        justify-content: center;
+        flex-direction: column;
+    }
+}
+/* End - Style to button */
+
+
+
+/* Begin - Style to sub render list */
+.fabrik-list .table {
+    border: none;
+}
+
+.fabrik-list thead .fabrik___heading,
+.fabrik-list tbody .fabrik_row {
+    background-color: #fff; 
+    border-bottom: 1px solid rgba(208, 219, 234, 1);
+}
+
+.fabrik-list tbody .fabrik_action .dropdown-toggle {
+    padding: 0px;
+}
+
+@media (max-width: 800px) {
+    .fabrik-list .subrender-list {
+        padding: 0px;
+    }
+}
+/* Begin - Style to sub render list */
+
+
+
+/* Begin - Style to footer */
+.fabrik-list .fabrikNav .active {
+    font-weight: 600;
+}
+
+.fabrik-list .fabrikNav .pagination > li {
+    padding: 0px 7px;
+}
+
+
+.fabrik-list .fabrikNav .list-footer {
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 16px;
+}
+
+.fabrik-list .fabrikNav {
+    padding: 10px;
+}
+
+.fabrik-list .fabrikNav .list-footer .pagination {
+    flex-direction: row;
+    align-items: center;
+    gap: 32px;
+    margin: 0px;
+    flex-shrink: 0;
+}
+
+.fabrik-list .fabrikNav .list-footer .pagination > div {
+    flex-direction: row;
+    flex-shrink: 0;
+    gap: 32px;
+}
+
+.fabrik-list .fabrikNav .list-footer .pagination > div:nth-child(2) {
+    gap: 16px;
+}
+
+.fabrik-list .fabrikNav .list-footer .limit {
+    justify-content: center;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 16px;
+    flex-shrink: 0;
+}
+
+.fabrik-list .fabrikNav .list-footer .limit p {
+    margin: 0px;
+}
+
+.fabrik-list .fabrikNav .list-footer .limit > div:nth-child(1),
+.fabrik-list .fabrikNav .list-footer .limit > div:nth-child(2) {
+    flex-grow: 0;
+}
+
+.fabrik-list .fabrikNav .list-footer .limit > div:nth-child(3) {
+    flex-grow: 1;
+    text-align: center;
+}
+
+
+.fabrik-list .fabrikNav .list-footer .go-page {
+    background-color: rgba(220, 226, 249, 1);
+    border-radius: 8px;
+    padding: 0px 15px;
+    height: 32px;
+}
+
+.fabrik-list .fabrikNav .list-footer .nav-pagination {
+    border: 1px solid rgba(163, 171, 189, 1);
+    width: 54px;
+    height: 32px;
+    text-align: center;
+    background-color: #fff;
+}
+
+@media (max-width: 800px) {
+    .fabrik-list .fabrikNav .list-footer {
+        flex-direction: column;
+        justify-content: center;
+    }
+}
+/* End - Style to footer */
+
+
+
+/* Begin - Style to workflow */
+#eventsContainer input, 
+#eventsContainer select,
+.modalContent input,
+.modalContent input[type="text"],
+.modalContent textarea,
+.modalContent select {
+    background-color: #fff;
+	border-radius: 12px;
+    border: 2px solid #eee;
+}
+/* End - Style to workflow */
+
+
+
+/* Begin - See how remove !important flag */
+/* 
+    Case:
+        - Input easyadmin
+        - Input filters
+        - Input workflow
+*/
+.fabrikFilterContainer .fabrik_filter, .fabrikinput {
+    border: 2px solid #eee !important;
+    height: 50px !important;
+    background-color: #fff !important;
+}
+
+.fabrikFilterContainer input.fabrik_filter {
+    padding-left: 40px !important;
+}
+/* End - See how remove !important flag */
+
+
+
+
+
+
+
+
+/* 
+    We need validate all css below... 
+    Probably we have css specific to some pages, 
+    but here must be only the css default to template
+*/
+.fabrikDataContainer {
+	clear: both;
+}
+
+ul.fabrikRepeatData {
+	list-style: none;
+    list-style-position:inside;
+	margin: 0;
+	padding-left: 0;
+}
+
+.fabrikRepeatData > li {
+	white-space: nowrap;
+	max-width:350px;
+	overflow:hidden;
+	text-overflow: ellipsis;
+}
+
+td.repeat-merge div, td.repeat-reduce div,
+td.repeat-merge i, td.repeat-reduce i {
+padding: 5px !important;
+}
+
+@media only screen and (min-width: 360px) {
+    .show-mobile {
+      display: block;
+    }
+    .hide-mobile {
+      display: none;
+    }
+  }
+
+@media only screen and (min-width: 1023px) {
+    .show-mobile {
+      display: none;
+    }
+    .hide-mobile {
+      display: block;
+    }
+}
+
+.nav li {
+list-style: none;
+}
+
+.filtertable_horiz {
+	display: inline-block;
+	vertical-align: top;
+}
+
+/* Left filter layout */
+.buttons {
+	height: 600px;
+	overflow: hidden;
+}
+
+.row {
+	display: flex;
+}
+
+/*Workflow css code*/
+.loader {
+    position: relative;
+    margin: 0 auto;
+    width: 50px;
+}
+.loader:before {
+    content: '';
+    display: block;
+    padding-top: 100%;
+}
+.circular {
+    animation: rotate 2s linear infinite;
+    height: 100%;
+    transform-origin: center center;
+    width: 100%;
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    margin: auto;
+}
+.path {
+    stroke-dasharray: 1, 200;
+    stroke-dashoffset: 0;
+    animation: dash 1.5s ease-in-out infinite, color 6s ease-in-out infinite;
+    stroke-linecap: round;
+}
+@keyframes rotate {
+100% {
+    transform: rotate(360deg);
+}
+}
+@keyframes dash {
+0% {
+    stroke-dasharray: 1, 200;
+    stroke-dashoffset: 0;
+}
+50% {
+    stroke-dasharray: 89, 200;
+    stroke-dashoffset: -35px;
+}
+100% {
+    stroke-dasharray: 89, 200;
+    stroke-dashoffset: -124px;
+}
+}
+@keyframes color {
+100%, 0% {
+    stroke: #d62d20;
+}
+40% {
+    stroke: #0057e7;
+}
+66% {
+    stroke: #008744;
+}
+80%, 90% {
+    stroke: #ffa700;
+}
+}
+body {
+    background-color: #eee;
+}
+
+.contentpane {
+    background-color: #fff !important;
+}
+
+.showbox {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    padding: 5%;
+}
+
+.modalContainer {
+	z-index: 2;
+	position: fixed;
+	display: none;
+	background: rgba(0,0,0,0.5);
+	top: 0;
+	left: 0;
+	height: 100vh;
+	width: 100%;
+}
+
+.modalContent {
+	position: relative;
+	background-color: #FFF;
+	top: 50%;
+	left: 50%;
+	transform: translate(-50%, -50%);
+	height: 80%;
+	width: 50%;
+	min-width: 600px;
+	padding: 20px;
+	overflow:auto;
+}
+
+.modalCloseBtn {
+	position: absolute;
+	right: 0;
+	top: 0;
+	margin-right: 20px;
+	font-size:20px;
+	cursor: pointer;
+	font-weight: bold;
+	z-index: 100;
+}
+
+/*Workflow css code end*/
+.dropdown-menu > li > a {
+    white-space: normal !important;
+}
+
+.icon-fa, .icon-sort {
+    padding: 0px 2px;
+}
+
+.fabrik_action .dropdown-menu {
+    transform: translate(0px, 30px) !important;
+}
+
+.fabrikFilterContainer a {
+    text-decoration: underline;
+}
+
+.fabrik___heading .fabrik_ordercell a, .fabrik___heading .fabrik_ordercell span {
+    max-width: 90%; 
+    overflow: hidden; 
+    text-overflow: ellipsis; 
+    white-space: nowrap;
+}
+
+textarea, input, select, .list-footer .form-select {
+    background-color: #fff;
+	border-radius: 12px;
+    border: 2px solid #eee;
+}
+
+.modal-content {
+    border-radius: 20px !important;
+    box-shadow: 0px 6px 6px 0px #3c3939;
+}
+
+.fabrik_actions img {
+    max-width: inherit;
+}
+
+thead .fabrik___heading a,
+.fabrik___heading select {
+    color: #011627 !important;
+}
+
+.g-menu-item span:hover {
+	font-weight: 700 !important;
+}
+
+.fabrikgrid_checkbox {
+    display: flex !important;
+    align-items: center !important;
+}
+
+.fabrikgrid_checkbox input {
+    margin-left: 0px !important;
+    margin-top: 0px !important;
+}
+
+.fabrikgrid_checkbox label {
+    margin-bottom: 0px !important;
+}
+
+.dropdown-menu > li > a:hover, .dropdown-menu > li > a:focus, .dropdown-submenu:hover > a, .dropdown-submenu:focus > a {
+    background: inherit !important;
+    font-weight: 500;
+}
+
+.dropdown-toggle .fabrikImg {
+    max-width: inherit;
+}
+
+.btn.dropdown-toggle-no-caret::after {
+    border: none !important;
+}
+
+
+form .fabrikButtonsContainer .nav {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: end;
+    width: 100%;
+}
+
+.fabrikButtonsContainer ul {
+    margin-bottom: 30px !important;
+}
+
+.fabrikButtonsContainer ul li {
+    padding: 0px 30px;
+}
+
+.table > :not(caption) > * > * {
+    border-bottom: none !important;
+}
+
+
+.table > :not(:last-child) > :last-child > * {
+    border-bottom-color: unset !important;
+}
+
+
+form a, table a {
+    color: #011627;
+}
+
+.dropdown-menu > li > a {
+	color: #011627 !important;
+}
+
+.dropdown-menu > li > a:hover {
+	font-weight: 700;
+	background: none !important;
+    cursor: pointer;
+}
+
+.g-container{
+    width: 90rem !important;
+}
+
+.nav {
+    margin: 10px 0px !important;
+}
+
+h1 {
+    margin: 0px !important;
+    line-height: 1;
+}
+
+.fabrikForm {
+    font-size: 1rem;
+}
+
+.active>.page-link, .page-link.active{
+    z-index: 1 !important;
+    background-color: #eceff3;
+}
+
+.table-aditional.in {
+    display: block;
+}
+
+#eventsContainer ul {
+    list-style: none;
+}
+
+i.fas.fa-exclamation-triangle.fa-sm{
+    padding: 0rem 0.3rem;
+}
+
+#g-footer {
+    padding: 0px;
+}
+
+#conteudo {
+	webkit-box-flex: 0;
+    -moz-box-flex: 0;
+    box-flex: 0;
+    -webkit-flex: 0 90%;
+    -moz-flex: 0 90%;
+    -ms-flex: 0 90%;
+    margin: auto;
+    flex: 0 90%;
+    width: 90%;
+}
+
+.chzn-container-single .chzn-single {
+    height: 30px !important;
+    line-height: 26px !important;
+}
+.chzn-container-single .chzn-single div b{
+    top: 2px !important; 
+}
+
+.date-between{
+    border: 0px !important;
+    border-radius: 5px 0px 0px 5px !important;
+    height: 30px !important;
+    line-height: 26px !important;
+}
+.input-append{
+    display:inline-flex;
+}
+
+.btn-primary:hover, .btn-primary:active, .btn-primary:focus {
+    background: #bbb !important;
+}
+
+.btn.calendarbutton {
+    background: #eee;
+    border-radius: 0px 5px 5px 0px !important;
+    margin: 2px 0px 0px 0px;
+    font-size: 10px;
+    border: 0px;
+    color: #000;
+    padding: 0rem 1.7rem;
+    height: 47px;
+    display: flex;
+    align-items: center;
+}
+
+.fabrik_filter_submit {
+    margin-top: 10px !important;
+}
+
+.fabrikFilterContainer {
+    background-color: #FBFBFB;
+	padding: 10px;
+}
+
+.filterContentNotEmpty {
+	color: #000;
+    font-weight: 500;
+    border-radius: 5px;
+    margin-right: 0px;
+}
+
+.btn.fabrik_view{
+    color: #054267;
+}
+.btn.fabrik_edit{
+    color: #0E534A;
+}
+.btn.delete{
+    color: #A41623;
+}
+
+.btn.btn-default.delete,
+.btn.fabrik_view,
+.btn.fabrik_edit
+.btn.fabrik_report{
+    background: #e3ecf1 !important;
+    padding: 0.2rem 0.4rem;
+    border-radius: 5px !important;
+    margin-left: 5px !important;
+    border: 1px solid #BAD0DC;
+}
+
+.inputbox.fabrik_filter.input-medium {
+    border: none;
+}
+
+.heading.fabrik_ordercell.fabrik_actions,
+.heading.fabrik_ordercell.fabrik_select,
+.fabrik_select.fabrik_element,
+.fabrik_actions.fabrik_element{
+    text-align: right;
+}
+
+.fabrik_filter.search-query.input-medium{
+	border: 1px solid #508AA8;
+}
+
+.fabrikFilterContainer > .row-fluid:first-child{
+    display: flex;
+}
+
+.row-fluid .span3{
+    margin: 0px 10px;
+}
+
+@media (max-width: 800px){
+    main .platform-content {
+        padding: 5px !important;
+    }
+
+    .g-content {
+        padding: 10px 15px !important;
+    }
+
+    .input-append input {
+        width: 200px !important;
+    }
+
+    .fabrikButtonsContainer {
+        padding: 0px !important;
+    }
+
+    .filterContent {
+        padding-left: 0px !important;
+        padding-right: 0px !important;
+    }
+
+    .fabrikButtonsContainer ul li {
+        margin-bottom: 10px;
+        padding: 0px 5px;
+    }
+
+    .fabrikDateListFilterRange,
+    .fabrikDateListFilterRange .input-append {
+        width: 100%;
+    }
+
+    .fabrikDateListFilterRange .inputbox  {
+        width: 80% !important;
+    }
+    
+    .fabrik_groupdata table caption {
+        font-size: 1.3em;
+    }
+	
+	.fabrik_groupdata tr { 
+        border: 1px solid #ccc; 
+        margin: 10px auto;
+        border-bottom: 1px solid #07102a;
+    }
+	
+	.fabrik_groupdata td { 
+		/* Behave  like a "row" */
+		border: none;
+		border-bottom: 1px solid #eee; 
+		position: relative;
+		padding-left: 50%; 
+	}
+	
+	.fabrik_groupdata td:before { 
+		/* Now like a table header */
+		position: initial;
+		/* Top/left values mimic padding */
+		top: 6px;
+		left: 6px;
+		width: 45%; 
+		padding-right: 10px; 
+		white-space: nowrap;
+        content: attr(data-label);
+        float: left;
+        font-weight: bold;
+        text-transform: uppercase;
+        font-size: .8em;
+        text-align: left;
+
+	}
+    .listContent.fabrikDataContainer{
+        margin: 20px auto;
+    }
+       
+    .fabrik_row td {
+        width: 100% !important;
+    }
+
+    td:before {
+        content: attr(data-content) !important;
+    }
+
+    /*Joyce*/
+    .filterContent.filterContentNotEmpty .fabrikFilterContainer .row-fluid .span4 {
+        width: 100% !important;
+    }
+}
+
+@media (max-width: 500px) {
+    .listContent.fabrikDataContainer {
+        width: 100%;
+        max-width: 100%;
+        overflow-x: auto;
+    }
+    
+    table {
+        width: 100%;
+        max-width: 100%;
+        border-collapse: collapse;
+    }
+}
+
+.autocomplete-trigger {
+    border: 1px solid rgba(0, 0, 0, 0.1) !important; 
+    height: 28px;
+}
+
+.single_field {
+    border: 1px solid rgba(0, 0, 0, 0.1) !important; 
+    height: 28px;
+}
+
+.search-icon-button {
+    top: 5px !important;
+}
+
+
+
+/*Joyce*/
+.filterContent.filterContentNotEmpty .fabrikFilterContainer .row-fluid .span4 {
+    width: 31.5%;
+}
+
+/*Joyce*/
+.btn.php-1.listplugin.btn-default{
+    background: #e3ecf1 !important;
+    padding: 0.2rem 0.4rem;
+    border-radius: 5px !important;
+    margin-left: 5px !important;
+    border: 1px solid #BAD0DC;
+    color: #0E534A;
+}
+
+/*Joyce*/
+.btn.link-1.listplugin.btn-default{
+    background: #e3ecf1 !important;
+    padding: 0.2rem 0.4rem;
+    border-radius: 5px !important;
+    margin-left: 5px !important;
+    border: 1px solid #BAD0DC;
+    color: #07102a;
+}
+
+
+/*WORKFLOW*/
+.btn-outline-primary{
+    border: 1px solid #003EA1 !important;
+}
+
+
+/* Modo Exibição*/
+.box {
+    position: relative;
+    min-height: 20px;
+    padding: 19px;
+    margin-bottom: 20px;
+    background-color: #ffffff;
+    border: 1px solid #e3e3e3;
+    -webkit-border-radius: 4px;
+    -moz-border-radius: 4px;
+    border-radius: 4px;
+    -webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.05);
+    -moz-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.05);
+    box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.05);
+}
+
+.radio-group {
+    display: flex;
+    overflow: hidden;
+}
+
+.radio-group input[type="radio"] {
+    display: none;
+}
+    
+.radio-group img {
+    padding: 0.3rem 0.3rem;
+    cursor: pointer !important;
+    transition: background-color 0.3s, color 0.3s;
+}
+
+.radio-group input[type="radio"]:checked + label {
+    background-color: #eee;
+    color: #0d3e9d;
+}
+    
+/* Estilo do Modal */
+#loadingModal {
+    display: none; /* Esconde o modal inicialmente */
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5); /* Fundo semitransparente */
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+}
+
+/* Ícone de Carregamento (Spinner) */
+#loadingModal .spinner {
+    border: 4px solid #f3f3f3; /* Cor de fundo do spinner */
+    border-top: 4px solid #3498db; /* Cor da borda do spinner */
+    border-radius: 50%;
+    width: 200px;
+    height: 200px;
+    animation: spin 1s linear infinite;
+    margin-bottom: 10px;
+}
+
+/* Animação do Spinner */
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* Style to tutorial view */
+.section {
+    display: flex;
+}
+
+.summary {
+    width: 15%;
+    padding-top: 25px;
+    border-right: 2px solid #eee;
+}
+
+.tutorial {
+    width: 85%;
+    padding: 0px 5%;
+}
+
+.tutorial-section {
+    margin-bottom: 30px;
+}
+
+.tutorial-section:last-child {
+    margin-bottom: 0px
+}
+
+.tutorial h2, .tutorial h3, .tutorial h4, .tutorial h5, .tutorial h6 {
+    font-weight: 700;
+}
+
+.tutorial h2 {
+    margin: 0px;
+}
+
+.header-tutorial {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 2px solid #eee;
+}
+
+.pdf-header {
+    display: flex;
+    align-items: center;
+    padding-right: 5%;
+}
+
+.pdf-header img {
+    margin-right: 5px;
+}
+
+/* Estilo básico para o contêiner de registros */
+/* Estilo básico para o contêiner de registros */
+#registros-container {
+    padding: 20px;
+    font-family: Arial, sans-serif;
+}
+
+/* Estilo para os itens da árvore */
+.tree-item {
+    margin: 0em 0px 0em 0.5em;
+    padding: 0;
+    cursor: pointer;
+    position: relative;
+    margin-top: -15px;
+    margin-bottom: -15px;
+}
+
+.tree-text {
+    cursor: pointer;
+}
+
+
+/* Estilo para o símbolo de seta */
+.tree-arrow {
+    cursor: pointer; /* Muda o cursor ao passar sobre a seta */
+    display: inline-block;
+    transition: transform 0.2s; /* Animação de rotação */
+}
+
+/* Estilo para o texto do item */
+.no-children {
+    color: #666;
+    font-style: italic;
+    margin-left: 20px; /* Ajuste conforme necessário */
+    margin-top: -15px;
+}
+
+.tree-item.open > .tree-arrow {
+    transform: rotate(90deg); /* Rotate the arrow to indicate expansion */
+}
+
+.action-menu {
+    position: absolute;
+    background-color: white;
+    border: 1px solid #ccc;
+    list-style: none;
+    padding: 5px;
+    margin: 0;
+    display: none;
+    z-index: 1000;
+}
+
+.action-menu li {
+    padding: 5px;
+    cursor: pointer;
+}
+
+.action-menu li:hover {
+    background-color: #eee;
+}
+
+.dropdown.fabrik_action{
+    display: inline;
+}
+
+/* Aplica o hover apenas ao .dropdown que é filho direto do .tree-item que está sendo hoverado */
+.tree-item:hover > .actions > .dropdown.fabrik_action {
+    visibility: visible;
+    opacity: 1;
+}
+
+.button.btn.btn-default.btn-mini.dropdown-toggle.dropdown-toggle-no-caret{
+    margin: 0;
+}
