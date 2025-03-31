@@ -256,7 +256,7 @@ div.modal.fade {
     border-bottom: 1px solid rgba(208, 219, 234, 1);
 }
 
-.fabrik-list tbody .fabrik_action .dropdown-toggle {
+.fabrik-list .fabrik_action .dropdown-toggle {
     padding: 0px;
 }
 
