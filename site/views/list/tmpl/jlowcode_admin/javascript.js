@@ -34,6 +34,10 @@ requirejs(['fab/fabrik', 'fab/bootstrap_tree'], function (Fabrik, BootstrapTree)
 			}
 		})
 	});
+
+	Fabrik.addEvent('fabrik.list.submit.ajax.complete', function (list) {
+		jQuery('#nav-pagination').val(Math.ceil((parseInt(list.options.limitStart)+1)/parseInt(list.options.limitLength)));
+	})
 });
 
 window.addEvent('fabrik.loaded', function () {
@@ -421,20 +425,25 @@ function orderingTreeTutorial(tree) {
  * Functions to new pagination
  * 
  */
+setInterval(() => {
+	setEventsNavigation();
+}, 1000);
+
+
 function setEventsNavigation() {
-	jQuery("#go-page").on("click", function (e) {
+	jQuery("#go-page").off('click').on("click", function (e) {
 		e.preventDefault();
 		e.stopPropagation();
 		navigation();
 	});
 
-	jQuery("#nav-pagination").on("blur", function (e) {
+	jQuery("#nav-pagination").off('blur').on("blur", function (e) {
 		e.preventDefault();
 		e.stopPropagation();
 		navigation();
 	});
 
-	jQuery("#nav-pagination").keypress(function(e) {
+	jQuery("#nav-pagination").off('keypress').on('keypress', function(e) {
 		if (e.which === 13) {
 			e.preventDefault();
 			e.stopPropagation();
