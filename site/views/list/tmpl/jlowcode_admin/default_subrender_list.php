@@ -63,13 +63,7 @@ if ($width_list) {
                         <col class="col-<?php echo $key; ?>">
                     <?php endforeach; ?>
                 </colgroup>
-                <tfoot>
-                    <tr class="fabrik___heading">
-                        <td colspan="<?php echo count($this->headings); ?>">
-                            <?php echo $this->nav; ?>
-                        </td>
-                    </tr>
-                </tfoot>
+                
                 <thead><?php echo $this->headingsHtml ?></thead>
                 <?php
                 if ($this->isGrouped && empty($this->rows)) :
@@ -128,4 +122,12 @@ if ($width_list) {
             print_r($this->hiddenFields);
             ?>
         </div>
+
+        <tfoot>
+            <tr class="fabrik___heading">
+                <td colspan="<?php echo count($this->headings); ?>">
+                    <?php echo $this->nav; ?>
+                </td>
+            </tr>
+        </tfoot>
 </form>

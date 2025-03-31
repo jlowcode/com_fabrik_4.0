@@ -260,6 +260,16 @@ div.modal.fade {
     padding: 0px;
 }
 
+@media (max-width: 1280px) {
+    .fabrik-list .subrender-list {
+        overflow-x: scroll;
+    }
+
+    .fabrik-list .subrender-list .table {
+        width: 1920px !important;
+    }
+}
+
 @media (max-width: 800px) {
     .fabrik-list .subrender-list {
         padding: 0px;
