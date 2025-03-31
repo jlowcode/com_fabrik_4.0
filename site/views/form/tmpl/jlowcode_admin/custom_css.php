@@ -124,15 +124,6 @@ echo <<<EOT
 	border: 2px solid #eee !important;
 }
 
-.g-menu-item span {
-	color: #032B43 !important;
-    font-weight: 400 !important;
-}
-
-.g-menu-item span:hover {
-	font-weight: 700 !important;
-}
-
 .page-header {
 	border-bottom: 2px solid #eee !important;
 }
