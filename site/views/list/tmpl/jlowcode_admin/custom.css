@@ -151,9 +151,9 @@ div.modal.fade {
     background-color: rgba(234, 236, 240, 1);
 }
 
-.fabrik-list .fabrikButtonsContainer .addbutton, 
-.fabrik-list .fabrikButtonsContainer .middle-buttons > li, 
-.tagSearched, 
+.addbutton, 
+.fabrik-list .fabrikButtonsContainer .middle-buttons > li,
+.tagSearched,
 .process_mapper-modal-footer button {
     height: 40px;
     display: flex !important;
@@ -165,7 +165,7 @@ div.modal.fade {
     color: #fff;
 }
 
-.fabrik-list .fabrikButtonsContainer .addbutton .fa,
+.addbutton .fa,
 .fabrik-list .fabrikButtonsContainer .middle-buttons li .fabrikImg, 
 .tagSearched .fa, 
 .addRecord .fa { 
