@@ -51,7 +51,7 @@ if ($width_list) {
             endif;
             echo $this->loadTemplate('tabs'); ?>
         </div>
-        <div style="<?php echo $cssOverflow; ?>" class="listContent fabrikDataContainer<?php echo in_array($this->params['show-table-filters'], [6]) && $this->showFilters ? ' col-md-12 col-lg-9' : ''; ?>">
+        <div style="<?php echo $cssOverflow; ?>" class="subrender-list listContent fabrikDataContainer<?php echo in_array($this->params['show-table-filters'], [6]) && $this->showFilters ? ' col-md-12 col-lg-9' : ''; ?>">
 
             <?php foreach ($this->pluginBeforeList as $c) :
                 echo $c;
@@ -63,13 +63,7 @@ if ($width_list) {
                         <col class="col-<?php echo $key; ?>">
                     <?php endforeach; ?>
                 </colgroup>
-                <tfoot>
-                    <tr class="fabrik___heading">
-                        <td colspan="<?php echo count($this->headings); ?>">
-                            <?php echo $this->nav; ?>
-                        </td>
-                    </tr>
-                </tfoot>
+                
                 <thead><?php echo $this->headingsHtml ?></thead>
                 <?php
                 if ($this->isGrouped && empty($this->rows)) :
@@ -128,4 +122,12 @@ if ($width_list) {
             print_r($this->hiddenFields);
             ?>
         </div>
+
+        <tfoot>
+            <tr class="fabrik___heading">
+                <td colspan="<?php echo count($this->headings); ?>">
+                    <?php echo $this->nav; ?>
+                </td>
+            </tr>
+        </tfoot>
 </form>

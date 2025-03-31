@@ -211,6 +211,33 @@
 	</fieldset>
 
 	<fields name="params">
+		<fieldset name="jlowcode-layout">
+
+			<field name="show_thumb_list"
+					type="radio"
+					class="btn-group"
+					default="1"
+					label="COM_FABRIK_FIELD_SHOW_THUMB_LIST_LABEL"
+				layout="joomla.form.field.radio.switcher"
+					description="COM_FABRIK_FIELD_SHOW_THUMB_LIST_DESC"
+			>
+				<option value="0">JNO</option>
+				<option value="1">JYES</option>
+			</field>
+
+			<field name="show_description_list"
+					type="radio"
+					class="btn-group"
+					default="1"
+					label="COM_FABRIK_FIELD_SHOW_DESCRIPTION_LIST_LABEL"
+				layout="joomla.form.field.radio.switcher"
+					description="COM_FABRIK_FIELD_SHOW_DESCRIPTION_LIST_DESC"
+			>
+				<option value="0">JNO</option>
+				<option value="1">JYES</option>
+			</field>
+		</fieldset>
+		
 		<fieldset name="main">
 
 			<field name="empty_data_msg"

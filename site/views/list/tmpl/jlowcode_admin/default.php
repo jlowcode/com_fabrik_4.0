@@ -16,6 +16,8 @@ defined('_JEXEC') or die('Restricted access');
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\Factory;
 
+JHtml::_('script', 'components/com_fabrik/views/list/tmpl/' . $this->getModel()->getFormModel()->getTmpl() . '/js/sortable.min.js', array('relative' => false));
+
 if (!function_exists('getItens')) {
     function getItens($self, $parent)
     {
@@ -101,7 +103,6 @@ if (!function_exists('getItensChild')) {
     }
 }
 
-JHtml::_('script', 'components/com_fabrik/views/list/tmpl/jlowcode_admin/sortable.min.js', array('version' => 'auto', 'relative' => false));
 $db = Factory::getContainer()->get('DatabaseDriver');
 $input = Factory::getApplication()->input;
 
@@ -137,6 +138,11 @@ if (isset($_SESSION['modo']) && $_SESSION['modo']['lista'] == $this->table->db_t
     $modoExibicao["template"] = 'list';
 }
 
+?> 
+
+<div class="fabrik-list">
+
+<?php
 $this->headingsHtml = $this->loadTemplate('headings');
 // Workflow code
 echo $this->loadTemplate('modal');
@@ -156,39 +162,10 @@ if ($this->params->get('show_page_heading')) :
     echo '<h1>' . $this->params->get('page_heading') . '</h1>';
 endif;
 
-$query = "SHOW TABLES LIKE '%{adm_cloner_listas}%';";
-$db->setQuery($query);
-$exist = $db->loadObject();
+$this->modalLearnMore = Array('callModal' => 0);
+echo $this->loadTemplate('header');
 
-if($exist) {
-    $idList = $this->list->id;
-    $query = $db->getQuery(true);
-    $query->select('miniatura')->from('adm_cloner_listas')->where('id_lista = ' . $idList);
-    $db->setQuery($query);
-    $miniatura = $db->loadResult();
-}
-
-if($miniatura) { ?>
-    <div style="display: flex; padding-bottom: 10px; border-bottom: 2px solid #eee;">
-        <img style="margin-right: 50px; width: 300px; object-fit=contain" src="<?php echo $miniatura; ?>"/>
-        <?php echo $this->loadTemplate('header'); ?>
-    </div>
-<?php } else { ?>
-    <div style="display: flex; border-bottom: 2px solid #eee;">
-        <?php echo $this->loadTemplate('header'); ?>
-    </div>
-<?php }
-
-if($this->table->intro) : ?>
-
-<div class="intro-container">
-    <div class="text-intro-content">
-            <?php echo $this->table->intro; ?>
-    </div>
-    <i class="fa fa-angle-down" aria-hidden="true"></i>
-</div>
-
-<?php endif; ?>
+?>
 
 <div id="loadingModal" class="modal">
     <div class="spinner"></div>
@@ -223,3 +200,4 @@ if ($pageClass !== '') :
     echo '</div>';
 endif;
 ?>
+</div>
