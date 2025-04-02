@@ -90,7 +90,7 @@ echo <<<EOT
     display: flex;
     flex-direction: row;
     border-top: 1px solid #eee;
-    padding: 15px 0px 15px 10px;
+    padding: 15px 10px;
 }
 
 .detailsContent > div:hover {
@@ -207,8 +207,6 @@ main .platform-content {
 	border: none !important;
     display: block !important;
 	font-weight: 300 !important;
-	margin: 0px !important;
-    color: #fff !important;
     float: right;
 }
 
@@ -235,6 +233,18 @@ main .platform-content {
 .fabrikGroup{
     padding: 30px 0px;
 }
+
+/* BEGIN - Added by PITT */
+.btn-primary {
+    color: #fff !important;
+}
+
+.btn-pitt {
+    background: #207dcd !important;
+    color: #fff !important;
+}
+
+/* END - Added by PITT */
 
 /* END - Your CSS styling ends here */
 EOT;

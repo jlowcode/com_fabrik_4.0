@@ -589,6 +589,17 @@
 				<option value="3">COM_FABRIK_FORM_VIEW_ONLY</option>
 			</field>
 
+			<field name="show-complete-data"
+			       type="radio"
+			       class="btn-group"
+			       default="1"
+				layout="joomla.form.field.radio.switcher"
+			       description="COM_FABRIK_FIELD_SHOW_COMPLETE_DATA_DESC"
+			       label="COM_FABRIK_FIELD_SHOW_COMPLETE_DATA_LABEL">
+				<option value="0">JNO</option>
+				<option value="1">JYES</option>
+			</field>
+
 		</fieldset>
 
 		<fieldset name="processing">
