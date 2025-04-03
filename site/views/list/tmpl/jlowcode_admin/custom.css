@@ -155,9 +155,9 @@ div.modal.fade {
     background-color: rgba(234, 236, 240, 1);
 }
 
-.fabrik-list .fabrikButtonsContainer .addbutton, 
-.fabrik-list .fabrikButtonsContainer .middle-buttons > li, 
-.tagSearched, 
+.addbutton, 
+.fabrik-list .fabrikButtonsContainer .middle-buttons > li,
+.tagSearched,
 .process_mapper-modal-footer button {
     height: 40px;
     display: flex !important;
@@ -169,7 +169,7 @@ div.modal.fade {
     color: #fff;
 }
 
-.fabrik-list .fabrikButtonsContainer .addbutton .fa,
+.addbutton .fa,
 .fabrik-list .fabrikButtonsContainer .middle-buttons li .fabrikImg, 
 .tagSearched .fa, 
 .addRecord .fa { 
@@ -604,13 +604,6 @@ body {
 
 .fabrikFilterContainer a {
     text-decoration: underline;
-}
-
-.fabrik___heading .fabrik_ordercell a, .fabrik___heading .fabrik_ordercell span {
-    max-width: 90%; 
-    overflow: hidden; 
-    text-overflow: ellipsis; 
-    white-space: nowrap;
 }
 
 textarea, input, select, .list-footer .form-select {
