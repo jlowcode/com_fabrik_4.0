@@ -1721,6 +1721,8 @@ class PlgFabrik_Element extends FabrikPlugin
 	 */
 	public function getListHeading()
 	{
+		$db = FabrikWorker::getDbo();
+
 		$params  = $this->getParams();
 		$element = $this->getElement();
 		$label   = $params->get('alt_list_heading') == '' ? $element->label : $params->get('alt_list_heading');
@@ -1728,13 +1730,18 @@ class PlgFabrik_Element extends FabrikPlugin
 		if($element->get('plugin') == 'databasejoin') {
 			$app = Factory::getApplication();
 			$menu = $app->getMenu();
-			
-			$idPopupForm = $params->get('databasejoin_popupform');
-			$url = "index.php?option=com_fabrik&view=list&listid=$idPopupForm";
-			$menuLinked = $menu->getItems('link', $url, true);
-			$route = $menuLinked->route;
-			$link = '/' . (isset($route) ? $route : $url);
-			$label = "<a href='$link' target='_blank'>$label</a>";
+
+			$tableName = $params->get('join_db_name');
+			$db->setQuery("SELECT id FROM #__fabrik_lists WHERE `db_table_name` = '$tableName' AND `published` = '1'");
+			$idPopupForm = $db->loadResult();
+
+			if(!empty($idPopupForm)) {
+				$url = "index.php?option=com_fabrik&view=list&listid=$idPopupForm";
+				$menuLinked = $menu->getItems('link', $url, true);
+				$route = $menuLinked->route;
+				$link = '/' . (isset($route) ? $route : $url);
+				$label = "<a href='$link' target='_blank'>$label</a>";
+			}
 		}
 
 		return Text::_($label);
