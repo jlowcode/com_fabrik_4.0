@@ -25,7 +25,7 @@ $this->showEmpty = true;
 
 ?>
 <form class="fabrikForm" action="<?php echo $this->table->action; ?>" method="post" id="<?php echo $this->formid; ?>" name="fabrikList">
-    <div class="<?php echo $this->params['show-table-filters'] === '6' ? 'row' : ''; ?>">
+    <div class="<?php echo in_array($this->params['show-table-filters'], [6, 7]) ? 'row' : ''; ?>" style="width: 100%;">
         <div class="<?php echo $this->params['show-table-filters'] === '6' ? 'col-md-12' : ''; ?>">
             <?php
             if ($this->hasButtons) :
@@ -46,7 +46,7 @@ $this->showEmpty = true;
             // End workflow code
             ?>
         </div>
-        <div class="<?php echo $this->params['show-table-filters'] === '6' ? ' col-md-2 span2 ' : '';
+        <div class="filterContent fabrikFilterContainer <?php echo in_array($this->params['show-table-filters'], [6, 7]) && $this->showFilters ? ' col-md-12 col-lg-3 ' : '';
                     echo $this->showFilters === true ? 'filterContentNotEmpty' : '' ?>" style="margin-bottom: 30px">
 
             <?php
