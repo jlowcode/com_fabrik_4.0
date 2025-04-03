@@ -33,6 +33,7 @@ define(['jquery', 'fab/fabrik', 'fab/advanced-search'], function (jQuery, Fabrik
             this.filterContainer = this.container.find('.fabrikFilterContainer');
             this.filtersInHeadings = this.container.find('.listfilter');
             var b = this.container.find('.toggleFilters');
+
             b.on('click', function (e) {
                 e.preventDefault();
                 self.filterContainer.toggle();
@@ -40,7 +41,7 @@ define(['jquery', 'fab/fabrik', 'fab/advanced-search'], function (jQuery, Fabrik
 
                 // Left side filter toggle
                 if(this.dataset.filterMode == '7') {
-                    classContainer = self.filterContainer[0].parentNode.getElementsByClassName('listContent')[0].classList;
+                    classContainer = self.filterContainer[0].parentNode.parentNode.getElementsByClassName('listContent')[0].classList;
                     if(classContainer.value.indexOf('col-lg-9') !== -1) {
                         classContainer.remove('col-lg-9');
                     } else {

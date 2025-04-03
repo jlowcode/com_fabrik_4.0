@@ -56,7 +56,7 @@ $this->showEmpty = true;
             ?>
         </div>
 
-        <div class="fabrikDataContainer<?php echo $this->params['show-table-filters'] === '6' ? ' col-md-9 span9' : ''; ?>" data-cols="<?php echo $columns; ?>" style="">
+        <div class="subrender-grid listContent fabrikDataContainer<?php echo $this->params['show-table-filters'] === '6' ? ' col-md-9 span9' : ''; ?>" data-cols="<?php echo $columns; ?>" style="">
             <?php foreach ($this->pluginBeforeList as $c) {
                 echo $c;
             } ?>

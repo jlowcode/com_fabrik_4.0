@@ -45,7 +45,7 @@ $this->showEmpty = true;
             // End workflow code
             ?>
         </div>
-        <div class="fabrikDataContainer col-md-12 span9" data-cols="<?php echo $columns; ?>" style="float: right">
+        <div class="subrender-tree listContent fabrikDataContainer col-md-12 span9" data-cols="<?php echo $columns; ?>" style="float: right">
             <?php foreach ($this->pluginBeforeList as $c) {
                 echo $c;
             } ?>
