@@ -38,6 +38,10 @@ $c = $_REQUEST['c'];
 echo <<<EOT
 /* BEGIN - Your CSS styling starts here */
 
+.pitt-header {
+    margin-top: 20px;
+}
+
 .fabrik_groupdata td, .list-footer {
     font-weight: 400;
     line-height: 2;
@@ -112,7 +116,7 @@ echo <<<EOT
 
 textarea, input, select {
     background-color: #fff !important;
-	border-radius: 12px !important;
+	border-radius: 12px;
     border: 2px solid #eee !important;
 }
 /* End - Details styles */
