@@ -538,7 +538,8 @@ define(['jquery', 'lib/tree.jquery'], function (jQuery) {
         addTag: function (text, id) {
             let self  = this,
                 dates = null;
-
+            var id = id.toString();
+            
             if (self.options.typeFilter == 'datetree') dates = id.split(' - ');
 
             let tag = {
