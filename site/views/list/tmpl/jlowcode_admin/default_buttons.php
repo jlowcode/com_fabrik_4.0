@@ -241,7 +241,7 @@ foreach ($elsList as $el) {
 		<!-- Begin - Action code -->
 		<?php if ($this->showActionButton) : ?>
 			<li>
-				<a class="addbutton actionButton"></a>
+				<a class="actionButton"></a>
 			</li>
 		<?php endif; ?>
 		<!-- End action code -->
