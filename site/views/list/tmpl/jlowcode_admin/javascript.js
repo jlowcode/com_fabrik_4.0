@@ -79,7 +79,7 @@ window.addEvent('fabrik.loaded', function () {
 	jQuery('.bi-search').on('click', function (event) {
 		Fabrik.fireEvent('fabrik.list.dofilter', [this]);
 	});
-	
+
 	// Begin - Search icon on general search
 	var searchBox = jQuery('.fabrik_filter.search-query');
 	var searchButton = jQuery('<i class="fa-solid fa-magnifying-glass"></i>');
@@ -476,11 +476,11 @@ function navigation() {
 	if (urlInput.length && paginationInput.length && limitInput.length && resultsPerPage) {
 		let limit = limitInput.val();
 
-		if (paginationInput.val() > limit) {
+		if (parseInt(paginationInput.val()) > parseInt(limit)) {
 			paginationInput.val(limit);
 		}
 
-		let finalUrl = urlInput.val().slice(0, -2) + (paginationInput.val() - 1) * resultsPerPage.val();
+		let finalUrl = urlInput.val().slice(0, -2) + (parseInt(paginationInput.val()) - 1) * parseInt(resultsPerPage.val());
 		history.pushState(null, '', window.location.pathname + '?' + finalUrl);
 		location.reload();
 	}
