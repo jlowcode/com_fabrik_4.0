@@ -35,12 +35,9 @@
 
 header('Content-type: text/css');
 $c = $_REQUEST['c'];
+
 echo <<<EOT
 /* BEGIN - Your CSS styling starts here */
-
-.pitt-header {
-    margin-top: 20px;
-}
 
 .fabrik_groupdata td, .list-footer {
     font-weight: 400;
@@ -252,3 +249,12 @@ main .platform-content {
 
 /* END - Your CSS styling ends here */
 EOT;
+
+//For PITT
+if($c == 74) {
+    echo <<<EOT
+        .pitt-header {
+            margin-top: 20px;
+        }
+    EOT;
+}
