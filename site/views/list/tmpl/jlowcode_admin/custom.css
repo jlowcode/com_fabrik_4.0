@@ -9,6 +9,7 @@
 #g-main, .com_fabrik #g-page-surround  {
     background-color: #fff;
     background: #fff;
+    height: 100vh;
 }
 
 .g-content {
@@ -265,17 +266,15 @@ div.modal.fade {
     padding: 0px;
 }
 
-@media (max-width: 1280px) {
+@media (max-width: 800px) {
     .fabrik-list .subrender-list {
         overflow-x: scroll;
     }
 
     .fabrik-list .subrender-list .table {
-        width: 1920px !important;
+        width: 1280px !important;
     }
-}
 
-@media (max-width: 800px) {
     .fabrik-list .subrender-list {
         padding: 0px;
     }
