@@ -765,7 +765,7 @@ i.fas.fa-exclamation-triangle.fa-sm{
     display:inline-flex;
 }
 
-.btn-primary:hover, .btn-primary:active, .btn-primary:focus {
+.fabrik-list .btn-primary:hover, .fabrik-list .btn-primary:active, .fabrik-list .btn-primary:focus {
     background: #bbb !important;
 }
 
