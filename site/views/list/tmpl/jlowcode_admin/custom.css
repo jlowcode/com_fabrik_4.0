@@ -761,10 +761,6 @@ i.fas.fa-exclamation-triangle.fa-sm{
     display:inline-flex;
 }
 
-.btn-primary:hover, .btn-primary:active, .btn-primary:focus {
-    background: #bbb !important;
-}
-
 .btn.calendarbutton {
     background: #eee;
     border-radius: 0px 5px 5px 0px !important;
