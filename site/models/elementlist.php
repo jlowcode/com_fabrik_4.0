@@ -563,6 +563,7 @@ class PlgFabrik_ElementList extends PlgFabrik_Element
 		$label = FArrayHelper::getValue($opts, 'label', '');
 		$rows = $elementModel->filterValueList(true, '', $label);
 		$v = $app->getInput()->get('value', '', 'string');
+		$v = preg_replace('/[^A-Za-z0-9 ]/', '', iconv('UTF-8', 'ASCII//TRANSLIT', $v));
 
 		/**
 		 * Search for every word separately in the result rather than the single string (of multiple words)
