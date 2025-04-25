@@ -3791,7 +3791,7 @@ class PlgFabrik_Element extends FabrikPlugin
 	 *
 	 * @return  array  of radio button labels
 	 */
-	protected function getOptionLabels()
+	public function getOptionLabels()
 	{
 		return $this->getSubOptionLabels();
 	}
