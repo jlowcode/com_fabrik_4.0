@@ -765,10 +765,6 @@ i.fas.fa-exclamation-triangle.fa-sm{
     display:inline-flex;
 }
 
-.fabrik-list .btn-primary:hover, .fabrik-list .btn-primary:active, .fabrik-list .btn-primary:focus {
-    background: #bbb !important;
-}
-
 .btn.calendarbutton {
     background: #eee;
     border-radius: 0px 5px 5px 0px !important;
