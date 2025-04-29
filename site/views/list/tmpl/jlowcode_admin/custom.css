@@ -139,11 +139,13 @@ div.modal.fade {
 
 /* Begin - Style to container buttons */
 .fabrik-list .fabrikButtonsContainer {
+    flex-direction: row-reverse;
     justify-content: space-between;
     align-items: center;
     flex-wrap: wrap;
     margin-bottom: 24px;
-    gap: 8px;
+    gap: 32px;
+    padding-right: 0px;
 }
 
 .fabrik-list .fabrikButtonsContainer .fabrik_filter {
@@ -192,7 +194,7 @@ div.modal.fade {
 .fabrik-list .fabrikButtonsContainer .middle-buttons {
     flex: 1;
     flex-direction: row;
-    justify-content: flex-start;
+    justify-content: flex-end;
     align-items: center;
     flex-wrap: wrap;
     gap: 8px;
@@ -763,6 +765,10 @@ i.fas.fa-exclamation-triangle.fa-sm{
 }
 .input-append{
     display:inline-flex;
+}
+
+.btn-primary:hover, .btn-primary:active, .btn-primary:focus {
+    background: #bbb !important;
 }
 
 .btn.calendarbutton {
