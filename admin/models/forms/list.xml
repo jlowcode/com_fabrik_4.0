@@ -236,6 +236,32 @@
 				<option value="0">JNO</option>
 				<option value="1">JYES</option>
 			</field>
+
+			<field name="show_list_with_replies"
+					type="radio"
+					class="btn-group"
+					default="0"
+					label="COM_FABRIK_FIELD_SHOW_LIST_WITH_REPLIES_LABEL"
+				layout="joomla.form.field.radio.switcher"
+					description="COM_FABRIK_FIELD_SHOW_LIST_WITH_REPLIES_DESC"
+			>
+				<option value="0">JNO</option>
+				<option value="1">JYES</option>
+			</field>
+
+			<field name="parent_element"
+			       type="listfields"
+			       valueformat="id"
+			       label="COM_FABRIK_FIELD_PARENT_ELEMENT_LABEL"
+			       description="COM_FABRIK_FIELD_GROUP_BY_PARENT_ELEMENT_LABEL"
+			/>
+
+			<field name="reply_element"
+			       type="listfields"
+			       valueformat="id"
+			       label="COM_FABRIK_FIELD_REPLY_ELEMENT_LABEL"
+			       description="COM_FABRIK_FIELD_GROUP_BY_REPLY_ELEMENT_LABEL"
+			/>
 		</fieldset>
 		
 		<fieldset name="main">

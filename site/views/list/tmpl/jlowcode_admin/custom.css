@@ -259,12 +259,20 @@ div.modal.fade {
 
 .fabrik-list thead .fabrik___heading,
 .fabrik-list tbody .fabrik_row {
-    background-color: #fff; 
+    background-color: #fff;
     border-bottom: 1px solid rgba(208, 219, 234, 1);
 }
 
 .fabrik-list .fabrik_action .dropdown-toggle {
     padding: 0px;
+}
+
+.fabrik-list .list-notifications .answer-row a {
+    display: none;
+}
+
+.fabrik-list .list-notifications tr td {
+    line-height: 20px;
 }
 
 @media (max-width: 800px) {

@@ -3190,6 +3190,21 @@ class FabrikFEModelList extends FormModel
 			$this->orderDirs[] = $groupOrderDir;
 		}
 
+		// If list is set to show like notification we need reset ordering and order by parents and children
+		if($params->get('show_list_with_replies', '0')) {
+			$elsId = $this->getElements('id');
+			$parentEl = FabrikString::safeColName($elsId[$params->get('parent_element')]->getFullName());
+			$primaryKey = $this->getPrimaryKey();
+			$sqlOrder = "COALESCE($parentEl,$primaryKey) DESC, $parentEl IS NOT NULL";
+
+			if($query === false) {
+				$strOrder = $sqlOrder;
+			} else {
+				$query->clear('order');
+				$query->order($sqlOrder);
+			}
+		}
+
 		$this->orderBy[$sig] = $query === false ? $strOrder : $query;
 
 		return $this->orderBy[$sig];
