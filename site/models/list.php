@@ -3195,7 +3195,7 @@ class FabrikFEModelList extends FormModel
 			$elsId = $this->getElements('id');
 			$parentEl = FabrikString::safeColName($elsId[$params->get('parent_element')]->getFullName());
 			$primaryKey = $this->getPrimaryKey();
-			$sqlOrder = "COALESCE($parentEl,$primaryKey) DESC, $parentEl IS NOT NULL";
+			$sqlOrder = "COALESCE(NULLIF($parentEl, 0),$primaryKey) DESC, $parentEl != 0";
 
 			if($query === false) {
 				$strOrder = $sqlOrder;
