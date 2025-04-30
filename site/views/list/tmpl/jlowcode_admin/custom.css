@@ -237,6 +237,10 @@ div.modal.fade {
     justify-content: center;
 }
 
+.fabrik-list #workflow-pagination .page-item {
+    padding: 0 15px;
+}
+
 @media (max-width: 900px) {
     .fabrik-list .fabrikButtonsContainer .middle-buttons {
         flex-wrap: wrap;
