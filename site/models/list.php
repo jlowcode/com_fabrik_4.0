@@ -1634,6 +1634,13 @@ class FabrikFEModelList extends FormModel
 				{
 					if ($canEdit == 1)
 					{
+						if ($this->canViewDetails($row) && $this->floatingDetailLink())
+						{
+							$row->fabrik_view = $viewLink;
+//							$row->fabrik_actions['fabrik_view'] = $j3 ? $row->fabrik_view : '<li class="fabrik_view">' . $row->fabrik_view . '</li>';
+							$row->fabrik_actions['fabrik_view'] = $row->fabrik_view;
+						}
+						
 //						if ($params->get('editlink') || ($actionMethod == 'floating' || $j3))
 //						{
 							$row->fabrik_edit = $editLink;
@@ -1642,13 +1649,6 @@ class FabrikFEModelList extends FormModel
 //						}
 
 						$row->fabrik_edit_url = $edit_link;
-
-						if ($this->canViewDetails($row) && $this->floatingDetailLink())
-						{
-							$row->fabrik_view = $viewLink;
-//							$row->fabrik_actions['fabrik_view'] = $j3 ? $row->fabrik_view : '<li class="fabrik_view">' . $row->fabrik_view . '</li>';
-							$row->fabrik_actions['fabrik_view'] = $row->fabrik_view;
-						}
 					}
 					else
 					{
