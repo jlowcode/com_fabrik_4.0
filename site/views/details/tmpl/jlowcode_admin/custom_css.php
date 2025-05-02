@@ -211,10 +211,6 @@ main .platform-content {
     float: right;
 }
 
-.btn.btn-default:hover{
-	color: #C2F6F9 !important;
-}
-
 .row-striped .row-fluid{
     display: flex;
 }
@@ -234,18 +230,6 @@ main .platform-content {
 .fabrikGroup{
     padding: 30px 0px;
 }
-
-/* BEGIN - Added by PITT */
-.btn-primary {
-    color: #fff !important;
-}
-
-.btn-pitt {
-    background: #207dcd !important;
-    color: #fff !important;
-}
-
-/* END - Added by PITT */
 
 /* END - Your CSS styling ends here */
 EOT;
