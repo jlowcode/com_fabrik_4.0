@@ -466,7 +466,7 @@ function navigation() {
 		}
 
 		let finalUrl = urlInput.val().slice(0, -2) + (paginationInput.val() - 1) * resultsPerPage.val();
-		history.pushState(null, '', window.location.pathname + '?' + finalUrl);
+		history.pushState(null, '', window.location.pathname + '?' + finalUrl + '&resetfilters=0&clearordering=0&clearfilters=0');
 		location.reload();
 	}
 }
