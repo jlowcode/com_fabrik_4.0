@@ -249,10 +249,6 @@ main .platform-content {
 	color: #fff !important;
 }
 
-.btn:hover {
-	color: #C2F6F9 !important;
-}
-
 .btn-save-new{
 	background-color: #0a85d0 !important;
 }
