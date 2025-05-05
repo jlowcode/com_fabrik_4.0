@@ -271,12 +271,13 @@ div.modal.fade {
     padding: 0px;
 }
 
-.fabrik-list .list-notifications .answer-row a {
-    display: none;
+.fabrik-list .list-notifications .answer-row {
+    background-color: #eaeaeae0;
 }
 
 .fabrik-list .list-notifications tr td {
     line-height: 20px;
+    text-align: justify;
 }
 
 @media (max-width: 800px) {

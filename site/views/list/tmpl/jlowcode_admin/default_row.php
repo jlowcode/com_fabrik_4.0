@@ -26,12 +26,13 @@ if($likeNotifications) {
 	$els = $this->getModel()->getElements('id');
 	$parentEl = $els[$this->params->get('parent_element')]->getFullName();
 	$replyEl = $els[$this->params->get('reply_element')]->getFullName();
-	$data = !is_null($this->_row->data->$parentEl) && $likeNotifications ? $this->pad = "|&nbsp&nbsp" : $this->pad = '';
+	$this->pad = !is_null($this->_row->data->$parentEl) ? "|&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp" : '';
+	$answerRow = !is_null($this->_row->data->$parentEl) ? ' answer-row' : '';
 }
 
 ?>
 
-<tr id="<?php echo $this->_row->id;?>" class="<?php echo $this->_row->class;?>">
+<tr id="<?php echo $this->_row->id;?>" class="<?php echo $this->_row->class . $answerRow; ?>">
 	<?php foreach ($this->headings as $heading => $label) : ?>
 		<?php
 			$style = empty($this->cellClass[$heading]['style']) ? '' : 'style="'.$this->cellClass[$heading]['style'].'"';
