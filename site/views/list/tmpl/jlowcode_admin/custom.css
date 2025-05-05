@@ -281,6 +281,10 @@ div.modal.fade {
     text-align: justify;
 }
 
+.fabrik-list .list-notifications tr td.first-column-notifications {
+    text-align: left;
+}
+
 @media (max-width: 800px) {
     .fabrik-list .subrender-list {
         overflow-x: scroll;

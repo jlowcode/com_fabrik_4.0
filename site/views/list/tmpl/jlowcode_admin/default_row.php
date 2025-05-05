@@ -43,7 +43,7 @@ if($likeNotifications) {
 			$columnData = $replyEl == $heading && $likeNotifications && !is_null($this->_row->data->$parentEl) ? '' : $this->_row->data->$heading;
 			$x++;
 		?>
-		<td class="<?php echo $this->cellClass[$heading]['class']?>" <?php echo $style?>>
+		<td class="<?php echo $this->cellClass[$heading]['class']?><?php echo $x == 1 && $likeNotifications ? ' first-column-notifications' : '' ?>" <?php echo $style?>>
 			<?php echo isset($this->_row->data) ? ($x == 1 && $likeNotifications ? $this->pad.$columnData : $columnData) : '';?>
 		</td>
 	<?php endforeach; ?>
