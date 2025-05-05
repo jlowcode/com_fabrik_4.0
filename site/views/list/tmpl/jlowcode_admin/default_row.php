@@ -26,7 +26,7 @@ if($likeNotifications) {
 	$els = $this->getModel()->getElements('id');
 	$parentEl = $els[$this->params->get('parent_element')]->getFullName();
 	$replyEl = $els[$this->params->get('reply_element')]->getFullName();
-	$this->pad = !is_null($this->_row->data->$parentEl) ? "&nbsp&nbsp&nbsp&nbsp|&nbsp&nbsp" : '';
+	$this->pad = !is_null($this->_row->data->$parentEl) ? "&nbsp&nbsp&nbsp|&nbsp" : '';
 	$answerRow = !is_null($this->_row->data->$parentEl) ? ' answer-row' : '';
 }
 

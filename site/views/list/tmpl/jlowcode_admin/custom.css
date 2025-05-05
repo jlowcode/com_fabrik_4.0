@@ -277,6 +277,7 @@ div.modal.fade {
 
 .fabrik-list .list-notifications tr td {
     line-height: 20px;
+    font-size: 14px;
     text-align: justify;
 }
 
