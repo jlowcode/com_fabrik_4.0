@@ -120,6 +120,7 @@ class FabrikViewList extends FabrikViewListBase
 		$d['calculations'] = $model->getCalculations();
 		$d['hasFilters'] = $model->gotOptionalFilters();
 		$d['searchallvalue'] = $model->getFilterModel()->getSearchAllValue('html');
+		$d['filters'] = $model->getRequestData();
 
 		// $$$ hugh - see if we have a message to include, set by a list plugin
 		$context = 'com_' . $this->package . '.list' . $model->getRenderContext();

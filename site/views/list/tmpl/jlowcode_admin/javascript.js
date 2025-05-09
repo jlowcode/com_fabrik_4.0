@@ -6,7 +6,6 @@
  */
 
 requirejs(['fab/fabrik', 'fab/bootstrap_tree'], function (Fabrik, BootstrapTree) {
-
 	jQuery(document).ready(function () {
 		var tree = jQuery('.summary')[0];
 
@@ -38,6 +37,16 @@ requirejs(['fab/fabrik', 'fab/bootstrap_tree'], function (Fabrik, BootstrapTree)
 	Fabrik.addEvent('fabrik.list.submit.ajax.complete', function (list) {
 		jQuery('#nav-pagination').val(Math.ceil((parseInt(list.options.limitStart)+1)/parseInt(list.options.limitLength)));
 	})
+
+	Fabrik.addEvent('fabrik.list.submit.ajax.complete', function (t, j) {
+		qtnFilters = Object.keys(j.filters.value).length;
+		jQuery('.toggleFilters .num-button').html(qtnFilters);
+		jQuery('.toggleFilters .num-button').removeClass('fabrikHide');
+	});
+
+	jQuery('.clearFilters').on('click', function() {
+		jQuery('.toggleFilters .num-button').addClass('fabrikHide');
+	});
 });
 
 window.addEvent('fabrik.loaded', function () {
@@ -272,7 +281,7 @@ function onReportAbuse(listRowIds) {
 
 document.addEventListener("DOMContentLoaded", function () {
 	// Certifique-se de que o Sortable está disponível
-	if (typeof Sortable !== 'undefined') {
+	if (typeof Sortable !== 'undefined' && tree !== undefined) {
 		const table = document.getElementById('list_'+jQuery('[name=listid]').val()+'_com_fabrik_'+jQuery('[name=listid]').val());
 		if (table) {
 			// Seleciona o thead para tornar as colunas ordenáveis
@@ -363,7 +372,7 @@ function renderTutorial(url, id) {
  */
 function orderingTreeTutorial(tree) {
 	//Make sortable
-	if (typeof Sortable !== 'undefined') {
+	if (typeof Sortable !== 'undefined' && tree !== undefined) {
 		Sortable.create(tree, {
 			animation: 150,
 			filter: '.not-draggable',
