@@ -145,12 +145,17 @@ div.modal.fade {
 }
 
 .fabrik-list .fabrikButtonsContainer .fabrik_filter {
-    padding-left: 16px;
+    padding-left: 40px;
     border-radius: 16px;
     width: 360px;
     height: 56px;
     border: none;
     background-color: rgba(234, 236, 240, 1);
+}
+
+.fabrik-list .fabrikButtonsContainer .clearFilters:hover,
+.fabrik-list .fabrikButtonsContainer .search-all:hover {
+    cursor: pointer;
 }
 
 .addbutton, 

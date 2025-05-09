@@ -53,7 +53,7 @@ window.addEvent('fabrik.loaded', function () {
 		if(height < maxHeight) {
 			toogleBtn.css('display', 'none');
 		}
-	
+
 		toogleBtn.on('click', function() {
 			if (textContent.css('max-height') !== 'none') {
 				textContent.css('max-height', 'none');
@@ -78,22 +78,9 @@ window.addEvent('fabrik.loaded', function () {
 	jQuery('.bi-search').on('click', function (event) {
 		Fabrik.fireEvent('fabrik.list.dofilter', [this]);
 	});
-	
+
 	// Begin - Search icon on general search
-	var searchBox = jQuery('.fabrik_filter.search-query');
-	var searchButton = jQuery('<i class="fa-solid fa-magnifying-glass"></i>');
-	searchBox.parent().css({
-		'position': 'relative'
-	});
-	searchBox.parent().append(searchButton);
-	searchButton.css({
-		'position': 'absolute',
-		'top': '35%',
-		'right': '42px',
-		'cursor': 'pointer',
-		'z-index': '10',
-		'color': 'rgba(68, 70, 79, 1)'
-	});
+	var searchButton = jQuery('.search-all');
 	searchButton.on('click', function () {
 		Fabrik.fireEvent('fabrik.list.dofilter', [this]);
 	});
