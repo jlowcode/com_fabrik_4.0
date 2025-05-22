@@ -281,36 +281,6 @@ function onReportAbuse(listRowIds) {
 	});
 }
 
-document.addEventListener("DOMContentLoaded", function () {
-	// Certifique-se de que o Sortable está disponível
-	if (typeof Sortable !== 'undefined' && tree !== undefined) {
-		const table = document.getElementById('list_'+jQuery('[name=listid]').val()+'_com_fabrik_'+jQuery('[name=listid]').val());
-		if (table) {
-			// Seleciona o thead para tornar as colunas ordenáveis
-			const thead = table.querySelector('thead tr');
-			// Aplica o SortableJS ao cabeçalho
-			Sortable.create(thead, {
-				animation: 150,
-				onEnd: function (evt) {
-					const oldIndex = evt.oldIndex;
-					const newIndex = evt.newIndex;
-					// Reordena as células no tbody
-					table.querySelectorAll('tbody tr').forEach(function (row) {
-						const cells = Array.from(row.children);
-						const movedCell = cells.splice(oldIndex, 1)[0];
-						cells.splice(newIndex, 0, movedCell);
-						// Atualiza a ordem das células
-						row.innerHTML = '';
-						cells.forEach(function (cell) {
-							row.appendChild(cell);
-						});
-					});
-				}
-			});
-		}
-	}
-});
-
 function hideHeadings() {
 	jQuery('.fabrikList .fabrik___heading th').each(function (i, column) {
 		classes = jQuery(column).attr('class').split(' ');
