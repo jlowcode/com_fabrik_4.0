@@ -676,7 +676,7 @@ thead .fabrik___heading a,
     max-width: inherit;
 }
 
-.btn.dropdown-toggle-no-caret::after {
+.btn.dropdown-toggle-no-caret::after,  .btn-default.dropdown-toggle-no-caret::after {
     border: none !important;
 }
 
