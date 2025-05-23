@@ -39,11 +39,17 @@ requirejs(['fab/fabrik', 'fab/bootstrap_tree'], function (Fabrik, BootstrapTree)
 	})
 
 	Fabrik.addEvent('fabrik.list.submit.ajax.complete', function (t, j) {
-		if(j.filters.value === undefined) return;
+		if(j.filters.value === undefined) {
+			jQuery('.clearFilters').addClass('fabrikHide');
+			jQuery('.fabrik-list .fabrikButtonsContainer .fabrik_filter').removeClass('p-clean-filters');
+			return;
+		}
 
 		qtnFilters = Object.keys(j.filters.value).length;
 		jQuery('.toggleFilters .num-button').html(qtnFilters);
 		jQuery('.toggleFilters .num-button').removeClass('fabrikHide');
+		jQuery('.clearFilters').removeClass('fabrikHide');
+		jQuery('.fabrik-list .fabrikButtonsContainer .fabrik_filter').addClass('p-clean-filters');
 	});
 
 	jQuery('.clearFilters').on('click', function() {
