@@ -232,7 +232,7 @@ div.modal.fade {
     width: auto;
 }
 
-.fabrik-list .fabrikButtonsContainer .num-button {
+.fabrik-list .fabrikButtonsContainer .num-flag {
     background-color: rgba(49, 34, 95, 1);
     border-radius: 50%;
     color: #fff;
@@ -244,6 +244,10 @@ div.modal.fade {
     display: flex;
     align-items: center;
     justify-content: center;
+}
+
+.fabrik-list .fabrikButtonsContainer .num-flag.num-flag-red {
+    background-color: rgba(179, 38, 30, 1);
 }
 
 .fabrik-list #workflow-pagination .page-item {
