@@ -40,15 +40,21 @@ requirejs(['fab/fabrik', 'fab/bootstrap_tree'], function (Fabrik, BootstrapTree)
 	})
 
 	Fabrik.addEvent('fabrik.list.submit.ajax.complete', function (t, j) {
-		if(j.filters.value === undefined) return;
+		if(j.filters.value === undefined) {
+			jQuery('.clearFilters').addClass('fabrikHide');
+			jQuery('.fabrik-list .fabrikButtonsContainer .fabrik_filter').removeClass('p-clean-filters');
+			return;
+		}
 
 		qtnFilters = Object.keys(j.filters.value).length;
-		jQuery('.toggleFilters .num-button').html(qtnFilters);
-		jQuery('.toggleFilters .num-button').removeClass('fabrikHide');
+		jQuery('.toggleFilters .num-flag').html(qtnFilters);
+		jQuery('.toggleFilters .num-flag').removeClass('fabrikHide');
+		jQuery('.clearFilters').removeClass('fabrikHide');
+		jQuery('.fabrik-list .fabrikButtonsContainer .fabrik_filter').addClass('p-clean-filters');
 	});
 
 	jQuery('.clearFilters').on('click', function() {
-		jQuery('.toggleFilters .num-button').addClass('fabrikHide');
+		jQuery('.toggleFilters .num-flag').addClass('fabrikHide');
 	});
 });
 
@@ -281,36 +287,6 @@ function onReportAbuse(listRowIds) {
 		}
 	});
 }
-
-document.addEventListener("DOMContentLoaded", function () {
-	// Certifique-se de que o Sortable está disponível
-	if (typeof Sortable !== 'undefined' && tree !== undefined) {
-		const table = document.getElementById('list_'+jQuery('[name=listid]').val()+'_com_fabrik_'+jQuery('[name=listid]').val());
-		if (table) {
-			// Seleciona o thead para tornar as colunas ordenáveis
-			const thead = table.querySelector('thead tr');
-			// Aplica o SortableJS ao cabeçalho
-			Sortable.create(thead, {
-				animation: 150,
-				onEnd: function (evt) {
-					const oldIndex = evt.oldIndex;
-					const newIndex = evt.newIndex;
-					// Reordena as células no tbody
-					table.querySelectorAll('tbody tr').forEach(function (row) {
-						const cells = Array.from(row.children);
-						const movedCell = cells.splice(oldIndex, 1)[0];
-						cells.splice(newIndex, 0, movedCell);
-						// Atualiza a ordem das células
-						row.innerHTML = '';
-						cells.forEach(function (cell) {
-							row.appendChild(cell);
-						});
-					});
-				}
-			});
-		}
-	}
-});
 
 function hideHeadings() {
 	jQuery('.fabrikList .fabrik___heading th').each(function (i, column) {

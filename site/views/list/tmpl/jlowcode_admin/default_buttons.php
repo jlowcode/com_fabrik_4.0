@@ -137,7 +137,7 @@ foreach ($elsList as $el) {
 					<a href="#" class="toggleFilters" data-filter-mode="<?php echo $this->filterMode; ?>">
 						<?php echo $this->buttons->filter; ?>
 						<span><?php echo Text::_('COM_FABRIK_FILTER'); ?></span>
-						<span class="num-button <?php echo $activeFilters < 1 ? 'fabrikHide' : '' ?>"><?php echo $activeFilters?></span>
+						<span class="num-flag <?php echo $activeFilters < 1 ? 'fabrikHide' : '' ?>"><?php echo $activeFilters?></span>
 					</a>
 				<?php endif; ?>
 			</li>
@@ -226,7 +226,7 @@ foreach ($elsList as $el) {
 				<a id="showRequests" class="showRequests" href="<?php echo $url ?>">
 					<?php echo $_REQUEST['workflow']['eventsButton'] ?>
 					<?php if($_REQUEST['workflow']['requests_count'] > 0) : ?>
-						<span class="num-button"><?php echo $_REQUEST['workflow']['requests_count'] ?></span>
+						<span class="num-flag <?php echo $_REQUEST['workflow']['adminList'] ? 'num-flag-red' : '' ?>"><?php echo $_REQUEST['workflow']['requests_count'] ?></span>
 					<?php endif ?>
 				</a>
 			</li>

@@ -149,12 +149,16 @@ div.modal.fade {
 }
 
 .fabrik-list .fabrikButtonsContainer .fabrik_filter {
-    padding-left: 40px;
+    padding-left: 16px;
     border-radius: 16px;
     width: 360px;
     height: 56px;
     border: none;
     background-color: rgba(234, 236, 240, 1);
+}
+
+.fabrik-list .fabrikButtonsContainer .fabrik_filter.p-clean-filters {
+    padding-left: 40px !important;
 }
 
 .fabrik-list .fabrikButtonsContainer .clearFilters:hover,
@@ -228,7 +232,7 @@ div.modal.fade {
     width: auto;
 }
 
-.fabrik-list .fabrikButtonsContainer .num-button {
+.fabrik-list .fabrikButtonsContainer .num-flag {
     background-color: rgba(49, 34, 95, 1);
     border-radius: 50%;
     color: #fff;
@@ -240,6 +244,10 @@ div.modal.fade {
     display: flex;
     align-items: center;
     justify-content: center;
+}
+
+.fabrik-list .fabrikButtonsContainer .num-flag.num-flag-red {
+    background-color: rgba(179, 38, 30, 1);
 }
 
 .fabrik-list #workflow-pagination .page-item {
@@ -676,7 +684,7 @@ thead .fabrik___heading a,
     max-width: inherit;
 }
 
-.btn.dropdown-toggle-no-caret::after {
+.btn.dropdown-toggle-no-caret::after,  .btn-default.dropdown-toggle-no-caret::after {
     border: none !important;
 }
 

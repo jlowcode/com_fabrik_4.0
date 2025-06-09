@@ -6896,6 +6896,7 @@ class FabrikFEModelList extends FormModel
 			$displayData->class = 'form-control search-query';
 			$displayData->v = $this->getFilterModel()->getSearchAllValue('html');
 			$displayData->requestKey = $this->getFilterModel()->getSearchAllRequestKey();;
+			$displayData->cleanFilters = !empty($this->getRequestData());
 
 			if ($params->get('search-mode-advanced') == 1)
 			{
