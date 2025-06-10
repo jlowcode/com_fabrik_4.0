@@ -13,7 +13,8 @@ requirejs(['fab/fabrik', 'fab/bootstrap_tree'], function (Fabrik, BootstrapTree)
 		setFiltersTutorialTemplate();
 		orderingTreeTutorial(tree);
 		setToogleFilters();
-		
+		setNumFlagsAndClearFilters();
+
 		Fabrik.addEvent('fabrik.list.update', function (list) {
 			hideHeadings();
 
@@ -35,23 +36,11 @@ requirejs(['fab/fabrik', 'fab/bootstrap_tree'], function (Fabrik, BootstrapTree)
 		});
 	});
 
-	Fabrik.addEvent('fabrik.list.submit.ajax.complete', function (list) {
+	Fabrik.addEvent('fabrik.list.submit.ajax.complete', function (list, j) {
+		setNumFlagsAndClearFilters(j);
+
 		jQuery('#nav-pagination').val(Math.ceil((parseInt(list.options.limitStart)+1)/parseInt(list.options.limitLength)));
 	})
-
-	Fabrik.addEvent('fabrik.list.submit.ajax.complete', function (t, j) {
-		if(j.filters.value === undefined) {
-			jQuery('.clearFilters').addClass('fabrikHide');
-			jQuery('.fabrik-list .fabrikButtonsContainer .fabrik_filter').removeClass('p-clean-filters');
-			return;
-		}
-
-		qtnFilters = Object.keys(j.filters.value).length;
-		jQuery('.toggleFilters .num-flag').html(qtnFilters);
-		jQuery('.toggleFilters .num-flag').removeClass('fabrikHide');
-		jQuery('.clearFilters').removeClass('fabrikHide');
-		jQuery('.fabrik-list .fabrikButtonsContainer .fabrik_filter').addClass('p-clean-filters');
-	});
 
 	jQuery('.clearFilters').on('click', function() {
 		jQuery('.toggleFilters .num-flag').addClass('fabrikHide');
@@ -119,6 +108,19 @@ window.addEvent('fabrik.loaded', function () {
 	})
 })
 
+function setNumFlagsAndClearFilters(j) {
+	if(j === undefined || j.filters.value === undefined) {
+		jQuery('.clearFilters').addClass('fabrikHide');
+		jQuery('.fabrik-list .fabrikButtonsContainer .fabrik_filter').removeClass('p-clean-filters');
+		return;
+	}
+
+	qtnFilters = Object.keys(j.filters.value).length;
+	jQuery('.toggleFilters .num-flag').html(qtnFilters);
+	jQuery('.toggleFilters .num-flag').removeClass('fabrikHide');
+	jQuery('.clearFilters').removeClass('fabrikHide');
+	jQuery('.fabrik-list .fabrikButtonsContainer .fabrik_filter').addClass('p-clean-filters');
+}
 
 function handleRadioClick(element) {
 	showSpinner();
