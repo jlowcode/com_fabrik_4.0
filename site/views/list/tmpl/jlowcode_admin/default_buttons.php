@@ -77,6 +77,14 @@ foreach ($elsList as $el) {
 	</div>
 	
 	<div class="middle-buttons d-flex">
+		<!-- Begin - Action code -->
+		<?php if ($this->showActionButton) : ?>
+			<li>
+				<a class="actionButton"></a>
+			</li>
+		<?php endif; ?>
+		<!-- End action code -->
+		 
 		<?php
 			if ($this->showToggleCols) :
 				echo $this->loadTemplate('togglecols');
@@ -251,13 +259,5 @@ foreach ($elsList as $el) {
 			</li>
 		<?php endif; ?>
 		<!-- End - Workflow code -->
-
-		<!-- Begin - Action code -->
-		<?php if ($this->showActionButton) : ?>
-			<li>
-				<a class="actionButton"></a>
-			</li>
-		<?php endif; ?>
-		<!-- End action code -->
 	</div>
 </div>
