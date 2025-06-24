@@ -4418,7 +4418,10 @@ class PlgFabrik_Element extends FabrikPlugin
 							$value = $value;
 							break;
 						default:
-							$value = $db->q('%' . $value . '%');
+							// Added if above to find results insensitive with accents
+							if(substr_count($value, '%') != 2) {
+								$value = $db->q('%' . $value . '%');
+							}
 							break;
 					}
 					break;
