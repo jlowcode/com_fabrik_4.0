@@ -8539,7 +8539,7 @@ class PlgFabrik_Element extends FabrikPlugin
 			$fontSize = round($fontSizeMax * $row->counter / $max); // Ensure that it will not exceed the maximum amount
 	        if ($fontSize < $fontSizeMin) $fontSize = $fontSizeMin; // Make sure it does not pass the minimum amount
 			
-			$return[] = '<a class="tag" style="font-size:' . $fontSize . 'px" value="' . $row->value . '">' . $row->text . '</a>&nbsp; ';
+			$return[] = '<a class="tag" style="font-weight: 400; text-decoration: none; font-size:' . $fontSize . 'px; cursor: pointer" value="' . $row->value . '">' . $row->text . '</a>&nbsp; ';
 		}
 		
 		$return[] = '</div>';	
