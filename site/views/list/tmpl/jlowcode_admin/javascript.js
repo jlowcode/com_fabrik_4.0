@@ -402,6 +402,7 @@ function setToogleFilters() {
 	jQuery(".toggleFilters").on('click', function() {
 		jQuery(".chosen-done").each(function(index, element) {
 			jQuery(element).chosen("destroy");
+			jQuery(element).removeClass("chosen-done");
 		});
 
 		Fabrik.buildChosen('select.advancedSelect', {
