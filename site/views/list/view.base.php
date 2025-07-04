@@ -640,6 +640,7 @@ class FabrikViewListBase extends FabrikView
 
 		$this->canShowTutorialTemplate = $model->canShowTutorialTemplate();
 		$this->dataTemplateTutorial = $this->canShowTutorialTemplate ? $model->dataTemplateTutorial() : false;
+		$this->elementsToShowOnGridAndCardTemplate = $model->elementsToShowOnGridAndCardTemplate();
 
 		// Get dropdown list of other tables for quick nav in admin
 		$this->tablePicker = $params->get('show-table-picker', $input->get('list-picker', true)) && $this->app->isClient('administrator') && $this->app->getInput()->get('format') !== 'pdf' ? FabrikHelperHTML::tableList($this->table->id) : '';

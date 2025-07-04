@@ -6636,6 +6636,48 @@ class FabrikFEModelList extends FormModel
 	}
 
 	/**
+	 * This method get the default elements to show in grid and card template.
+	 * - The first fileupload element
+	 * - Name element
+	 * - The first textarea element (No indexing_text)
+	 * - Created_date or date_time element
+	 * - Created_by element
+	 * 
+	 * @return  array
+	 */
+	public function elementsToShowOnGridAndCardTemplate()
+	{
+		$els = $this->getElements('id');
+		$fields = Array();
+
+		foreach ($els as $el) {
+			switch (true) {
+				case is_a($el, 'PlgFabrik_ElementFileupload') && !isset($fields['thumb-gallery-mode']):
+					$fields['thumb-gallery-mode'] = $el;
+					break;
+
+				case $el->getElement()->get('name') == 'name' && !isset($fields['name-gallery-mode']):
+					$fields['name-gallery-mode'] = $el;
+					break;
+
+				case is_a($el, 'PlgFabrik_ElementTextarea') && $el->getElement()->get('name') != 'indexing_text' && !isset($fields['description-gallery-mode']):
+					$fields['description-gallery-mode'] = $el;
+					break;
+
+				case in_array($el->getElement()->get('name'), ['date_time', 'created_date']) && !isset($fields['date-gallery-mode']):
+					$fields['date-gallery-mode'] = $el;
+					break;
+
+				case $el->getElement()->get('name') == 'created_by' && !isset($fields['owner-gallery-mode']):
+					$fields['owner-gallery-mode'] = $el;
+					break;
+			}
+		}
+
+		return $fields;
+	}
+
+	/**
 	 * This list can be showed with tutorial template?
 	 *  
 	 * @return  bool
@@ -6648,7 +6690,7 @@ class FabrikFEModelList extends FormModel
 		foreach ($els as $el) {
 			$params = $el->getParams();
 			if (
-				str_contains($el->getName(), 'Databasejoin') && $params->get('database_join_display_type') == 'auto-complete'
+				is_a($el, 'PlgFabrik_ElementDatabasejoin') && $params->get('database_join_display_type') == 'auto-complete'
 				&& $params->get('join_db_name') == $this->getTable()->get('db_table_name') &&
 				($params->get('database_join_display_style') == 'both-treeview-autocomplete' || $params->get('database_join_display_style') == 'only-treeview')
 			) {
@@ -6656,17 +6698,17 @@ class FabrikFEModelList extends FormModel
 				!isset($fields->tree) ? $fields->tree = $el->getId() : null;
 			}
 
-			if(str_contains($el->getName(), 'Field')) {
+			if($el->getElement()->get('name') == 'name') {
 				$field = true;
 				!isset($fields->field) ? $fields->field = $el->getId() : null;
 			}
 
-			if(str_contains($el->getName(), 'Textarea') && $params->get('use_wysiwyg') == '1') {
+			if(is_a($el, 'PlgFabrik_ElementTextarea') && $params->get('use_wysiwyg') == '1') {
 				$textarea = true;
 				!isset($fields->textarea) ? $fields->textarea = $el->getId() : null;
 			}
 
-			if(str_contains($el->getName(), 'Ordering')) {
+			if(is_a($el, 'PlgFabrik_ElementOrdering')) {
 				!isset($fields->ordering) ? $fields->ordering = $el->getId() : null;
 			}
 		}
@@ -12781,5 +12823,24 @@ class FabrikFEModelList extends FormModel
 	public function _filtersToSQLPublic(&$filters, $startWithWhere = true, $incPlugin = true) 
 	{
 		return $this->_filtersToSQL($filters, $startWithWhere, $incPlugin);
+	}
+
+	/**
+	 * This method get a sql date format and return d m. Y
+	 * 
+	 * @param	string	$date	Date to transform (d/m/Y H:i:s)
+	 * 
+	 * @return	string
+	 */
+	public function renderDateFormat($date)
+	{
+		$months = ["jan.", "fev.", "mar.", "abr.", "mai.", "jun.", "jul.", "ago.", "set.", "out.", "nov.", "dez."];
+
+		$date = new DateTime($date);
+		$month = $months[intval($date->format('m')) - 1];
+		$day = $date->format('d');
+		$year = $date->format('Y');
+
+		return "$day $month $year";
 	}
 }
