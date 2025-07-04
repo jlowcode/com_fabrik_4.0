@@ -16,13 +16,10 @@ defined('_JEXEC') or die('Restricted access');
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\Factory;
 
-// The number of columns to split the list rows into
-$columns = 3;
-// Show the labels next to the data:
-$this->showLabels = false;
-// Show empty data
-$this->showEmpty = true;
+$document = Factory::getDocument();
+$document->addStyleSheet('components/com_fabrik/views/list/tmpl/' . $this->getModel()->getFormModel()->getTmpl() . '/css/subRenderGrid.css');
 
+$columns = 3;
 ?>
 <form class="fabrikForm" action="<?php echo $this->table->action; ?>" method="post" id="<?php echo $this->formid; ?>" name="fabrikList">
     <div class="<?php echo $this->params['show-table-filters'] === '6' ? 'row' : ''; ?>">
@@ -37,7 +34,6 @@ $this->showEmpty = true;
                 <script type="text/javascript">
                     function showRequests() {
                         document.getElementById('eventsContainer').toggle();
-                        //document.getElementById('list_<?php echo $this->table->renderid; ?>').toggle();
                     };
                 </script>
             <?php
@@ -46,20 +42,25 @@ $this->showEmpty = true;
             // End workflow code
             ?>
         </div>
-        <div class="<?php echo $this->params['show-table-filters'] === '6' ? ' col-md-2 span2 ' : '';
-                    echo $this->showFilters === true ? 'filterContentNotEmpty' : '' ?>" style="margin-bottom: 30px">
 
-            <?php
-            if ($this->showFilters) {
-                echo $this->layoutFilters();
-            }
+        <div class="<?php 
+            echo $this->params['show-table-filters'] === '6' ? ' col-md-2 span2 ' : ''; 
+            echo $this->showFilters === true ? 'filterContentNotEmpty' : '' ?>">
+
+            <?php 
+                if ($this->showFilters) :
+                    echo $this->layoutFilters();
+                endif;
             ?>
         </div>
 
-        <div class="fabrikDataContainer<?php echo $this->params['show-table-filters'] === '6' ? ' col-md-9 span9' : ''; ?>" data-cols="<?php echo $columns; ?>" style="">
-            <?php foreach ($this->pluginBeforeList as $c) {
-                echo $c;
-            } ?>
+        <div class="subRenderGrid listContent fabrikDataContainer<?php echo $this->params['show-table-filters'] === '6' ? ' col-md-9 span9' : ''; ?>" data-cols="<?php echo $columns; ?>" style="">
+            <?php 
+                foreach ($this->pluginBeforeList as $c) :
+                    echo $c;
+                endforeach;
+            ?>
+
             <div class="fabrikList" id="list_<?php echo $this->table->renderid; ?>">
                 <table style="<?php echo $cssWidth; ?>" class="<?php echo $this->list->class; ?>" id="list_<?php echo $this->table->renderid; ?>">
                     <colgroup>
@@ -67,7 +68,7 @@ $this->showEmpty = true;
                             <col class="col-<?php echo $key; ?>">
                         <?php endforeach; ?>
                     </colgroup>
-                    <tfoot>
+                    <tfoot class="d-none">
                         <tr class="fabrik___heading">
                             <td colspan="<?php echo count($this->headings); ?>">
                             </td>
@@ -76,34 +77,31 @@ $this->showEmpty = true;
                     <thead><?php echo $this->headingsHtml ?></thead>
                 </table>
                 <?php
-
                 $gCounter = 0;
                 foreach ($this->rows as $groupedBy => $group) : ?>
-                    <?php
-                    if ($this->isGrouped) :
-                        $imgProps = array('alt' => FText::_('COM_FABRIK_TOGGLE'), 'data-role' => 'toggle', 'data-expand-icon' => 'fa fa-arrow-down', 'data-collapse-icon' => 'fa fa-arrow-right');
-                    ?>
+                    <?php if ($this->isGrouped) : ?>
                         <div class="fabrik_groupheading">
                             <?php echo $this->layoutGroupHeading($groupedBy, $group); ?>
                         </div>
-                    <?php
-                    endif;
-                    ?>
-                    <div class="fabrik_groupdata">
+                    <?php endif; ?>
+
+                    <div class="fabrik_groupdata d-flex flex-column">
                         <div class="groupDataMsg">
                             <div class="emptyDataMessage" style="<?php echo $this->emptyStyle ?>">
                                 <?php echo $this->emptyDataMessage; ?>
                             </div>
                         </div>
-                        <?php
-                        $items = array();
-                        foreach ($group as $this->_row) :
-                            $items[] = $this->loadTemplate('row_gallery');
-                            $ids[] = $this->_row->id;
-                        endforeach;
 
-                        $class = 'fabrik_row well col-md-4 galery-div';
-                        echo FabrikHelperHTML::bootstrapGrid($items, $columns, $class, true, $ids);
+                        <?php
+                            $items = array();
+                            foreach ($group as $this->_row) :
+                                $items[] = $this->loadTemplate('row_gallery');
+                                $ids[] = $this->_row->id;
+                            endforeach;
+
+                            $class = 'fabrik_row well gallery-div';
+                            $classRow = 'flex-column flex-md-row';
+                            echo FabrikHelperHTML::bootstrapGridCards($items, $columns, $class, true, $ids, $classRow);
                         ?>
                     </div>
                 <?php endforeach; ?>
