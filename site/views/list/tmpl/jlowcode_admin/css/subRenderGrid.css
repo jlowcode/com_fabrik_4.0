@@ -149,7 +149,18 @@
         min-height: 0px;
     }
 
+    .fabrik-list .subRenderGrid .gallery-div .gallery-box {
+        padding: 0px 0px 32px 0px;
+        border: none;
+        border-bottom: 1px solid #D0DBEA;
+        border-radius: 0px;
+    }
+
+    .fabrik-list .subRenderGrid .row {
+        gap: 40px;
+    }
+
     .fabrik-list .subRenderGrid .fabrik_groupdata {
-        gap: 24px;
+        gap: 40px;
     }
 }
