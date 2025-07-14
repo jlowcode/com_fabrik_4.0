@@ -22,6 +22,20 @@ $ignoreHeadings = ['fabrik_actions', 'fabrik_select'];
 $rowData = $this->_row->data;
 $elements = $this->getModel()->getElements('filtername');
 
+$elDate = $this->elementsToShowOnGridAndCardTemplate['date-gallery-card-mode'];
+if(isset($elDate)) {
+	$elDate->reset();
+	$dateFullName = $elDate->getFullName();
+	$ignoreHeadings[] = $dateFullName;
+	$dateRawName = $dateFullName . '_raw';
+}
+
+$elOwner = $this->elementsToShowOnGridAndCardTemplate['owner-gallery-card-mode'];
+if(isset($elOwner)) {
+	$elOwner->reset();
+	$ownerFullName = $elOwner->getFullName();
+	$ignoreHeadings[] = $ownerFullName;
+}
 ?>
 <div class="fabrik_row card-box d-flex flex-row justify-content-between <?php echo $rowClass; ?>" id="<?php echo $this->_row->id; ?>">
 	<div class="d-flex flex-row">
@@ -58,14 +72,17 @@ $elements = $this->getModel()->getElements('filtername');
 			?>
 			<div class="fabrikDivElement div-description">
 				<span class="description">
-					<?php if(isset($el) && !empty($data)) : ?>
+					<?php if(isset($el)) : ?>
 						<?php $el->reset(); ?>
-						<p class="m-0 <?php echo $el->getFullName() ?>">
-							<?php
-								echo $el->getValue((array) @$rowData);
-								$ignoreHeadings[] = $el->getFullName();
-							?>
-						</p>
+						<?php $data = $el->getValue((array) @$rowData); ?>
+						<?php if(!empty($data)) : ?>
+							<p class="m-0 <?php echo $el->getFullName() ?>">
+								<?php
+									echo $el->getValue((array) @$rowData);
+									$ignoreHeadings[] = $el->getFullName();
+								?>
+							</p>
+						<?php endif; ?>
 					<?php endif; ?>
 				</span>
 			</div>
@@ -98,26 +115,19 @@ $elements = $this->getModel()->getElements('filtername');
 			<!-- Show created_by and date_time -->
 			<div class="fabrikDivElement info-row d-flex align-items-center justify-content-between">
 				<div class="div-info d-flex flex-row flex-wrap">
-					<?php $el = $this->elementsToShowOnGridAndCardTemplate['date-gallery-card-mode']; ?>
-					<?php if (isset($el)) : ?>
-						<?php $el->reset(); ?>
-						<span class="date <?php echo $el->getFullName(); ?>">
+					<?php if (isset($elDate)) : ?>
+						<span class="date <?php echo $dateFullName ?>">
 							<?php
-								$rawName = $el->getFullName() . '_raw';
 								$allData = @$rowData;
-								echo $el->renderListData(@$rowData->$rawName, $allData);
+								echo $elDate->renderListData(@$rowData->$dateRawName, $allData);
 							?>
 						</span>
 					<?php endif; ?>
 
-					<?php 
-						$el = $this->elementsToShowOnGridAndCardTemplate['owner-gallery-card-mode']; 
-					?>
-					<?php if (isset($el)) : ?>
-						<?php $el->reset(); ?>
+					<?php if (isset($elOwner)) : ?>
 						<span class="owner">
 							<span><?php echo Text::_("COM_FABRIK_BY"); ?></span>
-							<span class="<?php echo $el->getFullName(); ?>"><?php echo $el->getValue((array) @$rowData)[0] ?></span>
+							<span class="<?php echo $ownerFullName ?>"><?php echo $elOwner->getValue((array) @$rowData)[0] ?></span>
 						</span>
 					<?php endif; ?>
 				</div>
