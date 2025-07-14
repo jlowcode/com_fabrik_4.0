@@ -56,10 +56,12 @@ if(isset($elOwner)) {
 
 			<?php 
 				$el = $this->elementsToShowOnGridAndCardTemplate['name-gallery-card-mode']; 
-				$data = $el->getValue((array) @$rowData);
 			?>
 			<?php if(isset($el)) : ?>
-				<?php $el->reset(); ?>
+				<?php 
+					$el->reset();
+					$data = $el->getValue((array) @$rowData);
+				?>
 				<div class="fabrikDivElement div-name">
 					<span class="title name <?php echo $el->getFullName() ?>" title="<?php echo strip_tags($data); ?>">
 						<?php
