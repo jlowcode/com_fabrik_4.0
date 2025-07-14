@@ -54,13 +54,16 @@ if(isset($elOwner)) {
 				</div>
 			<?php endif; ?>
 
-			<?php $el = $this->elementsToShowOnGridAndCardTemplate['name-gallery-card-mode']; ?>
+			<?php 
+				$el = $this->elementsToShowOnGridAndCardTemplate['name-gallery-card-mode']; 
+				$data = $el->getValue((array) @$rowData);
+			?>
 			<?php if(isset($el)) : ?>
 				<?php $el->reset(); ?>
 				<div class="fabrikDivElement div-name">
-					<span class="title name <?php echo $el->getFullName() ?>">
+					<span class="title name <?php echo $el->getFullName() ?>" title="<?php echo strip_tags($data); ?>">
 						<?php
-							echo $el->getValue((array) @$rowData);
+							echo $data;
 							$ignoreHeadings[] = $el->getFullName();
 						?>
 					</span>
@@ -74,7 +77,7 @@ if(isset($elOwner)) {
 					<span class="description">
 						<p class="m-0 <?php echo $el->getFullName() ?>">
 							<?php
-								echo $el->getValue((array) @$rowData);
+								echo strip_tags($el->getValue((array) @$rowData));
 								$ignoreHeadings[] = $el->getFullName();
 							?>
 						</p>
