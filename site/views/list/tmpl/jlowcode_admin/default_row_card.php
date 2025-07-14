@@ -37,8 +37,8 @@ if(isset($elOwner)) {
 	$ignoreHeadings[] = $ownerFullName;
 }
 ?>
-<div class="fabrik_row card-box d-flex flex-row justify-content-between <?php echo $rowClass; ?>" id="<?php echo $this->_row->id; ?>">
-	<div class="d-flex flex-row">
+<div class="fabrik_row card-box d-flex flex-row justify-content-between w-100 <?php echo $rowClass; ?>" id="<?php echo $this->_row->id; ?>">
+	<div class="d-flex flex-row w-100">
 		<!-- Show thumb, name and description first -->
 		<?php $el = $this->elementsToShowOnGridAndCardTemplate['thumb-gallery-card-mode']; ?>
 		<?php if(isset($el)) : ?>
@@ -53,7 +53,7 @@ if(isset($elOwner)) {
 			</div>
 		<?php endif; ?>
 
-		<div class="card-head-row">
+		<div class="card-head-row w-100">
 			<?php $el = $this->elementsToShowOnGridAndCardTemplate['name-gallery-card-mode']; ?>
 			<?php if(isset($el)) : ?>
 				<?php $el->reset(); ?>

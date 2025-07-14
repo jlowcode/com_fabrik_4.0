@@ -38,7 +38,7 @@
 }
 
 .fabrik-list .subRenderCard .card-data-row .fabrikDivElementData {
-    flex: 1 0 auto;
+    flex: 1 1 40%;
 }
 
 .fabrik-list .subRenderCard .div-description {
