@@ -29,10 +29,10 @@ $elements = $this->getModel()->getElements('filtername');
 		<div class="gallery-head-row">
 			<?php $el = $this->elementsToShowOnGridAndCardTemplate['thumb-gallery-card-mode']; ?>
 			<?php if(isset($el)) : ?>
+				<?php $el->reset(); ?>
 				<div class="fabrikDivElement div-thumb">
 					<span class="thumb <?php echo $el->getFullName() ?>" >
 						<?php
-							$el->reset();
 							echo $el->getValue((array) @$rowData);
 							$ignoreHeadings[] = $el->getFullName();
 						?>
@@ -42,10 +42,10 @@ $elements = $this->getModel()->getElements('filtername');
 
 			<?php $el = $this->elementsToShowOnGridAndCardTemplate['name-gallery-card-mode']; ?>
 			<?php if(isset($el)) : ?>
+				<?php $el->reset(); ?>
 				<div class="fabrikDivElement div-name">
 					<span class="title name <?php echo $el->getFullName() ?>">
 						<?php
-							$el->reset();
 							echo $el->getValue((array) @$rowData);
 							$ignoreHeadings[] = $el->getFullName();
 						?>
@@ -55,11 +55,11 @@ $elements = $this->getModel()->getElements('filtername');
 			
 			<?php $el = $this->elementsToShowOnGridAndCardTemplate['description-gallery-card-mode']; ?>
 			<?php if(isset($el)) : ?>
+				<?php $el->reset(); ?>
 				<div class="fabrikDivElement div-description">
 					<span class="description">
 						<p class="m-0 <?php echo $el->getFullName() ?>">
 							<?php
-								$el->reset();
 								echo $el->getValue((array) @$rowData);
 								$ignoreHeadings[] = $el->getFullName();
 							?>
@@ -100,9 +100,9 @@ $elements = $this->getModel()->getElements('filtername');
 		<div class="div-info d-flex flex-row flex-wrap">
 			<?php $el = $this->elementsToShowOnGridAndCardTemplate['date-gallery-card-mode']; ?>
 			<?php if (isset($el)) : ?>
+				<?php $el->reset(); ?>
 				<span class="date <?php echo $el->getFullName(); ?>">
 					<?php
-						$el->reset();
 						$rawName = $el->getFullName() . '_raw';
 						$allData = @$rowData;
 						echo $el->renderListData(@$rowData->$rawName, $allData);
@@ -112,9 +112,9 @@ $elements = $this->getModel()->getElements('filtername');
 
 			<?php 
 				$el = $this->elementsToShowOnGridAndCardTemplate['owner-gallery-card-mode']; 
-				$el->reset();
 			?>
 			<?php if (isset($el)) : ?>
+				<?php $el->reset(); ?>
 				<span class="owner">
 					<span><?php echo Text::_("COM_FABRIK_BY"); ?></span>
 					<span class="<?php echo $el->getFullName(); ?>"><?php echo $el->getValue((array) @$rowData)[0] ?></span>
