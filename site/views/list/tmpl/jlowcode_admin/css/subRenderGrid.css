@@ -3,59 +3,12 @@
 */
 @import url('https://fonts.googleapis.com/css2?family=Inter&display=swap');
 
-.fabrik-list .subRenderGrid .mode-img-card {
-    object-fit: cover;
-    object-position: center;
-}
-
-.fabrik-list .subRenderGrid .name-gallery-mode {
-    font-family: 'Inter';
-    font-size: 28px;
-    line-height: 32px;
-    color: #322550;
-    font-weight: 700;
-    font-style: normal;
-    display: -webkit-box;
-    -webkit-line-clamp: 1;
-    -webkit-box-orient: vertical;
-    overflow: hidden;
-    text-overflow: ellipsis;
-}
-
 .fabrik-list .subRenderGrid .table {
     margin-bottom: 0px;
 }
 
-.fabrik-list .subRenderGrid .div-mode-img-card img {
-    max-width: 100%;
-    width: 100%;
-    height: 100%;
-}
-
-.fabrik-list .subRenderGrid .div-mode-img-card {
-    aspect-ratio: 16/9;
-    overflow: hidden;
-    text-align: center;
-}
-
-.fabrik-list .subRenderGrid .div-name-gallery-mode {
+.fabrik-list .subRenderGrid .div-name {
     margin-top: 8px;
-    margin-bottom: 16px;
-}
-
-.fabrik-list .subRenderGrid .div-description-gallery-mode {
-    margin-bottom: 16px;
-}
-
-.fabrik-list .subRenderGrid .description-gallery-mode > p {
-    display: -webkit-box;
-    -webkit-line-clamp: 3;
-    -webkit-box-orient: vertical;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    min-height: calc(3 * 21px); 
-    line-height: 20px;
-    font-size: 16px;
 }
 
 .fabrik-list .subRenderGrid .row {
@@ -83,13 +36,8 @@
     padding-left: 0px;
 }
 
-.fabrik-list .subRenderGrid .gallery-info-row {
-    margin-top: 24px;
-}
-
 .fabrik-list .subRenderGrid .gallery-div .gallery-box {
     position: relative;
-    min-height: 20px;
     padding: 24px;
     background-color: #ffffff;
     border: 1px solid #D0DBEA;
@@ -98,39 +46,13 @@
     border-radius: 8px;
 }
 
-.fabrik-list .subRenderGrid .date-gallery-mode {
-    font-size: 16px;
-    line-height: 20px;
-    font-weight: 600;
-    color: #322550;
-    margin-right: 24px;
-}
-
-.fabrik-list .subRenderGrid .owner-gallery-mode,
-.fabrik-list .subRenderGrid .owner-gallery-mode a {
-    font-size: 14px;
-    line-height: 20px;
-    color: #59577A;
-}
-
-.fabrik-list .subRenderGrid .owner-gallery-mode :last-child {
-    text-transform: capitalize;
-}
-
-.fabrik-list .subRenderGrid .fabrikDivElementData {
-    display: flex;
-}
-
-.fabrik-list .subRenderGrid .div-info-gallery-mode {
-    gap: 2px;
-}
-
 .fabrik-list .subRenderGrid .fabrikRating {
     display: inline-flex;
 }
 
-.fabrik-list .subRenderGrid .title-field-card {
-    margin-right: 4px;
+.fabrik-list .subRenderGrid .description > p {
+    -webkit-line-clamp: 3;
+    min-height: calc(3 * 21px);
 }
 
 @media only all and (min-width: 48rem) and (max-width: 59.99rem) {
@@ -145,7 +67,7 @@
         padding-right: 0px;
     }
 
-    .fabrik-list .subRenderGrid .description-gallery-mode > p {
+    .fabrik-list .subRenderGrid .description > p {
         min-height: 0px;
     }
 

@@ -187,10 +187,6 @@ div.modal.fade {
     margin-right: 8px;
 }
 
-.fabrik-list .fabrikButtonsContainer .middle-buttons li #grid-view .fabrikImg {
-    margin-right: 4px;
-}
-
 .fabrik-list .fabrikButtonsContainer .header_buttons li {
     margin-right: 16px;
     list-style: none;
@@ -429,6 +425,19 @@ div.modal.fade {
     font-weight: 700;
     line-height: 50px;
     font-size: 48px;
+}
+
+.fabrik-list input[type="checkbox"] {
+    transform: scale(1.5);
+}
+
+.fabrik-list .hideThead .fabrik___heading th {
+    display: none;
+}
+
+.fabrik-list .hideThead .fabrik___heading th.fabrik_actions {
+    width: 100% !important;
+    display: table-cell;
 }
 /* End - Style to subrenders */
 
@@ -762,10 +771,6 @@ form a, table a {
 h1 {
     margin: 0px !important;
     line-height: 1;
-}
-
-.fabrikForm {
-    font-size: 1rem;
 }
 
 .active>.page-link, .page-link.active{
