@@ -16,12 +16,11 @@ defined('_JEXEC') or die('Restricted access');
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\Factory;
 
+$document = Factory::getDocument();
+$document->addStyleSheet('components/com_fabrik/views/list/tmpl/' . $this->getModel()->getFormModel()->getTmpl() . '/css/subRenderCard.css');
+$document->addStyleSheet('components/com_fabrik/views/list/tmpl/' . $this->getModel()->getFormModel()->getTmpl() . '/css/subRenderGridCard.css');
 
-// Show the labels next to the data:
-$this->showLabels = true;
-// Show empty data
-$this->showEmpty = true;
-
+$columns = 3;
 ?>
 <form class="fabrikForm" action="<?php echo $this->table->action; ?>" method="post" id="<?php echo $this->formid; ?>" name="fabrikList">
     <div class="<?php echo $this->params['show-table-filters'] === '6' ? 'row' : ''; ?>">
@@ -36,7 +35,6 @@ $this->showEmpty = true;
                 <script type="text/javascript">
                     function showRequests() {
                         document.getElementById('eventsContainer').toggle();
-                        //document.getElementById('list_<?php echo $this->table->renderid; ?>').toggle();
                     };
                 </script>
             <?php
@@ -45,10 +43,25 @@ $this->showEmpty = true;
             // End workflow code
             ?>
         </div>
-        <div class="hideThead fabrikDataContainer col-md-12 span9" data-cols="<?php echo $columns; ?>" style="float: right">
-            <?php foreach ($this->pluginBeforeList as $c) {
-                echo $c;
-            } ?>
+
+        <div class="<?php 
+            echo $this->params['show-table-filters'] === '6' ? ' col-md-2 span2 ' : ''; 
+            echo $this->showFilters === true ? 'filterContentNotEmpty' : '' ?>">
+
+            <?php 
+                if ($this->showFilters) :
+                    echo $this->layoutFilters();
+                endif;
+            ?>
+        </div>
+
+        <div class="subRenderGridCard subRenderCard hideThead listContent fabrikDataContainer<?php echo $this->params['show-table-filters'] === '6' ? ' col-md-9 span9' : ''; ?>" data-cols="<?php echo $columns; ?>" style="">
+            <?php 
+                foreach ($this->pluginBeforeList as $c) :
+                    echo $c;
+                endforeach;
+            ?>
+
             <div class="fabrikList" id="list_<?php echo $this->table->renderid; ?>">
                 <table style="<?php echo $cssWidth; ?>" class="<?php echo $this->list->class; ?>" id="list_<?php echo $this->table->renderid; ?>">
                     <colgroup>
@@ -56,7 +69,7 @@ $this->showEmpty = true;
                             <col class="col-<?php echo $key; ?>">
                         <?php endforeach; ?>
                     </colgroup>
-                    <tfoot>
+                    <tfoot class="d-none">
                         <tr class="fabrik___heading">
                             <td colspan="<?php echo count($this->headings); ?>">
                             </td>
@@ -64,19 +77,32 @@ $this->showEmpty = true;
                     </tfoot>
                     <thead><?php echo $this->headingsHtml ?></thead>
                 </table>
-                <div id="registros-container">
-                    <?php
-                        $self = $this;
-                        $itens = getItens($self, null);
+                <?php
+                $gCounter = 0;
+                foreach ($this->rows as $groupedBy => $group) : ?>
+                    <?php if ($this->isGrouped) : ?>
+                        <div class="fabrik_groupheading">
+                            <?php echo $this->layoutGroupHeading($groupedBy, $group); ?>
+                        </div>
+                    <?php endif; ?>
 
-                        foreach ($itens as $row) {
-                            $this->_row = $this->_models["list"]->getRow($row->id, true);
-                            echo $this->loadTemplate('row_tree');
-                        }
-                    ?>
-                </div>
+                    <div class="fabrik_groupdata d-flex flex-column">
+                        <div class="groupDataMsg">
+                            <div class="emptyDataMessage" style="<?php echo $this->emptyStyle ?>">
+                                <?php echo $this->emptyDataMessage; ?>
+                            </div>
+                        </div>
+
+                        <?php
+                            foreach ($group as $this->_row) :
+                                echo $this->loadTemplate('row_card');
+                            endforeach;
+                        ?>
+                    </div>
+                <?php endforeach; ?>
             </div>
             <?php
+            echo $this->nav;
             print_r($this->hiddenFields); ?>
         </div>
     </div>

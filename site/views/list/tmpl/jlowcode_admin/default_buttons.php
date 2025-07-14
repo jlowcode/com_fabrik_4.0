@@ -196,6 +196,8 @@ foreach ($elsList as $el) {
 				$links[] = '<a id="tutorial-view" name="view" onclick="handleRadioClick(this)">' . FabrikHelperHTML::image('notification.png', 'list', $this->tmpl) . Text::_("COM_FABRIK_LAYOUT_MODE_OPTION_3") . '</a>';
 			}
 
+			$links[] = '<a id="card-view" name="view" onclick="handleRadioClick(this)">' . FabrikHelperHTML::image('credit-card.png', 'list', $this->tmpl) . Text::_("COM_FABRIK_LAYOUT_MODE_OPTION_4") . '</a>';
+
 			$displayData = new stdClass;
 			$displayData->icon = FabrikHelperHTML::image('list-2.png');
 			$displayData->label = Text::_("COM_FABRIK_LAYOUT_MODE");
@@ -204,6 +206,7 @@ foreach ($elsList as $el) {
 			$layout = $this->getModel()->getLayout('fabrik-nav-dropdown');
 			echo $layout->render($displayData);
 		?>
+		<input type="hidden" name="initial-mode" value="<?php echo $this->modoExibicao ?>"/>
 		<!-- End - Sub render Buttons -->
 
 		<?php 

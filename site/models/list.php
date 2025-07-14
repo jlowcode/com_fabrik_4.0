@@ -6615,29 +6615,56 @@ class FabrikFEModelList extends FormModel
 	 */
 	public function elementsToShowOnGridAndCardTemplate()
 	{
+		$params = $this->getParams();
 		$els = $this->getElements('id');
 		$fields = Array();
 
+		// Uer selection has priority
 		foreach ($els as $el) {
 			switch (true) {
-				case is_a($el, 'PlgFabrik_ElementFileupload') && !isset($fields['thumb-gallery-mode']):
-					$fields['thumb-gallery-mode'] = $el;
+				case $el->getId() == $params->get('field_thumb_template_mode', 0):
+					$fields['thumb-gallery-card-mode'] = $el;
 					break;
 
-				case $el->getElement()->get('name') == 'name' && !isset($fields['name-gallery-mode']):
-					$fields['name-gallery-mode'] = $el;
+				case $el->getId() == $params->get('field_name_template_mode', 0):
+					$fields['name-gallery-card-mode'] = $el;
 					break;
 
-				case is_a($el, 'PlgFabrik_ElementTextarea') && $el->getElement()->get('name') != 'indexing_text' && !isset($fields['description-gallery-mode']):
-					$fields['description-gallery-mode'] = $el;
+				case $el->getId() == $params->get('field_description_template_mode', 0):
+					$fields['description-gallery-card-mode'] = $el;
 					break;
 
-				case in_array($el->getElement()->get('name'), ['date_time', 'created_date']) && !isset($fields['date-gallery-mode']):
-					$fields['date-gallery-mode'] = $el;
+				case $el->getId() == $params->get('field_date_template_mode', 0):
+					$fields['date-gallery-card-mode'] = $el;
 					break;
 
-				case $el->getElement()->get('name') == 'created_by' && !isset($fields['owner-gallery-mode']):
-					$fields['owner-gallery-mode'] = $el;
+				case $el->getId() == $params->get('field_owner_template_mode', 0):
+					$fields['owner-gallery-card-mode'] = $el;
+					break;
+			}
+		}
+
+		// If user selection is not set for all, then we get the elements by default
+		foreach ($els as $el) {
+			switch (true) {
+				case (is_a($el, 'PlgFabrik_ElementFileupload') && !isset($fields['thumb-gallery-card-mode'])):
+					$fields['thumb-gallery-card-mode'] = $el;
+					break;
+
+				case $el->getElement()->get('name') == 'name' && !isset($fields['name-gallery-card-mode']):
+					$fields['name-gallery-card-mode'] = $el;
+					break;
+
+				case is_a($el, 'PlgFabrik_ElementTextarea') && $el->getElement()->get('name') != 'indexing_text' && !isset($fields['description-gallery-card-mode']):
+					$fields['description-gallery-card-mode'] = $el;
+					break;
+
+				case in_array($el->getElement()->get('name'), ['date_time', 'created_date']) && !isset($fields['date-gallery-card-mode']):
+					$fields['date-gallery-card-mode'] = $el;
+					break;
+
+				case $el->getElement()->get('name') == 'created_by' && !isset($fields['owner-gallery-card-mode']):
+					$fields['owner-gallery-card-mode'] = $el;
 					break;
 			}
 		}

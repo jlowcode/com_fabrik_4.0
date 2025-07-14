@@ -18,6 +18,7 @@ use Joomla\CMS\Factory;
 
 $document = Factory::getDocument();
 $document->addStyleSheet('components/com_fabrik/views/list/tmpl/' . $this->getModel()->getFormModel()->getTmpl() . '/css/subRenderGrid.css');
+$document->addStyleSheet('components/com_fabrik/views/list/tmpl/' . $this->getModel()->getFormModel()->getTmpl() . '/css/subRenderGridCard.css');
 
 $columns = 3;
 ?>
@@ -54,7 +55,7 @@ $columns = 3;
             ?>
         </div>
 
-        <div class="subRenderGrid listContent fabrikDataContainer<?php echo $this->params['show-table-filters'] === '6' ? ' col-md-9 span9' : ''; ?>" data-cols="<?php echo $columns; ?>" style="">
+        <div class="subRenderGridCard subRenderGrid hideThead listContent fabrikDataContainer<?php echo $this->params['show-table-filters'] === '6' ? ' col-md-9 span9' : ''; ?>" data-cols="<?php echo $columns; ?>" style="">
             <?php 
                 foreach ($this->pluginBeforeList as $c) :
                     echo $c;

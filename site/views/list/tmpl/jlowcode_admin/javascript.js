@@ -9,20 +9,12 @@ requirejs(['fab/fabrik', 'fab/bootstrap_tree'], function (Fabrik, BootstrapTree)
 	jQuery(document).ready(function () {
 		var tree = jQuery('.summary')[0];
 
-		hideHeadings();
 		setFiltersTutorialTemplate();
 		orderingTreeTutorial(tree);
-
-		Fabrik.addEvent('fabrik.list.update', function (list) {
-			hideHeadings();
-
-			return list;
-		});
+		checkViewMobileMode();
 	});
 
 	Fabrik.addEvent('fabrik.list.loaded', function (list) {
-		hideHeadings();
-
 		var dataRow = list.list.getElementsByClassName('fabrik_row');
 		Array.from(dataRow).each(function (row) {
 			var btnAction = row.getElementsByClassName('fabrik_action');
@@ -120,6 +112,10 @@ window.addEvent('fabrik.loaded', function () {
 
 
 function handleRadioClick(element) {
+	if(element.id.indexOf(sessionStorage.getItem("modo")) > -1) {
+		return;
+	}
+
 	showSpinner();
 
 	switch (element.id) {
@@ -137,6 +133,10 @@ function handleRadioClick(element) {
 
 		case 'tutorial-view':
 			sessionStorage.setItem("modo", "tutorial");			
+			break;
+
+		case 'card-view':
+			sessionStorage.setItem("modo", "card");
 			break;
 	}
 
@@ -161,6 +161,10 @@ function carregarModoEscolhido() {
 
 		case 'tutorial':
 			document.getElementById("tutorial-view").checked = true;		
+			break;
+
+		case 'card':
+			document.getElementById("card-view").checked = true;		
 			break;
 	}
 }
@@ -283,15 +287,6 @@ function onReportAbuse(listRowIds) {
 		error: function (err) {
 			alert("Erro ao reportar abuso.");
 			hideSpinner();
-		}
-	});
-}
-
-function hideHeadings() {
-	jQuery('.fabrikList .fabrik___heading th').each(function (i, column) {
-		classes = jQuery(column).attr('class').split(' ');
-		if(classes.indexOf('fabrik_actions') < 0) {
-			jQuery(column).css('visibility', 'hidden');
 		}
 	});
 }
@@ -443,4 +438,29 @@ function navigation() {
 		history.pushState(null, '', window.location.pathname + '?' + finalUrl + '&resetfilters=0&clearordering=0&clearfilters=0');
 		location.reload();
 	}
+}
+
+// Change the view mode, for mobile devices default mode for cards is the grid mode
+function checkViewMobileMode() {
+	if(jQuery(window).width() < 768) {
+		jQuery('#card-view').parent().addClass('fabrikHide');
+
+		if(sessionStorage.getItem("modo") === 'card' || jQuery('input[name="initial-mode"]').val() === '4') {
+			sessionStorage.setItem("modo", "grid");
+			enviarDadosParaServidor();
+		}
+	}
+
+	jQuery(window).on('resize', function () {
+		if(jQuery(window).width() < 768) {
+			jQuery('#card-view').parent().addClass('fabrikHide');
+
+			if(sessionStorage.getItem("modo") === 'card' || jQuery('input[name="initial-mode"]').val() === '4') {
+				sessionStorage.setItem("modo", "grid");
+				enviarDadosParaServidor();
+			}
+		} else {
+			jQuery('#card-view').parent().removeClass('fabrikHide');
+		}
+	});
 }

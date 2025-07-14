@@ -27,10 +27,10 @@ $elements = $this->getModel()->getElements('filtername');
 	<div>
 		<!-- Show thumb, name and description first -->
 		<div class="gallery-head-row">
-			<?php $el = $this->elementsToShowOnGridAndCardTemplate['thumb-gallery-mode']; ?>
+			<?php $el = $this->elementsToShowOnGridAndCardTemplate['thumb-gallery-card-mode']; ?>
 			<?php if(isset($el)) : ?>
-				<div class="fabrikDivElement div-thumb-gallery-mode">
-					<span class="thumb-gallery-mode <?php echo $el->getFullName() ?>" >
+				<div class="fabrikDivElement div-thumb">
+					<span class="thumb <?php echo $el->getFullName() ?>" >
 						<?php
 							$el->reset();
 							echo $el->getValue((array) @$rowData);
@@ -40,10 +40,10 @@ $elements = $this->getModel()->getElements('filtername');
 				</div>
 			<?php endif; ?>
 
-			<?php $el = $this->elementsToShowOnGridAndCardTemplate['name-gallery-mode']; ?>
+			<?php $el = $this->elementsToShowOnGridAndCardTemplate['name-gallery-card-mode']; ?>
 			<?php if(isset($el)) : ?>
-				<div class="fabrikDivElement div-name-gallery-mode">
-					<span class="name-gallery-mode <?php echo $el->getFullName() ?>">
+				<div class="fabrikDivElement div-name">
+					<span class="title name <?php echo $el->getFullName() ?>">
 						<?php
 							$el->reset();
 							echo $el->getValue((array) @$rowData);
@@ -53,10 +53,10 @@ $elements = $this->getModel()->getElements('filtername');
 				</div>
 			<?php endif; ?>
 			
-			<?php $el = $this->elementsToShowOnGridAndCardTemplate['description-gallery-mode']; ?>
+			<?php $el = $this->elementsToShowOnGridAndCardTemplate['description-gallery-card-mode']; ?>
 			<?php if(isset($el)) : ?>
-				<div class="fabrikDivElement div-description-gallery-mode">
-					<span class="description-gallery-mode">
+				<div class="fabrikDivElement div-description">
+					<span class="description">
 						<p class="m-0 <?php echo $el->getFullName() ?>">
 							<?php
 								$el->reset();
@@ -96,11 +96,11 @@ $elements = $this->getModel()->getElements('filtername');
 	</div>
 
 	<!-- Finally show created_by, date_time and fabrik_actions -->
-	<div class="fabrikDivElement gallery-info-row d-flex align-items-center justify-content-between">
-		<div class="div-info-gallery-mode d-flex flex-row flex-wrap">
-			<?php $el = $this->elementsToShowOnGridAndCardTemplate['date-gallery-mode']; ?>
+	<div class="fabrikDivElement info-row d-flex align-items-center justify-content-between">
+		<div class="div-info d-flex flex-row flex-wrap">
+			<?php $el = $this->elementsToShowOnGridAndCardTemplate['date-gallery-card-mode']; ?>
 			<?php if (isset($el)) : ?>
-				<span class="date-gallery-mode <?php echo $el->getFullName(); ?>">
+				<span class="date <?php echo $el->getFullName(); ?>">
 					<?php
 						$el->reset();
 						$rawName = $el->getFullName() . '_raw';
@@ -111,11 +111,11 @@ $elements = $this->getModel()->getElements('filtername');
 			<?php endif; ?>
 
 			<?php 
-				$el = $this->elementsToShowOnGridAndCardTemplate['owner-gallery-mode']; 
+				$el = $this->elementsToShowOnGridAndCardTemplate['owner-gallery-card-mode']; 
 				$el->reset();
 			?>
 			<?php if (isset($el)) : ?>
-				<span class="owner-gallery-mode">
+				<span class="owner">
 					<span><?php echo Text::_("COM_FABRIK_BY"); ?></span>
 					<span class="<?php echo $el->getFullName(); ?>"><?php echo $el->getValue((array) @$rowData)[0] ?></span>
 				</span>

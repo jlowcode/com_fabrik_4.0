@@ -122,7 +122,7 @@ if (isset($_SESSION['modo']) && $_SESSION['modo']['lista'] == $this->table->db_t
 } else {
     $modoExibicao["template"] = 'list';
 }
-
+$this->modoExibicao = $modoExibicao["template"];
 ?> 
 
 <div class="fabrik-list">
@@ -177,6 +177,11 @@ switch ($modoExibicao["template"]) {
     case 'tutorial':
     case '3':
         echo $this->loadTemplate('subrender_tutorial');
+        break;
+    
+    case 'card':
+    case '4':
+        echo $this->loadTemplate('subrender_card');
         break;
 }
 
