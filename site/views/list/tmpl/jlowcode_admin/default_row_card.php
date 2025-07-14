@@ -81,7 +81,7 @@ if(isset($elOwner)) {
 						<?php if(!empty($data)) : ?>
 							<p class="m-0 <?php echo $el->getFullName() ?>">
 								<?php
-									echo $el->getValue((array) @$rowData);
+									echo strip_tags($el->getValue((array) @$rowData));
 									$ignoreHeadings[] = $el->getFullName();
 								?>
 							</p>
