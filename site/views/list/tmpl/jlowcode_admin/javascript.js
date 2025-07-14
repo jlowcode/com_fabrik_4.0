@@ -112,10 +112,6 @@ window.addEvent('fabrik.loaded', function () {
 
 
 function handleRadioClick(element) {
-	if(element.id.indexOf(sessionStorage.getItem("modo")) > -1) {
-		return;
-	}
-
 	showSpinner();
 
 	switch (element.id) {
