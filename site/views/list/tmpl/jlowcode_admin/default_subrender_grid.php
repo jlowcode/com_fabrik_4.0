@@ -96,7 +96,7 @@ $columns = 3;
                         <?php
                             $items = array();
                             foreach ($group as $this->_row) :
-                                $items[] = $this->loadTemplate('row_gallery');
+                                $items[] = $this->loadTemplate('row_grid');
                                 $ids[] = $this->_row->id;
                             endforeach;
 
