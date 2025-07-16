@@ -75,22 +75,22 @@ if(isset($elOwner)) {
 			<?php
 				$el = $this->elementsToShowOnGridAndCardTemplate['description-gallery-card-mode']; 
 			?>
-			<div class="fabrikDivElement div-description">
-				<span class="description">
-					<?php if(isset($el)) : ?>
-						<?php $el->reset(); ?>
-						<?php $data = $el->getValue((array) @$rowData); ?>
-						<?php if(!empty($data)) : ?>
+			<?php if(isset($el)) : ?>
+				<?php $el->reset(); ?>
+				<?php $data = $el->getValue((array) @$rowData); ?>
+				<?php if(!empty($data)) : ?>
+					<div class="fabrikDivElement div-description">
+						<span class="description">	
 							<p class="m-0 <?php echo $el->getFullName() ?>">
 								<?php
 									echo strip_tags($el->getValue((array) @$rowData));
 									$ignoreHeadings[] = $el->getFullName();
 								?>
 							</p>
-						<?php endif; ?>
-					<?php endif; ?>
-				</span>
-			</div>
+						</span>
+					</div>
+				<?php endif; ?>
+			<?php endif; ?>
 
 			<!-- Then show all data -->
 			<div class="card-data-row d-flex">
