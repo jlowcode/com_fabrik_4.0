@@ -29,7 +29,11 @@
 }
 
 .fabrik-list .subRenderCard .fabrik_groupdata {
-    gap: 24px;
+    gap: 48px;
+}
+
+.fabrik-list .subRenderCard .fabrik_groupdata > div:first-child {
+    margin-top: 16px;
 }
 
 .fabrik-list .subRenderCard .card-data-row {

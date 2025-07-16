@@ -87,14 +87,15 @@ $columns = 3;
                     <?php endif; ?>
 
                     <div class="fabrik_groupdata d-flex flex-column">
-                        <div class="groupDataMsg">
-                            <div class="emptyDataMessage" style="<?php echo $this->emptyStyle ?>">
-                                <?php echo $this->emptyDataMessage; ?>
+                        <div>
+                            <div class="groupDataMsg">
+                                <div class="emptyDataMessage" style="<?php echo $this->emptyStyle ?>">
+                                    <?php echo $this->emptyDataMessage; ?>
+                                </div>
                             </div>
-                        </div>
 
                         <?php
-                            foreach ($group as $this->_row) :
+                            foreach ($group as $this->firstCard => $this->_row) :
                                 echo $this->loadTemplate('row_card');
                             endforeach;
                         ?>
