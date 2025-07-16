@@ -146,3 +146,7 @@ if(isset($elOwner)) {
 		<span style="margin-top: 7px;"><?php echo @$rowData->fabrik_select; ?></span>
 	</div>
 </div>
+
+<?php if($this->firstCard === 0) : ?>
+</div>
+<?php endif; ?>
