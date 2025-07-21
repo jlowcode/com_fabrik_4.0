@@ -44,12 +44,14 @@ $columns = 3;
             ?>
         </div>
 
-        <div class="<?php 
-            echo $this->params['show-table-filters'] === '6' ? ' col-md-2 span2 ' : ''; 
-            echo $this->showFilters === true ? 'filterContentNotEmpty' : '' ?>">
+        <div class="
+            <?php 
+                echo $this->showFilters === true ? 'filterContentNotEmpty' : '';
+                echo in_array($this->params['show-table-filters'], [6, 7]) && $this->showFilters ? ' col-md-12 col-lg-3 ' : '';
+            ?>">
 
             <?php 
-                if ($this->showFilters) :
+                if ($this->showFilters && $this->bootShowFilters) :
                     echo $this->layoutFilters();
                 endif;
             ?>

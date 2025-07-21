@@ -305,7 +305,6 @@ div.modal.fade {
     padding: 0px 7px;
 }
 
-
 .fabrik-list .fabrikNav .list-footer {
     align-items: center;
     justify-content: space-between;
@@ -438,6 +437,15 @@ div.modal.fade {
 .fabrik-list .hideThead .fabrik___heading th.fabrik_actions {
     width: 100% !important;
     display: table-cell;
+}
+
+.fabrik-list .fabrikgrid_checkbox label {
+    display: flex;
+    align-items: center;
+}
+
+.fabrik-list .fabrikgrid_checkbox input {
+    margin-right: 8px;;
 }
 /* End - Style to subrenders */
 
