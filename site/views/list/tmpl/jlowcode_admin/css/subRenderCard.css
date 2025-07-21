@@ -20,6 +20,10 @@
     box-sizing: border-box;
 }
 
+.fabrik-list .subRenderCard .div-description p {
+    margin: 0px !important;
+}
+
 .fabrik-list .subRenderCard .description {
     box-sizing: border-box;
 }

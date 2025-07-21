@@ -77,13 +77,13 @@ if(isset($elOwner)) {
 			?>
 			<?php if(isset($el)) : ?>
 				<?php $el->reset(); ?>
-				<?php $data = $el->getValue((array) @$rowData); ?>
+				<?php $data = strip_tags($el->getValue((array) @$rowData)); ?>
 				<?php if(!empty($data)) : ?>
 					<div class="fabrikDivElement div-description">
 						<span class="description">	
 							<p class="m-0 <?php echo $el->getFullName() ?>">
 								<?php
-									echo strip_tags($el->getValue((array) @$rowData));
+									echo $data;
 									$ignoreHeadings[] = $el->getFullName();
 								?>
 							</p>
