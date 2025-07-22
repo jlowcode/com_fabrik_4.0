@@ -45,6 +45,7 @@ requirejs(['fab/fabrik', 'fab/bootstrap_tree'], function (Fabrik, BootstrapTree)
 		if(j.filters.value === undefined) {
 			jQuery('.clearFilters').addClass('fabrikHide');
 			jQuery('.fabrik-list .fabrikButtonsContainer .fabrik_filter').removeClass('p-clean-filters');
+			jQuery('.toggleFilters .num-flag').addClass('fabrikHide');
 			return;
 		}
 
