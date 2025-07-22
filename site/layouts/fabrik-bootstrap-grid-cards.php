@@ -30,13 +30,12 @@ foreach ($d->items as $i => $s)
 		$rowdata = $s;
 	}
 
-
     if ($endLine)
     {
         $grid[] = '</div><!-- grid close row -->';
     }
 
-    if ($newLine)
+    if ($newLine && $d->newLine)
     {
         $grid[] = '<div class="row ' . $d->classRow . '">';
     }

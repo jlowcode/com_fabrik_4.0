@@ -114,16 +114,15 @@ if ($_SERVER["REQUEST_METHOD"] == 'POST') {
 }
 
 if (isset($_SESSION['modo']) && $_SESSION['modo']['lista'] == $this->table->db_table_name) {
-    $modoExibicao = $_SESSION['modo'];
+    $this->modoExibicao = $_SESSION['modo']['template'];
 } else if($input->get('layout_mode')) {
-    $modoExibicao["template"] = $input->get('layout_mode');
+    $this->modoExibicao = $input->get('layout_mode');
 } else if ($this->params->get('layout_mode')) {
-    $modoExibicao["template"] = $this->params->get('layout_mode');
+    $this->modoExibicao = $this->params->get('layout_mode');
 } else {
-    $modoExibicao["template"] = 'list';
+    $this->modoExibicao = 'list';
 }
-$this->modoExibicao = $modoExibicao["template"];
-?> 
+?>
 
 <div class="fabrik-list">
 
@@ -158,7 +157,7 @@ echo $this->loadTemplate('header');
 
 <?php
 
-switch ($modoExibicao["template"]) {
+switch ($this->modoExibicao) {
     case 'list':
     case '0':
         echo $this->loadTemplate('subrender_list');

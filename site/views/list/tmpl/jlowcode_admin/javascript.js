@@ -14,6 +14,17 @@ requirejs(['fab/fabrik', 'fab/bootstrap_tree'], function (Fabrik, BootstrapTree)
 		checkViewMobileMode();
 	});
 
+	Fabrik.addEvent('fabrik.list.updaterows', function () {
+		jQuery('.subRenderCard .description').each(function () {
+			let boxDescription = jQuery(this);
+			let description = boxDescription.find('p');
+
+			if(description.text() === '') {
+				boxDescription.closest('.div-description').css('margin-bottom', '0px');
+			}
+		});
+	});
+
 	Fabrik.addEvent('fabrik.list.loaded', function (list) {
 		var dataRow = list.list.getElementsByClassName('fabrik_row');
 		Array.from(dataRow).each(function (row) {

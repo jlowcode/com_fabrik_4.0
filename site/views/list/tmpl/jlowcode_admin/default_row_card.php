@@ -78,9 +78,9 @@ if(isset($elOwner)) {
 			<?php if(isset($el)) : ?>
 				<?php $el->reset(); ?>
 				<?php $data = strip_tags($el->getValue((array) @$rowData)); ?>
-				<?php if(!empty($data)) : ?>
+				<?php if(!empty($data) || empty($rowData)) : ?>
 					<div class="fabrikDivElement div-description">
-						<span class="description">	
+						<span class="description">
 							<p class="m-0 <?php echo $el->getFullName() ?>">
 								<?php
 									echo $data;
@@ -123,7 +123,7 @@ if(isset($elOwner)) {
 					<?php if (isset($elDate)) : ?>
 						<span class="date <?php echo $dateFullName ?>">
 							<?php
-								$allData = @$rowData;
+								$allData = @$rowData ?? new stdClass();
 								echo $elDate->renderListData(@$rowData->$dateRawName, $allData);
 							?>
 						</span>
@@ -142,7 +142,15 @@ if(isset($elOwner)) {
 
 	<!-- Finally show fabrik_actions and fabrik_select -->
 	<div class="div-actions d-flex align-items-start justify-content-end w-25">
-		<span><?php echo @$rowData->fabrik_actions; ?></span>
-		<span style="margin-top: 7px;"><?php echo @$rowData->fabrik_select; ?></span>
+		<span>
+			<div class="fabrik_actions fabrik_element">
+				<?php echo @$rowData->fabrik_actions; ?>
+			</div>
+		</span>
+		<span style="margin-top: 7px;">
+			<div class="fabrik_select fabrik_element">
+				<?php echo @$rowData->fabrik_select; ?>
+			</div>
+		</span>
 	</div>
 </div>

@@ -120,7 +120,7 @@ if(isset($elOwner)) {
 			<?php if (isset($elDate)) : ?>
 				<span class="date <?php echo $dateFullName ?>">
 					<?php
-						$allData = @$rowData;
+						$allData = @$rowData ?? new stdClass();
 						echo $elDate->renderListData(@$rowData->$dateRawName, $allData);
 					?>
 				</span>
@@ -134,7 +134,11 @@ if(isset($elOwner)) {
 			<?php endif; ?>
 		</div>
 		<div>
-			<span><?php echo @$rowData->fabrik_actions; ?></span>
+			<span>
+				<div class="fabrik_actions fabrik_element">
+					<?php echo @$rowData->fabrik_actions; ?>
+				</div>
+			</span>
 		</div>
 	</div>
 </div>
