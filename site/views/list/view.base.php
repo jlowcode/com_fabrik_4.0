@@ -478,6 +478,11 @@ class FabrikViewListBase extends FabrikView
 		$this->rows = $data;
 		reset($this->rows);
 
+		// Options for layout modes
+		$this->canShowTutorialTemplate = $model->canShowTutorialTemplate();
+		$this->dataTemplateTutorial = $this->canShowTutorialTemplate ? $model->dataTemplateTutorial() : false;
+		$this->elementsToShowOnGridAndCardTemplate = $model->elementsToShowOnGridAndCardTemplate();
+
 		// Cant use numeric key '0' as group by uses grouped name as key
 		$firstRow                   = current($this->rows);
 		$this->requiredFiltersFound = $model->getRequiredFiltersFound();
@@ -637,10 +642,6 @@ class FabrikViewListBase extends FabrikView
 		$this->params         = $params;
 		$this->loadTemplateBottom();
 		$this->getManagementJS($this->rows);
-
-		$this->canShowTutorialTemplate = $model->canShowTutorialTemplate();
-		$this->dataTemplateTutorial = $this->canShowTutorialTemplate ? $model->dataTemplateTutorial() : false;
-		$this->elementsToShowOnGridAndCardTemplate = $model->elementsToShowOnGridAndCardTemplate();
 
 		// Get dropdown list of other tables for quick nav in admin
 		$this->tablePicker = $params->get('show-table-picker', $input->get('list-picker', true)) && $this->app->isClient('administrator') && $this->app->getInput()->get('format') !== 'pdf' ? FabrikHelperHTML::tableList($this->table->id) : '';

@@ -16,6 +16,17 @@ requirejs(['fab/fabrik', 'fab/bootstrap_tree'], function (Fabrik, BootstrapTree)
 		checkViewMobileMode();
 	});
 
+	Fabrik.addEvent('fabrik.list.updaterows', function () {
+		jQuery('.subRenderCard .description').each(function () {
+			let boxDescription = jQuery(this);
+			let description = boxDescription.find('p');
+
+			if(description.text() === '') {
+				boxDescription.closest('.div-description').css('margin-bottom', '0px');
+			}
+		});
+	});
+
 	Fabrik.addEvent('fabrik.list.loaded', function (list) {
 		var dataRow = list.list.getElementsByClassName('fabrik_row');
 		Array.from(dataRow).each(function (row) {
@@ -33,6 +44,21 @@ requirejs(['fab/fabrik', 'fab/bootstrap_tree'], function (Fabrik, BootstrapTree)
 
 		jQuery('#nav-pagination').val(Math.ceil((parseInt(list.options.limitStart)+1)/parseInt(list.options.limitLength)));
 	})
+
+	Fabrik.addEvent('fabrik.list.submit.ajax.complete', function (t, j) {
+		if(j.filters.value === undefined) {
+			jQuery('.clearFilters').addClass('fabrikHide');
+			jQuery('.fabrik-list .fabrikButtonsContainer .fabrik_filter').removeClass('p-clean-filters');
+			jQuery('.toggleFilters .num-flag').addClass('fabrikHide');
+			return;
+		}
+
+		qtnFilters = Object.keys(j.filters.value).length;
+		jQuery('.toggleFilters .num-flag').html(qtnFilters);
+		jQuery('.toggleFilters .num-flag').removeClass('fabrikHide');
+		jQuery('.clearFilters').removeClass('fabrikHide');
+		jQuery('.fabrik-list .fabrikButtonsContainer .fabrik_filter').addClass('p-clean-filters');
+	});
 
 	jQuery('.clearFilters').on('click', function() {
 		jQuery('.toggleFilters .num-flag').addClass('fabrikHide');

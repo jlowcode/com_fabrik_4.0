@@ -41,11 +41,12 @@ define(['jquery', 'fab/fabrik', 'fab/advanced-search'], function (jQuery, Fabrik
 
                 // Left side filter toggle
                 if(this.dataset.filterMode == '7') {
-                    classContainer = self.filterContainer[0].parentNode.parentNode.getElementsByClassName('listContent')[0].classList;
-                    if(classContainer.value.indexOf('col-lg-9') !== -1) {
-                        classContainer.remove('col-lg-9');
+                    let container = self.filterContainer.closest('form').find('.listContent');
+                    let classList = container.prop('className');
+                    if(classList.indexOf('col-lg-9') !== -1) {
+                        container.removeClass('col-lg-9');
                     } else {
-                        classContainer.add('col-lg-9');
+                        container.addClass('col-lg-9');
                     }
                 }
             });

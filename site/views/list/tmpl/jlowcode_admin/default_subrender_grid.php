@@ -16,15 +16,16 @@ defined('_JEXEC') or die('Restricted access');
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\Factory;
 
+$tmpl = $this->getModel()->getFormModel()->getTmpl();
 $document = Factory::getDocument();
-$document->addStyleSheet('components/com_fabrik/views/list/tmpl/' . $this->getModel()->getFormModel()->getTmpl() . '/css/subRenderGrid.css');
-$document->addStyleSheet('components/com_fabrik/views/list/tmpl/' . $this->getModel()->getFormModel()->getTmpl() . '/css/subRenderGridCard.css');
+$document->addStyleSheet('components/com_fabrik/views/list/tmpl/' . $tmpl . '/css/subRenderGrid.css');
+$document->addStyleSheet('components/com_fabrik/views/list/tmpl/' . $tmpl . '/css/subRenderGridCard.css');
 
 $columns = 3;
 ?>
 <form class="fabrikForm" action="<?php echo $this->table->action; ?>" method="post" id="<?php echo $this->formid; ?>" name="fabrikList">
     <div class="<?php echo in_array($this->params['show-table-filters'], [6, 7]) ? 'row' : ''; ?>" style="width: 100%;">
-        <div class="<?php echo $this->params['show-table-filters'] === '6' ? 'col-md-12' : ''; ?>">
+        <div class="<?php echo in_array($this->params['show-table-filters'], [6, 7]) ? 'col-md-12' : ''; ?>">
             <?php
             if ($this->hasButtons) :
                 echo $this->loadTemplate('buttons');
