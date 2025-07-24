@@ -4,6 +4,7 @@
 */
 
 
+@import url('https://fonts.googleapis.com/css2?family=Inter&display=swap');
 
 /* Begin - Global style */
 #g-main, .com_fabrik #g-page-surround  {
@@ -21,6 +22,10 @@ div.modal.fade {
 
 .fabrik-list .btn:hover {
     font-weight: 600;
+}
+
+#g-main *:not(.fa) {
+    font-family: 'Inter', sans-serif !important;
 }
 /* End - Global style */
 

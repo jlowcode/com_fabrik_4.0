@@ -4,8 +4,7 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter&display=swap');
 
 .fabrik-list .subRenderGridCard .title {
-    font-family: 'Inter';
-    font-size: 28px;
+    font-size: 24px;
     line-height: 32px;
     color: #322550;
     font-weight: 700;
@@ -42,12 +41,8 @@
     -webkit-box-orient: vertical;
     overflow: hidden;
     text-overflow: ellipsis;
-    line-height: 20px;
-    font-size: 16px;
-}
-
-.fabrik-list .subRenderGridCard .div-name {
-    margin-bottom: 16px;
+    line-height: 21px;
+    font-size: 14px;
 }
 
 .fabrik-list .subRenderGridCard .info-row {
@@ -55,26 +50,30 @@
 }
 
 .fabrik-list .subRenderGridCard .date {
-    font-size: 16px;
-    line-height: 20px;
-    font-weight: 600;
-    color: #322550;
-    margin-right: 24px;
+    font-size: 13px;
+    line-height: 19px;
+    margin-right: 8px;
 }
 
 .fabrik-list .subRenderGridCard .owner,
 .fabrik-list .subRenderGridCard .owner a {
-    font-size: 14px;
-    line-height: 20px;
     color: #59577A;
+    font-size: 13px;
+    line-height: 19px;
+    font-weight: 400;
+    display: flex;
+    align-items: center;
 }
 
 .fabrik-list .subRenderGridCard .owner :last-child {
     text-transform: capitalize;
+    margin-left: 1.5px;
 }
 
 .fabrik-list .subRenderGridCard .fabrikDivElementData {
     display: flex;
+    font-size: 14px;
+    line-height: 21px;
 }
 
 .fabrik-list .subRenderGridCard .div-info {
@@ -83,4 +82,9 @@
 
 .fabrik-list .subRenderGridCard .title-field-card {
     margin-right: 4px;
+    color: #59577A;
+}
+
+.fabrik-list .subRenderGridCard .data-field-card {
+    color: #1F0E3D;
 }

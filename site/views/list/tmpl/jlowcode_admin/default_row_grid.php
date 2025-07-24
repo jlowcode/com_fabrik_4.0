@@ -107,8 +107,8 @@ if(isset($elOwner)) {
 				$c = $this->cellClass[$heading];
 				?>
 				<div class="row-fluid fabrikDivElement fabrikDivElementData">
-					<?php echo '<span class="muted title-field-card">' . $label . ': </span>'; ?>
-					<?php echo '<span class="' . $c['class'] . '">' . $d . '</span>'; ?>
+					<?php echo '<span class="title-field-card">' . $label . ': </span>'; ?>
+					<?php echo '<span class="data-field-card ' . $c['class'] . '">' . $d . '</span>'; ?>
 				</div>
 			<?php endforeach; ?>
 		</div>

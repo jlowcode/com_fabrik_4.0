@@ -9,6 +9,7 @@
 
 .fabrik-list .subRenderGrid .div-name {
     margin-top: 8px;
+    margin-bottom: 16px;
 }
 
 .fabrik-list .subRenderGrid .row {
@@ -53,6 +54,11 @@
 .fabrik-list .subRenderGrid .description > p {
     -webkit-line-clamp: 3;
     min-height: calc(3 * 21px);
+}
+
+.fabrik-list .subRenderGrid .date {
+    font-weight: 600;
+    color: #322550;
 }
 
 @media only all and (min-width: 48rem) and (max-width: 59.99rem) {
