@@ -894,9 +894,11 @@ define(['jquery', 'fab/encoder', 'fab/fabrik', 'lib/debounce/jquery.ba-throttle-
                     if (typeOf(el) === 'array') {
                         if (typeOf(document.id(el[1])) === 'null') {
                             /* Some elements may not exist if this is a new record, specifically the lockrow element */
-                            if (document.getElements('input[name=rowid]')[0].value != "" && el[0] != 'FbLockrow') {
-                                fconsole('Fabrik form::addElements: Cannot add element "' + el[1] +
-                                    '" because it does not exist in HTML.');
+                            if(document.getElements('input[name=rowid]')[0] !== undefined) {
+                                if (document.getElements('input[name=rowid]')[0].value != "" && el[0] != 'FbLockrow') {
+                                    fconsole('Fabrik form::addElements: Cannot add element "' + el[1] +
+                                        '" because it does not exist in HTML.');
+                                }
                             }
                             return;
                         }
@@ -1103,6 +1105,7 @@ define(['jquery', 'fab/encoder', 'fab/fabrik', 'lib/debounce/jquery.ba-throttle-
                     this._completeValidaton(e, id, origid);
                 }.bind(this)
             }).send();
+            localStorage.setItem('popUpForm', JSON.stringify(this.getFormData()));
         },
 
         /**
@@ -1581,6 +1584,7 @@ define(['jquery', 'fab/encoder', 'fab/fabrik', 'lib/debounce/jquery.ba-throttle-
                                 });
                         }
                         else {
+                            localStorage.setItem('popUpForm', JSON.stringify(this.getFormData()));
                             var myajax = new Request.JSON({
                                 'url': this.form.action,
                                 'data': data,
@@ -1687,7 +1691,6 @@ define(['jquery', 'fab/encoder', 'fab/fabrik', 'lib/debounce/jquery.ba-throttle-
                                         }
                                         // Query the list to get the updated data
                                         Fabrik.fireEvent('fabrik.form.submitted', [this, json]);
-
                                         if (btn.name !== 'apply') {
                                             if (clear_form) {
                                                 this.clearForm();
@@ -2493,8 +2496,13 @@ define(['jquery', 'fab/encoder', 'fab/fabrik', 'lib/debounce/jquery.ba-throttle-
                             // $$$ hugh - sanity check in case we have an element which has no input
                             if (document.id(testid).getElement('input')) {
                                 input.cloneEvents(document.id(testid).getElement('input'));
+                                // Note: Radio's etc. now have their events delegated from the form - so no need to duplicate them
+                                // Update labels for sub elements
+                                var l = subElementContainer.getParent('.fabrikElementContainer').getElement('label');
+                                if (l) {
+                                    l.setProperty('for', subElementContainer.id);
+                               }
                             }
-                            // Note: Radio's etc. now have their events delegated from the form - so no need to duplicate them
 
                         } else {
                             input.cloneEvents(el.element);
@@ -2546,6 +2554,25 @@ define(['jquery', 'fab/encoder', 'fab/fabrik', 'lib/debounce/jquery.ba-throttle-
                         newEl.cloneUpdateIds(subElementContainer.id);
                         newEl.options.element = subElementContainer.id;
                         newEl._getSubElements();
+                        // update the labels
+                        newEl.subElements.each(function (subEl) {
+                            l = subEl.nextElementSibling;
+                            while (l) {
+                                if (l.nodeName == "LABEL") {
+                                    let lBits = l.htmlFor.split('_');
+                                    let eBits = newEl.options.element.split('_');
+                                    lBits[6] = eBits[6];
+                                    l.htmlFor = lBits.join('_');
+                                    break;
+                                }
+                                l = l.nextElementSibling;
+                            }
+                        });
+                        // Update the id on the fieldset if there is one
+                        let fs = subElementContainer.getElement('fieldset');
+                        if (fs) {
+                            fs.setAttribute('id', subElementContainer.id);
+                        }
                     } else {
                         newEl.cloneUpdateIds(lastinput.id);
                     }
@@ -2576,6 +2603,12 @@ define(['jquery', 'fab/encoder', 'fab/fabrik', 'lib/debounce/jquery.ba-throttle-
                     newEl.resetEvents();
                 }
             }.bind(this));
+            
+            // Update the element container label
+            if( container )
+            {
+                lastinput.getParent('.fabrikElementContainer').getElement('label').htmlFor = container.id;
+            }
             var o = {};
             o[i] = newElementControllers;
             this.addElements(o);

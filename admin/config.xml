@@ -4,11 +4,6 @@
 	<inlinehelp button="show"/>
 	<fieldset label="COM_FABRIK_GLOBAL" name="global">
 
-		<field name="fabrik_product_key"
-		       type="text"
-		       description="COM_FABRIK_FIELD_PRODUCT_KEY_DESC"
-		       label="COM_FABRIK_FIELD_PRODUCT_KEY_LABEL" />
-
 		<field name="enable_big_selects"
 			class="radio btn-group"
 			type="radio"
@@ -568,6 +563,12 @@
 			default=""
 			description="COM_FABRIK_REQUIREJS_BASE_URI_DESC"
 			label="COM_FABRIK_REQUIREJS_BASE_URI_LABEL" />
+
+		<field name="load_path_url"
+			size="250"
+			default=""
+			description="COM_FABRIK_CUSTOM_PATH_LOADING_GIF_DESC"
+			label="COM_FABRIK_CUSTOM_PATH_LOADING_GIF_LABEL" />
 
 	</fieldset>
 

@@ -18,21 +18,21 @@ define(['jquery'], function (jQuery) {
             });
 
             // Set up toggle events for elements
-            form.addEvent('mouseup:relay(a[data-toggle-col])', function (e, btn) {
-                var state = jQuery(btn).data('toggle-state');
-                var col = jQuery(btn).data('toggle-col');
+            form.addEvent('mouseup:relay(a[data-bs-toggle-col])', function (e, btn) {
+                var state = jQuery(btn).data('bs-toggle-state');
+                var col = jQuery(btn).data('bs-toggle-col');
                 this.toggleColumn(col, state, btn);
             }.bind(this));
 
             // Toggle events for groups (toggles all elements in group)
-            var groups = form.getElements('a[data-toggle-group]');
-            form.addEvent('mouseup:relay(a[data-toggle-group])', function (e, group) {
-                var state = jQuery(group).data('toggle-state'), muted,
-                    groupName = jQuery(group).data('toggle-group'),
-                    links = document.getElements('a[data-toggle-parent-group=' + groupName + ']');
+            var groups = form.getElements('a[data-bs-toggle-group]');
+            form.addEvent('mouseup:relay(a[data-bs-toggle-group])', function (e, group) {
+                var state = jQuery(group).data('bs-toggle-state'), muted,
+                    groupName = jQuery(group).data('bs-toggle-group'),
+                    links = document.getElements('a[data-bs-toggle-parent-group=' + groupName + ']');
 
                 links.each(function (btn) {
-                    var col = jQuery(btn).data('toggle-col');
+                    var col = jQuery(btn).data('bs-toggle-col');
                     this.toggleColumn(col, state, btn);
                 }.bind(this));
 
@@ -41,7 +41,7 @@ define(['jquery'], function (jQuery) {
                 jQuery(group).find('*[data-isicon]')
                     .removeClass()
                     .addClass('icon-eye-' + state + muted);
-                jQuery(group).data('toggle-state', state);
+                jQuery(group).data('bs-toggle-state', state);
 
             }.bind(this));
         },
@@ -58,23 +58,23 @@ define(['jquery'], function (jQuery) {
             state = state === 'open' ? 'close' : 'open';
 
             if (state === 'open') {
-                jQuery('.fabrik___heading .' + col).show();
-                jQuery('.fabrikFilterContainer .' + col).show();
-                jQuery('.fabrik_row  .' + col).show();
-                jQuery('.fabrik_calculations  .' + col).show();
+                jQuery('.fabrik___heading .' + col).addClass('d-table-cell').removeClass('d-none d-md-none d-lg-none');
+                jQuery('.fabrikFilterContainer .' + col).addClass('d-table-cell').removeClass('d-none d-md-none d-lg-none');
+                jQuery('.fabrik_row  .' + col).addClass('d-table-cell').removeClass('d-none d-md-none d-lg-none');
+                jQuery('.fabrik_calculations  .' + col).addClass('d-table-cell').removeClass('d-none d-md-none d-lg-none');
                 muted = '';
             } else {
-                jQuery('.fabrik___heading .' + col).hide();
-                jQuery('.fabrikFilterContainer .' + col).hide();
-                jQuery('.fabrik_row  .' + col).hide();
-                jQuery('.fabrik_calculations  .' + col).hide();
+                jQuery('.fabrik___heading .' + col).addClass('d-none').removeClass('d-table-cell d-md-table-cell d-lg-table-cell');
+                jQuery('.fabrikFilterContainer .' + col).addClass('d-none').removeClass('d-table-cell d-md-table-cell d-lg-table-cell');
+                jQuery('.fabrik_row  .' + col).addClass('d-none').removeClass('d-table-cell d-md-table-cell d-lg-table-cell');
+                jQuery('.fabrik_calculations  .' + col).addClass('d-none').removeClass('d-table-cell d-md-table-cell d-lg-table-cell');
                 muted = ' muted';
             }
 
             jQuery(btn).find('*[data-isicon]')
                 .removeClass()
                 .addClass('icon-eye-' + state + muted);
-            jQuery(btn).data('toggle-state', state);
+            jQuery(btn).data('bs-toggle-state', state);
         }
     });
 

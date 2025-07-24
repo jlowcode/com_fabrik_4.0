@@ -13,6 +13,8 @@ defined('_JEXEC') or die('Restricted access');
 
 use Joomla\CMS\Layout\LayoutInterface;
 use Joomla\CMS\Object\CMSObject;
+use Joomla\CMS\Router\Route;
+use Joomla\CMS\Uri\Uri;
 
 require_once JPATH_SITE . '/components/com_fabrik/views/list/view.base.php';
 
@@ -122,7 +124,6 @@ class FabrikViewList extends FabrikViewListBase
 
 			$layoutFile = $this->filterCols > 1 ? 'fabrik-filters-bootstrap' : 'fabrik-filters';
 		}
-
 		$layout = $this->getModel()->getLayout('list.' . $layoutFile);
 
 		return $layout->render($displayData);
