@@ -56,6 +56,10 @@
     min-height: calc(3 * 21px);
 }
 
+.fabrik-list .subRenderGrid .info-row {
+    margin-top: 16px;
+}
+
 .fabrik-list .subRenderGrid .date {
     font-weight: 600;
     color: #322550;

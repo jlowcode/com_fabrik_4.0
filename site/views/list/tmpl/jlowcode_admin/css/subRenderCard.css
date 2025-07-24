@@ -38,6 +38,10 @@
     box-sizing: border-box;
 }
 
+.fabrik-list .subRenderCard .info-row {
+    margin-top: 24px;
+}
+
 .fabrik-list .subRenderCard .date {
     font-weight: 400;
     color: #1F0E3D;
