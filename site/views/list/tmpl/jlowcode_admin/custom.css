@@ -27,10 +27,6 @@ div.modal.fade {
 #g-main *:not(.fa) {
     font-family: 'Inter', sans-serif !important;
 }
-
-.plg-display .fabrikinput {
-    height: inherit !important;
-}
 /* End - Global style */
 
 
@@ -270,37 +266,6 @@ div.modal.fade {
 
 
 
-/* Begin - Style to sub render list */
-.fabrik-list .table {
-    border: none;
-}
-
-.fabrik-list thead .fabrik___heading,
-.fabrik-list tbody .fabrik_row {
-    background-color: #fff;
-    border-bottom: 1px solid rgba(208, 219, 234, 1);
-}
-
-.fabrik-list .fabrik_action .dropdown-toggle {
-    padding: 0px;
-}
-
-.fabrik-list .list-notifications .answer-row {
-    background-color: #eaeaeae0;
-}
-
-.fabrik-list .list-notifications tr td {
-    line-height: 20px;
-    text-align: justify;
-}
-
-.fabrik-list .list-notifications tr td.first-column-notifications {
-    text-align: left;
-}
-/* Begin - Style to sub render list */
-
-
-
 /* Begin - Style to footer */
 .fabrik-list .fabrikNav .active {
     font-weight: 600;
@@ -309,6 +274,7 @@ div.modal.fade {
 .fabrik-list .fabrikNav .pagination > li {
     padding: 0px 7px;
 }
+
 
 .fabrik-list .fabrikNav .list-footer {
     align-items: center;
@@ -442,15 +408,6 @@ div.modal.fade {
 .fabrik-list .hideThead .fabrik___heading th.fabrik_actions {
     width: 100% !important;
     display: table-cell;
-}
-
-.fabrik-list .fabrikgrid_checkbox label {
-    display: flex;
-    align-items: center;
-}
-
-.fabrik-list .fabrikgrid_checkbox input {
-    margin-right: 8px;;
 }
 /* End - Style to subrenders */
 
@@ -835,6 +792,10 @@ i.fas.fa-exclamation-triangle.fa-sm{
 }
 .input-append{
     display:inline-flex;
+}
+
+.btn-primary:hover, .btn-primary:active, .btn-primary:focus {
+    background: #bbb !important;
 }
 
 .btn.calendarbutton {

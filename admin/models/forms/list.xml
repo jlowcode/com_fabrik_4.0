@@ -237,32 +237,6 @@
 				<option value="1">JYES</option>
 			</field>
 
-			<field name="show_list_with_replies"
-					type="radio"
-					class="btn-group"
-					default="0"
-					label="COM_FABRIK_FIELD_SHOW_LIST_WITH_REPLIES_LABEL"
-				layout="joomla.form.field.radio.switcher"
-					description="COM_FABRIK_FIELD_SHOW_LIST_WITH_REPLIES_DESC"
-			>
-				<option value="0">JNO</option>
-				<option value="1">JYES</option>
-			</field>
-
-			<field name="parent_element"
-			       type="listfields"
-			       valueformat="id"
-			       label="COM_FABRIK_FIELD_PARENT_ELEMENT_LABEL"
-			       description="COM_FABRIK_FIELD_GROUP_BY_PARENT_ELEMENT_LABEL"
-			/>
-
-			<field name="reply_element"
-			       type="listfields"
-			       valueformat="id"
-			       label="COM_FABRIK_FIELD_REPLY_ELEMENT_LABEL"
-			       description="COM_FABRIK_FIELD_GROUP_BY_REPLY_ELEMENT_LABEL"
-			/>
-			
 			<field name="layout_mode"
 				type="list"
 				default="0"
@@ -991,17 +965,6 @@
 				<option value="1">JYES</option>
 			</field>
 
-			<field name="csv_include_dbjoin_params"
-			       type="radio"
-			       class="btn-group"
-			       default="0"
-			       label="COM_FABRIK_FIELD_CSV_INCLUDE_DBJOIN_PARAMS_LABEL"
-			       description="COM_FABRIK_FIELD_CSV_INCLUDE_DBJOIN_PARAMS_DESC"
-			>
-				<option value="0">JNO</option>
-				<option value="1">JYES</option>
-			</field>
-
 			<field name="csv_include_calculations"
 			       type="radio"
 			       class="btn-group"
@@ -1705,15 +1668,6 @@
 				<option value="1">JYES</option>
 			</field>
 
-			<field name="reduce_query"
-			       type="radio"
-			       default="0"
-			       label="COM_FABRIK_LIST_REDUCE_QUERY_LABEL"
-			       description="COM_FABRIK_LIST_REDUCE_QUERY_DESC"
-			       class="btn-group">
-				<option value="0">JNO</option>
-				<option value="1">JYES</option>
-			</field>
 		</fieldset>
 
 		<fieldset name="open_archive_initiative">

@@ -36,7 +36,7 @@ $group = $this->group;
 
 	// This column will contain the add/delete buttons
 	if ($group->editable) : ?>
-	<th data-role="fabrik-group-repeaters" class=" btn-group-sm"></th>
+	<th data-role="fabrik-group-repeaters"></th>
 	<?php
 	endif;
 	?>

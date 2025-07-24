@@ -114,9 +114,7 @@ class FabrikAdminViewImport extends HtmlView
 		$version = new Version;
 //		$icon    = version_compare($version->RELEASE, '3.0') >= 0 ? 'arrow-right-2' : 'forward.png';
 		$icon    = 'arrow-right-2';
-		//ToolBarHelper::custom('import.doimport', $icon, $icon, 'COM_FABRIK_CONTINUE', false);
-		//Use Save button to get J! standard field validation
-		ToolBarHelper::save('import.doimport', 'COM_FABRIK_CONTINUE');
+		ToolBarHelper::custom('import.doimport', $icon, $icon, 'COM_FABRIK_CONTINUE', false);
 		ToolBarHelper::cancel('import.cancel', 'JTOOLBAR_CANCEL');
 	}
 }

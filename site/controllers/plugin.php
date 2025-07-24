@@ -11,12 +11,9 @@
 // No direct access
 defined('_JEXEC') or die('Restricted access');
 
-use Fabrik\Enums\PluginStructure;
-
 use Joomla\CMS\MVC\Controller\BaseController;
 use Joomla\CMS\Plugin\PluginHelper;
 use Joomla\CMS\Factory;
-use Joomla\Event\Event;
 use \Joomla\Utilities\ArrayHelper;
 use Joomla\String\StringHelper;
 
@@ -50,7 +47,7 @@ class FabrikControllerPlugin extends BaseController
 	{
 		$app    = Factory::getApplication();
 		$input  = $app->getInput();
-		$pluginType = $input->get('plugin', '');
+		$plugin = $input->get('plugin', '');
 		$method = $input->get('method', '');
 		$group  = $input->get('g', 'element');
 
@@ -59,13 +56,13 @@ class FabrikControllerPlugin extends BaseController
 		try
 		{
 			// First lets try the fabrik plugin manager - needed when loading namespaced plugins
-			$plugin = $pluginManager->loadPlugIn($pluginType, $group);
+			$pluginManager->loadPlugIn($plugin, $group);
 		} catch (Exception $e)
 		{
-			if (!$plugin = PluginHelper::importPlugin('fabrik_' . $group, $pluginType))
+			if (!PluginHelper::importPlugin('fabrik_' . $group, $plugin))
 			{
 				$o      = new stdClass;
-				$o->err = 'unable to import plugin fabrik_' . $group . ' ' . $pluginType;
+				$o->err = 'unable to import plugin fabrik_' . $group . ' ' . $plugin;
 				echo json_encode($o);
 
 				return;
@@ -77,13 +74,10 @@ class FabrikControllerPlugin extends BaseController
 			$method = 'on' . StringHelper::ucfirst($method);
 		}
 
-		if ($plugin->getStructure() == PluginStructure::J4) {
-			$event = new Event($method, []);
-			$this->getDispatcher()->dispatch($event->getName(), $event);
-			$result = $event->getArgument('result', []);
-		} else {
-			$result = Factory::getApplication()->triggerEvent($method);
-		}
+//		$dispatcher = JEventDispatcher::getInstance();
+//		$dispatcher    = Factory::getApplication()->getDispatcher();
+//		$dispatcher->triggerEvent($method);
+		$dispatcher = Factory::getApplication()->triggerEvent($method);
 	}
 
 	/**

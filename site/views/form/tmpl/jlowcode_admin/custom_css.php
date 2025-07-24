@@ -56,11 +56,6 @@ echo <<<EOT
 
 /* BEGIN - Your CSS styling starts here */
 
-.fabrikSubElementContainer label {
-	display: flex;
-	align-items: center;
-}
-
 .select2-dropdown {
 	border: 1px solid rgba(0, 0, 0, 0.15) !important;
     border-radius: 0.25rem !important;
@@ -127,6 +122,15 @@ echo <<<EOT
 
 .repeatGroupTable {
 	border: 2px solid #eee !important;
+}
+
+.g-menu-item span {
+	color: #032B43 !important;
+    font-weight: 400 !important;
+}
+
+.g-menu-item span:hover {
+	font-weight: 700 !important;
 }
 
 .page-header {
@@ -247,6 +251,10 @@ main .platform-content {
 	padding: 8px 25px !important;
 	border-radius: 12px !important;
 	color: #fff !important;
+}
+
+.btn:hover {
+	color: #C2F6F9 !important;
 }
 
 .btn-save-new{

@@ -47,7 +47,6 @@ $tasks = array('publish', 'unpublish', 'publish');
 				<?= Text::_('JGLOBAL_NO_MATCHING_RESULTS'); ?>
 			</div>
 		<?php else : ?>
-		 <div class="table-responsive">
 	<table class="table table-striped">
 		<thead>
 			<tr>
@@ -73,7 +72,7 @@ $tasks = array('publish', 'unpublish', 'publish');
 		</thead>
 		<tfoot>
 			<tr>
-				<td colspan="6">
+				<td colspan="5">
 					<?= $this->pagination->getListFooter(); ?>
 				</td>
 			</tr>
@@ -119,7 +118,6 @@ $tasks = array('publish', 'unpublish', 'publish');
 			<?php endforeach; ?>
 		</tbody>
 	</table>
-	</div>
 	<?php endif; ?>
 
 	<input type="hidden" name="task" value="" />

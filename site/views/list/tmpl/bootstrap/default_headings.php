@@ -13,31 +13,19 @@
 defined('_JEXEC') or die('Restricted access');
 
 use Joomla\CMS\Language\Text;
-
 $btnLayout  = $this->getModel()->getLayout('fabrik-button');
 $layoutData = (object) array(
 	'class' => 'btn-info btn-sm fabrik_filter_submit button',
 	'name' => 'filter',
 	'label' => FabrikHelperHTML::icon('icon-filter', Text::_('COM_FABRIK_GO'))
 );
-// Workflow code
-$req_status = $_REQUEST['wfl_status'];
-// Workflow code end
 ?>
 	<tr class="fabrik___heading">
 		<?php foreach ($this->headings as $key => $heading) :
-		// Workflow code
-                        if ($key == 'req_approval') {
-                            $heading = $req_status == 'verify' ? $_REQUEST['workflow']['label_request_aproval'] : $_REQUEST['workflow']['label_request_view'];
-						}
-			if(isset($this->headingClass[$key])) {
-				$h = $this->headingClass[$key];
-			}
+			$h = $this->headingClass[$key];
 			$style = empty($h['style']) ? '' : 'style="' . $h['style'] . '"'; ?>
 			<th class="heading <?php echo $h['class'] ?>" <?php echo $style ?>>
-				<span><?php echo $heading; 
-		// Workflow code end ?>
-				</span>
+				<span><?php echo $heading; ?></span>
 			</th>
 		<?php endforeach; ?>
 	</tr>

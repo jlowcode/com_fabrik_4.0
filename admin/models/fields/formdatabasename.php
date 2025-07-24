@@ -57,7 +57,6 @@ class JFormFieldFormDatabaseName extends TextField
 			$this->value = $db->loadResult();
 		}
 
-		$this->layoutData = [];
 		return parent::getInput();
 	}
 }

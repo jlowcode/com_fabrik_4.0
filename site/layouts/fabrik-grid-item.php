@@ -12,7 +12,7 @@ $thisId = str_replace(array('[', ']'), array('_', '_'), $thisName);
 $thisId = rtrim($thisId, '_');
 $thisId .=  '_input_' . $d->i;
 
-$label    = '<span>' . $d->label . '</span>';
+$labelSpan    = '<span>' . $d->label . '</span>';
 $labelClass = $d->buttonGroup ? 'btn ' : 'form-check-label';
 $inputClass = $d->buttonGroup ? 'btn-check' : 'form-check-input';
 
@@ -32,9 +32,8 @@ if (array_key_exists('label', $d->classes))
 {
 	$labelClass .= ' ' . implode(' ', $d->classes['label']);
 }
-
-$html = $d->elementBeforeLabel == '1' ? $chx . $label : $label . $chx;
+$label = '<label for="'.$thisId.'" class="'.$labelClass.' fabrikgrid_'.FabrikString::clean($d->value).'">'.$labelSpan.'</label>';
+$html = $d->elementBeforeLabel == '1' ? $chx . $label : $label . $chx; 
 ?>
-<label for="<?php echo $thisId; ?>" class="fabrikgrid_<?php echo FabrikString::clean($d->value) . ' ' . $labelClass; ?>">
-	<?php echo $html; ?>
-</label>
+
+<?php echo $html; ?>

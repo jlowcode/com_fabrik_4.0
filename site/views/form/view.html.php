@@ -12,7 +12,6 @@
 defined('_JEXEC') or die('Restricted access');
 
 use Joomla\CMS\Router\Route;
-use Joomla\CMS\Uri\Uri;
 use Joomla\Utilities\ArrayHelper;
 use Fabrik\Helpers\StringHelper;
 
@@ -106,14 +105,10 @@ class FabrikViewForm extends FabrikViewFormBase
 			$slug   = $model->getListModel()->getSlug(ArrayHelper::toObject($data));
 			$rowId  = $slug === '' ? $model->getRowId() : $slug;
 			$view   = $model->isEditable() ? 'form' : 'details';
-			$itemId = FabrikWorker::itemId();
-            $url    = 'index.php?option=com_fabrik' . '&view=' . $view . '&formid=' . $formId . '&rowid=' . $rowId;
-            if (!empty($itemId))
-            {
-                $url .= '&Itemid=' . $itemId;
-            }
-       }
-       return Route::_($url,true,Route::TLS_IGNORE,true);
+			$url    = Route::_('index.php?option=com_' . $this->package . '&view=' . $view . '&formid=' . $formId . '&rowid=' . $rowId);
+		}
+
+		return $url;
 	}
 
 	/**

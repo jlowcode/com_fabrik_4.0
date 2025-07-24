@@ -18,7 +18,6 @@ use Joomla\CMS\Factory;
 use Fabrik\Controllers\Controller;
 use Fabrik\Helpers\Html;
 use Fabrik\Helpers\Worker;
-use Joomla\CMS\Uri\Uri;
 
 jimport('joomla.application.component.controller');
 
@@ -101,7 +100,7 @@ class FabrikControllerVisualization extends BaseController
 		{
 			// Build unique cache id on url, post and user id
 			$user = Factory::getUser();
-			$uri = Uri::getInstance();
+			$uri = JURI::getInstance();
 			$uri = $uri->toString(array('path', 'query'));
 			$cacheId = serialize(array($uri, $input->post, $user->get('id'), get_class($view), 'display', $this->cacheId));
 			$cache = Factory::getCache('com_fabrik', 'view');
@@ -119,7 +118,7 @@ class FabrikControllerVisualization extends BaseController
 	 */
 	protected function getViewName()
 	{
-		$viz = \FabTable::getInstance('Visualization', 'FabrikTable');
+		$viz = FabTable::getInstance('Visualization', 'FabrikTable');
 		$viz->load($this->input->getInt('id'));
 		$viewName = $viz->plugin;
 		$this->addViewPath(JPATH_SITE . '/plugins/fabrik_visualization/' . $viewName . '/views');

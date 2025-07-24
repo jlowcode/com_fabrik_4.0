@@ -30,7 +30,7 @@ $imgDelAction = $hasPermission ? 'trash.png' : 'danger.png';
 	</span>
 
 	<span class="tree-text">
-		<?php echo @$this->_row->{$this->list->db_table_name.'___' . $this->elFieldTree . '_raw'}; ?>
+		<?php echo @$this->_row->{$this->list->db_table_name.'___name_raw'}; ?>
 	</span>
 
 	<?php

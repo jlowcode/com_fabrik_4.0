@@ -30,6 +30,7 @@ if ($this->params->get('show-title', 1)) :?>
 endif;
 
 echo $form->intro;
+
 if ($this->isMambot) :
 	echo '<div class="fabrikForm fabrikDetails fabrikIsMambot" id="' . $form->formid . '">';
 else :

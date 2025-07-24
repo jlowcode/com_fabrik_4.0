@@ -369,8 +369,8 @@ class PlgFabrik_ElementList extends PlgFabrik_Element
 		$elName = $this->getFullName(true, false);
 		$params = $this->getParams();
 		$v = $this->filterName($counter, $normal);
-		
-		if (in_array($element->filter_type, array('range', 'dropdown', '', 'checkbox', 'multiselect', 'tagcloud')))
+
+		if (in_array($element->filter_type, array('range', 'dropdown', '', 'checkbox', 'multiselect')))
 		{
 			$rows = $this->filterValueList($normal);
 
@@ -412,19 +412,12 @@ class PlgFabrik_ElementList extends PlgFabrik_Element
 
 				if (!is_array($default))
 				{
-					$default = array();
+					$default = array('', '');
 				}
 
-				// $this->rangedFilterFields($default, $return, $rows, $v, 'list');
-				$return = $this->rangeSliderFilter($default, $rows, $v);
+				$this->rangedFilterFields($default, $return, $rows, $v, 'list');
 				break;
-
-			case 'tagcloud':
-				$return = $this->tagCloudFilter($rows, $default, $v);
-				break;
-
 			case 'checkbox':
-			case 'backupcheckbox':
 				$return[] = $this->checkboxFilter($rows, $default, $v);
 				break;
 			case 'dropdown':

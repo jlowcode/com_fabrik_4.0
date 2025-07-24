@@ -12,8 +12,6 @@
 // No direct access
 defined('_JEXEC') or die('Restricted access');
 
-use Fabrik\Enums\PluginStructure;
-
 use Joomla\CMS\Plugin\PluginHelper;
 use Joomla\CMS\Factory;
 use Joomla\Utilities\ArrayHelper;
@@ -49,26 +47,17 @@ class FabrikAdminControllerPlugin extends FabControllerForm
 	{
 		$app = Factory::getApplication();
 		$input = $app->input;
-		$pluginType = $input->get('plugin', '');
+		$plugin = $input->get('plugin', '');
 		$method = $input->get('method', '');
 		$group = $input->get('g', 'element');
 
-		$pluginManager = FabrikWorker::getPluginManager();
-
-		try
+		if (!PluginHelper::importPlugin('fabrik_' . $group, $plugin))
 		{
-			// First lets try the fabrik plugin manager - needed when loading namespaced plugins
-			$plugin = $pluginManager->loadPlugIn($pluginType, $group);
-		} catch (Exception $e)
-		{
-			if (!$plugin = PluginHelper::importPlugin('fabrik_' . $group, $pluginType))
-			{
-				$o      = new stdClass;
-				$o->err = 'unable to import plugin fabrik_' . $group . ' ' . $pluginType;
-				echo json_encode($o);
+			$o = new stdClass;
+			$o->err = 'unable to import plugin fabrik_' . $group . ' ' . $plugin;
+			echo json_encode($o);
 
-				return;
-			}
+			return;
 		}
 
 		if (substr($method, 0, 2) !== 'on')
@@ -76,11 +65,10 @@ class FabrikAdminControllerPlugin extends FabControllerForm
 			$method = 'on' . StringHelper::ucfirst($method);
 		}
 
-		if ($plugin->getStructure() == PluginStructure::J4) {
-			$result = Factory::getApplication()->getDispatcher()->dispatch($method);
-		} else {
-			$result = Factory::getApplication()->triggerEvent($method);
-		}
+//		$dispatcher = JEventDispatcher::getInstance();
+//		$dispatcher    = Factory::getApplication()->getDispatcher();
+//		$dispatcher->triggerEvent($method);
+		$dispatcher = Factory::getApplication()->triggerEvent($method);
 
 		return;
 	}

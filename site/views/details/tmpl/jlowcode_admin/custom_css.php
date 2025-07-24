@@ -35,7 +35,6 @@
 
 header('Content-type: text/css');
 $c = $_REQUEST['c'];
-
 echo <<<EOT
 /* BEGIN - Your CSS styling starts here */
 
@@ -91,7 +90,7 @@ echo <<<EOT
     display: flex;
     flex-direction: row;
     border-top: 1px solid #eee;
-    padding: 15px 10px;
+    padding: 15px 0px 15px 10px;
 }
 
 .detailsContent > div:hover {
@@ -113,7 +112,7 @@ echo <<<EOT
 
 textarea, input, select {
     background-color: #fff !important;
-	border-radius: 12px;
+	border-radius: 12px !important;
     border: 2px solid #eee !important;
 }
 /* End - Details styles */
@@ -208,7 +207,13 @@ main .platform-content {
 	border: none !important;
     display: block !important;
 	font-weight: 300 !important;
+	margin: 0px !important;
+    color: #fff !important;
     float: right;
+}
+
+.btn.btn-default:hover{
+	color: #C2F6F9 !important;
 }
 
 .row-striped .row-fluid{
@@ -233,12 +238,3 @@ main .platform-content {
 
 /* END - Your CSS styling ends here */
 EOT;
-
-//For PITT
-if($c == 74) {
-    echo <<<EOT
-        .pitt-header {
-            margin-top: 20px;
-        }
-    EOT;
-}

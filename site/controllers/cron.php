@@ -19,7 +19,6 @@ use Joomla\CMS\Filter\InputFilter;
 use Joomla\CMS\Factory;
 use Fabrik\Helpers\Html;
 use Fabrik\Helpers\Worker;
-use Joomla\CMS\Uri\Uri;
 
 
 /**
@@ -96,7 +95,7 @@ class FabrikControllerCron extends BaseController
 			// Build unique cache id on url, post and user id
 			$user = Factory::getUser();
 
-			$uri = Uri::getInstance();
+			$uri = JURI::getInstance();
 			$uri = $uri->toString(array('path', 'query'));
 			$cacheId = serialize(array($uri, $post, $user->get('id'), get_class($view), 'display', $this->cacheId));
 			$cache = Factory::getCache('com_fabrik', 'view');
@@ -116,7 +115,7 @@ class FabrikControllerCron extends BaseController
 		{
 			$app = Factory::getApplication();
 			$input = $app->getInput();
-			$item = \FabTable::getInstance('Cron', 'FabrikTable');
+			$item = FabTable::getInstance('Cron', 'FabrikTable');
 			$item->load($input->getInt('id'));
 			$this->viewName = $item->plugin;
 			$this->addViewPath(JPATH_SITE . '/plugins/fabrik_cron/' . $this->viewName . '/views');

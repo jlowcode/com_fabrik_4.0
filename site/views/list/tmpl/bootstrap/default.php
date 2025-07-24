@@ -39,10 +39,6 @@ endif;
 // Intro outside of form to allow for other lists/forms to be injected.
 echo $this->table->intro;
 
-// Workflow code
-echo $this->loadTemplate('modal');
-// End workflow code
-
 ?>
 <form class="fabrikForm form-search" action="<?php echo $this->table->action;?>" method="post" id="<?php echo $this->formid;?>" name="fabrikList">
 <div class="container-fluid text-bg-light">
@@ -65,7 +61,7 @@ $headingsHtml = $this->loadTemplate('headings');
 echo $this->loadTemplate('tabs');
 ?>
 
-<div class="fabrikDataContainer table-responsive">
+<div class="fabrikDataContainer">
 
 <?php foreach ($this->pluginBeforeList as $c) :
 	echo $c;
@@ -150,23 +146,6 @@ endforeach;
 		endforeach?>
 	</table>
 	<?php print_r($this->hiddenFields);?>
-        <?php
-        // Workflow code
-            if ($_REQUEST['workflow']['showEventsButton'] == true):
-                ?>
-                <script type="text/javascript">
-                    function showRequests() {
-                        document.getElementById('eventsContainer').toggle();
-                        //document.getElementById('list_<?php echo $this->table->renderid;?>').toggle();
-                    };
-                </script>
-                <?php
-                echo $this->loadTemplate('table_aditional_ajax');
-            endif;
-        // End workflow code
-        ?>
-        
-    </div>
 </div>
 </form>
 <?php

@@ -456,9 +456,6 @@ class FabrikFEModelListfilter extends FabModel
 			$this->_db->setQuery('SHOW VARIABLES LIKE \'ft_min_word_len\'');
 			$res = $this->_db->loadObject();
 			$min = (int) $res->Value;
-			if($min > 2){
-				$min = 2;
-			}
 		}
 
 		if ($mode !== 'exact')
@@ -698,9 +695,7 @@ class FabrikFEModelListfilter extends FabModel
 		$elements = $this->listModel->getElements('id', false);
 		$keys = array_keys($elements);
 		$i = 0;
-		// Changed to find results insensitive with accents
-		// $condition = 'REGEXP';
-		$condition = 'LIKE';
+		$condition = 'REGEXP';
 		$orig_search = $search;
 		$searchable = false;
 

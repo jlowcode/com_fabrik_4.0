@@ -48,8 +48,8 @@ foreach ($this->elements as $element) :
 	<?php
 	endforeach;
  	if ($group->editable) : ?>
-		<td class="">
-			<div class="fabrikGroupRepeater float-end btn-group-sm">
+		<td class="fabrikGroupRepeater">
+			<div class="pull-right">
 				<?php if ($group->canAddRepeat) :
 					echo $this->addRepeatGroupButtonRow;
 				endif;

@@ -20,7 +20,6 @@ use Joomla\CMS\Session\Session;
 use Joomla\CMS\Factory;
 use Fabrik\Helpers\Html;
 use Fabrik\Helpers\Worker;
-use Joomla\CMS\Uri\Uri;
 
 /**
  * Fabrik List Controller
@@ -108,7 +107,7 @@ class FabrikControllerList extends BaseController
 		{
 			// Build unique cache id on url, post and user id
 			$user = Factory::getUser();
-			$uri = Uri::getInstance();
+			$uri = JURI::getInstance();
 			$uri = $uri->toString(array('path', 'query'));
 			$cacheId = serialize(array($uri, $input->post, $user->get('id'), get_class($view), 'display', $this->cacheId));
 			$cache = Factory::getCache('com_fabrik', 'view');

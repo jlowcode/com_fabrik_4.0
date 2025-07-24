@@ -12,10 +12,7 @@
 // No direct access
 defined('_JEXEC') or die('Restricted access');
 $d = $displayData;
-$icon = '<span class="fa fa-edit"></span>';
-if ($d->list_edit_link_icon !== 'edit') {
-	$icon = FabrikHelperHTML::image($d->list_edit_link_icon, 'list', '', array('alt' => $d->editLabel));
-}
+
 ?>
 <a data-loadmethod="<?php echo $d->loadMethod; ?>" 
     class="<?php echo $d->class;?> btn-default" <?php echo $d->editAttributes;?>
@@ -25,4 +22,4 @@ if ($d->list_edit_link_icon !== 'edit') {
     data-iscustom="<?php if ($d->isCustom) echo '1'; else echo '0'; ?>"
     href="<?php echo $d->editLink;?>" 
     title="<?php echo $d->editLabel;?>">
-	<?php echo $icon.$d->editText; ?></a>
+	<span class="fa fa-edit"></span> <?php echo $d->editText; ?></a>

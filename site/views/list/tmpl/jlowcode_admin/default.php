@@ -29,9 +29,9 @@ if (!function_exists('getItens')) {
         $query->select(Array('*'));
 
         if ($parent == null) {
-            $query->from($db->quoteName($self->table->db_table_name))->where($self->elTree . " IS NULL");
+            $query->from($db->quoteName($self->table->db_table_name))->where("parent IS NULL");
         } else {
-            $query->from($db->quoteName($self->table->db_table_name))->where($self->elTree . " = " . $parent);
+            $query->from($db->quoteName($self->table->db_table_name))->where("parent = " . $parent);
         }
 
         if($self->canShowTutorialTemplate) {
@@ -55,7 +55,7 @@ if (!function_exists('getItens')) {
 }
 
 if (!function_exists('getItensChild')) {
-    function getItensChild($db_table_name, &$self)
+    function getItensChild($db_table_name, $self)
     {
         $db = Factory::getContainer()->get('DatabaseDriver');
 
@@ -63,25 +63,10 @@ if (!function_exists('getItensChild')) {
         $elements = $model->getElements('id');
         $parent = isset($_POST['id']) ? intval($_POST['id']) : 0;
 
-        foreach ($elements as $el) {
-            $params = $el->getParams();
-            if (
-                str_contains($el->getName(), 'Databasejoin') && $params->get('database_join_display_type') == 'auto-complete'
-                && $params->get('join_db_name') == $model->getTable()->get('db_table_name') &&
-                ($params->get('database_join_display_style') == 'both-treeview-autocomplete' || $params->get('database_join_display_style') == 'only-treeview')
-            ) {
-                $elTree = $el->getParams()->get('tree_parent_id');
-            }
-
-            if (str_contains($el->getName(), 'Field') && is_null($self->elFieldTree)) {
-                $self->elFieldTree = $el->element->name;
-            }
-        }
-
         $query = $db->getQuery(true);
         $query->select(array('*'))
             ->from($db->quoteName($db_table_name))
-            ->where($elTree . " = " . $parent);
+            ->where("parent = " . $parent);
 
         if($self->canShowTutorialTemplate) {
             $idElOrder = isset($self->getModel()->fieldsTemplateTutorial->ordering) ? $self->getModel()->fieldsTemplateTutorial->ordering : $self->getModel()->fieldsTemplateTutorial->field;

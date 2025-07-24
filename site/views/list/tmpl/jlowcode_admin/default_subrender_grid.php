@@ -24,7 +24,7 @@ $document->addStyleSheet('components/com_fabrik/views/list/tmpl/' . $tmpl . '/cs
 $columns = 3;
 ?>
 <form class="fabrikForm" action="<?php echo $this->table->action; ?>" method="post" id="<?php echo $this->formid; ?>" name="fabrikList">
-    <div class="<?php echo in_array($this->params['show-table-filters'], [6, 7]) ? 'row' : ''; ?>" style="width: 100%;">
+    <div class="<?php echo in_array($this->params['show-table-filters'], [6, 7]) ? 'row' : ''; ?>">
         <div class="<?php echo in_array($this->params['show-table-filters'], [6, 7]) ? 'col-md-12' : ''; ?>">
             <?php
             if ($this->hasButtons) :

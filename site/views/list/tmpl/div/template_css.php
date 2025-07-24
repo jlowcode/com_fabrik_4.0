@@ -10,68 +10,43 @@
 
 header('Content-type: text/css');
 $c = $_REQUEST['c'];
-$buttonCount = (int) $_REQUEST['buttoncount'];
-$buttonTotal = $buttonCount === 0 ? '100%' : 30 * $buttonCount ."px";
-$customCssLoading = '';
-// if the user set a different path for loading gif
-if(isset($_REQUEST['loadinggif']) && !empty($_REQUEST['loadinggif'])){
-    $basicUrl = "http://" . $_SERVER['HTTP_HOST'];
-    $whatINeed = explode('/', $_SERVER['REQUEST_URI'])[1];
-    $customLoadingGif = $basicUrl . '/' . $whatINeed . '/' . $_REQUEST['loadinggif'];
-    $customCssLoading = '.spinner-img { background: url(' . $customLoadingGif . ') no-repeat; width: 60px; height: 80px; margin: 0 auto; }';
-}
-echo "
 
-$customCssLoading
+$pdf_format = array_key_exists("format",$_REQUEST)? $_REQUEST['format']=='pdf' : false;
+echo "
+.fabrikButtonsContainer .hasFilters, .fabrikFilterContainer .hasFilters {color:red;}
+ul.fabrikRepeatData {
+	list-style: none;
+	list-style-position:inside;
+	margin: 0;
+	padding-left: 0;
+}
 
 /** Hide the checkbox in each record*/
 
-#listform_$c .fabrikList input[type=checkbox] {
+#listform_$c .fabrikList .fabrik_select {
 	display: none;
 }
-#listform_$c .well {
-	position: relative;
-}
 
-ul.fabrikRepeatData {
-    overflow:hidden;
-}
+#listform_$c .row	{margin-bottom:1em;}
+#listform_$c .fabrik_divrow {position: relative;height: 100%;}
+#listform_$c .table-bordered .fabrik_divrow {    border: solid 1px;padding: 5px;}
 
+/*action buttons as dropown*/
 #listform_$c .fabrik_action {
 	position: absolute;
 	top: 10px;
 	right: 10px;
 }
 
-.filtertable_horiz {
-	display: inline-block;
-	vertical-align: top;
-}
-
-.well {
-    background-color: #ffffff;
-}
-
-.list-striped, .row-striped {
-    border: 1px solid #e0e0e5;
-}
-
-.row-striped .row-fluid {
-	background-color: #ffffff !important;
-	border-bottom: none !important;
-	padding: 0 !important;
-}
-
-//Fixing autocomplete dropdown list
-.dropdown-menu > li > a {
-    white-space: normal !important;
-}
-
-.fabrik_filter {
-	max-width : 100% !important;
-    border-radius: 4px 4px 4px 4px !important;
-	-webkit-border-radius: 4px 4px 4px 4px !important;
-    -moz-border-radius: 4px 4px 4px 4px !important;
-}
-
+";
+//For (dom)pdf set flex to inline-block
+if ($pdf_format) echo "
+#listform_$c .row {position:relative;display:block;    page-break-inside: avoid}
+#listform_$c .fabrik_row {display:inline-block;position:relative;vertical-align:top;}
+#listform_$c .fabrik_divrow {height:auto;}
+#listform_$c .col-sm-2 {width:16%}
+#listform_$c .col-sm-3 {width:24%}
+#listform_$c .col-sm-4 {width:32%}
+#listform_$c .col-sm-6 {width:48%}
+#listform_$c .col-sm-12 {width:96%}
 ";?>

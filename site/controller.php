@@ -18,7 +18,6 @@ use Joomla\CMS\Filter\InputFilter;
 use Joomla\CMS\Factory;
 use Fabrik\Helpers\Html;
 use Fabrik\Helpers\Worker;
-use Joomla\CMS\Uri\Uri;
 
 /**
  * Fabrik Component Controller
@@ -90,17 +89,15 @@ class FabrikController extends BaseController
 		// Set the default view name from the Request
 		$view = $this->getView($viewName, $viewType);
 
-		try {
-			// Push a model into the view
-			if ($model = $this->getModel($modelName))
-			{
-				$view->setModel($model, true);
-			}
-		} catch (\Exception $e) {
-			$view->error = 	$e->getMessage();
+		// Push a model into the view
+		if ($model = $this->getModel($modelName))
+		{
+			$view->setModel($model, true);
 		}
 
 		// Display the view
+
+		$view->error = $this->getError();
 
 		if (($viewName = 'form' || $viewName = 'details'))
 		{
@@ -112,7 +109,7 @@ class FabrikController extends BaseController
 		if (Worker::useCache() && !$this->isMambot)
 		{
 			$user = Factory::getUser();
-			$uri = Uri::getInstance();
+			$uri = JURI::getInstance();
 			$uri = $uri->toString(array('path', 'query'));
 			$cacheid = serialize(array($uri, $input->post, $user->get('id'), get_class($view), 'display', $this->cacheId));
 			$cache = Factory::getCache('com_' . $package, 'view');
