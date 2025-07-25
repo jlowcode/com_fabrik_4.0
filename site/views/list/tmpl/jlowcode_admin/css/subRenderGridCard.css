@@ -68,8 +68,14 @@
 
 .fabrik-list .subRenderGridCard .fabrikDivElementData {
     display: flex;
+    align-items: center;
     font-size: 14px;
     line-height: 21px;
+}
+
+.fabrik-list .subRenderGridCard .fabrikDivElementData .title-field-card {
+    font-size: 13px;
+    line-height: 19px;
 }
 
 .fabrik-list .subRenderGridCard .div-info {
