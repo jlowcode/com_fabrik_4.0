@@ -37,6 +37,7 @@ use Joomla\Utilities\ArrayHelper;
 use Joomla\String\StringHelper;
 use Joomla\CMS\Factory;
 use Fabrik\Helpers\Php;
+use Joomla\CMS\Uri\Uri;
 
 require_once COM_FABRIK_FRONTEND . '/models/list-advanced-search.php';
 
@@ -1683,7 +1684,7 @@ class FabrikFEModelList extends FormModel
 					if ($buttonAction == 'dropdown')
 					{
 //						$row->fabrik_actions['delete_divider'] = $j3 ? '' : '<li class="divider"></li>';
-						//$row->fabrik_actions['delete_divider'] = '';
+						$row->fabrik_actions['delete_divider'] = '';
 					}
 
 					$row->fabrik_actions['fabrik_delete'] = $this->deleteButton();
@@ -2372,7 +2373,6 @@ class FabrikFEModelList extends FormModel
 			$class = ' fabrik_edit';
 		}
 
-
 		$loadMethod = $this->getLoadMethod('custom_link');
 		$class = 'fabrik___rowlink ' . $class;
 		$dataList = 'list_' . $this->getRenderContext();
@@ -2447,14 +2447,15 @@ class FabrikFEModelList extends FormModel
 		{
 			// $$$ rob only test canEdit and canView on standard edit links - if custom we should always use them,
 			// 3.0 get either edit or view link - as viewDetailsLink now always returns the view details link
-			if ($this->canViewDetails($row))
-			{
-				$this->_aLinkElements[] = $element->name;
-				$link = $this->viewDetailsLink($row);
-			} elseif ($this->canEdit($row))
+			if ($this->canEdit($row))
 			{
 				$this->_aLinkElements[] = $element->name;
 				$link = $this->editLink($row);
+			}
+			elseif ($this->canViewDetails($row))
+			{
+				$this->_aLinkElements[] = $element->name;
+				$link = $this->viewDetailsLink($row);
 			}
 		}
 		else
@@ -2725,7 +2726,7 @@ class FabrikFEModelList extends FormModel
 			if (!empty($ids))
 			{
 
-				if ($lookUpNames[$lookupC] !== $table->db_primary_key)
+				if ($lookUpNames[$lookupC] !== $table->db_primary_key && !$this->params->get('reduce_query'))
 				{
 					$query->where($lookUpNames[$lookupC] . ' IN (' . implode(',', array_unique($ids)) . ')');
 				}
@@ -3187,6 +3188,19 @@ class FabrikFEModelList extends FormModel
 
 			$this->orderEls[] = $orderBy;
 			$this->orderDirs[] = $groupOrderDir;
+		}
+
+		// If list is set to show like notification we need reset ordering and order by parents and children
+		if($params->get('show_list_with_replies', '0')) {
+			$elsId = $this->getElements('id');
+			$parentEl = FabrikString::safeColName($elsId[$params->get('parent_element')]->getFullName());
+			$primaryKey = $this->getPrimaryKey();
+			$sqlOrder = "COALESCE(NULLIF($parentEl, 0),$primaryKey) DESC, $parentEl != 0";
+
+			if($query !== false) {
+				$query->clear('order');
+				$query->order($sqlOrder);
+			}
 		}
 
 		$this->orderBy[$sig] = $query === false ? $strOrder : $query;
@@ -4056,7 +4070,7 @@ class FabrikFEModelList extends FormModel
 		if (!isset($this->table) || !is_object($this->table))
 		{
 			Table::addIncludePath(JPATH_ADMINISTRATOR . '/components/com_fabrik/tables');
-			$this->table = FabTable::getInstance('List', 'FabrikTable');
+			$this->table = \FabTable::getInstance('List', 'FabrikTable');
 			$id = $this->getId();
 
 			if ($id !== 0)
@@ -4485,6 +4499,16 @@ class FabrikFEModelList extends FormModel
 	}
 
 	/**
+	 * Checks parameter to hide tablenamejoin_id and tablenamejoin___params from csv
+	 *
+	 * @return  bool  access allowed
+	 */
+	public function hideDbJoinItens()
+	{
+		return $this->getParams()->get('csv_include_dbjoin_params');
+	}
+
+	/**
 	 * Checks user access for exporting csv
 	 *
 	 * @return  bool  access allowed
@@ -4547,6 +4571,14 @@ class FabrikFEModelList extends FormModel
 			$groups = $this->user->getAuthorisedViewLevels();
 			$this->access->add = in_array($this->getParams()->get('allow_add'), $groups);
 			$hideAdd = $input->getBool('hide-add', false);
+
+			/**
+		     * @author Marcel Ferrante <marcelf@gmail.com>
+		     */
+		    if ($_REQUEST['wfl_action'] == 'request' && in_array($this->getParams()->get('allow_request_record'), $groups))
+		    {
+		            $this->access->add = true;
+		    }
 
 			if ($hideAdd)
 			{
@@ -4638,7 +4670,7 @@ class FabrikFEModelList extends FormModel
 	public function loadFromFormId($formId)
 	{
 		Table::addIncludePath(JPATH_ADMINISTRATOR . '/components/com_fabrik/table');
-		$row = FabTable::getInstance('List', 'FabrikTable');
+		$row = \FabTable::getInstance('List', 'FabrikTable');
 		$row->load(array('form_id' => $formId));
 		$this->table = $row;
 		$this->setId($row->id);
@@ -6871,9 +6903,18 @@ class FabrikFEModelList extends FormModel
 					$f->id = isset($filter->id) ? $filter->id : '';
 					$f->element = $filter->filter;
 					$f->required = isset($filter->required) ? $filter->required : '';
+					$f->filter_type = $filter->filter_type;
 					$f->displayValue = is_array($filter->displayValue) ? implode(', ', $filter->displayValue) :
 							$filter->displayValue;
 					$this->viewfilters[$filter->name] = $f;
+
+					if(isset($filter->popupform)){
+						$f->popupform = $filter->popupform;
+					}
+					$f->btnpopupform = $filter->btnpopupform;
+					$f->related_linked_list = $filter->related_linked_list;
+					$f->displayValue = is_array($filter->displayValue) ? implode(', ', $filter->displayValue) :
+							$filter->displayValue;
 				}
 			}
 
@@ -6992,6 +7033,21 @@ class FabrikFEModelList extends FormModel
 						$o->name = $elementModel->getFullName(true, false);
 						$o->id = $elementModel->getHTMLId() . 'value';
 						$o->filter = $elementModel->getFilter($counter, true, $container);
+						$o->filter_type = $element->filter_type;
+
+						$elParams = json_decode($element->params);
+						if(isset($elParams->related_linked_list) && !empty($elParams->related_linked_list)){
+							$o->related_linked_list = $elParams->related_linked_list;
+						}
+
+						if(is_a($elementModel, 'PlgFabrik_ElementDatabasejoin')){
+							if(isset($elParams->tree_parent_id) && !empty($elParams->tree_parent_id)){
+								$o->popupform = $elementModel->getPopUpId();
+							}
+						}
+
+						$o->btnpopupform = isset($elParams->add_popup_form_button) && $elParams->add_popup_form_button == 1 ? true : false;
+						
 						$fScript[] = $elementModel->filterJS(true, $container);
 						$o->required = $elementModel->getParams()->get('filter_required');
 						$o->label = $elementModel->getListHeading();
@@ -7095,6 +7151,7 @@ class FabrikFEModelList extends FormModel
 		$newFields = array();
 		$db = $this->getDb();
 		$this->temp_db_key_addded = false;
+		$hideDbjoin = is_null($this->hideDbJoinItens()) ? false : $this->hideDbJoinItens();
 		/* $$$ rob if no fields specified presume we are requesting CSV file from URL and return
 		 * all fields otherwise set the fields to be those selected in fabrik window
 		* or defined in the lists csv export settings
@@ -7128,7 +7185,7 @@ class FabrikFEModelList extends FormModel
 								$elModel->isJoin() && (
 									strstr($f, $db->qn($name . '___params'))
 									|| strstr($f, $db->qn($name . '_id'))
-								)
+								) && !$hideDbjoin
 							)
 						)
 						{
@@ -8002,11 +8059,12 @@ class FabrikFEModelList extends FormModel
 		/*
 		 * $$$ rob - correct rowid is now inserted into the form's rowid hidden field
 		* even when useing usekey and -1, we just need to check if we are adding a new record and if so set rowid to 0
+		* PHP8: now 0!='', so rowid has to be '' to get insertID below
 		*/
 		if (!$isJoin && $input->get('usekey_newrecord', false))
 		{
-			$rowId = 0;
-			$origRowId = 0;
+			$rowId = '';
+			$origRowId = '';
 		}
 
 		$primaryKey = str_replace("`", "", $primaryKey);
@@ -9540,7 +9598,7 @@ class FabrikFEModelList extends FormModel
 
 		if ($this->getParams()->get('rss') == '1')
 		{
-			$base = JURI::getInstance()->toString(array('scheme', 'user', 'pass', 'host', 'port', 'path'));
+			$base = Uri::getInstance()->toString(array('scheme', 'user', 'pass', 'host', 'port', 'path'));
 
 			// $$$ rob test fabrik's own feed renderer
 			$link = $base . '?option=com_' . $package . '&view=list&listid=' . $this->getId();
@@ -11789,6 +11847,10 @@ class FabrikFEModelList extends FormModel
 
 				FabrikHelperHTML::stylesheetFromPath($path);
 			}
+
+			// File added only for customized gif
+			$pathGif = 'components/com_fabrik/views/list/tmpl/customized_gif.php' . $qs;
+			FabrikHelperHTML::stylesheetFromPath($pathGif);
 		}
 	}
 
@@ -11900,7 +11962,7 @@ class FabrikFEModelList extends FormModel
 	{
 		$formModel = $this->getFormModel();
 		$input = $this->app->getInput();
-		$base = JURI::getInstance();
+		$base = Uri::getInstance();
 		$base = $base->toString(array('scheme', 'user', 'pass', 'host', 'port', 'path'));
 		$qs = $input->server->get('QUERY_STRING', '', 'string');
 
@@ -11946,6 +12008,60 @@ class FabrikFEModelList extends FormModel
 					$a[$thisUrl] = $o;
 				}
 			}
+		}
+
+		return $a;
+	}
+
+	/**
+	 * Get lists layouts headings
+	 *
+	 * @return   array  heading names
+	 */
+	public function getLayoutsHeadings()
+	{
+		$formModel = $this->getFormModel();
+		$input = $this->app->input;
+		$base = JURI::getInstance();
+		$base = $base->toString(array('scheme', 'user', 'pass', 'host', 'port', 'path'));
+		$qs = $input->server->get('QUERY_STRING', '', 'string');
+
+		if (StringHelper::stristr($qs, 'layout')) {
+			$qs = FabrikString::removeQSVar($qs, 'layout');
+			$qs = FabrikString::ltrimword($qs, '?');
+			$qs = str_replace('&', '&amp;', $qs);
+		}
+
+		$url = $base;
+
+		if (!empty($qs)) {
+			$url .= StringHelper::strpos($url, '?') !== false ? '&amp;' : '?';
+			$url .= $qs;
+		}
+
+		$url .= StringHelper::strpos($url, '?') !== false ? '&amp;' : '?';
+
+		$a = array();
+
+		$path = 'components/com_fabrik/views/list/tmpl';
+		$directories = JFolder::listFolderTree($path, $filter = '.', $maxLevel = 3, $level = 0, $parent = 0);
+		$files = JFolder::files($path, $filter = '.', $recurse = false, $fullpath = true);
+		$layouts = ''; //;
+
+		foreach ($files as $file) {
+			if (strpos($file, 'names.json') !== false) {
+				$layouts = json_decode(file_get_contents($file));
+			}
+		}
+
+		foreach ($directories as $directory) {
+			$dname = $directory['name'];
+			$layouts->$dname;
+			
+			$o = new stdClass;
+			$o->label = $layouts->$dname;
+			$o->layout = $dname;
+			$a[$url . 'layout='. $dname] = $o;
 		}
 
 		return $a;
@@ -12488,7 +12604,7 @@ class FabrikFEModelList extends FormModel
 		}
 
 		/* get the various current uri parts */
-		$uri = JURI::getInstance();
+		$uri = Uri::getInstance();
 		$uriActiveTab = $uri->getVar($tabsField, null);
 		/* If the tabsField is an array then we are showing merged tabs, we need the merged tabs names for the activeTabName */
 		if (is_array($uriActiveTab)) {

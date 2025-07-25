@@ -35,6 +35,12 @@ if(isset($_REQUEST['action']) && isset($_REQUEST['action']['showButton'])) {
 }
 // End action code
 
+if($this->toggleFilters) {
+	Text::script('JGLOBAL_TYPE_OR_SELECT_SOME_OPTIONS');
+	Text::script('JGLOBAL_SELECT_AN_OPTION');
+	Text::script('JGLOBAL_SELECT_NO_RESULTS_MATCH');
+}
+
 $listModel = $this->_models["list"];
 $elsList = $listModel->getElements('id');
 $tree = false;
@@ -47,7 +53,12 @@ foreach ($elsList as $el) {
         && $params->get('join_db_name') == $listModel->getTable()->get('db_table_name') &&
         ($params->get('database_join_display_style') == 'both-treeview-autocomplete' || $params->get('database_join_display_style') == 'only-treeview')
     ) {
+        $this->elTree = $el->getParams()->get('tree_parent_id');
         $tree = true;
+    }
+
+	if (str_contains($el->getName(), 'Field') && is_null($this->elFieldTree)) {
+        $this->elFieldTree = $el->element->name;
     }
 }
 
