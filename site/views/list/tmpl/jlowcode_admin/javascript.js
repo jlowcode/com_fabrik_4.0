@@ -6,13 +6,11 @@
  */
 
 requirejs(['fab/fabrik', 'fab/bootstrap_tree'], function (Fabrik, BootstrapTree) {
-	jQuery(document).ready(function () {
-		var tree = jQuery('.summary')[0];
+	var tree = jQuery('.summary')[0];
 
-		setFiltersTutorialTemplate();
-		orderingTreeTutorial(tree);
-		checkViewMobileMode();
-	});
+	setFiltersTutorialTemplate();
+	orderingTreeTutorial(tree);
+	checkViewMobileMode();
 
 	Fabrik.addEvent('fabrik.list.updaterows', function () {
 		jQuery('.subRenderCard .description').each(function () {
