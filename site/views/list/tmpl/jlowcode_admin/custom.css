@@ -24,7 +24,7 @@ div.modal.fade {
     font-weight: 600;
 }
 
-#g-main *:not(.fa) {
+#g-main *:not(.fa):not(i):not([class^=icon-]) {
     font-family: 'Inter', sans-serif !important;
 }
 /* End - Global style */
