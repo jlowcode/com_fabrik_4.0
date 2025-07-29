@@ -15,7 +15,7 @@ defined('_JEXEC') or die('Restricted access');
 use Joomla\CMS\Language\Text;
 
 ?>
-<div class="tab-pane active" id="jlowcode">
+<div class="tab-pane" id="jlowcode">
 
 	<ul class="nav nav-tabs" id="Fab_List_NavJlowcode" role="tablist">
 	  <li class="nav-item" role="">
@@ -26,7 +26,6 @@ use Joomla\CMS\Language\Text;
 	</ul>
 
 	<div class="tab-content">
-
 		<div class="tab-pane active" id="jlowcode-layout">
 			<legend></legend>
 			<fieldset>

@@ -14,11 +14,14 @@
 defined('_JEXEC') or die('Restricted access');
 
 $rowClass = isset($this->_row->rowClass) ? $this->_row->rowClass : '';
+// Catching the elements IDs in params
+$title_element_id = $this->params->get('titulo');
+$regexTitle = $title_element_id. '_order';
 ?>
-<div class="fabrik_divrow <?php echo $rowClass; ?>" >
+<div class="fabrik_divrow <?php echo $rowClass; ?>">
 <?php foreach ($this->headings as $heading => $label) :
 	$d = @$this->_row->data->$heading;
-	
+
 	//skip empty elements but don't skip the checkbox (delete, list plugins)
 	if (isset($this->showEmpty) && $this->showEmpty === false && trim(strip_tags($d)) == '' && $heading != 'fabrik_select') :
 		continue;
@@ -27,10 +30,11 @@ $rowClass = isset($this->_row->rowClass) ? $this->_row->rowClass : '';
 	$c = $this->cellClass[$heading];
 	$hStyle = empty($h['style']) ? '' : 'style="' . $h['style'] . '"';
 	$cStyle = empty($c['style']) ? '' : 'style="'. $c['style'].'"';
+	$cStyle = preg_match("/{$regexTitle}/", $h['class']) ? 'style="font-weight: bold;"' : ''
 	?>
-    <div class="fabrikDivElement">
+    <div class="fabrikDivElement" style="margin-top: 10px;">
 		<?php if (isset($this->showLabels) && $this->showLabels && $heading != 'fabrik_select' && $heading != 'fabrik_actions') :
-			echo '<span class="muted " ' . $hStyle . '>' . $label . ': </span>';
+			echo '<span class="muted ' . $h['class'] . '" ' . $hStyle . '>' . $label . ': </span>';
 		endif; ?>
 
 		<?php echo '<span class="' . $c['class'] . '" ' . $cStyle . '>' . $d . '</span>'; ?>

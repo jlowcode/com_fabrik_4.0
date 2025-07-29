@@ -8,9 +8,11 @@
 requirejs(['fab/fabrik', 'fab/bootstrap_tree'], function (Fabrik, BootstrapTree) {
 	var tree = jQuery('.summary')[0];
 
-	setFiltersTutorialTemplate();
-	orderingTreeTutorial(tree);
-	checkViewMobileMode();
+  setFiltersTutorialTemplate();
+  orderingTreeTutorial(tree);
+  setToogleFilters();
+  setNumFlagsAndClearFilters();
+  checkViewMobileMode();
 
 	Fabrik.addEvent('fabrik.list.updaterows', function () {
 		jQuery('.subRenderCard .description').each(function () {
@@ -32,10 +34,12 @@ requirejs(['fab/fabrik', 'fab/bootstrap_tree'], function (Fabrik, BootstrapTree)
 					btnAction[0].addClass('open');
 				});
 			}
-		})
+		});
 	});
 
-	Fabrik.addEvent('fabrik.list.submit.ajax.complete', function (list) {
+	Fabrik.addEvent('fabrik.list.submit.ajax.complete', function (list, j) {
+		setNumFlagsAndClearFilters(j);
+
 		jQuery('#nav-pagination').val(Math.ceil((parseInt(list.options.limitStart)+1)/parseInt(list.options.limitLength)));
 	})
 
@@ -120,6 +124,19 @@ window.addEvent('fabrik.loaded', function () {
 	})
 })
 
+function setNumFlagsAndClearFilters(j) {
+	if(j === undefined || j.filters.value === undefined) {
+		jQuery('.clearFilters').addClass('fabrikHide');
+		jQuery('.fabrik-list .fabrikButtonsContainer .fabrik_filter').removeClass('p-clean-filters');
+		return;
+	}
+
+	qtnFilters = Object.keys(j.filters.value).length;
+	jQuery('.toggleFilters .num-flag').html(qtnFilters);
+	jQuery('.toggleFilters .num-flag').removeClass('fabrikHide');
+	jQuery('.clearFilters').removeClass('fabrikHide');
+	jQuery('.fabrik-list .fabrikButtonsContainer .fabrik_filter').addClass('p-clean-filters');
+}
 
 function handleRadioClick(element) {
 	showSpinner();
@@ -396,6 +413,21 @@ function orderingTreeTutorial(tree) {
 	}
 }
 
+function setToogleFilters() {
+	jQuery(".toggleFilters").on('click', function() {
+		jQuery(".chosen-done").each(function(index, element) {
+			jQuery(element).chosen("destroy");
+			jQuery(element).removeClass("chosen-done");
+		});
+
+		Fabrik.buildChosen('select.advancedSelect', {
+			"placeholder_text_multiple": Joomla.JText._('JGLOBAL_TYPE_OR_SELECT_SOME_OPTIONS'),
+			"placeholder_text_single": Joomla.JText._('JGLOBAL_SELECT_AN_OPTION'),
+			"no_results_text": Joomla.JText._('JGLOBAL_SELECT_NO_RESULTS_MATCH')
+		});
+	});
+}
+
 /**
  * Functions to new pagination
  * 
@@ -436,11 +468,11 @@ function navigation() {
 	if (urlInput.length && paginationInput.length && limitInput.length && resultsPerPage) {
 		let limit = limitInput.val();
 
-		if (paginationInput.val() > limit) {
+		if (parseInt(paginationInput.val()) > parseInt(limit)) {
 			paginationInput.val(limit);
 		}
 
-		let finalUrl = urlInput.val().slice(0, -2) + (paginationInput.val() - 1) * resultsPerPage.val();
+		let finalUrl = urlInput.val().slice(0, -2) + (parseInt(paginationInput.val()) - 1) * parseInt(resultsPerPage.val());
 		history.pushState(null, '', window.location.pathname + '?' + finalUrl + '&resetfilters=0&clearordering=0&clearfilters=0');
 		location.reload();
 	}
