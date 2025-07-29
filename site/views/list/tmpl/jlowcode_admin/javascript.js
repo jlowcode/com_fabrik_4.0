@@ -8,11 +8,11 @@
 requirejs(['fab/fabrik', 'fab/bootstrap_tree'], function (Fabrik, BootstrapTree) {
 	var tree = jQuery('.summary')[0];
 
-  setFiltersTutorialTemplate();
-  orderingTreeTutorial(tree);
-  setToogleFilters();
-  setNumFlagsAndClearFilters();
-  checkViewMobileMode();
+	setFiltersTutorialTemplate();
+	orderingTreeTutorial(tree);
+	setToogleFilters();
+	setNumFlagsAndClearFilters();
+	checkViewMobileMode();
 
 	Fabrik.addEvent('fabrik.list.updaterows', function () {
 		jQuery('.subRenderCard .description').each(function () {
