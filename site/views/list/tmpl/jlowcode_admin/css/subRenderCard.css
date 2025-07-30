@@ -17,10 +17,6 @@
     width: 192px;
 }
 
-.fabrik-list .subRenderCard .div-name {
-    margin-bottom: 8px;
-}
-
 .fabrik-list .subRenderCard .description > p {
     -webkit-line-clamp: 2;
     line-height: 21px;
