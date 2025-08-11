@@ -54,7 +54,6 @@
 .fabrik-list .subRenderCard .card-data-row {
     flex-wrap: wrap;
     column-gap: 16px;
-    row-gap: 4px;
 }
 
 .fabrik-list .subRenderCard .card-data-row .fabrikDivElementData {

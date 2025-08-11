@@ -46,6 +46,11 @@
     border-radius: 8px;
 }
 
+.fabrik-list .subRenderGrid .gallery-data-row {
+    display: flex;
+    flex-direction: column;
+}
+
 .fabrik-list .subRenderGrid .fabrikRating {
     display: inline-flex;
 }

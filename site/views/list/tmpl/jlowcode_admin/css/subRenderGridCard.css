@@ -94,3 +94,8 @@
 .fabrik-list .subRenderGridCard .data-field-card {
     color: #1F0E3D;
 }
+
+.fabrik-list .subRenderGrid .gallery-data-row,
+.fabrik-list .subRenderCard .card-data-row {
+    row-gap: 4px;
+}
