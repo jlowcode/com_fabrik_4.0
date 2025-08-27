@@ -39,6 +39,10 @@ $c = $_REQUEST['c'];
 echo <<<EOT
 /* BEGIN - Your CSS styling starts here */
 
+.plg-display .header-desc, .plg-display .header-thumb {
+    display: none !important;
+}
+
 .fabrik_groupdata td, .list-footer {
     font-weight: 400;
     line-height: 2;
