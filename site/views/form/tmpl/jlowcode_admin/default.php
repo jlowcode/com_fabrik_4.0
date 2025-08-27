@@ -46,7 +46,7 @@ if ($this->params->get('show-title', 1)) :?>
 		<h1><?php echo $form->label;?></h1>
 	</div>
 	<div class="breadcum">
-		<span class="h6">
+		<span class="h6" style="cursor: pointer">
 			<a onclick="parent.location='<?php echo $linkList ?>'">
 			<i class="fa fa-angle-left" aria-hidden="true"></i> IR PARA LISTA</a>
 		</span>
