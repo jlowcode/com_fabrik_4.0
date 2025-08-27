@@ -1,0 +1,102 @@
+/* 
+    Style to sub render grid 
+*/
+@import url('https://fonts.googleapis.com/css2?family=Inter&display=swap');
+
+.fabrik-list .subRenderGrid .table {
+    margin-bottom: 0px;
+}
+
+.fabrik-list .subRenderGrid .div-name {
+    margin-top: 8px;
+}
+
+.fabrik-list .subRenderGrid .row {
+    gap: 24px;
+}
+
+.fabrik-list .subRenderGrid .fabrik_groupdata {
+    gap: 24px;
+}
+
+.fabrik-list .subRenderGrid .gallery-div {
+    max-width: 95%;
+    flex: 0 1 calc(33.3% - 16px);
+}
+
+.fabrik-list .subRenderGrid .gallery-div:not(:first-child):not(:last-child) {
+    padding: 0px;
+}
+
+.fabrik-list .subRenderGrid .gallery-div:first-child {
+    padding-right: 0px;
+}
+
+.fabrik-list .subRenderGrid .gallery-div:last-child:not(:first-child) {
+    padding-left: 0px;
+}
+
+.fabrik-list .subRenderGrid .gallery-div .gallery-box {
+    position: relative;
+    padding: 24px;
+    background-color: #ffffff;
+    border: 1px solid #D0DBEA;
+    -webkit-border-radius: 8px;
+    -moz-border-radius: 8px;
+    border-radius: 8px;
+}
+
+.fabrik-list .subRenderGrid .gallery-data-row {
+    display: flex;
+    flex-direction: column;
+}
+
+.fabrik-list .subRenderGrid .fabrikRating {
+    display: inline-flex;
+}
+
+.fabrik-list .subRenderGrid .description > p {
+    -webkit-line-clamp: 3;
+    min-height: calc(3 * 21px);
+}
+
+.fabrik-list .subRenderGrid .info-row {
+    margin-top: 16px;
+}
+
+.fabrik-list .subRenderGrid .date {
+    font-weight: 600;
+    color: #322550;
+}
+
+@media only all and (min-width: 48rem) and (max-width: 59.99rem) {
+    .row:before, .row:after {
+        display: none !important;
+    }
+}
+
+@media screen and (max-width: 768px) {
+    .fabrik-list .subRenderGrid .gallery-div {
+        padding-left: 0px;
+        padding-right: 0px;
+    }
+
+    .fabrik-list .subRenderGrid .description > p {
+        min-height: 0px;
+    }
+
+    .fabrik-list .subRenderGrid .gallery-div .gallery-box {
+        padding: 0px 0px 32px 0px;
+        border: none;
+        border-bottom: 1px solid #D0DBEA;
+        border-radius: 0px;
+    }
+
+    .fabrik-list .subRenderGrid .row {
+        gap: 40px;
+    }
+
+    .fabrik-list .subRenderGrid .fabrik_groupdata {
+        gap: 40px;
+    }
+}

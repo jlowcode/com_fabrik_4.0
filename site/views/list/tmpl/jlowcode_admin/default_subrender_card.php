@@ -18,13 +18,13 @@ use Joomla\CMS\Factory;
 
 $tmpl = $this->getModel()->getFormModel()->getTmpl();
 $document = Factory::getDocument();
-$document->addStyleSheet('components/com_fabrik/views/list/tmpl/' . $tmpl . '/css/subRenderGrid.css');
+$document->addStyleSheet('components/com_fabrik/views/list/tmpl/' . $tmpl . '/css/subRenderCard.css');
 $document->addStyleSheet('components/com_fabrik/views/list/tmpl/' . $tmpl . '/css/subRenderGridCard.css');
 
 $columns = 3;
 ?>
 <form class="fabrikForm" action="<?php echo $this->table->action; ?>" method="post" id="<?php echo $this->formid; ?>" name="fabrikList">
-    <div class="<?php echo in_array($this->params['show-table-filters'], [6, 7]) ? 'row' : ''; ?>" style="width: 100%;">
+    <div class="<?php echo in_array($this->params['show-table-filters'], [6, 7]) ? 'row' : ''; ?>">
         <div class="<?php echo in_array($this->params['show-table-filters'], [6, 7]) ? 'col-md-12' : ''; ?>">
             <?php
             if ($this->hasButtons) :
@@ -46,7 +46,7 @@ $columns = 3;
         </div>
 
         <div class="
-            <?php 
+            <?php
                 echo $this->showFilters === true ? 'filterContentNotEmpty' : '';
                 echo in_array($this->params['show-table-filters'], [6, 7]) && $this->showFilters ? ' col-md-12 col-lg-3 ' : '';
             ?>">
@@ -58,7 +58,7 @@ $columns = 3;
             ?>
         </div>
 
-        <div class="subRenderGridCard subRenderGrid hideThead listContent fabrikDataContainer<?php echo $this->params['show-table-filters'] === '6' ? ' col-md-9 span9' : ''; ?>" data-cols="<?php echo $columns; ?>" style="">
+        <div class="subRenderGridCard subRenderCard hideThead listContent fabrikDataContainer<?php echo $this->params['show-table-filters'] === '6' ? ' col-md-9 span9' : ''; ?>" data-cols="<?php echo $columns; ?>" style="">
             <?php 
                 foreach ($this->pluginBeforeList as $c) :
                     echo $c;
@@ -97,15 +97,9 @@ $columns = 3;
                         </div>
 
                         <?php
-                            $items = array();
                             foreach ($group as $this->_row) :
-                                $items[] = $this->loadTemplate('row_grid');
-                                $ids[] = $this->_row->id;
+                                echo $this->loadTemplate('row_card');
                             endforeach;
-
-                            $class = 'fabrik_row well gallery-div';
-                            $classRow = 'flex-column flex-md-row';
-                            echo FabrikHelperHTML::bootstrapGridCards($items, $columns, $class, true, $ids, $classRow);
                         ?>
                     </div>
                 <?php endforeach; ?>

@@ -4,6 +4,7 @@
 */
 
 
+@import url('https://fonts.googleapis.com/css2?family=Inter&display=swap');
 
 /* Begin - Global style */
 #g-main, .com_fabrik #g-page-surround  {
@@ -21,6 +22,10 @@ div.modal.fade {
 
 .fabrik-list .btn:hover {
     font-weight: 600;
+}
+
+#g-main *:not(.fa):not(i):not([class^=icon-]) {
+    font-family: 'Inter', sans-serif !important;
 }
 
 .plg-display .fabrikinput {
@@ -187,10 +192,6 @@ div.modal.fade {
     margin-right: 8px;
 }
 
-.fabrik-list .fabrikButtonsContainer .middle-buttons li #grid-view .fabrikImg {
-    margin-right: 4px;
-}
-
 .fabrik-list .fabrikButtonsContainer .header_buttons li {
     margin-right: 16px;
     list-style: none;
@@ -296,20 +297,6 @@ div.modal.fade {
 .fabrik-list .list-notifications tr td.first-column-notifications {
     text-align: left;
 }
-
-@media (max-width: 800px) {
-    .fabrik-list .subrender-list {
-        overflow-x: scroll;
-    }
-
-    .fabrik-list .subrender-list .table {
-        width: 1280px !important;
-    }
-
-    .fabrik-list .subrender-list {
-        padding: 0px;
-    }
-}
 /* Begin - Style to sub render list */
 
 
@@ -323,7 +310,6 @@ div.modal.fade {
     padding: 0px 7px;
 }
 
-
 .fabrik-list .fabrikNav .list-footer {
     align-items: center;
     justify-content: space-between;
@@ -333,6 +319,7 @@ div.modal.fade {
 
 .fabrik-list .fabrikNav {
     padding: 10px;
+    margin-top: 24px;
 }
 
 .fabrik-list .fabrikNav .list-footer .pagination {
@@ -416,6 +403,59 @@ div.modal.fade {
 
 
 
+/* Begin - Style to subrenders */
+.fabrik-list .table {
+    border: none;
+    margin-bottom: 0px;
+}
+
+.fabrik-list thead .fabrik___heading,
+.fabrik-list tbody .fabrik_row {
+    background-color: #fff; 
+    border-bottom: 1px solid rgba(208, 219, 234, 1);
+}
+
+.fabrik-list .fabrik_action .dropdown-toggle {
+    padding: 0px;
+}
+
+.fabrik-list .mode-img-card-default {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    aspect-ratio: 16/9;
+    overflow: hidden;
+    color: rgba(111, 115, 144, 1);
+    font-weight: 700;
+    line-height: 50px;
+    font-size: 48px;
+}
+
+.fabrik-list input[type="checkbox"] {
+    transform: scale(1.5);
+}
+
+.fabrik-list .hideThead .fabrik___heading th {
+    display: none;
+}
+
+.fabrik-list .hideThead .fabrik___heading th.fabrik_actions {
+    width: 100% !important;
+    display: table-cell;
+}
+
+.fabrik-list .fabrikgrid_checkbox label {
+    display: flex;
+    align-items: center;
+}
+
+.fabrik-list .fabrikgrid_checkbox input {
+    margin-right: 8px;;
+}
+/* End - Style to subrenders */
+
+
+
 /* Begin - See how remove !important flag */
 /* 
     Case:
@@ -433,6 +473,10 @@ div.modal.fade {
     padding-left: 40px !important;
 }
 /* End - See how remove !important flag */
+
+
+
+
 
 
 
@@ -742,10 +786,6 @@ h1 {
     line-height: 1;
 }
 
-.fabrikForm {
-    font-size: 1rem;
-}
-
 .active>.page-link, .page-link.active{
     z-index: 1 !important;
     background-color: #eceff3;
@@ -1008,20 +1048,6 @@ i.fas.fa-exclamation-triangle.fa-sm{
 
 
 /* Modo Exibição*/
-.box {
-    position: relative;
-    min-height: 20px;
-    padding: 19px;
-    margin-bottom: 20px;
-    background-color: #ffffff;
-    border: 1px solid #e3e3e3;
-    -webkit-border-radius: 4px;
-    -moz-border-radius: 4px;
-    border-radius: 4px;
-    -webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.05);
-    -moz-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.05);
-    box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.05);
-}
 
 .radio-group {
     display: flex;
