@@ -1,0 +1,61 @@
+/* 
+    Style to sub render grid 
+*/
+@import url('https://fonts.googleapis.com/css2?family=Inter&display=swap');
+
+.fabrik-list .subRenderCard .card-box,
+.fabrik-list .subRenderCard .card-box > div {
+    gap: 16px;
+}
+
+.fabrik-list .subRenderCard .card-box {
+    border-bottom: 1px solid #D0DBEA;
+    padding-bottom: 24px;
+}
+
+.fabrik-list .subRenderCard .div-mode-img-card {
+    width: 192px;
+}
+
+.fabrik-list .subRenderCard .description > p {
+    -webkit-line-clamp: 2;
+    line-height: 21px;
+}
+
+.fabrik-list .subRenderCard .card-head-row {
+    box-sizing: border-box;
+}
+
+.fabrik-list .subRenderCard .div-description p {
+    margin: 0px !important;
+}
+
+.fabrik-list .subRenderCard .description {
+    box-sizing: border-box;
+}
+
+.fabrik-list .subRenderCard .info-row {
+    margin-top: 24px;
+}
+
+.fabrik-list .subRenderCard .date {
+    font-weight: 400;
+    color: #1F0E3D;
+}
+
+.fabrik-list .hideThead .fabrik___heading th.fabrik_actions {
+    padding-right: 32px;
+}
+
+.fabrik-list .subRenderCard .fabrik_groupdata {
+    gap: 24px;
+}
+
+.fabrik-list .subRenderCard .card-data-row {
+    flex-wrap: wrap;
+    column-gap: 16px;
+}
+
+.fabrik-list .subRenderCard .card-data-row .fabrikDivElementData {
+    flex: 1 1 40%;
+}

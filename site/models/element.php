@@ -3752,7 +3752,7 @@ class PlgFabrik_Element extends FabrikPlugin
 		if ($pop !== '')
 		{
 			$w    = new FabrikWorker;
-			$data = empty($data) ? $this->getFormModel()->getData() : $data;
+			$data = empty($data) ? $this->getFormModel()->data : $data;
 			$pop  = $w->parseMessageForPlaceHolder($pop, $data, false);
 
 			$key = md5($pop) . '-' . md5(serialize($data));
@@ -4418,7 +4418,10 @@ class PlgFabrik_Element extends FabrikPlugin
 							$value = $value;
 							break;
 						default:
-							$value = $db->q('%' . $value . '%');
+							// Added if above to find results insensitive with accents
+							if(substr_count($value, '%') != 2) {
+								$value = $db->q('%' . $value . '%');
+							}
 							break;
 					}
 					break;
@@ -8536,7 +8539,7 @@ class PlgFabrik_Element extends FabrikPlugin
 			$fontSize = round($fontSizeMax * $row->counter / $max); // Ensure that it will not exceed the maximum amount
 	        if ($fontSize < $fontSizeMin) $fontSize = $fontSizeMin; // Make sure it does not pass the minimum amount
 			
-			$return[] = '<a class="tag" style="font-size:' . $fontSize . 'px" value="' . $row->value . '">' . $row->text . '</a>&nbsp; ';
+			$return[] = '<a class="tag" style="font-weight: 400; text-decoration: none; font-size:' . $fontSize . 'px; cursor: pointer" value="' . $row->value . '">' . $row->text . '</a>&nbsp; ';
 		}
 		
 		$return[] = '</div>';	

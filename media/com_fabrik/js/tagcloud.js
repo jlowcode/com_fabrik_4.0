@@ -23,8 +23,9 @@ define(['jquery'], function (jQuery) {
             }
 
             jQuery(a).on('click', function () {
-
                 input.val(jQuery(this).attr('value'));
+                jQuery(this).css("font-weight", "800");
+                jQuery(this).css("text-decoration", "underline");
 
                 var lastText = '';
                 if(lastText != jQuery(this).text()){
@@ -32,9 +33,6 @@ define(['jquery'], function (jQuery) {
                     lastText = jQuery(this).text();
                     self.addSearchedTag(jQuery(this).text());
                 }
-
-                // a.css("color", "#4db2b3");
-                // jQuery(this).css("color", "#5b1e77");
 
                 // filter without having to click the 'go' button
                 Fabrik.fireEvent('fabrik.list.dofilter', [this]);
@@ -57,7 +55,7 @@ define(['jquery'], function (jQuery) {
          */
         deleteSearchedTag: function(text){
             var divFilteredEls = jQuery('.filteredTags')[0];
-            if(divFilteredEls){
+            if(divFilteredEls) {
                 if(jQuery(divFilteredEls).find("span[tag-value='" + text + "']")[0]){
                     jQuery(divFilteredEls).find("span[tag-value='" + text + "']")[0].remove();
                 }

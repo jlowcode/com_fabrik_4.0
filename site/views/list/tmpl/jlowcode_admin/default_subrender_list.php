@@ -16,6 +16,9 @@ defined('_JEXEC') or die('Restricted access');
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\Factory;
 
+$document = Factory::getDocument();
+$document->addStyleSheet('components/com_fabrik/views/list/tmpl/' . $this->getModel()->getFormModel()->getTmpl() . '/css/subRenderList.css');
+
 $width_list = (int) $this->params->get('width_list');
 if ($width_list) {
     if ($width_list > 100) $cssOverflow = 'overflow-x: scroll;';
@@ -51,7 +54,7 @@ if ($width_list) {
             endif;
             echo $this->loadTemplate('tabs'); ?>
         </div>
-        <div style="<?php echo $cssOverflow; ?>" class="subrender-list listContent fabrikDataContainer <?php echo $this->params->get('show_list_with_replies', '0') ? 'list-notifications' : '' ?><?php echo in_array($this->params['show-table-filters'], [6]) && $this->showFilters ? ' col-md-12 col-lg-9' : ''; ?>">
+        <div style="<?php echo $cssOverflow; ?>" class="subRenderList listContent fabrikDataContainer <?php echo $this->params->get('show_list_with_replies', '0') ? 'list-notifications' : '' ?><?php echo in_array($this->params['show-table-filters'], [6]) && $this->showFilters ? ' col-md-12 col-lg-9' : ''; ?>">
 
             <?php foreach ($this->pluginBeforeList as $c) :
                 echo $c;

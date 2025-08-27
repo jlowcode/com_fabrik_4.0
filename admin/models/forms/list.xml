@@ -262,6 +262,65 @@
 			       label="COM_FABRIK_FIELD_REPLY_ELEMENT_LABEL"
 			       description="COM_FABRIK_FIELD_GROUP_BY_REPLY_ELEMENT_LABEL"
 			/>
+			
+			<field name="layout_mode"
+				type="list"
+				default="0"
+				description="COM_FABRIK_LAYOUT_MODE_DESC"
+				label="COM_FABRIK_LAYOUT_MODE_LABEL">
+					<option value="0">COM_FABRIK_LAYOUT_MODE_OPTION_0</option>
+					<option value="1">COM_FABRIK_LAYOUT_MODE_OPTION_1</option>
+					<option value="2">COM_FABRIK_LAYOUT_MODE_OPTION_2</option>
+					<option value="3">COM_FABRIK_LAYOUT_MODE_OPTION_3</option>
+					<option value="4">COM_FABRIK_LAYOUT_MODE_OPTION_4</option>
+			</field>
+
+			<field name="field_thumb_template_mode"
+			       type="listfields"
+			       valueformat="id"
+				   filter="fileupload"
+			       label="COM_FABRIK_FIELD_THUMB_TEMPLATE_MODE_LABEL"
+			       description="COM_FABRIK_FIELD_THUMB_TEMPLATE_MODE_DESC"
+			/>
+
+			<field name="field_name_template_mode"
+			       type="listfields"
+			       valueformat="id"
+			       label="COM_FABRIK_FIELD_NAME_TEMPLATE_MODE_LABEL"
+			       description="COM_FABRIK_FIELD_NAME_TEMPLATE_MODE_DESC"
+			/>
+
+			<field name="field_description_template_mode"
+			       type="listfields"
+			       valueformat="id"
+				   filter="textarea"
+			       label="COM_FABRIK_FIELD_DESCRIPTION_TEMPLATE_MODE_LABEL"
+			       description="COM_FABRIK_FIELD_DESCRIPTION_TEMPLATE_MODE_DESC"
+			/>
+
+			<field name="field_name_template_mode"
+			       type="listfields"
+			       valueformat="id"
+				   filter="field|databasejoin"
+			       label="COM_FABRIK_FIELD_NAME_TEMPLATE_MODE_LABEL"
+			       description="COM_FABRIK_FIELD_NAME_TEMPLATE_MODE_DESC"
+			/>
+
+			<field name="field_date_template_mode"
+			       type="listfields"
+			       valueformat="id"
+				   filter="date|jdate"
+			       label="COM_FABRIK_FIELD_DATE_TEMPLATE_MODE_LABEL"
+			       description="COM_FABRIK_FIELD_DATE_TEMPLATE_MODE_DESC"
+			/>
+
+			<field name="field_owner_template_mode"
+			       type="listfields"
+			       valueformat="id"
+				   filter="user|databasejoin"
+			       label="COM_FABRIK_FIELD_OWNER_TEMPLATE_MODE_LABEL"
+			       description="COM_FABRIK_FIELD_OWNER_TEMPLATE_MODE_DESC"
+			/>
 		</fieldset>
 		
 		<fieldset name="main">

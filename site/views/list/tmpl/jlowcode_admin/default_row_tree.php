@@ -42,6 +42,9 @@ $imgDelAction = $hasPermission ? 'trash.png' : 'danger.png';
 				$d = str_replace('close.png', $imgDelAction, $d);
 				$d = str_replace('href="#"','onclick="onReportAbuse(this)"', $d);
 
+				if(!$hasPermission) {
+					$d = str_replace(' '.Text::_("COM_FABRIK_EDIT"), ' '.Text::_("PLG_FORM_WORKFLOW_REPORT_EDIT_RECORD_LIST"), $d);
+				}
 				echo '<span class="actions' . $c['class'] . '" ' . $cStyle . '>' . $d . '</span>'; ?>
 			<?php
 			endif;

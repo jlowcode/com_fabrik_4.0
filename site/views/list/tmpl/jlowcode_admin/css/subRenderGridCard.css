@@ -1,0 +1,101 @@
+/* 
+    Style to sub render grid 
+*/
+@import url('https://fonts.googleapis.com/css2?family=Inter&display=swap');
+
+.fabrik-list .subRenderGridCard .div-name {
+    margin-bottom: 8px;
+}
+
+.fabrik-list .subRenderGridCard .title {
+    font-size: 24px;
+    line-height: 32px;
+    color: #322550;
+    font-weight: 700;
+    font-style: normal;
+    display: -webkit-box;
+    -webkit-line-clamp: 1;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.fabrik-list .subRenderGridCard .mode-img-card,
+.fabrik-list .subRenderGridCard .div-thumb div img {
+    object-fit: cover;
+    object-position: center;
+    width: 100%;
+    max-width: 100%;
+    height: 100%;
+}
+
+.fabrik-list .subRenderGridCard .div-mode-img-card,
+.fabrik-list .subRenderGridCard .div-thumb div {
+    aspect-ratio: 16/9;
+    overflow: hidden;
+    text-align: center;
+}
+
+.fabrik-list .subRenderGridCard .div-description {
+    margin-bottom: 16px;
+}
+
+.fabrik-list .subRenderGridCard .description > p {
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    line-height: 21px;
+    font-size: 14px;
+}
+
+.fabrik-list .subRenderGridCard .date {
+    font-size: 13px;
+    line-height: 19px;
+    margin-right: 8px;
+}
+
+.fabrik-list .subRenderGridCard .owner,
+.fabrik-list .subRenderGridCard .owner a {
+    color: #59577A;
+    font-size: 13px;
+    line-height: 19px;
+    font-weight: 400;
+    display: flex;
+    align-items: center;
+}
+
+.fabrik-list .subRenderGridCard .owner :last-child {
+    text-transform: capitalize;
+    margin-left: 1.5px;
+}
+
+.fabrik-list .subRenderGridCard .fabrikDivElementData {
+    display: flex;
+    align-items: center;
+    font-size: 14px;
+    line-height: 21px;
+}
+
+.fabrik-list .subRenderGridCard .fabrikDivElementData .title-field-card {
+    font-size: 13px;
+    line-height: 19px;
+}
+
+.fabrik-list .subRenderGridCard .div-info {
+    row-gap: 2px;
+}
+
+.fabrik-list .subRenderGridCard .title-field-card {
+    margin-right: 4px;
+    color: #59577A;
+}
+
+.fabrik-list .subRenderGridCard .data-field-card {
+    color: #1F0E3D;
+}
+
+.fabrik-list .subRenderGrid .gallery-data-row,
+.fabrik-list .subRenderCard .card-data-row {
+    row-gap: 4px;
+}

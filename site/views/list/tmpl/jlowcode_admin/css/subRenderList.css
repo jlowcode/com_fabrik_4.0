@@ -1,0 +1,21 @@
+/* 
+    Style to sub render list 
+*/
+.fabrik-list .subRenderList .mode-img-card-default {
+    font-size: 28px;
+    line-height: 32px;
+}
+
+@media (max-width: 800px) {
+    .fabrik-list .subRenderList {
+        overflow-x: scroll;
+    }
+
+    .fabrik-list .subRenderList .table {
+        width: 1280px !important;
+    }
+
+    .fabrik-list .subRenderList {
+        padding: 0px;
+    }
+}

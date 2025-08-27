@@ -6,24 +6,26 @@
  */
 
 requirejs(['fab/fabrik', 'fab/bootstrap_tree'], function (Fabrik, BootstrapTree) {
-	jQuery(document).ready(function () {
-		var tree = jQuery('.summary')[0];
+	var tree = jQuery('.summary')[0];
 
-		hideHeadings();
-		setFiltersTutorialTemplate();
-		orderingTreeTutorial(tree);
-		setToogleFilters();
-		
-		Fabrik.addEvent('fabrik.list.update', function (list) {
-			hideHeadings();
+	setFiltersTutorialTemplate();
+	orderingTreeTutorial(tree);
+	setToogleFilters();
+	setNumFlagsAndClearFilters();
+	checkViewMobileMode();
 
-			return list;
+	Fabrik.addEvent('fabrik.list.updaterows', function () {
+		jQuery('.subRenderCard .description').each(function () {
+			let boxDescription = jQuery(this);
+			let description = boxDescription.find('p');
+
+			if(description.text() === '') {
+				boxDescription.closest('.div-description').css('margin-bottom', '0px');
+			}
 		});
 	});
 
 	Fabrik.addEvent('fabrik.list.loaded', function (list) {
-		hideHeadings();
-
 		var dataRow = list.list.getElementsByClassName('fabrik_row');
 		Array.from(dataRow).each(function (row) {
 			var btnAction = row.getElementsByClassName('fabrik_action');
@@ -35,7 +37,9 @@ requirejs(['fab/fabrik', 'fab/bootstrap_tree'], function (Fabrik, BootstrapTree)
 		});
 	});
 
-	Fabrik.addEvent('fabrik.list.submit.ajax.complete', function (list) {
+	Fabrik.addEvent('fabrik.list.submit.ajax.complete', function (list, j) {
+		setNumFlagsAndClearFilters(j);
+
 		jQuery('#nav-pagination').val(Math.ceil((parseInt(list.options.limitStart)+1)/parseInt(list.options.limitLength)));
 	})
 
@@ -43,6 +47,7 @@ requirejs(['fab/fabrik', 'fab/bootstrap_tree'], function (Fabrik, BootstrapTree)
 		if(j.filters.value === undefined) {
 			jQuery('.clearFilters').addClass('fabrikHide');
 			jQuery('.fabrik-list .fabrikButtonsContainer .fabrik_filter').removeClass('p-clean-filters');
+			jQuery('.toggleFilters .num-flag').addClass('fabrikHide');
 			return;
 		}
 
@@ -119,6 +124,19 @@ window.addEvent('fabrik.loaded', function () {
 	})
 })
 
+function setNumFlagsAndClearFilters(j) {
+	if(j === undefined || j.filters.value === undefined) {
+		jQuery('.clearFilters').addClass('fabrikHide');
+		jQuery('.fabrik-list .fabrikButtonsContainer .fabrik_filter').removeClass('p-clean-filters');
+		return;
+	}
+
+	qtnFilters = Object.keys(j.filters.value).length;
+	jQuery('.toggleFilters .num-flag').html(qtnFilters);
+	jQuery('.toggleFilters .num-flag').removeClass('fabrikHide');
+	jQuery('.clearFilters').removeClass('fabrikHide');
+	jQuery('.fabrik-list .fabrikButtonsContainer .fabrik_filter').addClass('p-clean-filters');
+}
 
 function handleRadioClick(element) {
 	showSpinner();
@@ -138,6 +156,10 @@ function handleRadioClick(element) {
 
 		case 'tutorial-view':
 			sessionStorage.setItem("modo", "tutorial");			
+			break;
+
+		case 'card-view':
+			sessionStorage.setItem("modo", "card");
 			break;
 	}
 
@@ -162,6 +184,10 @@ function carregarModoEscolhido() {
 
 		case 'tutorial':
 			document.getElementById("tutorial-view").checked = true;		
+			break;
+
+		case 'card':
+			document.getElementById("card-view").checked = true;		
 			break;
 	}
 }
@@ -288,15 +314,6 @@ function onReportAbuse(listRowIds) {
 	});
 }
 
-function hideHeadings() {
-	jQuery('.fabrikList .fabrik___heading th').each(function (i, column) {
-		classes = jQuery(column).attr('class').split(' ');
-		if(classes.indexOf('fabrik_actions') < 0) {
-			jQuery(column).css('visibility', 'hidden');
-		}
-	});
-}
-
 function setFiltersTutorialTemplate() {
 	var nodesTree = jQuery('.tree-text');
 
@@ -400,6 +417,7 @@ function setToogleFilters() {
 	jQuery(".toggleFilters").on('click', function() {
 		jQuery(".chosen-done").each(function(index, element) {
 			jQuery(element).chosen("destroy");
+			jQuery(element).removeClass("chosen-done");
 		});
 
 		Fabrik.buildChosen('select.advancedSelect', {
@@ -458,4 +476,29 @@ function navigation() {
 		history.pushState(null, '', window.location.pathname + '?' + finalUrl + '&resetfilters=0&clearordering=0&clearfilters=0');
 		location.reload();
 	}
+}
+
+// Change the view mode, for mobile devices default mode for cards is the grid mode
+function checkViewMobileMode() {
+	if(jQuery(window).width() < 768) {
+		jQuery('#card-view').parent().addClass('fabrikHide');
+
+		if(sessionStorage.getItem("modo") === 'card' || jQuery('input[name="initial-mode"]').val() === '4') {
+			sessionStorage.setItem("modo", "grid");
+			enviarDadosParaServidor();
+		}
+	}
+
+	jQuery(window).on('resize', function () {
+		if(jQuery(window).width() < 768) {
+			jQuery('#card-view').parent().addClass('fabrikHide');
+
+			if(sessionStorage.getItem("modo") === 'card' || jQuery('input[name="initial-mode"]').val() === '4') {
+				sessionStorage.setItem("modo", "grid");
+				enviarDadosParaServidor();
+			}
+		} else {
+			jQuery('#card-view').parent().removeClass('fabrikHide');
+		}
+	});
 }

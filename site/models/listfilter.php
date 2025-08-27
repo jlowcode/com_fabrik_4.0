@@ -698,7 +698,9 @@ class FabrikFEModelListfilter extends FabModel
 		$elements = $this->listModel->getElements('id', false);
 		$keys = array_keys($elements);
 		$i = 0;
-		$condition = 'REGEXP';
+		// Changed to find results insensitive with accents
+		// $condition = 'REGEXP';
+		$condition = 'LIKE';
 		$orig_search = $search;
 		$searchable = false;
 
