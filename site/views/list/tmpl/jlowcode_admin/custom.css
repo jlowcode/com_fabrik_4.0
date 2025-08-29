@@ -1118,16 +1118,23 @@ i.fas.fa-exclamation-triangle.fa-sm{
 #registros-container {
     padding: 20px;
     font-family: Arial, sans-serif;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
 }
 
 /* Estilo para os itens da árvore */
 .tree-item {
-    margin: 0em 0px 0em 0.5em;
+    margin-left: 0.5em;
     padding: 0;
     cursor: pointer;
     position: relative;
-    margin-top: -15px;
-    margin-bottom: -15px;
+}
+
+#registros-container .tree-item.open .children-node {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
 }
 
 .tree-text {
@@ -1146,7 +1153,7 @@ i.fas.fa-exclamation-triangle.fa-sm{
 .no-children {
     color: #666;
     font-style: italic;
-    margin-left: 20px; /* Ajuste conforme necessário */
+    margin-left: 300px; /* Ajuste conforme necessário */
     margin-top: -15px;
 }
 
