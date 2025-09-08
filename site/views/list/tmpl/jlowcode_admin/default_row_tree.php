@@ -22,6 +22,24 @@ $hasPermission = $elementModel->hasPermission(['easyadmin_modal___listid' => $th
 $titleDelAction = $hasPermission ? Text::_("PLG_FORM_WORKFLOW_DELETE_RECORD_LIST") : Text::_("PLG_FORM_WORKFLOW_REPORT_RECORD_LIST");
 $imgDelAction = $hasPermission ? 'trash.png' : 'danger.png';
 
+$listModel = $this->_models["list"];
+$elsList = $listModel->getElements('id');
+foreach ($elsList as $el) {
+    $params = $el->getParams();
+    if (
+        str_contains($el->getName(), 'Databasejoin') && $params->get('database_join_display_type') == 'auto-complete'
+        && $params->get('join_db_name') == $listModel->getTable()->get('db_table_name') &&
+        ($params->get('database_join_display_style') == 'both-treeview-autocomplete' || $params->get('database_join_display_style') == 'only-treeview')
+    ) {
+        $this->elTree = $el->getParams()->get('tree_parent_id');
+        $tree = true;
+    }
+
+	if (str_contains($el->getName(), 'Field') && is_null($this->elFieldTree)) {
+        $this->elFieldTree = $el->element->name;
+    }
+}
+
 ?>
 
 <div class="tree-item" data-id=<?php echo @$this->_row->{$this->list->db_table_name.'___id_raw'}; ?>>
@@ -30,7 +48,7 @@ $imgDelAction = $hasPermission ? 'trash.png' : 'danger.png';
 	</span>
 
 	<span class="tree-text">
-		<?php echo @$this->_row->{$this->list->db_table_name.'___name_raw'}; ?>
+		<?php echo @$this->_row->{$this->list->db_table_name.'___' . $this->elFieldTree . '_raw'}; ?>
 	</span>
 
 	<?php
@@ -51,4 +69,3 @@ $imgDelAction = $hasPermission ? 'trash.png' : 'danger.png';
 		endforeach;
 	?>
 </div>
-
