@@ -42,6 +42,14 @@ echo <<<EOT
     display: none !important;
 }
 
+.plg-display .header-title {
+    display: none !important;
+}
+
+.plg-display .header {
+    margin-bottom: 0 !important;
+}
+
 .fabrik_groupdata td, .list-footer {
     font-weight: 400;
     line-height: 2;
