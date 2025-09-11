@@ -630,10 +630,6 @@ body {
     padding: 0px 2px;
 }
 
-.fabrik_action .dropdown-menu {
-    transform: translate(0px, 30px) !important;
-}
-
 .fabrikFilterContainer a {
     text-decoration: underline;
 }
