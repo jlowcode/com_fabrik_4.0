@@ -99,7 +99,7 @@ if (isset($_REQUEST['action']) && isset($_REQUEST['action']['showButton'])) {
                         <div class="intro-container <?php echo $this->modalLearnMore['callModal'] ? 'd-none' : ''; ?>">
                             <div class="text-intro-content">
                                 <?php $intro = strip_tags($this->table->intro);
-                                $limit = 150;
+                                $limit = 100;
                                 echo (strlen($intro) > $limit) ? mb_substr($intro, 0, $limit) . '...' : $intro; ?>
                                 <?php if(strlen($intro) > $limit) : ?>
                                     <a class="learn-more" href="#<?php echo $idModalLearnMore ?>" data-bs-toggle="modal"><?php echo Text::_("JGLOBAL_LEARN_MORE") ?></a>
@@ -116,7 +116,7 @@ if (isset($_REQUEST['action']) && isset($_REQUEST['action']['showButton'])) {
 <?php if($this->modalLearnMore['callModal']) : ?>
     <div class="intro-container">
         <div class="text-intro-content">
-            <?php echo strip_tags($this->table->intro); ?>
+            <?php $this->table->intro; ?>
         </div>
     </div>
 <?php endif; ?>

@@ -64,10 +64,6 @@ echo <<<EOT
 	display: none;
 }
 
-.plg-display .header-title {
-    display: none !important;
-}
-
 .section-horizontal-paddings {
     padding-left: 7% !important;
     padding-right: 7% !important;
