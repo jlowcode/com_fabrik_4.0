@@ -43,7 +43,7 @@ echo <<<EOT
     display: none !important;
 }
 
-.plg-display .fabrikButtonsContainer .middle-buttons.d-flex .itemShowRequests {
+.plg-display .fabrikButtonsContainer .middle-buttons .itemShowRequests {
     display: none !important;
     list-style: none !important;
     margin: 0 !important;
