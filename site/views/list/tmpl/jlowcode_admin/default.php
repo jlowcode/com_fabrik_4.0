@@ -27,6 +27,7 @@ if (!function_exists('getItens')) {
 
         $query = $db->getQuery(true);
         $query->select(Array('*'));
+        $query = $self->getModel()->buildQueryWhere(true, $query);
 
         if ($parent == null) {
             $query->from($db->quoteName($self->table->db_table_name))->where($self->elTree . " IS NULL");
