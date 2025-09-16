@@ -214,7 +214,7 @@ foreach ($elsList as $el) {
 				$url = ($_REQUEST['wfl_action'] == 'list_requests') ? $_REQUEST['workflow']['list_link'] : $_REQUEST['workflow']['requests_link'];
 				$active = ($_REQUEST['wfl_action'] == 'list_requests') ? 'active' : '';
 		?>
-			<li class="<?php echo $active ?>">
+			<li class="itemShowRequests <?php echo $active ?>">
 				<a id="showRequests" class="showRequests" href="<?php echo $url ?>">
 					<?php echo $_REQUEST['workflow']['eventsButton'] ?>
 					<?php if($_REQUEST['workflow']['requests_count'] > 0) : ?>
