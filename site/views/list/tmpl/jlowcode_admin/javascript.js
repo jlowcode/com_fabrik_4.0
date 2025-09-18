@@ -43,21 +43,6 @@ requirejs(['fab/fabrik', 'fab/bootstrap_tree'], function (Fabrik, BootstrapTree)
 		jQuery('#nav-pagination').val(Math.ceil((parseInt(list.options.limitStart)+1)/parseInt(list.options.limitLength)));
 	})
 
-	Fabrik.addEvent('fabrik.list.submit.ajax.complete', function (t, j) {
-		if(j.filters.value === undefined) {
-			jQuery('.clearFilters').addClass('fabrikHide');
-			jQuery('.fabrik-list .fabrikButtonsContainer .fabrik_filter').removeClass('p-clean-filters');
-			jQuery('.toggleFilters .num-flag').addClass('fabrikHide');
-			return;
-		}
-
-		qtnFilters = Object.keys(j.filters.value).length;
-		jQuery('.toggleFilters .num-flag').html(qtnFilters);
-		jQuery('.toggleFilters .num-flag').removeClass('fabrikHide');
-		jQuery('.clearFilters').removeClass('fabrikHide');
-		jQuery('.fabrik-list .fabrikButtonsContainer .fabrik_filter').addClass('p-clean-filters');
-	});
-
 	jQuery('.clearFilters').on('click', function() {
 		jQuery('.toggleFilters .num-flag').addClass('fabrikHide');
 	});
@@ -124,14 +109,35 @@ window.addEvent('fabrik.loaded', function () {
 	})
 })
 
+function getQtnFilters(filters) {
+	var qtn = 0;
+	var searchAll = false;
+	var searchTypes = filters.search_type;
+
+	// We need count searchall filter only once
+	for (let id in searchTypes) {
+		if (searchTypes.hasOwnProperty(id)) {
+			if(searchTypes[id] == 'searchall') {
+				searchAll = true;
+				continue;
+			}
+
+			qtn++;
+		}
+	}
+
+	return searchAll === true ? ++qtn : qtn;
+}
+
 function setNumFlagsAndClearFilters(j) {
-	if(j === undefined || j.filters.value === undefined) {
+	qtnFilters = getQtnFilters(j.filters);
+	if(qtnFilters === 0) {
 		jQuery('.clearFilters').addClass('fabrikHide');
 		jQuery('.fabrik-list .fabrikButtonsContainer .fabrik_filter').removeClass('p-clean-filters');
+		jQuery('.toggleFilters .num-flag').addClass('fabrikHide');
 		return;
 	}
 
-	qtnFilters = Object.keys(j.filters.value).length;
 	jQuery('.toggleFilters .num-flag').html(qtnFilters);
 	jQuery('.toggleFilters .num-flag').removeClass('fabrikHide');
 	jQuery('.clearFilters').removeClass('fabrikHide');
