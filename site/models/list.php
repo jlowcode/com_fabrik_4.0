@@ -2363,14 +2363,14 @@ class FabrikFEModelList extends FormModel
 		$data = preg_replace('/<a(.*?)>|<\/a>/', '', $data);
 		$class = '';
 
-		if ($this->canViewDetails($row))
-		{
-			$class = ' fabrik_view';
-		}
-
 		if ($this->canEdit($row))
 		{
 			$class = ' fabrik_edit';
+		}
+
+		if ($this->canViewDetails($row))
+		{
+			$class = ' fabrik_view';
 		}
 
 		$loadMethod = $this->getLoadMethod('custom_link');

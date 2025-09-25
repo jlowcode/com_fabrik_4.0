@@ -28,6 +28,9 @@ if(isset($elDate)) {
 	$dateFullName = $elDate->getFullName();
 	$ignoreHeadings[] = $dateFullName;
 	$dateRawName = $dateFullName . '_raw';
+
+	$allData = @$rowData ?? new stdClass();
+	$dateData = $elDate->renderListData(@$rowData->$dateRawName, $allData);
 }
 
 $elOwner = $this->elementsToShowOnGridAndCardTemplate['owner-gallery-card-mode'];
@@ -117,11 +120,10 @@ if(isset($elOwner)) {
 	<!-- Finally show created_by, date_time and fabrik_actions -->
 	<div class="fabrikDivElement info-row d-flex align-items-center justify-content-between">
 		<div class="div-info d-flex flex-row flex-wrap">
-			<?php if (isset($elDate)) : ?>
+			<?php if (!empty(strip_tags($dateData))) : ?>
 				<span class="date <?php echo $dateFullName ?>">
 					<?php
-						$allData = @$rowData ?? new stdClass();
-						echo $elDate->renderListData(@$rowData->$dateRawName, $allData);
+						echo $dateData;
 					?>
 				</span>
 			<?php endif; ?>

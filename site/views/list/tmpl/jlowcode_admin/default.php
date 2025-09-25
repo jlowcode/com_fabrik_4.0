@@ -35,8 +35,8 @@ if (!function_exists('getItens')) {
             $query->from($db->quoteName($self->table->db_table_name))->where($self->elTree . " = " . $parent);
         }
 
-        if($self->canShowTutorialTemplate) {
-            $idElOrder = isset($self->getModel()->fieldsTemplateTutorial->ordering) ? $self->getModel()->fieldsTemplateTutorial->ordering : $self->getModel()->fieldsTemplateTutorial->field;
+        $idElOrder = $self->getModel()->fieldsTemplateTutorial->ordering;
+        if($idElOrder) {
             $elOrder = $elements[$idElOrder];
             $query->order($elOrder->getElement()->get('name'));
         } else {
@@ -84,8 +84,8 @@ if (!function_exists('getItensChild')) {
             ->from($db->quoteName($db_table_name))
             ->where($elTree . " = " . $parent);
 
-        if($self->canShowTutorialTemplate) {
-            $idElOrder = isset($self->getModel()->fieldsTemplateTutorial->ordering) ? $self->getModel()->fieldsTemplateTutorial->ordering : $self->getModel()->fieldsTemplateTutorial->field;
+        $idElOrder = $self->getModel()->fieldsTemplateTutorial->ordering;
+        if($idElOrder) {
             $elOrder = $elements[$idElOrder];
             $query->order($elOrder->getElement()->get('name'));
         } else {

@@ -61,6 +61,10 @@ echo <<<EOT
 	align-items: center;
 }
 
+.fabrikLabel {
+	display: inherit !important;
+}
+
 .select2-dropdown {
 	border: 1px solid rgba(0, 0, 0, 0.15) !important;
     border-radius: 0.25rem !important;
