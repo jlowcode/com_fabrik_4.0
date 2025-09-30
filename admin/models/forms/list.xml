@@ -237,6 +237,18 @@
 				<option value="1">JYES</option>
 			</field>
 
+			<field name="show_format_description_list"
+					type="radio"
+					class="btn-group"
+					default="1"
+					label="COM_FABRIK_FIELD_SHOW_FORMAT_DESCRIPTION_LABEL"
+					layout="joomla.form.field.radio.switcher"
+					description="COM_FABRIK_FIELD_SHOW_FORMAT_DESCRIPTION_DESC"
+			>
+				<option value="0">JNO</option>
+				<option value="1">JYES</option>
+			</field>
+
 			<field name="show_list_with_replies"
 					type="radio"
 					class="btn-group"
