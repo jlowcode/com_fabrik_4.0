@@ -16,7 +16,11 @@ defined('_JEXEC') or die('Restricted access');
 use Joomla\CMS\Language\Text;
 
 $pluginManager = FabrikWorker::getPluginManager();
+$params = $this->getModel()->getFormModel()->getParams();
+$workflowPlugin = array_search('workflow', $params->get('plugins'));
+$hasWorkflow = $workflowPlugin != null && $params->get('plugin_state')[$workflowPlugin] == '1';
 $elementModel  = $pluginManager->getPlugIn('workflow', 'form');
+
 $elementModel->easyadmin = true;
 $hasPermission = $elementModel->hasPermission(['easyadmin_modal___listid' => $this->getModel()->getId()]);
 $titleDelAction = $hasPermission ? Text::_("PLG_FORM_WORKFLOW_DELETE_RECORD_LIST") : Text::_("PLG_FORM_WORKFLOW_REPORT_RECORD_LIST");
@@ -55,14 +59,18 @@ foreach ($elsList as $el) {
 		foreach ($this->headings as $heading => $label) :
 			if ($heading == 'fabrik_actions') :
 				$d = @$this->_row->$heading;
-				$d = str_replace('class="delete"','class="btn-delete"  data-rowid="xhr" data-loadmethod="xhr" target="_self" list-row-ids="' .$this->list->id . ':' . $this->_row->__pk_val . '" ', $d);
-				$d = str_replace('Excluir', $titleDelAction, $d);
-				$d = str_replace('close.png', $imgDelAction, $d);
-				$d = str_replace('href="#"','onclick="onReportAbuse(this)"', $d);
 
-				if(!$hasPermission) {
-					$d = str_replace(' '.Text::_("COM_FABRIK_EDIT"), ' '.Text::_("PLG_FORM_WORKFLOW_REPORT_EDIT_RECORD_LIST"), $d);
+				if ($hasWorkflow) {
+					$d = str_replace('class="delete"','class="btn-delete"  data-rowid="xhr" data-loadmethod="xhr" target="_self" list-row-ids="' .$this->list->id . ':' . $this->_row->__pk_val . '" ', $d);
+					$d = str_replace('Excluir', $titleDelAction, $d);
+					$d = str_replace('close.png', $imgDelAction, $d);
+					$d = str_replace('href="#"','onclick="onReportAbuse(this)"', $d);
+
+					if(!$hasPermission) {
+						$d = str_replace(' '.Text::_("COM_FABRIK_EDIT"), ' '.Text::_("PLG_FORM_WORKFLOW_REPORT_EDIT_RECORD_LIST"), $d);
+					}
 				}
+
 				echo '<span class="actions' . $c['class'] . '" ' . $cStyle . '>' . $d . '</span>'; ?>
 			<?php
 			endif;
