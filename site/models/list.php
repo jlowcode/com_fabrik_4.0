@@ -2372,7 +2372,6 @@ class FabrikFEModelList extends FormModel
 			$class = ' fabrik_view';
 		}
 
-
 		$loadMethod = $this->getLoadMethod('custom_link');
 		$class = 'fabrik___rowlink ' . $class;
 		$dataList = 'list_' . $this->getRenderContext();
@@ -9267,6 +9266,13 @@ class FabrikFEModelList extends FormModel
 			$val = implode(',', $val);
 		}
 
+		$pluginManager = FabrikWorker::getPluginManager();
+
+		if (in_array(false, $pluginManager->runPlugins('onBeforeDeleteRowsForm', $this->getFormModel(), 'form', $rows)))
+		{
+			return false;
+		}
+
 		$this->rowsToDelete = $rows;
 		$groupModels = $this->getFormGroupElementData();
 
@@ -9279,8 +9285,6 @@ class FabrikFEModelList extends FormModel
 				$elementModel->onDeleteRows($rows);
 			}
 		}
-
-		$pluginManager = FabrikWorker::getPluginManager();
 
 		/* $$$ hugh - added onDeleteRowsForm plugin (needed it so fabrikjuser form plugin can delete users)
 		 * NOTE - had to call it onDeleteRowsForm rather than onDeleteRows, otherwise runPlugins() automagically
