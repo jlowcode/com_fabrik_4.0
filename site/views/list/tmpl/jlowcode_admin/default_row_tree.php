@@ -56,24 +56,19 @@ foreach ($elsList as $el) {
 	</span>
 
 	<?php
-		foreach ($this->headings as $heading => $label) :
-			if ($heading == 'fabrik_actions') :
-				$d = @$this->_row->$heading;
+		$d = @$this->_row->fabrik_actions;
 
-				if ($hasWorkflow) {
-					$d = str_replace('class="delete"','class="btn-delete"  data-rowid="xhr" data-loadmethod="xhr" target="_self" list-row-ids="' .$this->list->id . ':' . $this->_row->__pk_val . '" ', $d);
-					$d = str_replace('Excluir', $titleDelAction, $d);
-					$d = str_replace('close.png', $imgDelAction, $d);
-					$d = str_replace('href="#"','onclick="onReportAbuse(this)"', $d);
+		if ($hasWorkflow) {
+			$d = str_replace('class="delete"','class="btn-delete"  data-rowid="xhr" data-loadmethod="xhr" target="_self" list-row-ids="' .$this->list->id . ':' . $this->_row->__pk_val . '" ', $d);
+			$d = str_replace('Excluir', $titleDelAction, $d);
+			$d = str_replace('close.png', $imgDelAction, $d);
+			$d = str_replace('href="#"','onclick="onReportAbuse(this)"', $d);
 
-					if(!$hasPermission) {
-						$d = str_replace(' '.Text::_("COM_FABRIK_EDIT"), ' '.Text::_("PLG_FORM_WORKFLOW_REPORT_EDIT_RECORD_LIST"), $d);
-					}
-				}
+			if(!$hasPermission) {
+				$d = str_replace(' '.Text::_("COM_FABRIK_EDIT"), ' '.Text::_("PLG_FORM_WORKFLOW_REPORT_EDIT_RECORD_LIST"), $d);
+			}
+		}
 
-				echo '<span class="actions' . $c['class'] . '" ' . $cStyle . '>' . $d . '</span>'; ?>
-			<?php
-			endif;
-		endforeach;
+		echo '<span class="actions' . $c['class'] . '" ' . $cStyle . '>' . $d . @$this->_row->fabrik_select . '</span>';
 	?>
 </div>
