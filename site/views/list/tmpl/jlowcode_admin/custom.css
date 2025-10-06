@@ -1194,3 +1194,22 @@ i.fas.fa-exclamation-triangle.fa-sm{
 .button.btn.btn-default.btn-mini.dropdown-toggle.dropdown-toggle-no-caret{
     margin: 0;
 }
+
+.btn-share {
+    margin-left: 8px;
+    background-color: rgba(220, 226, 249, 1);
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    padding: 0px;
+    flex-shrink: 0;
+    border: none;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.btn-share img {
+    margin-bottom: 3px;
+}

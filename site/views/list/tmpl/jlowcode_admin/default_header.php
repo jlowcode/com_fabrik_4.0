@@ -91,6 +91,16 @@ if (isset($_REQUEST['action']) && isset($_REQUEST['action']['showButton'])) {
                         <span style="font-weight: 700; font-size: 2.25rem; font-family: 'Nunito';"><?php echo $this->table->label; ?></span>
                     <?php endif ?>
                 <?php endif ?>
+                <?php 
+                $shareImage = FabrikHelperHTML::image('share.png', 'list', 'form', array('alt' => 'Share'));
+                ?>
+                <?php if($shareImage) : ?>
+                    <button id="button_share_<?php echo $this->get('id'); ?>" 
+                            type="button" 
+                            class="btn-share">
+                        <?php echo $shareImage; ?>
+                    </button>
+                <?php endif; ?>
             </div>
             <?php if($this->params->get('show_description_list', '1')) : ?>
                 <div class="header-desc">
@@ -98,10 +108,10 @@ if (isset($_REQUEST['action']) && isset($_REQUEST['action']['showButton'])) {
                     <?php if($this->table->intro) : ?>
                         <div class="intro-container <?php echo $this->modalLearnMore['callModal'] ? 'd-none' : ''; ?>">
                             <div class="text-intro-content">
-                                <?php echo $this->table->intro; ?>
-                                <?php if(strlen($this->table->intro) > 180) : ?>
-                                    <a class="learn-more" href="#<?php echo $idModalLearnMore ?>" data-bs-toggle="modal"><?php echo Text::_("JGLOBAL_LEARN_MORE") ?></a>
-                                <?php endif; ?>
+                                <p><?php echo strip_tags($this->table->intro); ?></p>
+                                <a class="learn-more" href="#<?php echo $idModalLearnMore ?>" data-bs-toggle="modal">
+                                    <?php echo Text::_("JGLOBAL_LEARN_MORE") ?>
+                                </a>
                             </div>
                         </div>
                     <?php endif; ?>
