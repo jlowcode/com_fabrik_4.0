@@ -6618,7 +6618,7 @@ class FabrikFEModelList extends FormModel
 		$els = $this->getElements('id');
 		$fields = Array();
 
-		// Uer selection has priority
+		// User's selection has priority
 		foreach ($els as $el) {
 			switch (true) {
 				case $el->getId() == $params->get('field_thumb_template_mode', 0):
@@ -6643,10 +6643,10 @@ class FabrikFEModelList extends FormModel
 			}
 		}
 
-		// If user selection is not set for all, then we get the elements by default
+		// If user's selection is not set for all, then we get the elements by default
 		foreach ($els as $el) {
 			switch (true) {
-				case (is_a($el, 'PlgFabrik_ElementFileupload') && !isset($fields['thumb-gallery-card-mode'])):
+				case ((is_a($el, 'PlgFabrik_ElementFileupload') || is_a($el, 'PlgFabrik_ElementYoutube')) && !isset($fields['thumb-gallery-card-mode'])):
 					$fields['thumb-gallery-card-mode'] = $el;
 					break;
 
