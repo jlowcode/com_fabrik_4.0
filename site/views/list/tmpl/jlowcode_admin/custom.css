@@ -1226,6 +1226,12 @@ i.fas.fa-exclamation-triangle.fa-sm{
     opacity: 1;
 }
 
-.button.btn.btn-default.btn-mini.dropdown-toggle.dropdown-toggle-no-caret{
-    margin: 0;
+.btn.btn-default.btn-mini.dropdown-toggle.dropdown-toggle-no-caret {
+    margin: -6px 0px 0px 0px !important;
+}
+
+.tree-item .actions {
+    display: inline-block;
+    float: right;
+    vertical-align: middle;
 }

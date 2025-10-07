@@ -99,22 +99,31 @@ if(isset($elOwner)) {
 			<div class="card-data-row d-flex">
 				<?php foreach ($this->headings as $heading => $label) :
 					$d = @$rowData->$heading;
+					$showLabel = true;
 
 					// Skip empty elements, id element, created_by element
 					if (in_array(explode('___', $heading)[1], ["id"]) || in_array($heading, $ignoreHeadings)) continue;
 
 					// If we use $label from $this->headings the label will be with a tag
 					foreach ($elements as $element) {
-						if($element->getFullName(true) == $heading) {
-							$label = $element->getElement()->get('label');
+						if($element->getFullName(true) != $heading) {
+							continue;
 						}
+
+						if(is_a($element, 'PlgFabrik_ElementYoutube')) {
+							$showLabel = false;
+						}
+
+						$elModel = $element->getElement();
+						$label = $element->getParams()->get('alt_list_heading') ?: $elModel->get('label');
 					}
 
 					$h = $this->headingClass[$heading];
 					$c = $this->cellClass[$heading];
-					?>
+				?>
+
 					<div class="row-fluid fabrikDivElement fabrikDivElementData">
-						<?php echo '<span class="title-field-card">' . $label . ': </span>'; ?>
+						<?php echo $showLabel ? '<span class="title-field-card">' . $label . ': </span>' : ''; ?>
 						<?php echo '<span class="data-field-card ' . $c['class'] . '">' . $d . '</span>'; ?>
 					</div>
 				<?php endforeach; ?>

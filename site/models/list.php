@@ -6651,7 +6651,7 @@ class FabrikFEModelList extends FormModel
 		$els = $this->getElements('id');
 		$fields = Array();
 
-		// Uer selection has priority
+		// User's selection has priority
 		foreach ($els as $el) {
 			switch (true) {
 				case $el->getId() == $params->get('field_thumb_template_mode', 0):
@@ -6676,10 +6676,10 @@ class FabrikFEModelList extends FormModel
 			}
 		}
 
-		// If user selection is not set for all, then we get the elements by default
+		// If user's selection is not set for all, then we get the elements by default
 		foreach ($els as $el) {
 			switch (true) {
-				case (is_a($el, 'PlgFabrik_ElementFileupload') && !isset($fields['thumb-gallery-card-mode'])):
+				case ((is_a($el, 'PlgFabrik_ElementFileupload') || is_a($el, 'PlgFabrik_ElementYoutube')) && !isset($fields['thumb-gallery-card-mode'])):
 					$fields['thumb-gallery-card-mode'] = $el;
 					break;
 
@@ -9325,6 +9325,13 @@ class FabrikFEModelList extends FormModel
 			$val = implode(',', $val);
 		}
 
+		$pluginManager = FabrikWorker::getPluginManager();
+
+		if (in_array(false, $pluginManager->runPlugins('onBeforeDeleteRowsForm', $this->getFormModel(), 'form', $rows)))
+		{
+			return false;
+		}
+
 		$this->rowsToDelete = $rows;
 		$groupModels = $this->getFormGroupElementData();
 
@@ -9337,8 +9344,6 @@ class FabrikFEModelList extends FormModel
 				$elementModel->onDeleteRows($rows);
 			}
 		}
-
-		$pluginManager = FabrikWorker::getPluginManager();
 
 		/* $$$ hugh - added onDeleteRowsForm plugin (needed it so fabrikjuser form plugin can delete users)
 		 * NOTE - had to call it onDeleteRowsForm rather than onDeleteRows, otherwise runPlugins() automagically
