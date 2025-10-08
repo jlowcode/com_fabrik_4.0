@@ -46,12 +46,18 @@ if(isset($elOwner)) {
 		<div class="gallery-head-row">
 			<?php $el = $this->elementsToShowOnGridAndCardTemplate['thumb-gallery-card-mode']; ?>
 			<?php if(isset($el)) : ?>
-				<?php $el->reset(); ?>
+				<?php 
+					$el->reset();
+					$thumbFullName = $el->getFullName();
+				?>
 				<div class="fabrikDivElement div-thumb">
-					<span class="thumb <?php echo $el->getFullName() ?>" >
+					<span class="thumb <?= $thumbFullName ?>" >
 						<?php
-							echo $el->getValue((array) @$rowData);
-							$ignoreHeadings[] = $el->getFullName();
+							$thumbRawName = $thumbFullName . '_raw';
+							$allData = @$rowData ?? new stdClass();
+							$ignoreHeadings[] = $thumbFullName;
+
+							echo $el->renderListData(@$rowData->$thumbRawName, $allData);
 						?>
 					</span>
 				</div>
