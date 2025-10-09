@@ -1,8 +1,6 @@
 <?php
 /**
  * Fabrik List Template: Div Row
- * Note the div cell container is now generated in the default template
- * in FabrikHelperHTML::bootstrapGrid();
  *
  * @package     Joomla
  * @subpackage  Fabrik
@@ -15,7 +13,7 @@ defined('_JEXEC') or die('Restricted access');
 
 use Joomla\CMS\Language\Text;
 
-$rowClass = isset($this->_row->rowClass) ? $this->_row->rowClass : '';
+$rowClass = $this->_row->rowClass ?? '';
 $title_element_id = $this->params->get('titulo');
 $regexTitle = $title_element_id. '_order';
 $ignoreHeadings = ['fabrik_actions', 'fabrik_select'];
@@ -23,6 +21,8 @@ $rowData = $this->_row->data;
 $elements = $this->getModel()->getElements('filtername');
 
 $elDate = $this->elementsToShowOnGridAndCardTemplate['date-gallery-card-mode'];
+$dateFullName = '';
+$dateData = '';
 if(isset($elDate)) {
 	$elDate->reset();
 	$dateFullName = $elDate->getFullName();
@@ -40,17 +40,17 @@ if(isset($elOwner)) {
 	$ignoreHeadings[] = $ownerFullName;
 }
 ?>
-<div class="gallery-box d-flex flex-column justify-content-between h-100 <?php echo $rowClass; ?>">
+<div class="masonry-box fabrik_row <?= $rowClass; ?>">
 	<div>
 		<!-- Show thumb, name and description first -->
-		<div class="gallery-head-row">
+		<div class="masonry-head-row">
 			<?php $el = $this->elementsToShowOnGridAndCardTemplate['thumb-gallery-card-mode']; ?>
 			<?php if(isset($el)) : ?>
 				<?php 
 					$el->reset();
 					$thumbFullName = $el->getFullName();
 				?>
-				<div class="fabrikDivElement div-thumb">
+				<div class="fabrikDivElement">
 					<span class="thumb <?= $thumbFullName ?>" >
 						<?php
 							$thumbRawName = $thumbFullName . '_raw';
@@ -72,7 +72,7 @@ if(isset($elOwner)) {
 					$data = $el->getValue((array) @$rowData);
 				?>
 				<div class="fabrikDivElement div-name">
-					<span class="title name <?php echo $el->getFullName() ?>" title="<?php echo strip_tags($data); ?>">
+					<span class="title name <?= $el->getFullName() ?>" title="<?= strip_tags($data); ?>">
 						<?php
 							echo $data;
 							$ignoreHeadings[] = $el->getFullName();
@@ -86,7 +86,7 @@ if(isset($elOwner)) {
 				<?php $el->reset(); ?>
 				<div class="fabrikDivElement div-description">
 					<span class="description">
-						<p class="m-0 <?php echo $el->getFullName() ?>">
+						<p class="m-0 <?= $el->getFullName() ?>">
 							<?php
 								echo strip_tags($el->getValue((array) @$rowData));
 								$ignoreHeadings[] = $el->getFullName();
@@ -98,13 +98,13 @@ if(isset($elOwner)) {
 		</div>
 
 		<!-- Then show all data -->
-		<div class="gallery-data-row">
+		<div class="masonry-data-row">
 			<?php foreach ($this->headings as $heading => $label) :
 				$d = @$rowData->$heading;
 				$showLabel = true;
 
 				// Skip empty elements, id element, created_by element
-				if (in_array(explode('___', $heading)[1], ["id"]) || in_array($heading, $ignoreHeadings)) continue;
+				if (explode('___', $heading)[1] == "id" || in_array($heading, $ignoreHeadings)) continue;
 
 				// If we use $label from $this->headings the label will be with a tag
 				foreach ($elements as $element) {
@@ -125,8 +125,8 @@ if(isset($elOwner)) {
 			?>
 
 				<div class="row-fluid fabrikDivElement fabrikDivElementData">
-					<?php echo $showLabel ? '<span class="title-field-card">' . $label . ': </span>' : ''; ?>
-					<?php echo '<span class="data-field-card ' . $c['class'] . '">' . $d . '</span>'; ?>
+					<?= $showLabel ? '<span class="title-field-card">' . $label . ': </span>' : ''; ?>
+					<?= '<span class="data-field-card ' . $c['class'] . '">' . $d . '</span>'; ?>
 				</div>
 			<?php endforeach; ?>
 		</div>
@@ -136,7 +136,7 @@ if(isset($elOwner)) {
 	<div class="fabrikDivElement info-row d-flex align-items-center justify-content-between">
 		<div class="div-info d-flex flex-row flex-wrap">
 			<?php if (!empty(strip_tags($dateData))) : ?>
-				<span class="date <?php echo $dateFullName ?>">
+				<span class="date <?= $dateFullName ?>">
 					<?php
 						echo $dateData;
 					?>
@@ -145,15 +145,15 @@ if(isset($elOwner)) {
 
 			<?php if (isset($elOwner)) : ?>
 				<span class="owner">
-					<span><?php echo Text::_("COM_FABRIK_BY"); ?></span>
-					<span class="<?php echo $ownerFullName ?>"><?php echo $elOwner->getValue((array) @$rowData)[0] ?></span>
+					<span><?= Text::_("COM_FABRIK_BY"); ?></span>
+					<span class="<?= $ownerFullName ?>"><?= $elOwner->getValue((array) @$rowData)[0] ?></span>
 				</span>
 			<?php endif; ?>
 		</div>
 		<div>
 			<span>
 				<div class="fabrik_actions fabrik_element">
-					<?php echo @$rowData->fabrik_actions; ?>
+					<?= @$rowData->fabrik_actions; ?>
 				</div>
 			</span>
 		</div>

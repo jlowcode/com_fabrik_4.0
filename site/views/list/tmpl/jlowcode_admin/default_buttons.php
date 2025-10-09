@@ -28,7 +28,7 @@ if(isset($_REQUEST['workflow'])) {
 // End workflow code
 
 // Action code 
-if(isset($_REQUEST['action']) && isset($_REQUEST['action']['showButton'])) {
+if(isset($_REQUEST['action']['showButton'])) {
 	$this->showActionButton = $_REQUEST['action']['showButton'];
 } else {
 	$this->showActionButton = null;
@@ -198,6 +198,7 @@ foreach ($elsList as $el) {
 			$links = Array();
 			$links[] = '<a id="list-view" name="view" onclick="handleRadioClick(this)">' . FabrikHelperHTML::image('list-2.png', 'list', $this->tmpl) . Text::_("COM_FABRIK_LAYOUT_MODE_OPTION_0") . '</a>';
 			$links[] = '<a id="grid-view" name="view" onclick="handleRadioClick(this)">' . FabrikHelperHTML::image('grid.png', 'list', $this->tmpl) . Text::_("COM_FABRIK_LAYOUT_MODE_OPTION_1") . '</a>';
+            $links[] = '<a id="masonry-view" name="view" onclick="handleRadioClick(this)">' . FabrikHelperHTML::image('masonry.png', 'list', $this->tmpl) . Text::_("COM_FABRIK_LAYOUT_MODE_OPTION_5") . '</a>';
 
 			if ($tree == true) {
 				$links[] = '<a id="tree-view" name="view" onclick="handleRadioClick(this)">' . FabrikHelperHTML::image('hierarchy.png', 'list', $this->tmpl) . Text::_("COM_FABRIK_LAYOUT_MODE_OPTION_2") . '</a>';

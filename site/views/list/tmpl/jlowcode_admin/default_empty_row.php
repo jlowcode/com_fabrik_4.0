@@ -25,29 +25,9 @@ if (isset($_SESSION['modo']) && $_SESSION['modo']['lista'] == $this->table->db_t
 	$modoExibicao = 'list';
 }
 
-switch ($modoExibicao) {
-    case 'list':
-    case '0':
-		echo $this->loadTemplate('row');	// Default list view
-        break;
-
-    case 'grid':
-    case '1':
-		echo $this->loadTemplate('empty_row_grid');
-        break;
-
-    case 'tree':
-    case '2':
-		echo $this->loadTemplate('row');	// Tree view is not implemented, using list as fallback
-        break;
-
-    case 'tutorial':
-    case '3':
-		echo $this->loadTemplate('row');	// Tutorial view is not implemented, using list as fallback
-        break;
-    
-    case 'card':
-    case '4':
-		echo $this->loadTemplate('empty_row_card');
-        break;
-}
+echo match ($modoExibicao) {
+    default => $this->loadTemplate('row'),
+    'grid', '1' => $this->loadTemplate('empty_row_grid'),
+    'card', '4' => $this->loadTemplate('empty_row_card'),
+    'masonry', '5' => $this->loadTemplate('empty_row_masonry'),
+};

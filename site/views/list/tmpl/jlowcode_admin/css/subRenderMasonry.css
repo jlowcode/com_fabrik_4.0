@@ -1,0 +1,36 @@
+/* 
+    Style to sub render grid 
+*/
+@import url('https://fonts.googleapis.com/css2?family=Inter&display=swap');
+
+.subRenderMasonry .masonry-box {
+    margin-top: 24px;
+}
+
+.subRenderMasonry .masonry-box, .subRenderMasonry .masonry-box-sizer {
+    width: calc((100% - 96px) / 5);
+}
+
+.fabrik-list .subRenderGridCard.subRenderMasonry .div-mode-img-card {
+    aspect-ratio: initial;
+}
+
+@media (max-width: 1900px) {
+    .subRenderMasonry .masonry-box-sizer,
+    .subRenderMasonry .masonry-box { width: calc((100% - 72px) / 4); }
+}
+
+@media (max-width: 1100px) {
+    .subRenderMasonry .masonry-box-sizer,
+    .subRenderMasonry .masonry-box { width: calc((100% - 48px) / 3); }
+}
+
+@media (max-width: 800px) {
+    .subRenderMasonry .masonry-box-sizer,
+    .subRenderMasonry .masonry-box { width: calc((100% - 24px) / 2); }
+}
+
+@media (max-width: 500px) {
+    .subRenderMasonry .masonry-box-sizer,
+    .subRenderMasonry .masonry-box { width: 100%; }
+}
