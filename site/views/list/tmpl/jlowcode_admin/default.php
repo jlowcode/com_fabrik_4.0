@@ -158,32 +158,15 @@ echo $this->loadTemplate('header');
 
 <?php
 
-switch ($this->modoExibicao) {
-    case 'list':
-    case '0':
-        echo $this->loadTemplate('subrender_list');
-        break;
-
-    case 'grid':
-    case '1':
-        echo $this->loadTemplate('subrender_grid');
-        break;
-
-    case 'tree':
-    case '2':
-        echo $this->loadTemplate('subrender_tree');
-        break;
-
-    case 'tutorial':
-    case '3':
-        echo $this->loadTemplate('subrender_tutorial');
-        break;
-    
-    case 'card':
-    case '4':
-        echo $this->loadTemplate('subrender_card');
-        break;
-}
+$subRender = match ($this->modoExibicao) {
+    default => $this->loadTemplate('subrender_list'),
+    'grid', '1' => $this->loadTemplate('subrender_grid'),
+    'tree', '2' => $this->loadTemplate('subrender_tree'),
+    'tutorial', '3' => $this->loadTemplate('subrender_tutorial'),
+    'card', '4' => $this->loadTemplate('subrender_card'),
+    'masonry', '5' => $this->loadTemplate('subrender_masonry'),
+};
+echo $subRender;
 
 echo $this->table->outro;
 if ($pageClass !== '') :
