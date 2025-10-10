@@ -14,6 +14,7 @@
 defined('_JEXEC') or die('Restricted access');
 
 use Joomla\CMS\Language\Text;
+use Joomla\CMS\Factory;
 
 $rowClass = isset($this->_row->rowClass) ? $this->_row->rowClass : '';
 $title_element_id = $this->params->get('titulo');
