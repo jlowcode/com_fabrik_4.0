@@ -56,7 +56,16 @@ if(isset($elOwner)) {
 						$allData = @$rowData ?? new stdClass();
 						$ignoreHeadings[] = $thumbFullName;
 
-						echo $el->renderListData(@$rowData->$thumbRawName, $allData);
+						$table = $this->getModel()->getTable()->db_table_name;
+						$rowId = $allData->__pk_val;
+						$db_name = Factory::getConfig()->get("db");
+
+						if($rowId) {
+							$mainImage = $el->getPrincipal($table, $rowId, $db_name);
+							$image = $el->getParams()->get('ajax_upload', '0') === '1' ? '/' . $el->getParams()->get('ul_directory') . '/' . $mainImage->arquivo->name : @$rowData->$thumbRawName;
+
+							echo $el->renderListData($image, $allData);
+						}
 					?>
 				</span>
 			</div>
