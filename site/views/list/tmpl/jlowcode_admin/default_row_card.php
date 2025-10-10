@@ -14,6 +14,7 @@
 defined('_JEXEC') or die('Restricted access');
 
 use Joomla\CMS\Language\Text;
+use Joomla\CMS\Factory;
 
 $rowClass = isset($this->_row->rowClass) ? $this->_row->rowClass : '';
 $title_element_id = $this->params->get('titulo');
@@ -52,11 +53,20 @@ if(isset($elOwner)) {
 			<div class="fabrikDivElement div-thumb">
 				<span class="thumb <?= $thumbFullName ?>" >
 					<?php
-						$thumbRawName = $thumbFullName . '_raw';
-						$allData = @$rowData ?? new stdClass();
-						$ignoreHeadings[] = $thumbFullName;
+                        $thumbRawName = $thumbFullName . '_raw';
+                        $allData = @$rowData ?? new stdClass();
+                        $ignoreHeadings[] = $thumbFullName;
 
-						echo $el->renderListData(@$rowData->$thumbRawName, $allData);
+                        $table = $this->getModel()->getTable()->db_table_name;
+                        $rowId = $allData->__pk_val;
+                        $db_name = Factory::getConfig()->get("db");
+
+                        if($rowId) {
+                            $mainImage = $el->getPrincipal($table, $rowId, $db_name);
+                            $image = $el->getParams()->get('ajax_upload', '0') === '1' ? '/' . $el->getParams()->get('ul_directory') . '/' . $mainImage->arquivo->name : @$rowData->$thumbRawName;
+
+                            echo str_replace('/thumbs/', '/', $el->renderListData($image, $allData));
+                        }
 					?>
 				</span>
 			</div>
