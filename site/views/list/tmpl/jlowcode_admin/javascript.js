@@ -446,6 +446,27 @@ function navigation() {
 	}
 }
 
+/**
+ * Sets up the button to copy the current page URL to the clipboard
+ * 
+ * @return  void
+ * 
+ * @since   version 1.0
+ */
+function setCopyToClipboard() {
+	jQuery(document).off('click', '.btn-share');
+    jQuery('.btn-share').on('click', function() {
+        var tempInput = document.createElement("input");
+        tempInput.value = window.location.href;
+        document.body.appendChild(tempInput);
+        tempInput.select();
+        tempInput.setSelectionRange(0, 99999);
+        document.execCommand("copy");
+        document.body.removeChild(tempInput);
+        alert(Joomla.JText._("COM_FABRIK_COPIED_TO_CLIPBOARD"));
+    });
+}
+
 // Change the view mode, for mobile devices default mode for cards is the grid mode
 function checkViewMobileMode() {
 	if(jQuery(window).width() < 768) {
