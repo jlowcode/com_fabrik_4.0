@@ -54,7 +54,7 @@ if(isset($elOwner)) {
 				<span class="thumb <?= $thumbFullName ?>" >
 					<?php
                         echo $el->getValue((array) @$rowData);
-                        $ignoreHeadings[] = $$thumbFullName;
+                        $ignoreHeadings[] = $thumbFullName;
                     ?>
 				</span>
             </div>
