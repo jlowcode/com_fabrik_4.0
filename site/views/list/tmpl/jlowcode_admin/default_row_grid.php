@@ -66,7 +66,7 @@ if(isset($elOwner)) {
                                 $mainImage = $el->getPrincipal($table, $rowId, $db_name);
                                 $image = $el->getParams()->get('ajax_upload', '0') === '1' ? '/' . $el->getParams()->get('ul_directory') . '/' . $mainImage->arquivo->name : @$rowData->$thumbRawName;
 
-                                echo $el->renderListData($image, $allData);
+                                echo str_replace('/thumbs/', '/', $el->renderListData($image, $allData));
                             }
 						?>
 					</span>
