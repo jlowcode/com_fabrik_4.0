@@ -25,159 +25,147 @@ $elements = $this->getModel()->getElements('filtername');
 
 $elDate = $this->elementsToShowOnGridAndCardTemplate['date-gallery-card-mode'];
 if(isset($elDate)) {
-	$elDate->reset();
-	$dateFullName = $elDate->getFullName();
-	$ignoreHeadings[] = $dateFullName;
-	$dateRawName = $dateFullName . '_raw';
+    $elDate->reset();
+    $dateFullName = $elDate->getFullName();
+    $ignoreHeadings[] = $dateFullName;
+    $dateRawName = $dateFullName . '_raw';
 
-	$allData = @$rowData ?? new stdClass();
-	$dateData = $elDate->renderListData(@$rowData->$dateRawName, $allData);
+    $allData = @$rowData ?? new stdClass();
+    $dateData = $elDate->renderListData(@$rowData->$dateRawName, $allData);
 }
 
 $elOwner = $this->elementsToShowOnGridAndCardTemplate['owner-gallery-card-mode'];
 if(isset($elOwner)) {
-	$elOwner->reset();
-	$ownerFullName = $elOwner->getFullName();
-	$ignoreHeadings[] = $ownerFullName;
+    $elOwner->reset();
+    $ownerFullName = $elOwner->getFullName();
+    $ignoreHeadings[] = $ownerFullName;
 }
 ?>
 <div class="fabrik_row card-box d-flex flex-row justify-content-between w-100 <?php echo $rowClass; ?>" id="<?php echo $this->_row->id; ?>">
-	<div class="d-flex flex-row w-100">
-		<!-- Show thumb, name and description first -->
-		<?php $el = $this->elementsToShowOnGridAndCardTemplate['thumb-gallery-card-mode']; ?>
-		<?php if(isset($el)) : ?>
-			<?php 
-				$el->reset();
-				$thumbFullName = $el->getFullName();
-			?>
-			<div class="fabrikDivElement div-thumb">
+    <div class="d-flex flex-row w-100">
+        <!-- Show thumb, name and description first -->
+        <?php $el = $this->elementsToShowOnGridAndCardTemplate['thumb-gallery-card-mode']; ?>
+        <?php if(isset($el)) : ?>
+            <?php
+            $el->reset();
+            $thumbFullName = $el->getFullName();
+            ?>
+            <div class="fabrikDivElement div-thumb">
 				<span class="thumb <?= $thumbFullName ?>" >
 					<?php
-                        $thumbRawName = $thumbFullName . '_raw';
-                        $allData = @$rowData ?? new stdClass();
-                        $ignoreHeadings[] = $thumbFullName;
-
-                        $table = $this->getModel()->getTable()->db_table_name;
-                        $rowId = $allData->__pk_val;
-                        $db_name = Factory::getConfig()->get("db");
-
-                        if($rowId) {
-                            $mainImage = $el->getPrincipal($table, $rowId, $db_name);
-                            $image = $el->getParams()->get('ajax_upload', '0') === '1' ? '/' . $el->getParams()->get('ul_directory') . '/' . $mainImage->arquivo->name : @$rowData->$thumbRawName;
-
-                            echo str_replace('/thumbs/', '/', $el->renderListData($image, $allData));
-                        }
-					?>
+                        echo $el->getValue((array) @$rowData);
+                        $ignoreHeadings[] = $$thumbFullName;
+                    ?>
 				</span>
-			</div>
-		<?php endif; ?>
+            </div>
+        <?php endif; ?>
 
-		<div class="card-head-row w-100">
-			<?php
-				$el = $this->elementsToShowOnGridAndCardTemplate['name-gallery-card-mode']; 
-			?>
-			<?php if(isset($el)) : ?>
-				<?php 
-					$el->reset();
-					$data = $el->getValue((array) @$rowData);
-				?>
-				<div class="fabrikDivElement div-name">
+        <div class="card-head-row w-100">
+            <?php
+            $el = $this->elementsToShowOnGridAndCardTemplate['name-gallery-card-mode'];
+            ?>
+            <?php if(isset($el)) : ?>
+                <?php
+                $el->reset();
+                $data = $el->getValue((array) @$rowData);
+                ?>
+                <div class="fabrikDivElement div-name">
 					<span class="title name <?php echo $el->getFullName() ?>" title="<?php echo strip_tags($data); ?>">
 						<?php
-							echo $data;
-							$ignoreHeadings[] = $el->getFullName();
-						?>
+                        echo $data;
+                        $ignoreHeadings[] = $el->getFullName();
+                        ?>
 					</span>
-				</div>
-			<?php endif; ?>
-			
-			<?php
-				$el = $this->elementsToShowOnGridAndCardTemplate['description-gallery-card-mode']; 
-			?>
-			<?php if(isset($el)) : ?>
-				<?php $el->reset(); ?>
-				<?php $data = strip_tags($el->getValue((array) @$rowData)); ?>
-				<?php if(!empty($data) || empty($rowData)) : ?>
-					<div class="fabrikDivElement div-description">
+                </div>
+            <?php endif; ?>
+
+            <?php
+            $el = $this->elementsToShowOnGridAndCardTemplate['description-gallery-card-mode'];
+            ?>
+            <?php if(isset($el)) : ?>
+                <?php $el->reset(); ?>
+                <?php $data = strip_tags($el->getValue((array) @$rowData)); ?>
+                <?php if(!empty($data) || empty($rowData)) : ?>
+                    <div class="fabrikDivElement div-description">
 						<span class="description">
 							<p class="m-0 <?php echo $el->getFullName() ?>">
 								<?php
-									echo $data;
-									$ignoreHeadings[] = $el->getFullName();
-								?>
+                                echo $data;
+                                $ignoreHeadings[] = $el->getFullName();
+                                ?>
 							</p>
 						</span>
-					</div>
-				<?php endif; ?>
-			<?php endif; ?>
+                    </div>
+                <?php endif; ?>
+            <?php endif; ?>
 
-			<!-- Then show all data -->
-			<div class="card-data-row d-flex">
-				<?php foreach ($this->headings as $heading => $label) :
-					$d = @$rowData->$heading;
-					$showLabel = true;
+            <!-- Then show all data -->
+            <div class="card-data-row d-flex">
+                <?php foreach ($this->headings as $heading => $label) :
+                    $d = @$rowData->$heading;
+                    $showLabel = true;
 
-					// Skip empty elements, id element, created_by element
-					if (in_array(explode('___', $heading)[1], ["id"]) || in_array($heading, $ignoreHeadings)) continue;
+                    // Skip empty elements, id element, created_by element
+                    if (in_array(explode('___', $heading)[1], ["id"]) || in_array($heading, $ignoreHeadings)) continue;
 
-					// If we use $label from $this->headings the label will be with a tag
-					foreach ($elements as $element) {
-						if($element->getFullName(true) != $heading) {
-							continue;
-						}
+                    // If we use $label from $this->headings the label will be with a tag
+                    foreach ($elements as $element) {
+                        if($element->getFullName(true) != $heading) {
+                            continue;
+                        }
 
-						if(is_a($element, 'PlgFabrik_ElementYoutube')) {
-							$showLabel = false;
-						}
+                        if(is_a($element, 'PlgFabrik_ElementYoutube')) {
+                            $showLabel = false;
+                        }
 
-						$elModel = $element->getElement();
-						$label = $element->getParams()->get('alt_list_heading') ?: $elModel->get('label');
-					}
+                        $elModel = $element->getElement();
+                        $label = $element->getParams()->get('alt_list_heading') ?: $elModel->get('label');
+                    }
 
-					$h = $this->headingClass[$heading];
-					$c = $this->cellClass[$heading];
-				?>
+                    $h = $this->headingClass[$heading];
+                    $c = $this->cellClass[$heading];
+                    ?>
 
-					<div class="row-fluid fabrikDivElement fabrikDivElementData">
-						<?php echo $showLabel ? '<span class="title-field-card">' . $label . ': </span>' : ''; ?>
-						<?php echo '<span class="data-field-card ' . $c['class'] . '">' . $d . '</span>'; ?>
-					</div>
-				<?php endforeach; ?>
-			</div>
+                    <div class="row-fluid fabrikDivElement fabrikDivElementData">
+                        <?php echo $showLabel ? '<span class="title-field-card">' . $label . ': </span>' : ''; ?>
+                        <?php echo '<span class="data-field-card ' . $c['class'] . '">' . $d . '</span>'; ?>
+                    </div>
+                <?php endforeach; ?>
+            </div>
 
-			<!-- Show created_by and date_time -->
-			<div class="fabrikDivElement info-row d-flex align-items-center justify-content-between">
-				<div class="div-info d-flex flex-row flex-wrap">
-					<?php if (!empty(strip_tags($dateData))) : ?>
-						<span class="date <?php echo $dateFullName ?>">
+            <!-- Show created_by and date_time -->
+            <div class="fabrikDivElement info-row d-flex align-items-center justify-content-between">
+                <div class="div-info d-flex flex-row flex-wrap">
+                    <?php if (!empty(strip_tags($dateData))) : ?>
+                        <span class="date <?php echo $dateFullName ?>">
 							<?php
-								echo $dateData;
-							?>
+                            echo $dateData;
+                            ?>
 						</span>
-					<?php endif; ?>
+                    <?php endif; ?>
 
-					<?php if (isset($elOwner)) : ?>
-						<span class="owner">
+                    <?php if (isset($elOwner)) : ?>
+                        <span class="owner">
 							<span><?php echo Text::_("COM_FABRIK_BY"); ?></span>
 							<span class="<?php echo $ownerFullName ?>"><?php echo $elOwner->getValue((array) @$rowData)[0] ?></span>
 						</span>
-					<?php endif; ?>
-				</div>
-			</div>
-		</div>
-	</div>
+                    <?php endif; ?>
+                </div>
+            </div>
+        </div>
+    </div>
 
-	<!-- Finally show fabrik_actions and fabrik_select -->
-	<div class="div-actions d-flex align-items-start justify-content-end w-25">
+    <!-- Finally show fabrik_actions and fabrik_select -->
+    <div class="div-actions d-flex align-items-start justify-content-end w-25">
 		<span>
 			<div class="fabrik_actions fabrik_element">
 				<?php echo @$rowData->fabrik_actions; ?>
 			</div>
 		</span>
-		<span style="margin-top: 7px;">
+        <span style="margin-top: 7px;">
 			<div class="fabrik_select fabrik_element">
 				<?php echo @$rowData->fabrik_select; ?>
 			</div>
 		</span>
-	</div>
+    </div>
 </div>
