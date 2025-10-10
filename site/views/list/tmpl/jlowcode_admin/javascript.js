@@ -134,6 +134,10 @@ function getQtnFilters(filters) {
 }
 
 function setNumFlagsAndClearFilters(j) {
+	if(j === undefined) {
+		return;
+	}
+
 	qtnFilters = getQtnFilters(j.filters);
 	if(qtnFilters === 0) {
 		jQuery('.clearFilters').addClass('fabrikHide');
