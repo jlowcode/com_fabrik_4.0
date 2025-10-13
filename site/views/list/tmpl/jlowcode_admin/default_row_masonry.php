@@ -31,11 +31,8 @@ $elements = $this->getModel()->getElements('filtername');
 				<div class="fabrikDivElement">
 					<span class="thumb <?= $thumbFullName ?>" >
 						<?php
-							$thumbRawName = $thumbFullName . '_raw';
-							$allData = @$rowData ?? new stdClass();
-							$ignoreHeadings[] = $thumbFullName;
-
-							echo $el->renderListData(@$rowData->$thumbRawName, $allData);
+                            echo $el->getValue((array) @$rowData);
+                            $ignoreHeadings[] = $thumbFullName;
 						?>
 					</span>
 				</div>
