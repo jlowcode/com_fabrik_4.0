@@ -61,6 +61,7 @@ requirejs(['fab/fabrik', 'fab/bootstrap_tree'], function (Fabrik, BootstrapTree)
 
 window.addEvent('fabrik.loaded', function () {
 	setEventsNavigation();
+	setCopyToClipboard();
 
 	// Description container
 	var toogleBtn = jQuery('.intro-container .fa');
