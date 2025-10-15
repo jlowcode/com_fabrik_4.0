@@ -15,6 +15,12 @@
     aspect-ratio: initial;
 }
 
+.fabrik-list .subRenderMasonry .div-name {
+    flex-direction: row;
+    display: flex;
+    justify-content: space-between;
+}
+
 @media (max-width: 1900px) {
     .subRenderMasonry .masonry-box-sizer,
     .subRenderMasonry .masonry-box { width: calc((100% - 72px) / 4); }

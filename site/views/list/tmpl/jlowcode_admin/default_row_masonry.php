@@ -11,50 +11,29 @@
 // No direct access
 defined('_JEXEC') or die('Restricted access');
 
-use Joomla\CMS\Language\Text;
-
 $rowClass = $this->_row->rowClass ?? '';
+$rowId = $this->_row->id;
 $title_element_id = $this->params->get('titulo');
 $regexTitle = $title_element_id. '_order';
 $ignoreHeadings = ['fabrik_actions', 'fabrik_select'];
 $rowData = $this->_row->data;
 $elements = $this->getModel()->getElements('filtername');
-
-$elDate = $this->elementsToShowOnGridAndCardTemplate['date-gallery-card-mode'];
-$dateFullName = '';
-$dateData = '';
-if(isset($elDate)) {
-	$elDate->reset();
-	$dateFullName = $elDate->getFullName();
-	$ignoreHeadings[] = $dateFullName;
-	$dateRawName = $dateFullName . '_raw';
-
-	$allData = @$rowData ?? new stdClass();
-	$dateData = $elDate->renderListData(@$rowData->$dateRawName, $allData);
-}
-
-$elOwner = $this->elementsToShowOnGridAndCardTemplate['owner-gallery-card-mode'];
-if(isset($elOwner)) {
-	$elOwner->reset();
-	$ownerFullName = $elOwner->getFullName();
-	$ignoreHeadings[] = $ownerFullName;
-}
 ?>
-<div class="masonry-box fabrik_row <?= $rowClass; ?>">
+<div class="masonry-box fabrik_row <?= $rowClass; ?>" id="<?= $rowId ?>">
 	<div>
 		<!-- Show thumb, name and description first -->
 		<div class="masonry-head-row">
 			<?php $el = $this->elementsToShowOnGridAndCardTemplate['thumb-gallery-card-mode']; ?>
 			<?php if(isset($el)) : ?>
-				<?php 
+				<?php
 					$el->reset();
 					$thumbFullName = $el->getFullName();
 				?>
 				<div class="fabrikDivElement">
 					<span class="thumb <?= $thumbFullName ?>" >
 						<?php
-							echo $el->getValue((array) @$rowData);
-                        	$ignoreHeadings[] = $thumbFullName;
+                            echo $el->getValue((array) @$rowData);
+                            $ignoreHeadings[] = $thumbFullName;
 						?>
 					</span>
 				</div>
@@ -75,11 +54,17 @@ if(isset($elOwner)) {
 							$ignoreHeadings[] = $el->getFullName();
 						?>
 					</span>
+
+                    <span>
+                        <div class="fabrik_actions fabrik_element">
+                            <?= @$rowData->fabrik_actions; ?>
+                        </div>
+                    </span>
 				</div>
 			<?php endif; ?>
 			
 			<?php $el = $this->elementsToShowOnGridAndCardTemplate['description-gallery-card-mode']; ?>
-			<?php if(isset($el)) : ?>
+			<?php if(isset($el) && $el->getParams()->get('show_in_list_summary') == '1') : ?>
 				<?php $el->reset(); ?>
 				<div class="fabrikDivElement div-description">
 					<span class="description">
@@ -126,33 +111,6 @@ if(isset($elOwner)) {
 					<?= '<span class="data-field-card ' . $c['class'] . '">' . $d . '</span>'; ?>
 				</div>
 			<?php endforeach; ?>
-		</div>
-	</div>
-
-	<!-- Finally show created_by, date_time and fabrik_actions -->
-	<div class="fabrikDivElement info-row d-flex align-items-center justify-content-between">
-		<div class="div-info d-flex flex-row flex-wrap">
-			<?php if (!empty(strip_tags($dateData))) : ?>
-				<span class="date <?= $dateFullName ?>">
-					<?php
-						echo $dateData;
-					?>
-				</span>
-			<?php endif; ?>
-
-			<?php if (isset($elOwner)) : ?>
-				<span class="owner">
-					<span><?= Text::_("COM_FABRIK_BY"); ?></span>
-					<span class="<?= $ownerFullName ?>"><?= $elOwner->getValue((array) @$rowData)[0] ?></span>
-				</span>
-			<?php endif; ?>
-		</div>
-		<div>
-			<span>
-				<div class="fabrik_actions fabrik_element">
-					<?= @$rowData->fabrik_actions; ?>
-				</div>
-			</span>
 		</div>
 	</div>
 </div>
