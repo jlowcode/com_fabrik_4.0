@@ -129,10 +129,6 @@ div.modal.fade {
     justify-content: center;
 }
 
-.fabrik-list .btn-share img {
-    margin-bottom: 3px;
-}
-
 @media (max-width: 800px) {
     .fabrik-list .header {
         flex-direction: column;
