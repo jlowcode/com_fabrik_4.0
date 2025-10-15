@@ -114,6 +114,25 @@ div.modal.fade {
     width: 70%;
 }
 
+.fabrik-list .btn-share {
+    margin-left: 8px;
+    background-color: rgba(220, 226, 249, 1);
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    padding: 0px;
+    flex-shrink: 0;
+    border: none;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.fabrik-list .btn-share img {
+    margin-bottom: 3px;
+}
+
 @media (max-width: 800px) {
     .fabrik-list .header {
         flex-direction: column;
@@ -133,25 +152,6 @@ div.modal.fade {
     .fabrik-list .header-desc .learn-more {
         padding-left: 0px;
     }
-}
-
-.fabrik-list .btn-share {
-    margin-left: 8px;
-    background-color: rgba(220, 226, 249, 1);
-    border-radius: 50%;
-    width: 40px;
-    height: 40px;
-    padding: 0px;
-    flex-shrink: 0;
-    border: none;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-.fabrik-list .btn-share img {
-    margin-bottom: 3px;
 }
 /* End - Style to header */
 
