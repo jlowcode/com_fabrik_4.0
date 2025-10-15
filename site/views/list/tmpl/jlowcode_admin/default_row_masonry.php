@@ -12,13 +12,14 @@
 defined('_JEXEC') or die('Restricted access');
 
 $rowClass = $this->_row->rowClass ?? '';
+$rowId = $this->_row->id;
 $title_element_id = $this->params->get('titulo');
 $regexTitle = $title_element_id. '_order';
 $ignoreHeadings = ['fabrik_actions', 'fabrik_select'];
 $rowData = $this->_row->data;
 $elements = $this->getModel()->getElements('filtername');
 ?>
-<div class="masonry-box fabrik_row <?= $rowClass; ?>">
+<div class="masonry-box fabrik_row <?= $rowClass; ?>" id="<?= $rowId ?>">
 	<div>
 		<!-- Show thumb, name and description first -->
 		<div class="masonry-head-row">
