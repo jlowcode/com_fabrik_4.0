@@ -29,6 +29,8 @@ requirejs(['fab/fabrik', 'fab/bootstrap_tree'], function (Fabrik, BootstrapTree)
 	});
 
 	Fabrik.addEvent('fabrik.list.loaded', function (list) {
+		setToogleFilters();
+
 		var dataRow = list.list.getElementsByClassName('fabrik_row');
 		Array.from(dataRow).each(function (row) {
 			var btnAction = row.getElementsByClassName('fabrik_action');
@@ -41,6 +43,7 @@ requirejs(['fab/fabrik', 'fab/bootstrap_tree'], function (Fabrik, BootstrapTree)
 	});
 
 	Fabrik.addEvent('fabrik.list.submit.ajax.complete', function (list, j) {
+		setToogleFilters();
 		buildMasonryMode();
 		setNumFlagsAndClearFilters(j);
 
@@ -53,6 +56,7 @@ requirejs(['fab/fabrik', 'fab/bootstrap_tree'], function (Fabrik, BootstrapTree)
 });
 
 window.addEvent('fabrik.loaded', function () {
+	setToogleFilters();
 	setEventsNavigation();
 
 	// Description container
@@ -442,11 +446,14 @@ function setToogleFilters() {
 			jQuery(element).removeClass("chosen-done");
 		});
 
-		Fabrik.buildChosen('select.advancedSelect', {
-			"placeholder_text_multiple": Joomla.JText._('JGLOBAL_TYPE_OR_SELECT_SOME_OPTIONS'),
-			"placeholder_text_single": Joomla.JText._('JGLOBAL_SELECT_AN_OPTION'),
-			"no_results_text": Joomla.JText._('JGLOBAL_SELECT_NO_RESULTS_MATCH')
-		});
+		setInterval( function() {
+			Fabrik.buildChosen('select.advancedSelect', {
+				"placeholder_text_multiple": Joomla.JText._('JGLOBAL_TYPE_OR_SELECT_SOME_OPTIONS'),
+				"placeholder_text_single": Joomla.JText._('JGLOBAL_SELECT_AN_OPTION'),
+				"no_results_text": Joomla.JText._('JGLOBAL_SELECT_NO_RESULTS_MATCH')
+			});
+		}, 200)
+
 	});
 }
 
