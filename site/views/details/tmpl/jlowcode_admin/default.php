@@ -25,9 +25,6 @@ $menu = $app->getMenu();
 $menuItem = $menu->getActive();
 $route = $menuItem->route;
 
-$doc = JFactory::getDocument();
-$doc->addScript('components/com_fabrik/views/details/tmpl/jlowcode_admin/javascript.js');
-
 // Sometimes $route and $routeList are different
 $idList = $listModel->getId();
 $url = "index.php?option=com_fabrik&view=list&listid=$idList";
@@ -46,16 +43,6 @@ if ($this->params->get('show-title', 1)) : ?>
 	<div class="header-title">
 		<div class="page-header">
 			<h1><?php echo $form->label; ?></h1>
-			<?php 
-			$shareImage = FabrikHelperHTML::image('share.png', 'list', 'form', array('alt' => 'Share'));
-			?>
-			<?php if($shareImage) : ?>
-				<button id="button_share_details_<?php echo $this->get('id'); ?>" 
-						type="button" 
-						class="btn-share">
-					<?php echo $shareImage; ?>
-				</button>
-			<?php endif; ?>
 		</div>
 		<div class="breadcum">
 			<span class="h6" style="cursor: pointer">
