@@ -387,7 +387,11 @@ main .platform-content {
 	color: #C2F6F9 !important;
 }
 
-
+.chosen-choices .search-choice {
+    background-color:#CDE6FB !important;
+	border: none !important;
+	background-image: none !important;
+}
 
 /* END - Your CSS styling ends here */
 
