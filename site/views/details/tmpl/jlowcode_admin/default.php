@@ -25,7 +25,7 @@ $menu = $app->getMenu();
 $menuItem = $menu->getActive();
 $route = $menuItem->route;
 
-$doc = JFactory::getDocument();
+$doc = Factory::getDocument();
 $doc->addScript('components/com_fabrik/views/details/tmpl/jlowcode_admin/javascript.js');
 
 // Sometimes $route and $routeList are different
