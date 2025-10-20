@@ -6,31 +6,29 @@
  */
 
 jQuery(function($) {
-    const $shareButton = $('.btn-share');
-    const $pageHeader = $('.page-header');
-    const $titleH1 = $pageHeader.find('h1');
+    const shareButton = $('.btn-share');
+    const pageHeader = $('.page-header');
+    const titleH1 = pageHeader.find('h1');
 
-    if ($shareButton.length && $pageHeader.length && $titleH1.length) {
-        $shareButton.insertAfter($titleH1);
+    if (shareButton.length && pageHeader.length && titleH1.length) {
+        shareButton.insertAfter(titleH1);
 
-        $pageHeader.css({
+        pageHeader.css({
             'display': 'flex',
             'align-items': 'center',
             'gap': '24px'
         });
 
-        $titleH1.css('margin', '0');
+        titleH1.css('margin', '0');
 
-        $shareButton.css({
+        shareButton.css({
             'background-color': 'rgba(220, 226, 249, 1)',
             'border-radius': '50%',
             'width': '40px',
             'height': '40px',
             'padding': '0px',
             'flex-shrink': '0'
-        }).find('img').css({
-            'margin-bottom': '3px'
-        });
+        })
     }
 
     setCopyToClipboard();
@@ -48,10 +46,13 @@ function setCopyToClipboard() {
         const tempInput = document.createElement("input");
         tempInput.value = window.location.href;
         document.body.appendChild(tempInput);
+        
+        // Select the input value and copy to clipboard
         tempInput.select();
         tempInput.setSelectionRange(0, 99999);
         document.execCommand('copy');
         document.body.removeChild(tempInput);
+
         alert(Joomla.JText._("COM_FABRIK_COPIED_TO_CLIPBOARD"));
     });
 }

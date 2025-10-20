@@ -455,15 +455,17 @@ function navigation() {
  * @since   version 1.0
  */
 function setCopyToClipboard() {
-	jQuery(document).off('click', '.btn-share');
-    jQuery('.btn-share').on('click', function() {
+	jQuery('.btn-share').off('click').on('click', function() {
         var tempInput = document.createElement("input");
         tempInput.value = window.location.href;
         document.body.appendChild(tempInput);
+
+		// Select the input value and copy to clipboard
         tempInput.select();
         tempInput.setSelectionRange(0, 99999);
         document.execCommand("copy");
         document.body.removeChild(tempInput);
+
         alert(Joomla.JText._("COM_FABRIK_COPIED_TO_CLIPBOARD"));
     });
 }
