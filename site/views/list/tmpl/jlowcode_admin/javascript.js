@@ -11,8 +11,11 @@ requirejs(['fab/fabrik', 'fab/bootstrap_tree'], function (Fabrik, BootstrapTree)
 	setFiltersTutorialTemplate();
 	orderingTreeTutorial(tree);
 	checkViewMobileMode();
+	buildMasonryMode();
 
 	Fabrik.addEvent('fabrik.list.updaterows', function () {
+		buildMasonryMode();
+
 		jQuery('.subRenderCard .description').each(function () {
 			let boxDescription = jQuery(this);
 			let description = boxDescription.find('p');
@@ -32,14 +35,14 @@ requirejs(['fab/fabrik', 'fab/bootstrap_tree'], function (Fabrik, BootstrapTree)
 					btnAction[0].addClass('open');
 				});
 			}
-		})
+		});
 	});
 
-	Fabrik.addEvent('fabrik.list.submit.ajax.complete', function (list) {
-		jQuery('#nav-pagination').val(Math.ceil((parseInt(list.options.limitStart)+1)/parseInt(list.options.limitLength)));
-	})
+	Fabrik.addEvent('fabrik.list.submit.ajax.complete', function (list, j) {
+		buildMasonryMode();
 
-	Fabrik.addEvent('fabrik.list.submit.ajax.complete', function (t, j) {
+		jQuery('#nav-pagination').val(Math.ceil((parseInt(list.options.limitStart)+1)/parseInt(list.options.limitLength)));
+
 		if(j.filters.value === undefined) {
 			jQuery('.clearFilters').addClass('fabrikHide');
 			jQuery('.fabrik-list .fabrikButtonsContainer .fabrik_filter').removeClass('p-clean-filters');
@@ -145,6 +148,10 @@ function handleRadioClick(element) {
 		case 'card-view':
 			sessionStorage.setItem("modo", "card");
 			break;
+
+		case 'masonry-view':
+			sessionStorage.setItem("modo", "masonry");
+			break;
 	}
 
 	enviarDadosParaServidor();
@@ -172,6 +179,10 @@ function carregarModoEscolhido() {
 
 		case 'card':
 			document.getElementById("card-view").checked = true;		
+			break;
+
+		case 'masonry':
+			document.getElementById("masonry-view").checked = true;
 			break;
 	}
 }
@@ -492,5 +503,27 @@ function checkViewMobileMode() {
 		} else {
 			jQuery('#card-view').parent().removeClass('fabrikHide');
 		}
+	});
+}
+
+function buildMasonryMode() {
+	let grid = jQuery('.js-masonry');
+	let qtnItems = jQuery('.masonry-box').length;
+
+	if (grid === null || qtnItems === 0) {
+		return;
+	}
+
+	if(jQuery('.masonry-box-sizer').length === 0) {
+		grid.prepend('<div class="masonry-box-sizer"></div>');
+	}
+
+	imagesLoaded(grid[0], function() {
+		new Masonry(grid[0], {
+			itemSelector: '.masonry-box',
+			columnWidth: '.masonry-box-sizer',
+			percentPosition: true,
+			gutter: 24
+		});
 	});
 }

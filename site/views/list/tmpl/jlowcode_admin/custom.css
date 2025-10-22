@@ -649,10 +649,6 @@ body {
     padding: 0px 2px;
 }
 
-.fabrik_action .dropdown-menu {
-    transform: translate(0px, 30px) !important;
-}
-
 .fabrikFilterContainer a {
     text-decoration: underline;
 }
@@ -1213,4 +1209,14 @@ i.fas.fa-exclamation-triangle.fa-sm{
     background-color: #CDE6FB;
     background-image: none;
     border: none;
+}
+
+.btn.btn-default.btn-mini.dropdown-toggle.dropdown-toggle-no-caret {
+    margin: -6px 0px 0px 0px !important;
+}
+
+.tree-item .actions {
+    display: inline-block;
+    float: right;
+    vertical-align: middle;
 }

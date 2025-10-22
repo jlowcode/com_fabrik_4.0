@@ -108,9 +108,11 @@ if (isset($_REQUEST['action']) && isset($_REQUEST['action']['showButton'])) {
                     <?php if($this->table->intro) : ?>
                         <div class="intro-container <?php echo $this->modalLearnMore['callModal'] ? 'd-none' : ''; ?>">
                             <div class="text-intro-content">
-                                <?php echo $this->table->intro; ?>
+                                <p><?php echo strip_tags($this->table->intro); ?></p>
                                 <?php if(strlen($this->table->intro) > 180) : ?>
-                                    <a class="learn-more" href="#<?php echo $idModalLearnMore ?>" data-bs-toggle="modal"><?php echo Text::_("JGLOBAL_LEARN_MORE") ?></a>
+                                    <a class="learn-more" href="#<?php echo $idModalLearnMore ?>" data-bs-toggle="modal">
+                                        <?php echo Text::_("JGLOBAL_LEARN_MORE") ?>
+                                    </a>
                                 <?php endif; ?>
                             </div>
                         </div>
