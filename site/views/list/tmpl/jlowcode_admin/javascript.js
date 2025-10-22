@@ -64,6 +64,7 @@ requirejs(['fab/fabrik', 'fab/bootstrap_tree'], function (Fabrik, BootstrapTree)
 
 window.addEvent('fabrik.loaded', function () {
 	setEventsNavigation();
+	setCopyToClipboard();
 
 	// Description container
 	var toogleBtn = jQuery('.intro-container .fa');
@@ -455,6 +456,29 @@ function navigation() {
 		history.pushState(null, '', window.location.pathname + '?' + finalUrl + '&resetfilters=0&clearordering=0&clearfilters=0');
 		location.reload();
 	}
+}
+
+/**
+ * Sets up the button to copy the current page URL to the clipboard
+ * 
+ * @return  void
+ * 
+ * @since   version 1.0
+ */
+function setCopyToClipboard() {
+	jQuery('.btn-share').off('click').on('click', function() {
+        var tempInput = document.createElement("input");
+        tempInput.value = window.location.href;
+        document.body.appendChild(tempInput);
+
+		// Select the input value and copy to clipboard
+        tempInput.select();
+        tempInput.setSelectionRange(0, 99999);
+        document.execCommand("copy");
+        document.body.removeChild(tempInput);
+
+        alert(Joomla.JText._("COM_FABRIK_COPIED_TO_CLIPBOARD"));
+    });
 }
 
 // Change the view mode, for mobile devices default mode for cards is the grid mode
