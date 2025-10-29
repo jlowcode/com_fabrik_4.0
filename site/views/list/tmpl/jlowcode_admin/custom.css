@@ -1194,3 +1194,17 @@ i.fas.fa-exclamation-triangle.fa-sm{
 .button.btn.btn-default.btn-mini.dropdown-toggle.dropdown-toggle-no-caret{
     margin: 0;
 }
+
+.chosen-container.chosen-container-multi ul.chosen-choices li.search-choice {
+    background-color: #CDE6FB;
+    background-image: none;
+    border: none;
+}
+
+.select2-selection__rendered .select2-selection__choice {
+    background-color: #CDE6FB !important;
+    margin-right: 8px !important;
+    border-radius: 0 !important;
+    padding: 0 4px !important;
+    border: none !important;
+}

@@ -387,7 +387,27 @@ main .platform-content {
 	color: #C2F6F9 !important;
 }
 
+.chosen-choices .search-choice {
+    background-color:#CDE6FB !important;
+	border: none !important;
+	background-image: none !important;
+	border-radius: 0 !important;
+}
 
+.singleTreeView .tag-container {
+	background-color: #CDE6FB;
+    margin-right: 8px;
+	border-radius: 0;
+    padding: 0 4px;
+}
+
+.select2-selection__rendered .select2-selection__choice {
+	background-color: #CDE6FB !important;
+    margin-right: 8px !important;
+	border-radius: 0 !important;
+    padding: 0 4px !important;
+	border: none !important;
+}
 
 /* END - Your CSS styling ends here */
 

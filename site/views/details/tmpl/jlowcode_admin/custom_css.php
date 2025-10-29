@@ -240,5 +240,11 @@ main .platform-content {
     padding: 30px 0px;
 }
 
+.tag-item {
+    background-color: #CDE6FB;
+    padding: 0 4px;
+    margin-right: 8px;
+}
+
 /* END - Your CSS styling ends here */
 EOT;
