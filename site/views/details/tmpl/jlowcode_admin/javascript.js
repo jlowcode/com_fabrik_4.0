@@ -6,7 +6,7 @@
  */
 
 jQuery(function($) {
-    const shareButton = $('.btn-share');
+    const shareButton = $('[id^="button_share_details_"]');
     const pageHeader = $('.page-header');
     const titleH1 = pageHeader.find('h1');
 
@@ -42,7 +42,7 @@ jQuery(function($) {
  * @since   version 4.0.5
  */
 function setCopyToClipboard() {
-    jQuery('.btn-share').off('click').on('click', function() {
+    jQuery('[id^="button_share_details_"]').off('click').on('click', function() {
         const tempInput = document.createElement("input");
         tempInput.value = window.location.href;
         document.body.appendChild(tempInput);
