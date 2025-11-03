@@ -384,29 +384,36 @@ main .platform-content {
 }
 
 .pull-right > .btn.btn-default:hover{
-	color: #C2F6F9 !important;
+	color:rgb(140, 209, 213) !important;
 }
 
 .chosen-choices .search-choice {
     background-color:#CDE6FB !important;
 	border: none !important;
 	background-image: none !important;
-	border-radius: 0 !important;
+	border-radius: 4px !important;
+	margin-right: 8px !important;
 }
 
 .singleTreeView .tag-container {
 	background-color: #CDE6FB;
     margin-right: 8px;
-	border-radius: 0;
-    padding: 0 4px;
+	border-radius: 4px;
+    padding: 2px 8px;
 }
 
 .select2-selection__rendered .select2-selection__choice {
 	background-color: #CDE6FB !important;
     margin-right: 8px !important;
-	border-radius: 0 !important;
-    padding: 0 4px !important;
+	border-radius: 4px !important;
 	border: none !important;
+}
+
+.tree-view2 .tag-container {
+	background-color: #CDE6FB;
+	padding: 2px 8px;
+	border-radius: 4px;
+	margin-right: 8px;
 }
 
 /* END - Your CSS styling ends here */

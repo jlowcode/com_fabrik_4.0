@@ -38,8 +38,16 @@ $c = $_REQUEST['c'];
 echo <<<EOT
 /* BEGIN - Your CSS styling starts here */
 
-.plg-display .header-desc, .plg-display .header-thumb {
+.plg-display .header {
+    margin-bottom: 0 !important;
     display: none !important;
+}
+
+.plg-display .fabrikButtonsContainer .middle-buttons .itemShowRequests {
+    display: none !important;
+    list-style: none !important;
+    margin: 0 !important;
+    padding: 0 !important;
 }
 
 .fabrik_groupdata td, .list-footer {
@@ -242,8 +250,9 @@ main .platform-content {
 
 .tag-item {
     background-color: #CDE6FB;
-    padding: 0 4px;
+    padding: 2px 8px;
     margin-right: 8px;
+    border-radius: 4px;
 }
 
 /* END - Your CSS styling ends here */
