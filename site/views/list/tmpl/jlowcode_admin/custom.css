@@ -1211,6 +1211,20 @@ i.fas.fa-exclamation-triangle.fa-sm{
     border: none;
 }
 
+.select2-selection__rendered .select2-selection__choice {
+    background-color: #CDE6FB !important;
+    margin-right: 8px !important;
+    border-radius: 4px !important;
+    padding: 2px 8px !important;
+    border: none !important;
+}
+
+.tag-item {
+    background-color: #CDE6FB;
+    padding: 2px 8px;
+    border-radius: 4px;
+}
+
 .btn.btn-default.btn-mini.dropdown-toggle.dropdown-toggle-no-caret {
     margin: -6px 0px 0px 0px !important;
 }
