@@ -247,6 +247,7 @@
 					<option value="2">COM_FABRIK_LAYOUT_MODE_OPTION_2</option>
 					<option value="3">COM_FABRIK_LAYOUT_MODE_OPTION_3</option>
 					<option value="4">COM_FABRIK_LAYOUT_MODE_OPTION_4</option>
+					<option value="5">COM_FABRIK_LAYOUT_MODE_OPTION_5</option>
 			</field>
 
 			<field name="field_thumb_template_mode"

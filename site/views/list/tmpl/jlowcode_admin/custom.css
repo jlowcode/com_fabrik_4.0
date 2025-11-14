@@ -134,6 +134,25 @@ div.modal.fade {
         padding-left: 0px;
     }
 }
+
+.fabrik-list .btn-share {
+    background-color: rgba(220, 226, 249, 1);
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    padding: 0px;
+    flex-shrink: 0;
+    border: none;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.header-title h1 {
+    line-height: 1;
+    margin: 0px 24px 0px 0px;
+}
 /* End - Style to header */
 
 
@@ -630,10 +649,6 @@ body {
     padding: 0px 2px;
 }
 
-.fabrik_action .dropdown-menu {
-    transform: translate(0px, 30px) !important;
-}
-
 .fabrikFilterContainer a {
     text-decoration: underline;
 }
@@ -736,11 +751,6 @@ form a, table a {
 
 .nav {
     margin: 10px 0px !important;
-}
-
-h1 {
-    margin: 0px !important;
-    line-height: 1;
 }
 
 .active>.page-link, .page-link.active{
@@ -1213,4 +1223,14 @@ i.fas.fa-exclamation-triangle.fa-sm{
     background-color: #CDE6FB;
     padding: 2px 8px;
     border-radius: 4px;
+}
+
+.btn.btn-default.btn-mini.dropdown-toggle.dropdown-toggle-no-caret {
+    margin: -6px 0px 0px 0px !important;
+}
+
+.tree-item .actions {
+    display: inline-block;
+    float: right;
+    vertical-align: middle;
 }
