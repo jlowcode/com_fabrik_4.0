@@ -134,31 +134,6 @@ div.modal.fade {
         padding-left: 0px;
     }
 }
-
-.fabrik-list .btn-share {
-    background-color: rgba(220, 226, 249, 1);
-    border-radius: 50%;
-    width: 40px;
-    height: 40px;
-    padding: 0px;
-    flex-shrink: 0;
-    border: none;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-.fabrik-list .btn-share img {
-    margin-bottom: 3px;
-}
-
-.header-title h1 {
-    line-height: 1;
-    margin: 0px 24px 0px 0px;
-}
-
-
 /* End - Style to header */
 
 
@@ -761,6 +736,11 @@ form a, table a {
 
 .nav {
     margin: 10px 0px !important;
+}
+
+h1 {
+    margin: 0px !important;
+    line-height: 1;
 }
 
 .active>.page-link, .page-link.active{

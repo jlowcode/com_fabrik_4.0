@@ -38,16 +38,8 @@ $c = $_REQUEST['c'];
 echo <<<EOT
 /* BEGIN - Your CSS styling starts here */
 
-.plg-display .header {
-    margin-bottom: 0 !important;
+.plg-display .header-desc, .plg-display .header-thumb {
     display: none !important;
-}
-
-.plg-display .fabrikButtonsContainer .middle-buttons .itemShowRequests {
-    display: none !important;
-    list-style: none !important;
-    margin: 0 !important;
-    padding: 0 !important;
 }
 
 .fabrik_groupdata td, .list-footer {
