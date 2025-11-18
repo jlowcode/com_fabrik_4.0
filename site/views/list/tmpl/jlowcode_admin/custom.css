@@ -1235,3 +1235,10 @@ i.fas.fa-exclamation-triangle.fa-sm{
     float: right;
     vertical-align: middle;
 }
+
+.flex-direction-row .fabrik_filter_submit.button {
+    border-radius: 100px !important;
+    background: var(--Colors-Blue-cett-blue-700, #175CD3) !important;
+    color: #FFF !important;
+    height: 40px !important;
+}
