@@ -1,12 +1,14 @@
-/*Suggest long titles*/
-.header-inside .container-title .page-title {
-    white-space: normal; /* Permette al testo di andare a capo */
-    overflow-wrap: break-word; /* Consente di spezzare le parole lunghe se necessario */
-    word-wrap: break-word; /* Supporto per browser pi첫 vecchi */
+/*Prevent the tooltip from hiding the labels.*/
+.form-label.fabrikLabel {
+	display: block !important;
 }
-.collapse:not(.show) {
-    display: none !important;
+/*Suggest long titles Admin*/
+body.admin.com_fabrik .header-inside .container-title .page-title {
+    white-space: normal; 
+    overflow-wrap: break-word; 
+    word-wrap: break-word; 
 }
+
 .fabrikHide {
 	display: none !important;
 }
@@ -178,6 +180,7 @@ div.popover {
 	display: block;
 	z-index: 1050 !important;
 	overflow: hidden !important;
+	max-width:97vw!important;
 }
 
 .auto-complete-container.advanced {
@@ -658,35 +661,45 @@ select.fabrik_filter[multiple] {
 	height: auto;
 }
 
-/** Fix pointer for form labels which are form labels without tooltips - checkbox / radio labels stay pointer **/
+/** Fix pointer for form labels which are form labels without tooltips - checkbox / radio labels stay pointer 
+ F4: not longer necessary; adapt radio + checkbox classes
+**/
 form.fabrikForm label {
-	cursor: default;
+	//cursor: default;
 }
 
 form.fabrikForm label.fabrikTip,
-form.fabrikForm label.checkbox,
-form.fabrikForm label.radio {
+form.fabrikForm .form-check-label,
+form.fabrikForm .form-check-input {
 	cursor: pointer;
 }
-/*Hide toggle*/
-@media (min-width: 576px) {
-  .toggler-burger {
-    display: none !important;
-  }
+
+/** Hide burgher if not smartphone **/
+@media (min-width: 576px) 
+{
+	body.admin.com_fabrik .toggler-burger {
+		display: none !important;
+	}
+}
+/** Close collpase Admin menu on smartphone **/
+@media (max-width: 575.98px) 
+{
+	body.admin.com_fabrik .sidebar-wrapper.sidebar-menu.collapse:not(.show) {
+		display: none !important;
+	}
+}
+
+@media (max-width: 576px) 
+{
+	body.admin.com_fabrik #subhead-container.subhead.collapse:not(.show) {
+		display: none !important;
+	}
 }
 
 /** radius search responsive **/
 
 @media only screen and (max-device-width: 499px)
 {
-	.fabrikWindow.modal {
-		max-width:100% !important;
-		left:0 !important;
-	}
-
-	.fabrikWindow.modal .contentWrapper {
-		max-width:100% !important;
-	}
 
 	.fabrikWindow .radius_search table.radius_table {
 		table-layout:fixed;
