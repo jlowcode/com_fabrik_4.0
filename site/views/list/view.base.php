@@ -387,6 +387,7 @@ class FabrikViewListBase extends FabrikView
 		Text::script('COM_FABRIK_ADVANCED_SEARCH');
 		Text::script('COM_FABRIK_FORM_FIELDS');
 		Text::script('COM_FABRIK_VIEW');
+		Text::script('COM_FABRIK_COPIED_TO_CLIPBOARD');
 
 		// Keyboard short cuts
 		Text::script('COM_FABRIK_LIST_SHORTCUTS_ADD');

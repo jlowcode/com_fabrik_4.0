@@ -33,7 +33,6 @@
 .fabrik-list .subRenderGridCard .div-thumb div,
 .fabrik-list .subRenderGridCard .div-thumb {
     aspect-ratio: 16/9;
-    overflow: hidden;
     text-align: center;
 }
 

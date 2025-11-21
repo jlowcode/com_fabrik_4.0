@@ -91,6 +91,16 @@ if (isset($_REQUEST['action']) && isset($_REQUEST['action']['showButton'])) {
                         <span style="font-weight: 700; font-size: 2.25rem; font-family: 'Nunito';"><?php echo $this->table->label; ?></span>
                     <?php endif ?>
                 <?php endif ?>
+                <?php 
+                $shareImage = FabrikHelperHTML::image('share.png', 'list', 'form', array('alt' => 'Share'));
+                ?>
+                <?php if($shareImage) : ?>
+                    <button id="button_share_<?php echo $this->get('id'); ?>" 
+                            type="button" 
+                            class="btn-share">
+                        <?php echo $shareImage; ?>
+                    </button>
+                <?php endif; ?>
             </div>
             <?php if($this->params->get('show_description_list', '1')) : ?>
                 <div class="header-desc">

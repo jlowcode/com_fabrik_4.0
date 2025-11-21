@@ -665,6 +665,7 @@ class FabrikViewFormBase extends FabrikView
 		}
 
 		Text::script('COM_FABRIK_FORM_SAVED');
+		Text::script('COM_FABRIK_COPIED_TO_CLIPBOARD');
 
 		// $$$ rob don't declare as var $bKey, but rather assign to window, as if loaded via ajax window the function is wrapped
 		// inside an anonymous function, and therefore $bKey wont be available as a global var in window
