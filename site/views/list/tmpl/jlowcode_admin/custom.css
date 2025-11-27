@@ -860,8 +860,11 @@ i.fas.fa-exclamation-triangle.fa-sm{
     align-items: center;
 }
 
-.fabrik_filter_submit {
-    margin-top: 10px !important;
+.filterContentNotEmpty .fabrikFilterContainer .fabrik_filter_submit {
+    margin-top: 10px;
+    border-radius: 100px;
+    background: #175CD3;
+    color: #FFF;
 }
 
 .fabrikFilterContainer {
